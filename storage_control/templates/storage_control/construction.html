@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>🏗️ ПУЛЬТ ПРОРАБА | КОНТУР А1</title>
+    <style>
+        body { background-color: #030712; color: #38bdf8; font-family: 'Courier New', monospace; padding: 30px; }
+        .glacier-box { max-width: 900px; margin: 0 auto; border: 1px solid #38bdf8; background: #070a13; padding: 25px; border-radius: 12px; box-shadow: 0 0 25px rgba(56,189,248,0.15); }
+        h1 { color: #fff; font-size: 20px; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid #38bdf8; padding-bottom: 15px; }
+        .defect-table { width: 100%; margin-top: 20px; border-collapse: collapse; }
+        .defect-row { border-bottom: 1px solid #1e293b; transition: all 0.3s ease; }
+        .defect-row:hover { background: rgba(56,189,248,0.05); }
+        .defect-cell { padding: 15px; font-size: 14px; }
+        .status-neon { color: #00f2fe; font-weight: bold; text-shadow: 0 0 8px #00f2fe; }
+        .btn-ice { background: #38bdf8; color: #030712; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="glacier-box">
+        <h1>🏗️ ИСПОЛНИТЕЛЬНАЯ ДОКУМЕНТАЦИЯ И СНиП (ГОСТ 475-2016)</h1>
+        <p>Контур А1: Оперативный журнал работ обновлен. Обнаружено дефектов: <span class="status-neon">12 страниц</span></p>
+        <table class="defect-table">
+            <tr class="defect-row">
+                <td class="defect-cell">📍 5F / Ось Б-12 — Кровля (Мембрана)</td>
+                <td class="defect-cell">Шов 35 мм — <span style="color:#ef4444;">БРАК</span></td>
+                <td class="defect-cell" style="text-align:right;"><button class="btn-ice">БЫСТРЫЙ ПРИЕМ "ОК"</button></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

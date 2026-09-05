@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Речевой Интеллект Ёжика</title>
+    <style>
+        body { background: #07090e; color: #ffaa00; font-family: monospace; padding: 40px; text-align: center; }
+        .audio-box { border: 2px solid #ffaa00; padding: 30px; display: inline-block; background: #0f141d; box-shadow: 0 0 25px #ffaa00; border-radius: 8px; max-width: 550px; }
+        .fx-wave { font-size: 24px; color: #ff0055; animation: pulse_fx 1.5s infinite ease-in-out; margin: 20px 0; font-weight: bold; }
+        .translation { background: #171f2a; border-left: 4px solid #ff0055; padding: 15px; text-align: left; color: #00ffcc; text-shadow: 0 0 5px #00ffcc; }
+        @keyframes pulse_fx { 0% { transform: scale(0.98); opacity: 0.6; text-shadow: 0 0 5px #ff0055; } 50% { transform: scale(1.02); opacity: 1; text-shadow: 0 0 20px #ff0055; } 100% { transform: scale(0.98); opacity: 0.6; text-shadow: 0 0 5px #ff0055; } }
+    </style>
+</head>
+<body>
+    <div class="audio-box">
+        <h2>🎙️ БЛОК 39: РЕЧЕВОЙ КОНТУР ИИ</h2>
+        <div class="fx-wave">{{ voice_ui.visual_fx }}</div>
+        <p><b>Статус аудиопотока:</b> {{ voice_ui.status }}</p>
+        <p style="color: #888;"><b>Анализ частот:</b> {{ voice_ui.audio_analysis }}</p>
+        <div class="translation">
+            <strong>Синтез речи (TTS):</strong><br>
+            <i>"{{ voice_ui.audio_synthesis }}"</i>
+        </div>
+        <hr style="border-color: #ffaa00; margin-top: 20px;">
+        <p style="color: #fff; margin-bottom: 0;">🦊 Капитал вековой вахты: {{ ezhik.total_revenue }}</p>
+    </div>
+</body>
+</html>

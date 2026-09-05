@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Экосистема FAMILYMIRO 1.5 — Наши Продукты</title>
+    <style>
+        /* ГЛУБОКАЯ НОЧНАЯ АТМОСФЕРА СИСТЕМЫ */
+        :root {
+            --bg-dark: #070709;
+            --card-base: #0f1115;
+            --border-glow: #1f242e;
+            
+            /* Цвета душевных контуров */
+            --gold-heritage: #d4af37;
+            --teal-safe: #2c7a7b;
+            --neon-tiktok: #ff007f;
+            --steel-gost: #f0883e;
+            --text-light: #e2e8f0;
+            --text-muted: #8a99ad;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            font-family: 'Courier New', monospace; /* Сохраняем строгий цифровой стиль Сейфа */
+            margin: 0;
+            padding: 60px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .showcase-container {
+            max-width: 900px;
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Заголовок, который дышит золотом */
+        header {
+            margin-bottom: 50px;
+            border-bottom: 1px solid var(--border-glow);
+            padding-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.8rem;
+            font-weight: 900;
+            color: var(--gold-heritage);
+            text-shadow: 0 0 15px rgba(214, 175, 55, 0.2);
+            margin: 0 0 10px 0;
+            letter-spacing: 2px;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        /* Сетка продуктов */
+        .products-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        /* ЖИВОЙ ОРГАНИЗМ КАРТОЧКИ С ИНДИВИДУАЛЬНОЙ ДУШОЙ */
+        .product-node {
+            background: var(--card-base);
+            border: 1px solid var(--border-glow);
+            border-radius: 16px;
+            padding: 35px;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Эффект оживания при наведении */
+        .product-node:hover {
+            transform: translateY(-5px) scale(1.01);
+        }
+
+        /* Индивидуальные настройки свечения для каждого продукта */
+        .node-heritage:hover {
+            border-color: var(--gold-heritage);
+            box-shadow: 0 0 30px rgba(214, 175, 55, 0.15);
+        }
+        .node-tiktok:hover {
+            border-color: var(--neon-tiktok);
+            box-shadow: 0 0 30px rgba(255, 0, 127, 0.15);
+        }
+        .node-construction:hover {
+            border-color: var(--steel-gost);
+            box-shadow: 0 0 30px rgba(240, 136, 62, 0.15);
+        }
+
+        /* Шапка карточки */
+        .node-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .node-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0;
+            transition: 0.3s;
+        }
+        .node-heritage .node-title { color: var(--gold-heritage); }
+        .node-tiktok .node-title { color: var(--neon-tiktok); }
+        .node-construction .node-title { color: var(--steel-gost); }
+
+        .node-badge {
+            font-size: 0.8rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-glow);
+            color: var(--text-muted);
+        }
+
+        /* Описание и списки */
+        .node-desc {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin: 0 0 20px 0;
+            color: #b3c1d1;
+        }
+
+        .node-features {
+            list-style: none;
+            padding-left: 0;
+            margin: 0;
+        }
+
+        .node-features li {
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            position: relative;
+            padding-left: 20px;
+            color: var(--text-muted);
+        }
+
+        .node-features li::before {
+            content: "»";
+            position: absolute;
+            left: 0;
+            color: var(--text-light);
+            font-weight: bold;
+        }
+
+        /* Подвал карточки: статус защиты Ёжика */
+        .node-footer {
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.03);
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #526072;
+        }
+
+        /* Кнопка возврата к пульту */
+        .btn-back {
+            margin-top: 50px;
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border-glow);
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            transition: 0.3s;
+        }
+        .btn-back:hover {
+            color: var(--gold-heritage);
+            border-color: var(--gold-heritage);
+            box-shadow: 0 0 15px rgba(214, 175, 55, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+<div class="showcase-container">
+    
+    <header>
+        <h1>ПРОДУКТЫ FAMILYMIRO</h1>
+        <p>Цифровая экосистема закрытых контуров • Версия Архитектуры 1.5</p>
+    </header>
+
+    <div class="products-stack">
+        
+        <!-- ПРОДУКТ 1: НАСЛЕДИЕ -->
+        <div class="product-node node-heritage">
+            <div class="node-header">
+                <h2 class="node-title">☀️ Платформа «Наследие» & Сейф Памяти</h2>
+                <span class="node-badge">Контур А • Семья</span>
+            </div>
+            <p class="node-desc">Семейный Храм Гордости и зашифрованное вечное хранилище Капсул Времени Лики. Продукт создан для фиксации Золотой Памяти рода, защиты от внешнего шума и передачи прав по наследству дочке Мирославе.</p>
+            <ul class="node-features">
+                <li>Протокол «Уговор»: Проверка Замка времени и автоматический запуск Будильников уведомлений.</li>
+                <li>ИИ-биометрия ID-Scan: Распознавание личности без паролей по детским фото через MediaPipe.</li>
+                <li>Финальный Якорь: Автоматическое и безвозвратное уничтожение исходников через 42 часа после выгрузки в розетку получателя.</li>
+            </ul>
+            <div class="node-footer">
+                <span>Технологии: Django / MediaPipe Age-Progression / СУБД Сейфа</span>
+                <span style="color: var(--gold-heritage);">🔒 Контур полностью изолирован</span>
+            </div>
+        </div>
+
+        <!-- ПРОДУКТ 2: НЕЙРО-РЕЖИССЕР -->
+                <!-- ПРОДУКТ 2: МЕДИА-КОНТУР СКОРОСТИ -->
+        <div class="product-node node-tiktok">
+            <div class="node-header">
+                <h2 class="node-title">⚡ Программный комплекс «FAMILYMIRO MEDIA-CORE» & Kivy-Модуль</h2>
+                <span class="node-badge">Контур Б • Глобальный Медиа-Стрим</span>
+            </div>
+            <p class="node-desc">Интеллектуальная экосистема обработки тяжелого контента для YouTube-блогеров, авторов VK, клипмейкеров и обычных пользователей. Система принимает гигантские сырые видеофайлы и трансформирует их в оптимизированные, легкие цифровые шедевры.</p>
+            <ul class="node-features">
+                <li>Компрессия сверхтяжелых архивов: Умное сжатие гигабайтных исходников для VK и YouTube без потери четкости «Золотого Кадра».</li>
+                <li>Алгоритм «Тихий Свидетель»: OpenCV сканирует видеопоток, вычищая операторский брак, плохой свет, тряску рук и затянутые паузы.</li>
+                <li>Интеграция Kivy UI: Выделенный интерфейс мобильного пульта со своим уникальным стилем космической скорости для управления рендерингом в один клик.</li>
+            </ul>
+            <div class="node-footer">
+                <span>Ядро: Kivy Framework / OpenCV / FFmpeg / Движок Сжатия</span>
+                <span style="color: var(--neon-tiktok);">🚀 Контур Ускорения Данных</span>
+            </div>
+        </div>
+
+
+        <!-- ПРОДУКТ 3: ЦИФРОВАЯ КАСКА -->
+        <div class="product-node node-construction">
+            <div class="node-header">
+                <h2 class="node-title">🏗️ Инженерный модуль «Цифровая Каска»</h2>
+                <span class="node-badge">Контур В • Бизнес</span>
+            </div>
+            <p class="node-desc">Профессиональный VIP-кабинет для линейных прорабов, инженеров авторского надзора и строительного контроля гостиничного комплекса. Жесткий индустриальный контроль.</p>
+            <ul class="node-features">
+                <li>Оцифровка 12 страниц Панч-листа: Учет дефектов по этажам (1F-5F), комнатам и осям с ИИ-классификатором бригад.</li>
+                <li>Протокол «Двойного разрешения»: Блокировка закрытия задач при влажности деревянных дверей > 12% по ГОСТ 475-2016.</li>
+                <li>Автогенерация Word: Мгновенное формирование официальных актов КС-2 и справок КС-3 на основе реальных логов базы данных.</li>
+            </ul>
+            <div class="node-footer">
+                <span>Технологии: Flask Cabinet / Python-Docx / ГОСТ Аналитика</span>
+                <span style="color: var(--steel-gost);">⚙️ Контур автоматизации объекта</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ТЕХНИЧЕСКИЙ ПОДВАЛ С ЁЖИКОМ -->
+    <div style="margin-top: 40px; font-size: 0.8rem; color: #4a5568;">
+        <p>Все продукты находятся под круглосуточным патрулированием ИИ-Диспетчера Аватара Ёжика</p>
+        <p>Протокол «Стерильный Поток» • P.S. Какие мы большие! — Да.</p>
+    </div>
+
+    <a href="/" class="btn-back">← Вернуться к Главному Пульту</a>
+
+</div>
+
+</body>
+</html>

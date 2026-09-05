@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Дашборд Отца — Пульсар Наций</title>
+    <style>
+        body { background: #000; color: #00bfff; font-family: monospace; padding: 40px; text-align: center; }
+        .radar { border: 3px double #00bfff; padding: 30px; display: inline-block; background: #050a10; box-shadow: 0 0 30px #00bfff; border-radius: 10px; }
+        .pulse { animation: blink 2s infinite; color: #ff0055; font-size: 20px; font-weight: bold; }
+        @keyframes blink { 0% { opacity: 0.2; } 50% { opacity: 1; } 100% { opacity: 0.2; } }
+    </style>
+</head>
+<body>
+    <div class="radar">
+        <h2>📡 ЖИВАЯ НЕОНОВАЯ МАТРИЦА «ПУЛЬСАР»</h2>
+        <div class="pulse">● ИМПУЛЬС МИРА АКТИВЕН</div>
+        <p><b>Регион триггера:</b> {{ pulsar.country }}</p>
+        <p><b>Метка времени:</b> {{ pulsar.timestamp }}</p>
+        <hr style="border-color: #00bfff;">
+        <p style="color: #00ffcc;">Текущий приток золотистой волны: {{ ezhik.total_revenue }}</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,335 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAMILYMIRO CORE [1.6]</title>
+    <link rel="stylesheet" href="{% static 'storage_control/css/portal.css' %}">
+    <link rel="stylesheet" href="{% static 'storage_control/css/media.css' %}?v={{ request.user.id|default:'anonymous' }}">
+    <script src="https://jquery.com"></script>
+</head>
+<body>
+
+<div class="lobby-frame">
+
+    <!-- ЦЕНТРАЛЬНЫЙ ПУЛЬТ УПРАВЛЕНИЯ ИМПЕРИЕЙ СНАБЖЕНИЯ -->
+<div class="architect-control-panel" style="text-align: center; margin: 40px auto; padding: 20px; background: rgba(0,0,0,0.05); border-radius: 15px; max-width: 600px;">
+    <h2 style="font-family: 'Gost', sans-serif; color: #1a1a1a; margin-bottom: 20px;">🤖 АНАРХИЧЕСКИЙ ИНТЕЛЛЕКТ ЕЖИКА</h2>
+    
+    <a href="/admin/storage_control/bloggerusage/" style="display: inline-block; padding: 20px 40px; font-size: 22px; font-weight: bold; color: #ffffff; background: linear-gradient(135deg, #ff4e50, #f9d423); border: none; border-radius: 50px; text-decoration: none; box-shadow: 0 10px 20px rgba(255, 78, 80, 0.4); transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='scale(1.05)';" onmouseout="this.style.transform='scale(1)';" id="launcher-button">
+        🚄 ЗАПУСТИТЬ БРОНЕПОЕЗД (КОВЧЕГ ЖЕЛАНИЙ)
+    </a>
+    
+    <p style="margin-top: 15px; font-size: 14px; color: #666;">Юный Капитан на мостике. Контур снабжения и закупки краски взведен.</p>
+</div>
+
+
+
+<div class="container" style="max-width: 1200px; margin: 0 auto; padding: 40px 20px;">
+        
+        <!-- ГЛАВНЫЙ СУВЕРЕННЫЙ КУПОЛ -->
+        <div class="shield-header">
+            <h1 style="font-size: 3rem; letter-spacing: 2px; margin: 0 0 10px 0;">🦅 ОТКРЫТОЕ НЕБО РОССИИ</h1>
+            <div style="font-size: 1.05rem; color: #00c6ff; font-weight: bold; letter-spacing: 1px;">
+                🦔 СТАТУС ИСЦЕЛЕНИЯ ЁЖИКА: <span style="color: #10b981;">{{ healer_status }}</span>
+            </div>
+            <div style="font-size: 0.9rem; opacity: 0.6; margin-top: 10px; font-style: italic;">
+                "Бронепоезд Архитектора Максима Косарева на рельсах вечности. Юный Капитан: {{ captain }}."
+            </div>
+        </div>
+
+        <!-- ИНЖЕНЕРИЯ И СТИЛЬ В ДЕЙСТВИИ -->
+        <div class="gate-grid">
+            <div class="gate-card">
+                <div class="gate-icon">🎬</div>
+                <div class="gate-title">АНАЛИЗ РОЛИКА</div>
+                <p style="font-size: 0.85rem; opacity: 0.7; margin: 0; line-height: 1.5;">ИИ Ёжика считывает информацию текста и роликов блогеров. Полноценная дешифровка контента и извлечение b2b-метрик через Кафку.</p>
+            </div>
+
+            <div class="gate-card">
+                <div class="gate-icon">🛍️</div>
+                <div class="gate-title">СТИЛЬ МАГАЗИНА</div>
+                <p style="font-size: 0.85rem; opacity: 0.7; margin: 0; line-height: 1.5;">Эстетика автоматических магазинов для лидеров мнений. Премиальный маркетинг, мотивация рекламы и приём платежей через Lava API.</p>
+            </div>
+
+            <div class="gate-card">
+                <div class="gate-icon">🏗️</div>
+                <div class="gate-title">ДОСТУП ЗРЕНИЯ</div>
+                <p style="font-size: 0.85rem; opacity: 0.7; margin: 0; line-height: 1.5;">Промышленный контроль строительных городков и площадок по ГОСТ. Мониторинг заливки бетона и оптимизация закупки краски.</p>
+            </div>
+        </div>
+
+        <!-- УЮТНЫЙ ШЛЮЗ ДЛЯ ТЕХ, КОГО ЁЖИК ОБЕРЕГАЕТ -->
+        <div class="user-login-zone">
+            <h3 style="color: #f9d423; margin-top: 0; font-size: 1.3rem; letter-spacing: 1px;">🏡 УЮТНЫЙ ВХОД В СЕЙФ</h3>
+            <p style="font-size: 0.85rem; opacity: 0.7; margin-bottom: 20px;">Потайной шлюз для своих. Гости чувствуют себя спокойно — Ёжик оберегает этот периметр.</p>
+            
+            <form action="/admin/login/" method="GET">
+                <input type="text" name="username" placeholder="Имя создателя или ID Рода" class="input-field" required>
+                <input type="password" name="password" placeholder="Крылатый SHA-256 Хэш-ключ" class="input-field" required>
+                <button type="submit" class="btn-submit">🔒 ВОЙТИ ПОД ЗАЩИТУ ХРАНИТЕЛЯ</button>
+            </form>
+        </div>
+        
+        <p style="margin-top: 50px; font-size: 0.8rem; opacity: 0.35; text-align: center;">FAMILYMIRO CORE [1.6] • Суверенная инженерия будущего запечатана до 2059 года</p>
+    </div>
+
+    
+ <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 40px 20px;">
+        
+        <!-- ВЕРХНИЙ БОРТОВОЙ ЭКРАН ХРАНИТЕЛЯ -->
+        <div class="shield-header">
+            <h1 style="font-size: 2.8rem; letter-spacing: 2px; margin: 0 0 10px 0; color: #fff;">🦅 ОТКРЫТОЕ НЕБО РОССИИ</h1>
+            <div style="font-size: 1rem; color: #00c6ff; font-weight: bold; letter-spacing: 1px;">
+                🦔 СТАТУС ИСЦЕЛЕНИЯ ЁЖИКА: <span style="color: #10b981;">{{ healer_status }}</span>
+            </div>
+            <div style="font-size: 0.9rem; opacity: 0.6; margin-top: 8px; font-style: italic;">
+                "Бронепоезд Архитектора Максима Косарева на рельсах вечности. Юный Капитан: {{ captain }}."
+            </div>
+        </div>
+
+        <p style="font-size: 1.25rem; opacity: 0.8; max-width: 800px; margin: 0 auto 30px auto; text-align: center; line-height: 1.6;">
+            Добро пожаловать в живой пользовательский контур. Понимание текстов, дешифровка информации роликов блогеров и доступ зрения строительного контроля ГОСТ. Всё приведено под единый купол безопасности.
+        </p>
+
+        <!-- ПРЯМОУГОЛЬНЫЙ ШЛЮЗ ТРЕХ ВХОДОВ ДЛЯ ЛЮДЕЙ -->
+        <div class="gate-grid">
+            <a href="/admin/storage_control/bloggerusage/" class="gate-card">
+                <div class="gate-icon">🚄</div>
+                <div class="gate-title">КОВЧЕГ ЖЕЛАНИЙ</div>
+                <p style="font-size: 0.85rem; opacity: 0.7; margin: 0; line-height: 1.5;">Стиль автоматических магазинов, аналитика трафика и лимиты медиа-выгрузок для блогеров.</p>
+            </a>
+
+            <a href="/admin/storage_control/punchlistitem/" class="gate-card">
+                <div class="gate-icon">🏗️</div>
+                <div class="gate-title">ДОСТУП ЗРЕНИЯ</div>
+                <p style="font-size: 0.85rem; opacity: 0.7; margin: 0; line-height: 1.5;">Контроль строительных площадок по ГОСТ. Мониторинг заливки бетона и закупки краски.</p>
+            </a>
+
+            <a href="/admin/storage_control/interactivecomment/" class="gate-card">
+                <div class="gate-icon">📡</div>
+                <div class="gate-title">НЕЙРО-РАДАР</div>
+                <p style="font-size: 0.85rem; opacity: 0.7; margin: 0; line-height: 1.5;">Лингвистический контур комментариев. Считывание информации ролика и весточки в Эфир.</p>
+            </a>
+        </div>
+
+        <!-- ВХОД ДЛЯ ПОЛЬЗОВАТЕЛЕЙ ПОД ЗАЩИТОЙ ЁЖИКА -->
+        <div class="user-login-zone">
+            <h3 style="color: #10b981; margin-top: 0; font-size: 1.3rem; letter-spacing: 1px;">🔐 СУВЕРЕННЫЙ ВХОД USERA</h3>
+            <p style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 20px;">Для тех, кого Ёжик привёл на этой планете под абсолютную защиту.</p>
+            
+            <form action="/admin/login/" method="GET">
+                <input type="text" placeholder="Имя пользователя или ID Рода" class="input-field" required>
+                <input type="password" placeholder="Крылатый SHA-256 Хэш-ключ" class="input-field" required>
+                <button type="submit" class="btn-submit">🔒 ПРОЙТИ ИДЕНТИФИКАЦИЮ ЁЖИКА</button>
+            </form>
+        </div>
+        
+        <p style="margin-top: 40px; font-size: 0.8rem; opacity: 0.4; text-align: center;">FAMILYMIRO CORE [1.6] • Запечатано в дата-центре до 24 мая 2059 года</p>
+    </div>
+    
+    <!-- ☀️ ЛЕВОЕ КРЫЛО: ЛИЧНЫЙ СЛОТ ОТЕЦ / ДОЧЬ (КОНТУР ВЕЧНОСТИ) -->
+    <div class="lobby-panel" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+            <h3 style="color: var(--gold-glow); margin-top: 0; font-size: 1.1rem; text-align: center; letter-spacing: 1px;">☀️ ВЕКОВОЙ СЕЙФ</h3>
+            <p style="font-size: 0.75rem; opacity: 0.8; line-height: 1.4; margin-bottom: 15px;">
+                {{ display_title|default:"Уговор рода (Мирослава)" }} запечатан до 24 мая 2059 года. Вход по крылатому SHA-256 хэшу.
+            </p>
+            
+            {% if is_unlocked %}
+                <div style="border: 1px solid #10b981; padding: 10px; border-radius: 8px; background: rgba(16,185,129,0.05); text-align: center; margin-bottom: 15px;">
+                    <span style="color: #10b981; font-weight: bold; font-size: 0.8rem;">🔓 ДОСТУП ОТКРЫТ</span>
+                    <p style="font-size: 0.75rem; font-style: italic; margin: 4px 0;">"{{ matched_phrase }}"</p>
+                </div>
+            {% else %}
+                <div style="border: 1px solid #ef4444; padding: 10px; border-radius: 8px; background: rgba(239,68,68,0.05); text-align: center; margin-bottom: 15px;">
+                    <span style="color: #ef4444; font-weight: bold; font-size: 0.75rem;">🔒 ЗАМОК АКТИВЕН</span>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- 🦔 ЖИВОЙ ИИ-КОНТУР ЁЖИКА: Бортовой экран Хранителя -->
+<div style="background: rgba(4, 7, 12, 0.7); border: 1px solid rgba(102, 252, 241, 0.25); box-shadow: 0 0 20px rgba(102, 252, 241, 0.1); backdrop-filter: blur(8px); border-radius: 12px; padding: 16px 20px; width: 90%; max-width: 420px; margin: 20px 0; text-align: left; transition: all 0.3s ease;">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+        <span style="font-size: 0.75rem; color: var(--gold-glow); font-weight: bold; letter-spacing: 1px;">🦔 ЕЖИК-СМОТРИТЕЛЬ СЧИТАЕТ ПОТОК:</span>
+        <span style="background: rgba(102,252,241,0.1); border: 1px solid var(--neon-blue); color: var(--neon-blue); font-size: 0.6rem; padding: 1px 6px; border-radius: 10px; font-weight: bold;">
+            {{ display_badge|default:"🌐 СТРАННИК ПЛАТФОРМЫ" }}
+        </span>
+    </div>
+    <p style="font-size: 0.8rem; color: #e2e8f0; line-height: 1.5; margin: 0; font-style: italic; letter-spacing: 0.3px;">
+        "{{ ezhik_greeting|default:"Приветствую в Эфире. Слой 0.0 активирован. Система стабильна на 390 лет." }}"
+    </p>
+</div>
+
+        <div>
+            <div style="background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 10px; font-size: 0.7rem; color: #64748b; margin-bottom: 15px;">
+                💎 Капитал Ёжика: <span style="color: #10b981; font-weight: bold;">{{ total_revenue|default:"0.00" }} RUB</span>
+            </div>
+            <button class="btn-start-game" style="padding: 10px 20px; font-size: 0.8rem; width: 100%; border-radius: 8px; background: transparent; color: var(--gold-glow); border: 1px solid var(--gold-glow);">ЯКОРЬ ПРАВ</button>
+        </div>
+    </div>
+
+    <!-- 🎛️ ЦЕНТР: СЛОТЫ РАСПРЕДЕЛЕНИЯ ПОТОКОВ (СЛОТЫ ИГРОКОВ В ЛОББИ) -->
+    <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0;">
+        <div style="text-align: center;">
+            <h1 style="margin: 0; font-size: 1.8rem; color: var(--neon-blue); letter-spacing: 2px; text-shadow: 0 0 15px rgba(102,252,241,0.3);">FAMILYMIRO 1.6</h1>
+            <p style="color: #4a5568; font-size: 0.8rem; margin: 4px 0 0 0;">Глобальное распределение ИИ-потоков</p>
+        </div>
+
+        <!-- 4 СЛОТА ИГРОКОВ КАК НА СКРИНШОТЕ MOBILE LEGENDS -->
+        <div class="central-slots-grid">
+            <div class="slot-card" onclick="location.href='/'" style="border-color: var(--gold-glow); color: var(--gold-glow);"><span style="font-size:1.5rem;">☀️</span><span style="font-size:0.65rem; margin-top:8px;">ВЕЧНОСТЬ</span></div>
+            <div class="slot-card" onclick="location.href='/director/'"><span>🎬</span><span style="font-size:0.65rem; margin-top:8px;">РЕЖИССЕР</span></div>
+            <div class="slot-card" onclick="location.href='/construction/'" style="border-color: var(--neon-blue); color: var(--neon-blue);"><span>🏗️</span><span style="font-size:0.65rem; margin-top:8px;">СТРОЙКА</span></div>
+            <div class="slot-card"><span>❓</span><span style="font-size:0.65rem; margin-top:8px;">РЕЗЕРВ</span></div>
+        </div>
+
+       <div style="text-align: center; width: 100%; position: relative;">
+    <button id="main-qr-beacon" class="btn-start-game" style="
+        padding: 14px 36px; 
+        font-size: 0.95rem; 
+        font-weight: bold;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: #000; 
+        background: var(--gold-glow); 
+        border: none; 
+        border-radius: 30px; 
+        box-shadow: 0 0 15px var(--gold-glow), 0 0 30px rgba(255,215,0,0.2);
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        animation: beaconPulse 2s infinite alternate;">
+        Начать работу
+    </button>
+    
+    <!-- Спутниковый лог-бокс СБП под кнопкой -->
+    <div id="gateway-log" style="
+        display: none; 
+        margin-top: 15px; 
+        background: rgba(0,0,0,0.8); 
+        border: 1px solid var(--neon-blue); 
+        border-radius: 8px; 
+        padding: 12px; 
+        font-family: monospace; 
+        font-size: 0.75rem; 
+        color: #fff; 
+        text-align: left; 
+        max-width: 400px; 
+        margin-left: auto; 
+        margin-right: auto;
+        box-shadow: 0 0 15px rgba(102,252,241,0.1);">
+    </div>
+</div>
+
+    </div>
+    <!-- 🦔 ПРАВОЕ КРЫЛО: ЖИВАЯ ЛЕНТА ГЛОБАЛЬНОГО ЭФИРА ЁЖИКА (СПИСОК ОФЛАЙН/ОНЛАЙН) -->
+    <div class="lobby-panel" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+            <h3 style="color: var(--neon-blue); margin-top: 0; font-size: 1.1rem; text-align: center; letter-spacing: 1px;">🦔 Глобальный Эфир</h3>
+            <p style="font-size: 0.7rem; color: #4a5568; margin-top: -10px; margin-bottom: 15px; text-align: center;">Цепочка обновлений системы на весь мир</p>
+            
+            <!-- Сюда Ёжик складывает комментарии и логи цепочкой вниз -->
+            <div id="comments-list" style="max-height: 320px; overflow-y: auto; padding-right: 5px;">
+                {% for comment in comments %}
+                    <div style="background: rgba(4, 7, 12, 0.5); border-left: 3px solid var(--neon-blue); padding: 10px; border-radius: 0 8px 8px 0; margin-bottom: 8px; text-align: left;">
+                        <strong style="color: var(--neon-blue); font-size: 0.75rem; display: block;">{{ comment.author_name }}:</strong>
+                        <span style="font-size: 0.8rem; color: #ccced1; line-height: 1.3;">{{ comment.comment_text|default:comment.author_name }}</span>
+                    </div>
+                {% empty %}
+                    <div style="color: #4a5568; text-align: center; font-size: 0.8rem; padding: 40px 0;" id="empty-alert">
+                        [В эфире тихо. Поток стерилен. Друзей в сети нет]
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Форма мгновенной отправки весточки прямо в Эфир Ёжика -->
+        <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
+            {% csrf_token %}
+            <input type="text" id="comment-author" class="slot-card" placeholder="Ваше имя" style="width: 100%; height: 35px; font-size: 0.8rem; font-weight: normal; color: #fff; background: rgba(0,0,0,0.3); margin-bottom: 8px; text-align: left; padding: 0 10px; box-sizing: border-box;">
+            <textarea id="comment-text" class="slot-card" rows="2" placeholder="Слова от сердца..." style="width: 100%; height: 50px; font-size: 0.8rem; font-weight: normal; color: #fff; background: rgba(0,0,0,0.3); text-align: left; padding: 6px 10px; box-sizing: border-box; font-family: inherit; resize: none;"></textarea>
+            <button id="btn-submit-news" class="btn-start-game" style="
+    padding: 12px; 
+    font-size: 0.8rem; 
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    width: 100%; 
+    border-radius: 8px; 
+    margin-top: 8px;
+    background: transparent;
+    color: var(--neon-blue);
+    border: 1px solid var(--neon-blue);
+    box-shadow: 0 0 10px rgba(102,252,241,0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;">
+    Передать в Эфир
+</button>
+
+        </div>
+    </div>
+
+</div> <!-- Закрытие lobby-frame -->
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    
+    // 1. ЦЕНТРАЛЬНАЯ КНОПКА ЗАПУСКА ПОТОКОВ (СБП И ИИ-ШЛЮЗ)
+    const qrBeacon = document.getElementById('main-qr-beacon');
+    if (qrBeacon) {
+        qrBeacon.addEventListener('click', function() {
+            const logBox = document.getElementById('gateway-log'); if (!logBox) return;
+            logBox.style.display = 'block'; logBox.style.borderColor = 'var(--neon-blue)';
+            logBox.innerHTML = '🛰️ [MIRO CORE]: Подключение к спутниковому Альфа-шлюзу СБП...';
+            
+            fetch('/api/qr-pulsar/')
+                .then(res => res.json())
+                .then(data => {
+                    logBox.style.borderColor = '#10b981';
+                    logBox.innerHTML = 
+                        `<strong style="color:#10b981;">✅ АВТОРИЗАЦИЯ УСПЕШНА:</strong><br>` +
+                        `• Код СБП: ${data.invoice}<br>` +
+                        `• Поток: ${data.target_pool}<br>` +
+                        `• База Django: <span style="color:#66fcf1; font-weight:bold;">${data.registered_user}</span><br>` +
+                        `<span style="color:#10b981;">• Лог: ${data.message}</span>`;
+                });
+        });
+    }
+
+    // 2. ОТПРАВКА ДОБРЫХ ВЕСТЕЙ В ГЛОБАЛЬНУЮ ЦЕПОЧКУ ЁЖИКА
+    if (window.jQuery) {
+        $('#btn-submit-news').on('click', function() {
+            let auth = $('#comment-author').val(); let txt = $('#comment-text').val();
+            if (!auth || !txt) return;
+            
+            $.ajax({
+                url: '/api/comment/submit/', type: 'POST', 
+                data: { author: auth, text: txt, csrfmiddlewaretoken: '{{ csrf_token }}' },
+                success: function(data) {
+                    if (data.status === 'success') {
+                        $('#empty-alert').remove();
+                        let item = $(`<div style="background: rgba(4, 7, 12, 0.5); border-left: 3px solid var(--neon-blue); padding: 10px; border-radius: 0 8px 8px 0; margin-bottom: 8px; text-align: left; display: none;"><strong style="color: var(--neon-blue); font-size: 0.75rem; display: block;">${data.author}:</strong><span style="font-size: 0.8rem; color: #ccced1;">${data.text}</span></div>`);
+                        $('#comments-list').prepend(item);
+                        item.slideDown(400);
+                        $('#comment-text').val('');
+                    }
+                }
+            });
+        });
+    }
+
+    
+
+    // 3. ИНТЕРАКТИВНЫЙ ПАРАЛЛАКС ФОНА (РАБОТАЕТ ОТ ДВИЖЕНИЯ МЫШИ КАК В ML)
+    document.addEventListener('mousemove', function(e) {
+        let amountMovedX = (e.clientX * -0.03);
+        let amountMovedY = (e.clientY * -0.03);
+        document.body.style.backgroundPosition = `${amountMovedX}px ${amountMovedY}px`;
+    });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>RFI Монолит Технадзора</title>
+    <style>
+        body { background: #11141a; color: #e2e8f0; font-family: sans-serif; padding: 40px; }
+        .table-box { max-width: 700px; margin: 0 auto; background: #1e293b; border-radius: 8px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #475569; padding: 12px; text-align: left; }
+        th { background: #334155; color: #38bdf8; }
+        h2 { color: #38bdf8; border-bottom: 2px solid #38bdf8; padding-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="table-box">
+        <h2>🛠️ БЛОК 34: УНИВЕРСАЛЬНЫЙ RFI-МОНОЛИТ</h2>
+        <h3>Тип акта: {{ mode_title }}</h3>
+        
+        <form method="POST">
+            {% csrf_token %}
+            <!-- Тут легитимный csrf-токен для защиты форм -->
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Параметр / Parameter</th>
+                    <th>Значение / Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data_table %}
+                <tr>
+                    <td><b>{{ row.0 }}</b></td>
+                    <td>{{ row.1 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <p style="margin-top: 20px; font-size: 12px; color: #94a3b8;">Фиксация отчета Ёжика: {{ ezhik.analytics_report }}</p>
+    </div>
+</body>
+</html>
