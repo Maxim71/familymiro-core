@@ -1,1 +1,81 @@
 nohup: ignoring input
+Not Found: /\u0441\u0442\u0430\u0442\u044c\u0438/\u0444\u043e\u0431\u0438\u0438
+[05/Sep/2026 14:59:38] "GET /%d1%81%d1%82%d0%b0%d1%82%d1%8c%d0%b8/%d1%84%d0%be%d0%b1%d0%b8%d0%b8 HTTP/1.0" 404 4624
+Internal Server Error: /
+Traceback (most recent call last):
+  File "/root/app/hello/lib/python3.10/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+  File "/root/app/hello/lib/python3.10/site-packages/django/template/base.py", line 172, in render
+    return self._render(context)
+  File "/root/app/hello/lib/python3.10/site-packages/django/template/base.py", line 164, in _render
+    return self.nodelist.render(context)
+  File "/root/app/hello/lib/python3.10/site-packages/django/template/base.py", line 1018, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/root/app/hello/lib/python3.10/site-packages/django/template/base.py", line 1018, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/root/app/hello/lib/python3.10/site-packages/django/template/base.py", line 979, in render_annotated
+    return self.render(context)
+  File "/root/app/hello/lib/python3.10/site-packages/django/template/loader_tags.py", line 199, in render
+    template = context.template.engine.select_template(template_name)
+  File "/root/app/hello/lib/python3.10/site-packages/django/template/engine.py", line 214, in select_template
+    raise TemplateDoesNotExist(", ".join(not_found))
+django.template.exceptions.TemplateDoesNotExist: storage_control/base_css.html
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/app/hello/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/root/app/hello/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/app/storage_control/views.py", line 48, in index_family
+    return render(request, 'storage_control/portal.html', context_dna)
+  File "/root/app/hello/lib/python3.10/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/root/app/hello/lib/python3.10/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "/root/app/hello/lib/python3.10/site-packages/django/template/backends/django.py", line 109, in render
+    reraise(exc, self.backend)
+  File "/root/app/hello/lib/python3.10/site-packages/django/template/backends/django.py", line 130, in reraise
+    raise new from exc
+django.template.exceptions.TemplateDoesNotExist: storage_control/base_css.html
+[05/Sep/2026 15:08:38] "GET / HTTP/1.0" 500 122575
+Internal Server Error: /
+Traceback (most recent call last):
+  File "/root/app/hello/lib/python3.10/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+  File "/root/app/hello/lib/python3.10/site-packages/django/template/base.py", line 172, in render
+    return self._render(context)
+  File "/root/app/hello/lib/python3.10/site-packages/django/template/base.py", line 164, in _render
+    return self.nodelist.render(context)
+  File "/root/app/hello/lib/python3.10/site-packages/django/template/base.py", line 1018, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/root/app/hello/lib/python3.10/site-packages/django/template/base.py", line 1018, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+  File "/root/app/hello/lib/python3.10/site-packages/django/template/base.py", line 979, in render_annotated
+    return self.render(context)
+  File "/root/app/hello/lib/python3.10/site-packages/django/template/loader_tags.py", line 199, in render
+    template = context.template.engine.select_template(template_name)
+  File "/root/app/hello/lib/python3.10/site-packages/django/template/engine.py", line 214, in select_template
+    raise TemplateDoesNotExist(", ".join(not_found))
+django.template.exceptions.TemplateDoesNotExist: storage_control/base_css.html
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/app/hello/lib/python3.10/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/root/app/hello/lib/python3.10/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/root/app/storage_control/views.py", line 48, in index_family
+    return render(request, 'storage_control/portal.html', context_dna)
+  File "/root/app/hello/lib/python3.10/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/root/app/hello/lib/python3.10/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "/root/app/hello/lib/python3.10/site-packages/django/template/backends/django.py", line 109, in render
+    reraise(exc, self.backend)
+  File "/root/app/hello/lib/python3.10/site-packages/django/template/backends/django.py", line 130, in reraise
+    raise new from exc
+django.template.exceptions.TemplateDoesNotExist: storage_control/base_css.html
+[05/Sep/2026 15:08:40] "GET / HTTP/1.0" 500 122575

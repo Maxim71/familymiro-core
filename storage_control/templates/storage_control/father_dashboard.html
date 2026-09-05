@@ -1,23 +1,51 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
     <meta charset="UTF-8">
-    <title>Дашборд Отца — Пульсар Наций</title>
-    <style>
-        body { background: #000; color: #00bfff; font-family: monospace; padding: 40px; text-align: center; }
-        .radar { border: 3px double #00bfff; padding: 30px; display: inline-block; background: #050a10; box-shadow: 0 0 30px #00bfff; border-radius: 10px; }
-        .pulse { animation: blink 2s infinite; color: #ff0055; font-size: 20px; font-weight: bold; }
-        @keyframes blink { 0% { opacity: 0.2; } 50% { opacity: 1; } 100% { opacity: 0.2; } }
-    </style>
+    <title>Кабинет Руководителя Проекта</title>
+    {% include "storage_control/base_css.html" %}
 </head>
 <body>
-    <div class="radar">
-        <h2>📡 ЖИВАЯ НЕОНОВАЯ МАТРИЦА «ПУЛЬСАР»</h2>
-        <div class="pulse">● ИМПУЛЬС МИРА АКТИВЕН</div>
-        <p><b>Регион триггера:</b> {{ pulsar.country }}</p>
-        <p><b>Метка времени:</b> {{ pulsar.timestamp }}</p>
-        <hr style="border-color: #00bfff;">
-        <p style="color: #00ffcc;">Текущий приток золотистой волны: {{ ezhik.total_revenue }}</p>
+    <div style="padding: 40px; max-width: 1200px; margin: 0 auto;">
+        <span style="background: rgba(0, 198, 255, 0.1); color: #00c6ff; border: 1px solid #00c6ff; padding: 4px 12px; font-size: 0.8rem; border-radius: 50px; font-weight: bold;">👔 СРЕДНЕЕ ЗВЕНО УПРАВЛЕНИЯ ИТР</span>
+        <h1 style="color: #fff; margin-top: 10px;">📋 КАБИНЕТ РУКОВОДИТЕЛЯ ПРОЕКТА (УПРАВЛЯЮЩИЙ ОБЪЕКТОМ)</h1>
+        
+        <!-- СВОДНЫЕ СЧЁТЧИКИ И ДИНАМИКА УЧАСТКОВ -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px;">
+            <div style="background: #111827; padding: 25px; border-radius: 12px; border-left: 5px solid #00c6ff;">
+                <h3 style="color: #00c6ff; margin-top:0;">🚨 НЕИСПРАВЛЕННЫЕ ДЕФЕКТЫ ПО СНиП:</h3>
+                <p style="font-size: 2.2rem; font-weight: bold; color: #ef4444; margin: 10px 0;">{{ all_defects_count }}</p>
+                <span style="font-size: 0.85rem; opacity: 0.6;">Требуется оперативное распределение нарядов прорабам.</span>
+            </div>
+            <div style="background: #111827; padding: 25px; border-radius: 12px; border-left: 5px solid #10b981;">
+                <h3 style="color: #10b981; margin-top:0;">🦔 АВТОМАТИЧЕСКИЙ СБОР ТАСКОВ:</h3>
+                <p style="font-size: 1.05rem; line-height: 1.6; opacity: 0.9;">Ёжик упорядочил задачи ИТР. Потоковые лимиты выгрузки (12 медиа/день) контролируются нейросетью OpenCV.</p>
+            </div>
+        </div>
+
+        <!-- ТАБЛИЦА НАРЯДОВ МЕНЕДЖЕРА -->
+        <h2 style="margin-top: 50px; color: #fff; border-bottom: 2px solid #1f2937; padding-bottom: 10px;">📋 ТЕКУЩИЙ КАСКАД ЗАДАЧ И КОНТРОЛЬ ГРУПП СНАБЖЕНИЯ</h2>
+        <table>
+            <tr>
+                <th>Объект / Холдинг</th>
+                <th>Суть наряда ИТР</th>
+                <th>Инструкция и Ведомость СНиП</th>
+                <th>Анализ и Предложение Ёжика</th>
+            </tr>
+            {% for task in manager_tasks %}
+            <tr>
+                <td style="font-weight: bold; color: #f9d423;">{{ task.company.company_name }}</td>
+                <td style="color: #00c6ff; font-weight: bold;">{{ task.task_title }}</td>
+                <td>{{ task.task_detail }}</td>
+                <td style="color: #10b981; font-style: italic;">{{ task.ezhik_ai_analysis }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" style="text-align: center; color: #9ca3af; padding: 30px;">Ведомость задач пуста. Ёжик ожидает каскадных распоряжений от Директора...</td>
+            </tr>
+            {% endfor %}
+        </table>
     </div>
 </body>
 </html>
