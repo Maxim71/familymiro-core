@@ -3,63 +3,75 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Пульт Прораба ИТР</title>
+    <title>Пульт Прораба ИТР — Протокол 3 Ракурсов</title>
     {% include "storage_control/base_css.html" %}
 </head>
 <body>
     <div style="padding: 40px; max-width: 1100px; margin: 0 auto;">
-        <span style="background: rgba(0, 198, 255, 0.1); color: #00c6ff; border: 1px solid #00c6ff; padding: 4px 12px; font-size: 0.8rem; border-radius: 50px; font-weight: bold;">🏗️ СТРОИТЕЛЬНЫЙ КОНТРОЛЬ ИТР</span>
-        <h1 style="color: #fff; margin-top: 10px;">📐 ПУЛЬТ ПРОРАБА НА УЧАСТКЕ (ГОСТ 475-2016)</h1>
+        <span style="background: rgba(0, 198, 255, 0.1); color: #00c6ff; border: 1px solid #00c6ff; padding: 4px 12px; font-size: 0.8rem; border-radius: 50px; font-weight: bold;">🏗️ СТРОИТЕЛЬНЫЙ КОНТРОЛЬ ИТР // ОБЪЕКТИВ OpenCV</span>
+        <h1 style="color: #fff; margin-top: 10px;">📐 ПУЛЬТ ТЕХНАДЗОРА НА УЧАСТКЕ (ГОСТ 475-2016)</h1>
         
-        <!-- КАСКАД НАРЯДОВ И ЗАДАЧ ОТ ЕЖИКА -->
-        <h2 style="margin-top: 40px; color: #f9d423; border-bottom: 2px solid #1f2937; padding-bottom: 10px;">📋 УПОРЯДОЧЕННЫЕ НАРЯДЫ И ТЕКУЩИЕ ЗАДАЧИ ЗОНЫ КОНТРОЛЯ:</h2>
-        <div style="display: grid; grid-template-columns: 1fr; gap: 15px; margin-top: 20px;">
-            {% for task in prorab_tasks %}
-            <div style="background: #111827; padding: 20px; border-radius: 10px; border-left: 5px solid #00c6ff;">
-                <h3 style="color: #00c6ff; margin-top: 0;">📌 {{ task.task_title }}</h3>
-                <p style="opacity: 0.9; font-size: 1rem;">{{ task.task_detail }}</p>
-                <div style="background: rgba(249, 212, 35, 0.05); padding: 10px; border-radius: 6px; margin-top: 10px; border: 1px dashed rgba(249, 212, 35, 0.3);">
-                    <span style="color: #f9d423; font-weight: bold; font-size: 0.85rem;">🧠 ИИ-АНАЛИЗ РИСКОВ ОТ ЁЖИКА:</span>
-                    <p style="margin: 5px 0 0 0; font-size: 0.95rem; opacity: 0.8;">{{ task.ezhik_ai_analysis }}</p>
-                </div>
-            </div>
-            {% empty %}
-            <div style="background: #111827; padding: 20px; border-radius: 10px; text-align: center; color: #9ca3af;">
-                Новых нарядов на сегодня нет. Ёжик проверяет ведомости СНиП...
-            </div>
-            {% endfor %}
-        </div>
-
-        <!-- ЖИВОЙ СНИП-КАЛЬКУЛЯТОР БЕТОНА -->
-        <div style="margin-top: 50px; background: #111827; padding: 30px; border-radius: 12px; border: 1px solid #1f2937; max-width: 600px;">
-            <h3 style="color: #10b981; margin-top: 0; display: flex; align-items: center; gap: 10px;">
-                🧮 ИНЖЕНЕРНЫЙ КАЛЬКУЛЯТОР КУБАТУРЫ БЕТОНА ПО СНиП:
-            </h3>
-            <p style="font-size: 0.85rem; opacity: 0.6; margin-bottom: 20px;">Автоматический расчет объёма заливки с фиксированным технологическим запасом 5% по ГОСТ.</p>
+        <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 30px; margin-top: 30px;">
             
-            <form method="POST">
-                {% csrf_token %}
-                <div style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 5px; font-size: 0.9rem;">Длина конструкции (метры):</label>
-                    <input type="number" step="0.01" name="length" required style="width: 100%; padding: 8px; background: #1f2937; border: 1px solid #374151; color: #fff; border-radius: 50px; outline: none; padding-left: 15px;">
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 5px; font-size: 0.9rem;">Ширина конструкции (метры):</label>
-                    <input type="number" step="0.01" name="width" required style="width: 100%; padding: 8px; background: #1f2937; border: 1px solid #374151; color: #fff; border-radius: 50px; outline: none; padding-left: 15px;">
-                </div>
-                <div style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 5px; font-size: 0.9rem;">Высота заливки (метры):</label>
-                    <input type="number" step="0.01" name="height" required style="width: 100%; padding: 8px; background: #1f2937; border: 1px solid #374151; color: #fff; border-radius: 50px; outline: none; padding-left: 15px;">
-                </div>
-                <button type="submit" style="width: 100%; padding: 12px; border-radius: 50px;">РАССЧИТАТЬ ОБЪЁМ ЗАКУПКИ</button>
-            </form>
-
-            {% if calc_result %}
-            <div style="margin-top: 25px; background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 8px; border: 1px solid #10b981; text-align: center;">
-                <span style="font-size: 0.9rem; opacity: 0.8; display: block;">ТРЕБУЕМЫЙ ОБЪЁМ ДЛЯ ЗАКАЗА НА ЗАВОД:</span>
-                <strong style="font-size: 1.8rem; color: #10b981; display: block; margin-top: 5px;">{{ calc_result }} куб.м</strong>
+            <!-- 📸 БЛОК 3-Х РАКУРСОВ ФОТОФИКСАЦИИ МАТЕРИАЛА -->
+            <div class="b2b-card">
+                <h3 style="color: #00c6ff; margin-top: 0; text-transform: uppercase; font-size: 1rem; letter-spacing: 1px;">📷 Протокол Трёх Ракурсов Склада:</h3>
+                <p style="font-size: 0.85rem; opacity: 0.7; margin-bottom: 20px;">Для исключения клеветы и получения точных эко-цифр, Ёжик анализирует материал по ниточкам геометрии.</p>
+                
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    <input type="hidden" name="action_type" value="opencv_audit">
+                    
+                    <div style="margin-bottom: 15px; background: rgba(255,255,255,0.02); padding: 12px; border-radius: 8px; border: 1px solid rgba(0,198,255,0.1);">
+                        <span style="color: #f9d423; font-weight: bold; font-size: 0.85rem; display: block;">1. РАКУРС ВЕРХ (Паллета):</span>
+                        <span style="font-size: 0.9rem; opacity: 0.9;">{{ photo_status.top_view }}</span>
+                    </div>
+                    <div style="margin-bottom: 15px; background: rgba(255,255,255,0.02); padding: 12px; border-radius: 8px; border: 1px solid rgba(0,198,255,0.1);">
+                        <span style="color: #f9d423; font-weight: bold; font-size: 0.85rem; display: block;">2. РАКУРС ГОРИЗОНТ (Ряды бочек):</span>
+                        <span style="font-size: 0.9rem; opacity: 0.9;">{{ photo_status.horizon_view }}</span>
+                    </div>
+                    <div style="margin-bottom: 20px; background: rgba(255,255,255,0.02); padding: 12px; border-radius: 8px; border: 1px solid rgba(0,198,255,0.1);">
+                        <span style="color: #f9d423; font-weight: bold; font-size: 0.85rem; display: block;">3. РАКУРС ПАНОРАМА (Общий склад):</span>
+                        <span style="font-size: 0.9rem; opacity: 0.9;">{{ photo_status.panorama_view }}</span>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 5px; font-size: 0.9rem; color: #fff;">Заявленное количество по накладной:</label>
+                        <input type="number" name="claimed_count" value="10" required style="width: 80px; padding: 8px; background: #111827; border: 1px solid #374151; color: #fff; text-align: center; border-radius: 6px;">
+                    </div>
+                    
+                    <button type="submit" style="width: 100%;">ЗАПУСТИТЬ АНАЛИЗ ОБЪЕКТИВА OpenCV</button>
+                </form>
             </div>
-            {% endif %}
+
+            <!-- 📊 ОКНО ВЕРДИКТА ЁЖИКА И ИИ-ШКАЛЫ -->
+            <div>
+                <div class="b2b-card" style="height: 100%; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <h3 style="color: #f9d423; margin-top: 0; text-transform: uppercase; font-size: 1rem;">📊 Результаты ИИ-Анализа:</h3>
+                        <div style="margin: 15px 0;">
+                            <span style="font-size: 0.85rem; opacity: 0.6; display: block;">ЧЁТКОСТЬ И КАЧЕСТВО ФОТОФИКСАЦИИ:</span>
+                            <strong style="font-size: 1.3rem; color: #00c6ff;">{{ photo_status.clarity_pct }}%</strong>
+                        </div>
+                        <div style="margin: 15px 0 25px 0;">
+                            <span style="font-size: 0.85rem; opacity: 0.6; display: block;">ГЛУБИНА СКАНИРОВАНИЯ БАЙТКОДОВ:</span>
+                            <strong style="font-size: 1.3rem; color: #10b981;">{{ photo_status.analysis_pct }}%</strong>
+                        </div>
+                    </div>
+
+                    {% if verdict_data %}
+                    <div style="background: rgba(239, 68, 68, 0.08); border: 2px solid #ef4444; padding: 15px; border-radius: 10px; margin-top: 20px;">
+                        <span style="color: #ef4444; font-weight: bold; font-size: 0.85rem; display: block; text-transform: uppercase; letter-spacing: 0.5px;">⚖️ ОФИЦИАЛЬНЫЙ СУДЗАКЛЮЧИТЕЛЬНЫЙ ВЕРДИКТ ИИ:</span>
+                        <p style="margin: 8px 0 0 0; font-size: 0.95rem; color: #fff; line-height: 1.4; font-family: monospace;">{{ verdict_data.text }}</p>
+                    </div>
+                    {% else %}
+                    <div style="background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.1); padding: 25px; border-radius: 10px; text-align: center; color: #6b7280; font-size: 0.9rem;">
+                        Ожидание активации Протокола Трёх Ракурсов. Вердикт Начальнику участка не сформирован.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
         </div>
     </div>
 </body>

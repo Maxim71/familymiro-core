@@ -1,113 +1,111 @@
 # -*- coding: utf-8 -*-
-import threading
-from django.shortcuts import render
+import math
+import random
+from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse
-from django.views.decorators.csrf import csrf_exempt
-from .models import Agreement, VideoCapsule, AvatarEzhik, InteractiveComment, PunchListItem, BloggerUsage
-
-# ==============================================================================
-# 🦅 ЦЕНТРАЛЬНЫЙ ШЛЮЗ РАСПРЕДЕЛЕНИЯ ПОТОКОВ (DJANGO + FLASK + KIVY) ПО QR-КОДУ
-# ==============================================================================
+from .models import Agreement, VideoCapsule, AvatarEzhik, InteractiveComment, BloggerUsage, ConstructionCompany, CascadeTask, PunchListItem
 
 def index_family(request):
-    """
-    [ПРОДУКТ: УМНЫЙ ШЛЮЗ РОЛЕЙ]
-    Считывает QR-код (через GET/POST параметры) и мгновенно распределяет 
-    потоки между микросервисами и ролями в зависимости от сущности Объекта.
-    """
-    # Идентифицируем Объект и его параметры из QR-сканера
     qr_payload = request.GET.get('qr_token', '').strip()
     user_role = request.GET.get('role', 'guest').lower()
-    country_code = request.GET.get('country', 'RU').upper()
-
-    # ДНК-контекст по умолчанию для Юного Капитана
-    context_dna = {
-        'captain': 'Miroslava_Kosareva',
-        'healer_status': 'Ezhik_Active_2026',
-        'qr_detected': qr_payload if qr_payload else "Ожидание сканирования..."
-    }
-
-    # Логика центрального распределения потоков (if/elif)
-    if user_role == 'father' or qr_payload == 'FATHER_KEY_2026':
-        # 👑 Поток 1: Пульт Векового Отца (Полный b2b-контроль холдинга)
-        return father_panel_view(request)
-
-    elif user_role == 'prorab' or qr_payload == 'CONSTRUCTION_GOST':
-        # 🏗️ Поток 2: Модуль Технадзора ИТР и Склада (Контроль по ГОСТ 475-2016)
-        return index_construction(request)
-
-    elif user_role == 'blogger' or qr_payload == 'BLOGGER_STREAM':
-        # 🛍️ Поток 3: Микросервис Магазинов Лидеров Мнений (Контроль лимитов 12 медиа/день)
-        return ezhik_blogger_shop(request, username=request.GET.get('user', 'Blogger_Partner'))
-
-    elif user_role == 'director':
-        # 👑 Поток 4: Модуль Директора Холдинга (Управление актами передачи)
-        return index_director(request)
-
-    # 🏡 Поток по умолчанию: Уютная Главная Застава — Открытое Небо России
+    context_dna = {'captain': 'Miroslava_Kosareva', 'healer_status': 'Ezhik_Active_2026'}
+    if user_role == 'father' or qr_payload == 'FATHER_KEY_2026': return redirect('father_panel')
     return render(request, 'storage_control/portal.html', context_dna)
 
-
-# ==============================================================================
-# 🪐 ВСЕ ПРИВЯЗАННЫЕ СЕРВИСНЫЕ ФУНКЦИИ (ОШИБКИ ИМПОРТА ПОЛНОСТЬЮ СТЕРТЫ)
-# ==============================================================================
-
-def ezhik_blogger_shop(request, username=None):
-    """[🛒 МИКРОСЕРВИС: МАГАЗИН БЛОГЕРОВ С ПОИСКОМ В УГЛУ]"""
+def show_products_catalog(request):
+    """[🛍️ ВИТРИНА МЕЗАНИНА] Ковчег Желаний с ИИ-перехватом покупателей по поисковым крохам"""
     search_query = request.GET.get('search', '').strip()
-    if not username:
-        username = "Miroslava_Kosareva"
+    blogger = request.GET.get('user', 'max_kosarev')
     
-    # Считаем живые Объекты в базе данных, чтобы вывести аналитику
-    daily_limits = BloggerUsage.objects.filter(blogger_name=username).first()
-    limit_val = daily_limits.daily_limit if daily_limits else 12
+    # Симулируем перехват поисковых крох нового покупателя из параметров (для теста)
+    buyer_need = request.GET.get('need', '').strip().lower()
+    custom_offer = None
 
-    html_shop = f"""<!DOCTYPE html><html><head><meta charset="UTF-8"><title>FAMILYMIRO SHOP</title></head>
-    <body style="background:#090d16;color:#fff;font-family:sans-serif;display:flex;justify-content:center;align-items:center;height:100vh;margin:0;">
-    <div style="text-align:center;border:1px solid #00c6ff;padding:40px;border-radius:24px;width:450px;position:relative;box-shadow: 0 15px 35px rgba(0,0,0,0.5);">
-        <form style="position:absolute;top:15px;right:15px;"><input type="text" name="search" value="{search_query}" placeholder="Поиск в углу..." style="background:#222;border:1px solid #444;color:#fff;padding:6px;border-radius:5px;outline:none;"><button type="submit" style="background:#00c6ff;border:none;color:#fff;padding:6px 10px;margin-left:5px;border-radius:5px;">🔍</button></form>
-        <span style="background:rgba(249,212,35,0.1);color:#f9d423;border:1px solid #f9d423;padding:3px 12px;font-size:0.75rem;border-radius:50px;font-weight:bold;">🛡️ КИВИ ИНТЕГРАЦИЯ</span>
-        <h1 style="color:#00c6ff;margin:20px 0 5px 0;font-size:1.8rem;">🚄 КОВЧЕГ ЖЕЛАНИЙ</h1>
-        <h2 style="color:#fff;margin:0 0 25px 0;font-size:1.2rem;opacity:0.8;">Владелец: <span style="color:#f9d423;">{username}</span></h2>
-        <p style="font-size:0.9rem;opacity:0.7;line-height:1.5;">Потоковый анализ OpenCV и контроль лимитов: <strong>{limit_val} медиа в день</strong>.</p>
-        <a href="/admin/login/" style="display:block;background:linear-gradient(135deg, #00c6ff, #0072ff);color:#fff;padding:12px;border-radius:10px;text-decoration:none;font-weight:bold;margin-top:25px;">Войти во внутрь SHOP ({username})</a>
-    </div></body></html>"""
-    return HttpResponse(html_shop, content_type="text/html; charset=utf-8")
+    # 🔎 ЁЖИК СКАНЕР: Если засёк у человека необходимость купить Мезанин или СНиП
+    if buyer_need == 'mezanin' or buyer_need == 'gost':
+        custom_offer = (
+            "🎯 [ИИ-ПЕРЕХВАТ ЁЖИКА]: Обнаружены поисковые крохи вашей потребности! "
+            "Платформа зафиксировала дефицит ПО Мезанина в вашем контуре. "
+            "Спец-предложение с добром: Активируйте b2b-модуль автоматизации снабжения со скидкой 10%. "
+            "Шлюз Lava Pay готов к отгрузке лицензии вечности."
+        )
 
-def otez_miri_love(request):
-    """[ВЕКОВОЙ СЕЙФ РОДА И ИМЕНИ МИРОСЛАВЫ КОСАРЕВОЙ]"""
-    html_vault = """<!DOCTYPE html><html><head><meta charset="UTF-8"><title>ВЕКОВОЙ СЕЙФ</title></head><body style="background:#020617;color:#fff;font-family:sans-serif;display:flex;justify-content:center;align-items:center;height:100vh;margin:0;"><div style="text-align:center;border:2px solid #f9d423;padding:50px;border-radius:20px;box-shadow:0 0 30px rgba(249,212,35,0.2);"><h1 style="color:#f9d423;">🪐 ВЕКОВОЙ СЕЙФ ВЕЧНОСТИ</h1><h2>КАПИТАН: МИРОСЛАВА КОСАРЕВА</h2><p>Запечатано на рельсах вечности до 24 мая 2059 года под Силой Ёжика.</p></div></body></html>"""
-    return HttpResponse(html_vault, content_type="text/html; charset=utf-8")
+    usage = BloggerUsage.objects.filter(blogger_name=blogger).first()
+    if not usage:
+        usage = BloggerUsage.objects.create(blogger_name=blogger, daily_limit=12, accumulated_income=5400.00)
 
-def ezhik_sympathy_notification(request):
-    """[АВАТАР ЁЖИКА: РЕЧЬ, ГЛАЗА, СЛУХ, РОТ]"""
-    return JsonResponse({"status":"operational","👀 ГЛАЗА":"OpenCV-Kivy-Stream","👂 СЛУХ":"Учтивый парсер"}, json_dumps_params={'ensure_ascii': False})
+    capsules = VideoCapsule.objects.all()
+    if search_query:
+        capsules = capsules.filter(video_title__icontains=search_query)
 
-def ezhik_journal_log(request):
-    """[СУВЕРЕННЫЙ ЖУРНАЛ ОТКЛИКОВ ХРАНИТЕЛЯ]"""
-    return JsonResponse({"status":"synchronized","journal_title":"📓 ВЕКОВОЙ ЖУРНАЛ FAMILYMIRO"}, json_dumps_params={'ensure_ascii': False})
+    return render(request, 'storage_control/products.html', {
+        'blogger_name': usage.blogger_name,
+        'daily_limit': usage.daily_limit,
+        'accumulated_income': usage.accumulated_income,
+        'capsules': capsules,
+        'search_query': search_query,
+        'custom_offer': custom_offer # Пробрасываем перехваченный офффер на экран!
+    })
 
-def index_construction(request): return HttpResponse("🏗️ Микросервис Flask/Django: Контур строительного контроля ГОСТ 475-2016 активен.", content_type="text/plain; charset=utf-8")
-def index_director(request): return HttpResponse("👑 Пульт управления Директора: Акты приёма-передачи ИТР.", content_type="text/plain; charset=utf-8")
-def father_panel_view(request): return HttpResponse("👨 Центральный пульт Векового Отца взведен.", content_type="text/plain; charset=utf-8")
-def ezhik_partner_diplomacy_gateway(request): return JsonResponse({"status": "active", "diplomacy": "enabled"})
-def verify_face(request): return JsonResponse({"status": "success", "face_verified": True})
-def show_products_catalog(request): return HttpResponse("📦 Складской учет: Каталог материалов холдинга.", content_type="text/plain; charset=utf-8")
-def architect_cocktail_lounge(request): return HttpResponse("🍸 Коктейль-бар Архитектора Максима активен.", content_type="text/plain; charset=utf-8")
+def anarchic_intelligence_view(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    user_ip = x_forwarded_for.split(',') if x_forwarded_for else request.META.get('REMOTE_ADDR', '176.59.50.34')
+    if 'actions_counter' not in request.session: request.session['actions_counter'] = 5
+    current_actions = request.session['actions_counter']
+    calculated_years = round(math.sqrt(current_actions) * 3.14, 1)
+    return render(request, 'storage_control/anarchic_intelligence.html', {
+        'memory_result': {'adaptation_years': calculated_years, 'networks': 'OpenCV / 9NTELECT v1.6', 'status': 'СТАБИЛЬНО'},
+        'ezhik': {'total_revenue': "5400.00 ₽"}, 'user_ip': user_ip, 'assigned_role': 'BLOGGER_PARTNER'
+    })
 
-def _async_vision_tunnel_task(video_id):
-    """
-    [ИИ-ТУННЕЛЕ СВЕРХЗРЕНИЯ ЁЖИКА — БУТЫЛОЧНОЕ ГОРЛЫШКО СТЁРТО]
-    Параллельное b2b-ветвление процессора. Покадровый анализ OpenCV
-    и сжатие FFmpeg для изоляции публичного трафика от закрытого контура.
-    """
-    try:
-        from .models import VideoCapsule, AvatarEzhik
-        capsule = VideoCapsule.objects.filter(id=video_id).first()
-        avatar = AvatarEzhik.objects.first()
-        if capsule and avatar:
-            avatar.opencv_logs = f"Анализ OpenCV для видео '{capsule.video_title}' завершен. Дефектов по СНиП нет."
-            avatar.save()
-        print("📡 [ИИ-Туннель] Тяжелое видео успешно обработано в фоне.")
-    except Exception as e:
-        print(f"❌ Ошибка в ИИ-туннеле: {str(e)}")
+def capsule_panel_view(request): return render(request, 'storage_control/capsule.html', {'capsules': VideoCapsule.objects.filter(is_public=False)})
+def construction_panel_view(request): return render(request, 'storage_control/construction.html', {'prorab_tasks': CascadeTask.objects.filter(target_role='prorab'), 'calc_result': None})
+def director_dashboard_view(request): return render(request, 'storage_control/director.html', {'company': ConstructionCompany.objects.first(), 'tasks': CascadeTask.objects.filter(target_role='director')})
+def father_panel_view(request): return render(request, 'storage_control/father_panel.html', {'ezhik': AvatarEzhik.objects.first(), 'findings': InteractiveComment.objects.filter(is_approved_by_ezhik=False)})
+def magnat_analyzer_view(request): return JsonResponse({"status": "Operational"})
+def ezhik_blogger_shop(request, username=None): return HttpResponse(f"🛒 SHOP {username}")
+def otez_miri_love(request): return HttpResponse("🪐 Сейф запечатан.")
+def ezhik_sympathy_notification(request): return JsonResponse({"status":"operational"})
+def architect_cocktail_lounge(request): return HttpResponse("🍸 Бар.")
+from django.http import FileResponse
+import io
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+
+def export_user_records_pdf(request):
+    """[📑 ПРОТОКОЛ АРХИВАРИУС]: Сборка цифровых крошек и ИТР-логов пользователя в один PDF файл на лету"""
+    
+    # 1. Создаем буфер в оперативной памяти для сборки файла
+    buffer = io.BytesIO()
+    p = canvas.Canvas(buffer, pagesize=letter)
+    
+    # 2. Начинаем чертить b2b-документ вечности
+    p.setFont("Helvetica-Bold", 16)
+    p.drawString(50, 750, "FAMILYMIRO HOLDING 1.6 — OFFICIAL REPORT")
+    p.setFont("Helvetica", 10)
+    p.drawString(50, 735, "-----------------------------------------------------------------------------------------")
+    
+    p.setFont("Helvetica-Bold", 12)
+    p.drawString(50, 700, "1. SECURITY STATUS // PROTOCOL EXPULSION:")
+    p.setFont("Helvetica", 11)
+    p.drawString(70, 680, f"- User IP Node: {request.META.get('REMOTE_ADDR', '176.59.50.34')}")
+    p.drawString(70, 660, "- Security Sandbox: ACTIVE (Bottle Flow Stable)")
+    
+    p.setFont("Helvetica-Bold", 12)
+    p.drawString(50, 620, "2. EXECUTIVE SUMMARY & ECO-NUMBERS:")
+    p.setFont("Helvetica", 11)
+    p.drawString(70, 600, "- Base Daily Limit: 12 Media uploads per 24 hours")
+    p.drawString(70, 580, "- Target Buffer Budget: 15,000,000.00 RUB under Father control")
+    p.drawString(70, 560, "- OpenCV Verification: 3-Photo geometry check operational")
+    
+    p.setFont("Helvetica", 10)
+    p.drawString(50, 500, "-----------------------------------------------------------------------------------------")
+    p.setFont("Helvetica-Oblique", 11)
+    p.drawString(50, 480, "Ezhik learns, guarantees and protects your digital asset for 300 years.")
+    
+    # Запечатываем страницу и буфер
+    p.showPage()
+    p.save()
+    
+    buffer.seek(0)
+    return FileResponse(buffer, as_attachment=True, filename='familymiro_gost_report.pdf')
