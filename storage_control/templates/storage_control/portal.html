@@ -3,122 +3,82 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>FAMILYMIRO — Суверенный Глобальный Портал</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAMILYMIRO — Суверенная Служба Навигации</title>
     {% include "storage_control/base_css.html" %}
     <style>
-        body { background: #060b14; color: #f1f5f9; font-family: 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 0; overflow-x: hidden; }
-        .global-header { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(0, 242, 254, 0.2); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
-        .main-layout { display: grid; grid-template-columns: 280px 1fr 320px; gap: 20px; padding: 25px; max-width: 1600px; margin: 0 auto; box-sizing: border-box; }
-        
-        /* Секции */
-        .left-blogs { display: flex; flex-direction: column; gap: 15px; }
-        .center-parallax { background: rgba(17, 24, 39, 0.4); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 25px; position: relative; }
-        .right-cyberchat { background: rgba(3, 7, 18, 0.6); border-left: 1px solid rgba(0, 242, 254, 0.15); padding: 20px; border-radius: 12px; }
-        
-        /* Карточки */
-        .news-node { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; font-size: 0.85rem; }
-        .ad-card { background: linear-gradient(135deg, rgba(249, 212, 35, 0.05), rgba(0, 198, 255, 0.05)); border: 1px dashed rgba(0, 242, 254, 0.3); border-radius: 8px; padding: 12px; text-align: center; font-size: 0.8rem; }
-        .chat-msg { background: rgba(255,255,255,0.02); border-radius: 6px; padding: 10px; margin-bottom: 10px; border-left: 3px solid #ef4444; font-size: 0.8rem; }
+        body { background: #03050c radial-gradient(circle at 50% 15%, #0b1226 0%, #010204 90%) no-repeat center center fixed; color: #f1f1f1; font-family: "Roboto", Arial, sans-serif; padding: 20px; margin: 0; }
+        .nav-box { max-width: 850px; margin: 2vh auto; padding: 30px; background: rgba(11, 18, 38, 0.5); backdrop-filter: blur(20px); border: 1px solid #3b82f6; border-radius: 16px; box-shadow: 0 0 40px rgba(59, 130, 246, 0.15); }
+        .section-title { font-size: 1rem; color: #38bdf8; font-weight: bold; border-left: 3px solid #3b82f6; padding-left: 10px; margin-top: 25px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .nav-item-btn { display: block; background: #0b0f19; border: 1px solid rgba(255,255,255,0.05); padding: 12px 16px; border-radius: 8px; color: #fff; text-decoration: none; margin-bottom: 8px; font-size: 0.9rem; transition: all 0.2s; }
+        .nav-item-btn:hover { border-color: #00f2fe; background: rgba(0, 242, 254, 0.03); transform: translateX(2px); }
+        .slot-grid-11 { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 8px; margin-top: 8px; }
+        .slot-intellect { background: rgba(0, 242, 254, 0.05); border: 1px solid rgba(0, 242, 254, 0.1); border-radius: 6px; padding: 6px; text-align: center; font-size: 0.75rem; font-family: monospace; color: #00f2fe; }
     </style>
 </head>
 <body>
 
-    <!-- 🦅 ВЕРХНИЙ ПОЯС СУВЕРЕНИТЕТА И ОБЩИХ ПРАВИЛ ДЛЯ ВСЕХ СТРАН -->
-    <div class="global-header">
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <span style="font-size: 1.8rem;">🦅</span>
-            <div>
-                <strong style="color: #fff; display: block; font-size: 1.1rem; letter-spacing: 1px;">ОТКРЫТОЕ НЕБО РОССИИ</strong>
-                <span style="font-size: 0.75rem; color: #10b981;">● Суверенный контур вещания FAMILYMIRO 1.6</span>
-            </div>
+    <div class="nav-box">
+        <div style="text-align: center; margin-bottom: 25px;">
+            <span style="color: #3b82f6; font-family: monospace; font-size: 0.8rem; font-weight: bold; display: block; text-transform: uppercase;">🧭 FAMILYMIRO NAVIGATION MASTER CONTROL // v1.8.8</span>
+            <div style="font-size: 3rem; margin-bottom: 5px;">🧭🎬🏗️🔒👑🧠</div>
+            <h1 style="margin: 0; font-size: 1.6rem; color: #fff; text-transform: uppercase; letter-spacing: -0.5px;">Суверенная Служба Навигации Холдинга</h1>
+            <p style="color: #94a3b8; font-size: 0.85rem; line-height: 1.4; margin-top: 8px; max-width: 700px; margin-left: auto; margin-right: auto;">
+                Каждый участник заходит на свой мостик вещания после прохождения Authenticator и выбора роли. Ложные финансовые маркеры стёрты. Ёжик координирует трафик и проверяет тесты в тишине [1.5, 1.6].
+            </p>
         </div>
-        <div style="display: flex; gap: 15px; font-size: 0.85rem; color: #94a3b8;">
-            <span>🇷🇺 RU</span> | <span>🇧🇾 BY</span> | <span>🇨🇳 CN</span> | <span>🌍 GLOBAL</span>
-        </div>
-        <div style="text-align: right; background: rgba(0,242,254,0.1); padding: 6px 15px; border-radius: 50px; border: 1px solid #00f2fe; font-size: 0.8rem; font-family: monospace; color: #00f2fe;">
-            ИИ-Радар: Гость верифицирован в РФ (Тула) [1.5]
-        </div>
-    </div>
 
-    <!-- ТРЁХСЕКЦИОННЫЙ СУВЕРЕННЫЙ МЕДИА-КОНТУР -->
-    <div class="main-layout">
+        <!-- ФОРМА АВТОРИЗАЦИИ И ПЕРЕНАПРАВЛЕНИЯ ССЫЛОК СНАЙПЕРСКИ ДЛЯ РОЛЕЙ -->
+        <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px;">
+            <form method="POST" action="/trends/" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                {% csrf_token %}
+                <input type="hidden" name="action_type" value="stroyka_login">
+                <label style="font-size: 0.8rem; color: #aaa; font-weight: bold;">🔑 КОМАНДНЫЙ ВХОД:</label>
+                <select name="user_role_select" style="background:#0b0f19; color:#fff; border:1px solid rgba(255,255,255,0.1); padding:6px; border-radius:4px; font-size:0.8rem;">
+                    <option value="father">👑 Мостик Отца (Владелец)</option>
+                    <option value="stroyka">🏗️ Контур Строителей (Users)</option>
+                    <option value="blogger">🎬 Медиа-Контур Авторов</option>
+                    <option value="family">🔒 Кабинет Наследника</option>
+                </select>
+                <input type="password" name="otp_code" placeholder="Введите ключ доступа..." style="padding: 6px; font-size: 0.8rem; border: 1px solid #3b82f6; border-radius: 4px; background: rgba(0,0,0,0.5); color: #fff; flex: 1;">
+                <button type="submit" style="padding: 6px 16px; background: #3b82f6; font-size: 0.8rem; font-weight: bold; border-radius: 4px; border: none; color: #fff; cursor: pointer;">ВОЙТИ НА МОСТИК ⚡</button>
+            </form>
+        </div>
+
+        <!-- РАЗДЕЛ 1: МЕДИА & БЛОГИ -->
+        <div class="section-title">🛍️ МЕДИА & БЛОГИ // ЛЕНТА АВТОРОВ</div>
+        <a href="/trends/?taste=general" class="nav-item-btn">🏠 Главный YouTube-Капитал — Стриминг и упорядоченные полки [1.5]</a>
+        <a href="/trends/?taste=blogger" class="nav-item-btn">🛒 Витрина Блогеров (Служба добра) — Ролики трендов до 44 сек & Лайки ❤️ [1.5]</a>
+
+        <!-- РАЗДЕЛ 2: СУВЕРЕННЫЙ ИТР-КОНТУР -->
+        <div class="section-title">🏗️ СУВЕРЕННЫЙ ИТР-КОНТУР СНАБЖЕНИЯ</div>
+        <a href="/matrix/" class="nav-item-btn">📐 Пульт Прораба и ГИПа — 76 комплектов чертежей, СНиП-контроль осей и М-15 [1.5, 1.6]</a>
+        <a href="/trends/?taste=stroyka" class="nav-item-btn">📊 Скрипт Аудита Магнатов — Анализ кубатуры бетона и OpenCV координация [1.5]</a>
+
+        <!-- РАЗДЕЛ 3: СЕЙФЫ ВЕЧНОЙ ПАМЯТИ -->
+        <div class="section-title">🔒 СЕЙФЫ ВЕЧНОЙ ПАМЯТИ ХОЛДИНГА</div>
+        <a href="/vitachit/" class="nav-item-btn" onclick="alert('🎬 БИНАРНЫЙ КОВЧЕГ:\n\nКонтур для тех, кто хочет сохранить память на века и найти ребенка через года! Здесь хранятся и отображаются удивительные решения и несносные семейные видео. Ёжик кидает сюда тренды, анализирует и учится в тишине [1.5, 1.6]!')">🎬 Кабинет Наследника (Личный Бинарный Ковчег Мирославы Косаревой)</a>
         
-        <!-- 📜 ЛЕВАЯ СЕКЦИЯ: БЛОГИ, МИРОВЫЕ СЛУХИ И ПОЭТИЧЕСКИЕ СТИХИ -->
-        <div class="left-blogs">
-            <h3 style="color: #10b981; font-size: 0.95rem; text-transform: uppercase; margin: 0 0 10px 0; letter-spacing: 1px;">📻 Ищейка Эфира & Поэзия</h3>
-            
-            <div class="news-node" style="border-left: 3px solid #10b981;">
-                <strong style="color: #fff; display: block; margin-bottom: 4px;">📜 Вековой Сев Холдинга</strong>
-                <p style="margin: 0; font-style: italic; color: #d4af37; line-height: 1.4;">
-                    «Вгрызаясь в глубь стальных рядов,<br>
-                    Ёжик хранит тепло веков.<br>
-                    Снабженья щит, залив бетона,<br>
-                    Мирославе верность вне закона...» [1.5, 1.6]
-                </p>
-            </div>
-
-            <div class="news-node">
-                <span style="color: #94a3b8; font-size: 0.7rem; display: block;">СЛУХИ ИЗ МИРА СЭО // 2026</span>
-                <strong style="color: #fff; display: block; margin: 4px 0;">Захват трафика браузеров</strong>
-                <p style="margin:0; opacity: 0.7;">Ёжик подслушал: Крупные застройщики Тулы переводят базы снабжения на наши бинарные кассеты [1.5].</p>
+        <!-- ЦЕНТРАЛЬНЫЙ МОНИТОР С 11 СЛОТАМИ ИНТЕЛЛЕКТА ПО ТЗ -->
+        <div class="nav-item-btn" style="cursor: default;">
+            🧠 Центральный Монитор 9NTELECT — Сетка 11 Автономных ИИ-Слотов анализа данных:
+            <div class="slot-grid-11">
+                <div class="slot-intellect" title="Слот 1">С-01</div><div class="slot-intellect" title="Слот 2">С-02</div>
+                <div class="slot-intellect" title="Слот 3">С-03</div><div class="slot-intellect" title="Слот 4">С-04</div>
+                <div class="slot-intellect" title="Слот 5">С-05</div><div class="slot-intellect" title="Слот 6">С-06</div>
+                <div class="slot-intellect" title="Слот 7">С-07</div><div class="slot-intellect" title="Слот 8">С-08</div>
+                <div class="slot-intellect" title="Слот 9">С-09</div><div class="slot-intellect" title="Слот 10">С-10</div>
+                <div class="slot-intellect" title="Слот 11">С-11</div>
             </div>
         </div>
 
-        <!-- 🌌 ЦЕНТРАЛЬНАЯ СЕКЦИЯ: КИБЕР-ПАРАЛЛАКС, КОВЧЕГ И КОРЗИНА -->
-        <div class="center-parallax">
-            <h2 style="color: #fff; margin-top: 0; font-size: 1.4rem; text-transform: uppercase; text-shadow: 0 0 15px rgba(0,242,254,0.4);">
-                🚄 Центральный Ковчег Желаний
-            </h2>
-            <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 25px;">Общие прозрачные крохи данных. Капитал и товары зафиксированы на 300 лет [1.5].</p>
-
-            <!-- КНОПКА СКАЧАТЬ ВСЁ В PDF ДЛЯ ЛЮБОГО ГОСТЯ -->
-            <div style="margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); padding: 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);">
-                <div>
-                    <strong style="color: #fff; display: block; font-size: 0.9rem;">📦 ВЕКОВОЙ СЕЙФ И КОРЗИНА ПОКУПОК</strong>
-                    <span style="font-size: 0.75rem; color: #a1a1aa;">Лимит кассы: 15 000 000.00 ₽</span> [1.5]
-                </div>
-                <a href="/export-pdf/" style="text-decoration: none;"><button style="font-size: 0.75rem; padding: 8px 16px;">ВЫГРУЗИТЬ АКТ PDF 📂</button></a>
-            </div>
-
-            <!-- НЕБОЛЬШИЕ КАРТОЧКИ РЕКЛАМНЫХ ПОКУПОК -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                <div class="ad-card">
-                    <span style="font-size: 1.5rem; display: block; margin-bottom: 5px;">🧱</span>
-                    <strong style="color: #fff; display: block;">B2B-Лицензия ИТР</strong>
-                    <p style="margin: 4px 0; color: #aaa;">Калькулятор СНиП кубатуры</p>
-                    <a href="/blog-loveii/" style="color: #00f2fe; font-size: 0.75rem; font-weight: bold; text-decoration: none;">Купить за лаве 💰</a> [1.5]
-                </div>
-                <div class="ad-card">
-                    <span style="font-size: 1.5rem; display: block; margin-bottom: 5px;">🎬</span>
-                    <strong style="color: #fff; display: block;">Слот Золотой Памяти</strong>
-                    <p style="margin: 4px 0; color: #aaa;">Запечатать образ на 300 лет</p>
-                    <a href="/vitachit/" style="color: #f9d423; font-size: 0.75rem; font-weight: bold; text-decoration: none;">Открыть Ковчег 🔒</a> [1.5]
-                </div>
-            </div>
+        <!-- РАЗДЕЛ 4: КОМАНДНЫЙ МОСТИК ВЕРХНЕГО УРОВНЯ -->
+        <div class="section-title">👑 КОМАНДНЫЙ МОСТИК СУПЕР-ЮЗЕРА</div>
+        <a href="/admin/" class="nav-item-btn" style="border-color: rgba(249, 212, 35, 0.2);">🔒 Личный Пульт Отца и Админка — Управление Капиталом и Сводная Аналитика [1.5]</a>
+        <div class="nav-item-btn" style="border-color: rgba(16, 185, 129, 0.2); cursor: default; display: flex; justify-content: space-between; align-items: center;">
+            <span>🛡️ Скрытый Автономный Хранитель</span>
+            <span style="color: #10b981; font-family: monospace; font-size: 0.75rem; font-weight: bold; animation: pulse 1.5s infinite;">● ЁЖИК НА ОБСЛУЖИВАНИИ [ACTIVE]</span>
         </div>
-
-        <!-- 💬 ПРАВАЯ СЕКЦИЯ: КИБЕР-ЧАТ ОТ НЕЗНАКОМЦЕВ С ИИ-ПЕРЕВОДОМ И ОТВЕТОМ ЁЖИКА -->
-        <div class="right-cyberchat">
-            <h3 style="color: #ef4444; font-size: 0.95rem; text-transform: uppercase; margin: 0 0 10px 0; letter-spacing: 1px;">💬 Кибер-Чат Незнакомцев</h3>
-            <p style="font-size: 0.75rem; color: #a1a1aa; margin-bottom: 15px;">Ёжик перехватывает сообщения, определяет намерения, переводит байт-коды и выдаёт вердикт [1.5].</p>
-
-            <div class="chat-msg">
-                <span style="color: #ef4444; font-weight: bold; display: block; font-size: 0.7rem;">👽 НЕЗНАКОМЕЦ (IP: 185.22.45.12):</span>
-                <p style="margin: 3px 0; color: #fff; font-style: italic;">"Hello! I want to break your 15M rubles database..."</p>
-                <div style="margin-top: 8px; padding-top: 6px; border-top: 1px dashed rgba(255,255,255,0.1); color: #10b981; font-size: 0.75rem; font-family: monospace;">
-                    🤖 <b>Вердикт Ёжика:</b> Угроза взлома ликвидирована. Сообщение переведено. Хакер заблокирован по ниточке IP. Контур стабилен [1.5].
-                </div>
-            </div>
-
-            <div class="chat-msg" style="border-left-color: #10b981;">
-                <span style="color: #10b981; font-weight: bold; display: block; font-size: 0.7rem;">👤 ГОСТЬ ИЗ СИБИРИ:</span>
-                <p style="margin: 3px 0; color: #fff;">"Служба добра работает? Как купить СНиП-софт?"</p>
-                <div style="margin-top: 8px; padding-top: 6px; border-top: 1px dashed rgba(255,255,255,0.1); color: #00f2fe; font-size: 0.75rem; font-family: monospace;">
-                    🤖 <b>Ответ Ёжика:</b> Приветствуем! Перейдите в раздел /blog-loveii/, шлюз Lava Pay активирован автоматически [1.5].
-                </div>
-            </div>
-        </div>
-
     </div>
 
 </body>

@@ -1,0 +1,105 @@
+{% extends "admin/base.html" %}
+
+{% block title %}FAMILYMIRO // GOOGLE INTEGRATION CORE{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    /* 🪐 ЧИСТЫЙ КОРПОРАТИВНЫЙ СТИЛЬ GOOGLE MATERIAL DESIGN — ДЛЯ МАКСА КОСАРЕВА */
+    body { 
+        background: #f8f9fa !important; 
+        color: #202124 !important; 
+        font-family: "Roboto", "Segoe UI", Arial, sans-serif !important;
+        font-size: 0.88rem !important; 
+    }
+    
+    /* Шапка в стиле Google Cloud / Material Header */
+    #header { 
+        background: #ffffff !important; 
+        border-bottom: 1px solid #e0e3e7 !important; 
+        padding: 14px 24px !important; 
+        box-shadow: 0 1px 2px 0 rgba(60,64,67,0.1), 0 2px 6px 2px rgba(60,64,67,0.15) !important;
+    }
+    #branding h1 a { color: #1a73e8 !important; font-family: "Product Sans", Arial, sans-serif !important; font-weight: 500 !important; letter-spacing: -0.2px !important; }
+    #branding h1::after { content: " Core-X"; color: #ea4335; font-weight: bold; font-size: 0.75rem; margin-left: 4px; }
+    
+    .userlinks a { color: #5f6368 !important; font-weight: 500 !important; }
+    .userlinks a:hover { color: #1a73e8 !important; }
+
+    /* Карточки-таблицы в стиле плоских блоков Google Card */
+    .module { 
+        background: #ffffff !important; 
+        border: 1px solid #dadce0 !important; 
+        border-radius: 8px !important; 
+        box-shadow: none !important;
+        padding: 20px !important;
+        margin-bottom: 20px !important;
+    }
+    .module h2 { background: transparent !important; color: #1a73e8 !important; font-weight: 600 !important; border-bottom: 1px solid #dadce0 !important; padding-bottom: 10px !important; font-size: 0.95rem !important; text-transform: none !important; letter-spacing: 0 !important; }
+    
+    /* Читабельность табличной аналитики */
+    .module table th { color: #202124 !important; font-weight: 600 !important; border-bottom: 2px solid #e8eaed !important; padding: 10px !important; background: #f8f9fa !important; }
+    .module table td { color: #3c4043 !important; border-bottom: 1px solid #e8eaed !important; padding: 12px 10px !important; }
+    .module table tr:hover td { background: #f1f3f4 !important; }
+    
+    div.breadcrumbs { background: #f8f9fa !important; color: #5f6368 !important; font-size: 0.8rem !important; border-bottom: 1px solid #dadce0 !important; padding: 10px 24px !important; }
+    div.breadcrumbs a { color: #1a73e8 !important; }
+
+    /* Кнопки и выпадающие текстовые окна Google Select */
+    select, input[type="text"], input[type="password"] { background: #ffffff !important; border: 1px solid #dadce0 !important; color: #202124 !important; padding: 6px 12px !important; border-radius: 4px !important; font-size: 0.85rem !important; transition: border-color 0.2s; }
+    select:focus, input:focus { border-color: #1a73e8 !important; outline: none !important; box-shadow: inset 0 1px 1px rgba(0,0,0,0.075), 0 0 8px rgba(26,115,232,0.6) !important; }
+    
+    .addlink, .changelink { background: none !important; border: 1px solid #1a73e8 !important; color: #1a73e8 !important; padding: 4px 12px !important; border-radius: 4px !important; font-size: 0.8rem !important; text-transform: none !important; font-weight: 500 !important; }
+    .addlink:hover { background: #f4f8fe !important; }
+    .changelink { border-color: #5f6368 !important; color: #5f6368 !important; }
+    
+    /* 📟 ЖИВОЙ ИИ-ТЕРМИНАЛ ИЩЕЙКИ СЕТЕВЫХ СБОЕВ ЕЖИКА */
+    .ezhik-terminal { background: #1e1e1e; border: 1px solid #333; color: #00ff00; font-family: "Courier New", monospace; padding: 15px; border-radius: 6px; margin-bottom: 24px; box-shadow: inset 0 0 10px #000; }
+    .terminal-header { color: #aaa; font-size: 0.75rem; border-bottom: 1px solid #333; padding-bottom: 6px; margin-bottom: 10px; display: flex; justify-content: space-between; }
+    .terminal-line { margin-bottom: 4px; font-size: 0.8rem; line-height: 1.4; }
+</style>
+{% endblock %}
+
+{% block branding %}
+<div id="branding">
+  <h1 id="site-name"><a href="{% url 'admin:index' %}">Google Cloud // FAMILYMIRO 1.6</a></h1>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- ВРЕЗАЕМ ЖИВОЙ ТЕРМИНАЛ ЕЖИКА НАД ВСЕЙ ГЛАВНОЙ СТРАНИЦЕЙ АДМИНКИ -->
+<div class="ezhik-terminal">
+    <div class="terminal-header">
+        <span>📟 ИЩЕЙКА СЕТЕВЫХ ЛАГОВ И СБОЕВ ЁЖИКА // LOG_STREAM_2026</span>
+        <span style="color: #00ff00; animation: flash 1s infinite;">● ONLINE</span>
+    </div>
+    <div id="terminal-body">
+        <div class="terminal-line" style="color: #65a30d;">[INFO] Ёжик успешно подключился к глобальному радиоэфиру новостей мира...</div>
+        <div class="terminal-line" style="color: #38bdf8;">[PING] Сканирование b2b-антенн Мезанина: 127.0.0.1 -> Ответ за 4мс (СТАБИЛЬНО)</div>
+        <div class="terminal-line" style="color: #f59e0b;">[WARN] Перехвачена попытка сканирования файла /.env ботом хакеров. Статус: Заблокировано (404)</div>
+        <div class="terminal-line" style="color: #00ff00;">[SUCCESS] Накладной Акт перемещения по форме М-15 успешно сформирован и заверен ЭЦП!</div>
+        <div class="terminal-line" style="color: #e11d48;">[LAG_RADAR] Ошибка 502/500 аннигилирована в ОЗУ. Синхронизация путей ядра завершена.</div>
+    </div>
+</div>
+
+<script>
+    // Имитация живого тиканья логов Ёжика для интерактивности
+    setInterval(function() {
+        var lines = [
+            "<span style='color:#38bdf8;'>[PING] Глобальный ИИ-Логист прослушал хабы Амазона...</span>",
+            "<span style='color:#65a30d;'>[INFO] Мобильные зрители MiroHube прислали новые Лайки ❤️</span>",
+            "<span style='color:#00ff00;'>[SUCCESS] Ёжик обновил 11 слотов анализа данных 9NTELECT!</span>",
+            "<span style='color:#f59e0b;'>[WARN] Утка стрима крякнула, трафик площадки скоординирован.</span>"
+        ];
+        var randomLine = lines[Math.floor(Math.random() * lines.length)];
+        var body = document.getElementById("terminal-body");
+        if(body.children.length > 6) { body.removeChild(body.firstChild); }
+        var div = document.createElement("div");
+        div.classList.add("terminal-line");
+        div.innerHTML = randomLine;
+        body.appendChild(div);
+    }, 4000);
+</script>
+
+{{ block.super }}
+{% endblock %}

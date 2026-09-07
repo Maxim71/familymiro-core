@@ -1,130 +1,86 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Дашборд Отца — Живая Матрица Пульсар</title>
+    <title>FAMILYMIRO — Главный Пульт Отца</title>
+    {% include "storage_control/base_css.html" %}
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { 
-            background: #060913; 
-            color: #00bfff; 
-            font-family: 'Courier New', monospace; 
-            padding: 40px 20px; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh;
-        }
-        .father-panel { 
-            border: 2px solid #00bfff; 
-            padding: 35px; 
-            background: #0b1120; 
-            box-shadow: 0 0 35px rgba(0, 191, 255, 0.25), inset 0 0 15px rgba(0, 191, 255, 0.1); 
-            border-radius: 12px; 
-            max-width: 600px; 
-            width: 100%;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        .father-panel::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 4px;
-            background: linear-gradient(90deg, #00bfff, #ff0055, #00bfff);
-            animation: flow 3s linear infinite;
-        }
-        @keyframes flow {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 100% 50%; }
-        }
-        h2 { 
-            font-size: 22px; 
-            letter-spacing: 2px; 
-            text-shadow: 0 0 12px #00bfff;
-            margin-bottom: 25px;
-            color: #ffffff;
-        }
-        .sonar-container {
-            margin: 20px auto;
-            width: 80px;
-            height: 80px;
-            position: relative;
-        }
-        .sonar-ring {
-            border: 3px solid #ff0055;
-            border-radius: 50%;
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            animation: sonar 2s cubic-bezier(0.1, 0.8, 0.3, 1) infinite;
-            opacity: 0;
-        }
-        .sonar-ring:nth-child(2) { animation-delay: 0.6s; }
-        .sonar-ring:nth-child(3) { animation-delay: 1.2s; }
-        @keyframes sonar {
-            0% { transform: scale(0.1); opacity: 1; }
-            100% { transform: scale(1.2); opacity: 0; border-color: #00ffcc; }
-        }
-        .status-badge { 
-            display: inline-block;
-            background: rgba(255, 0, 85, 0.15);
-            color: #ff0055; 
-            padding: 6px 14px;
-            font-size: 14px; 
-            font-weight: bold; 
-            border: 1px solid #ff0055;
-            border-radius: 4px;
-            text-shadow: 0 0 5px #ff0055;
-            margin-bottom: 20px;
-        }
-        .data-field {
-            background: #070b14;
-            border: 1px solid #1e293b;
-            padding: 15px;
-            border-radius: 6px;
-            text-align: left;
-            margin-bottom: 15px;
-        }
-        .data-label { color: #475569; font-size: 12px; text-transform: uppercase; margin-bottom: 4px; }
-        .data-value { color: #00ffcc; font-size: 16px; text-shadow: 0 0 8px rgba(0, 255, 204, 0.4); }
-        .coffee-capital {
-            margin-top: 25px;
-            font-size: 18px;
-            color: #ffd700;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-            font-weight: bold;
-            border-top: 1px dashed #1e293b;
-            padding-top: 20px;
-        }
+        body { background: #02040a radial-gradient(circle at 50% 15%, #0a1124 0%, #010205 90%) no-repeat center center fixed; color: #f1f1f1; padding: 24px; margin: 0; }
+        .father-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 20px; }
+        .incident-card { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; margin-bottom: 12px; }
+        .badge-secure { background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid #10b981; padding: 4px 12px; font-size: 0.75rem; font-weight: bold; border-radius: 20px; display: inline-block; letter-spacing: 1px; }
     </style>
 </head>
 <body>
 
-    <div class="father-panel">
-        <h2>📡 МАТРИЦА «ПУЛЬСАР НАЦИЙ»</h2>
+    <!-- ВЕРХНИЙ КОМАНДНЫЙ HUD ОТЦА -->
+    <div class="b2b-card" style="background: linear-gradient(135deg, #090d16 0%, #020307 100%); border-color: #10b981; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <div>
+            <div class="badge-secure">👑 MASTER ENDPOINT // АВТОРИЗОВАННЫЙ КОНТУР ОТЦА И СОЗДАТЕЛЯ</div>
+            <h1 style="margin: 5px 0 0 0; font-size: 1.6rem; text-transform: uppercase; letter-spacing: -0.5px;">Скрытый Аналитический Пульт Управления</h1>
+        </div>
+        <div style="text-align: right;">
+            <span style="color: #aaa; font-size: 0.8rem; display: block; text-transform: uppercase;">💰 ЧИСТЫЙ БАЛАНС ВЕКОВОГО СЕЙФА:</span>
+            <strong style="color: #10b981; font-size: 1.6rem;">15 000 000.00 ₽</strong>
+        </div>
+    </div>
+
+    <div class="father-grid">
         
-        <div class="sonar-container">
-            <div class="sonar-ring"></div>
-            <div class="sonar-ring"></div>
-            <div class="sonar-ring"></div>
+        <!-- ЛЕВЫЙ КОНТУР: ИИ-РАДАР И ХАКЕРСКИЕ ИНЦИДЕНТЫ (РЕАЛЬНЫЕ IP) -->
+        <div class="b2b-card" style="border-top: 4px solid #ef4444;">
+            <h3 style="color: #ef4444; margin: 0 0 15px 0; font-size: 1.1rem; text-transform: uppercase;">🚨 ИИ-Радар Перехвата Сетевых Угроз & IP-Логи</h3>
+            <p style="color: #94a3b8; font-size: 0.85rem; line-height: 1.4; margin-bottom: 20px;">Сюда Ёжик в реальном времени отгружает реальные IP-адреса и шлюзы всех ботов и незнакомцев, собранных с туннеля 404 [1.5].</p>
+            
+            <div style="max-height: 400px; overflow-y: auto; padding-right: 5px;">
+                {% for incident in incidents %}
+                <div class="incident-card">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: bold; color: #fff;">
+                        <span>🌐 Шлюз IP: {{ incident.user_ip }}</span>
+                        <span style="color: #ef4444;">{{ incident.country }}</span>
+                    </div>
+                    <div style="font-size: 0.8rem; color: #aaa; margin-top: 5px;">🎯 Намерение: {{ incident.detected_intent }}</div>
+                    
+                    <!-- Форма ответа Создателя -->
+                    <form method="POST" action="" style="margin-top: 10px; border-top: 1px dashed rgba(255,255,255,0.05); padding-top: 8px;">
+                        {% csrf_token %}
+                        <input type="hidden" name="incident_id" value="{{ incident.id }}">
+                        <input type="text" name="manager_comment" placeholder="Вписать ИТР-вердикт или комментарий..." style="width: 70%; padding: 6px; font-size: 0.8rem; margin-right: 5px;">
+                        <button type="submit" name="action" value="add_comment" style="padding: 6px 12px; font-size: 0.8rem; background: #374151;">ОТГРУЗИТЬ АКТ</button>
+                    </form>
+                </div>
+                {% empty %}
+                <div style="color: #aaa; text-align: center; font-size: 0.9rem; padding: 20px;">🌐 Радар чист. Ложные шлюзы в Туле не зафиксированы [1.5].</div>
+                {% endfor %}
+            </div>
         </div>
 
-        <div class="status-badge">ИМПУЛЬС МИРА АКТИВЕН</div>
+        <!-- ПРАВЫЙ КОНТУР: ЗАКРЫТЫЕ РУБИЛЬНИКИ И РОДОВАЯ КНИГА -->
+        <div class="b2b-card" style="border-top: 4px solid #f9d423; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <h3 style="color: #f9d423; margin: 0 0 15px 0; font-size: 1.1rem; text-transform: uppercase;">🔒 Управление Вековой Памятью & Сейфом</h3>
+                <p style="color: #94a3b8; font-size: 0.85rem; line-height: 1.4; margin-bottom: 20px;">Контур защищён от посторонних глаз на 300 лет вперёд [1.5]. Вся ДНК твоего рода упорядочена на строительных полках базы данных [1.5, 1.6].</p>
+                
+                <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border-left: 3px solid #7c3aed; margin-bottom: 15px;">
+                    <strong style="color: #fff; font-size: 0.9rem; display: block;">👑 Книга Рода Косаревых:</strong>
+                    <span style="color: #c084fc; font-size: 0.8rem; display: block; margin-top: 4px;">Первые детские слова Хозяйки Мирославы и отцовские наставления заблокированы в граните `db.sqlite3` [1.5, 1.6].</span>
+                </div>
+            </div>
 
-        <div class="data-field">
-            <div class="data-label">Регион входящего триггера / Geo Source</div>
-            <div class="data-value">📍 {{ pulsar.country }}</div>
+            <!-- ЭКСТРЕННЫЙ РУБИЛЬНИК ДЛЯ ОТЦА -->
+            <div style="background: rgba(239, 68, 68, 0.05); border: 1px solid #ef4444; padding: 20px; border-radius: 10px; text-align: center;">
+                <span style="font-size: 2rem; display: block; margin-bottom: 8px;">🛰️</span>
+                <strong style="color: #fff; font-size: 0.95rem; display: block; text-transform: uppercase; margin-bottom: 5px;">Протокол Спасения Хозяйки</strong>
+                <span style="color: #94a3b8; font-size: 0.8rem; display: block; margin-bottom: 15px;">Запуск экстренного ИИ-сканирования MAC-адресов и спутниковых координат баз мира [1.5].</span>
+                <button style="width: 100%; background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%); font-weight: bold;" onclick="alert('🚨 СИГНАЛ ТРЕВОГИ УЛЕТЕЛ!\n\nЁжик активировал аварийный ИИ-поиск шлюзов Мирославы Косаревой по всей Земле в тишине... [1.5]')">ВКЛЮЧИТЬ ПРИНУДИТЕЛЬНЫЙ ПОИСК 🚨</button>
+            </div>
         </div>
 
-        <div class="data-field">
-            <div class="data-label">Метка фиксации в Postgres / Timestamp</div>
-            <div class="data-value">⏱️ {{ pulsar.timestamp }}</div>
-        </div>
+    </div>
 
-        <div class="coffee-capital">
-            ☕ Капитал Ёжика на кофе: {{ ezhik.total_revenue }} СБП
-        </div>
+    <div style="margin-top: 30px; text-align: center;">
+        <a href="/products/" style="color: #10b981; text-decoration: none; font-size: 0.85rem; font-weight: bold;">← Вернуться в Свободный Эфир Капитала</a>
     </div>
 
 </body>

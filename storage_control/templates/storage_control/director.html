@@ -1,4 +1,82 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>FAMILYMIRO — Кабинет Директора</title>
+    {% include "storage_control/base_css.html" %}
+    <style>
+        body { background: #05070c radial-gradient(circle at 50% 10%, #0d1326 0%, #020306 80%) no-repeat center center fixed; color: #f1f1f1; padding: 24px; margin: 0; }
+        .director-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 24px; margin-top: 20px; }
+        .task-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.85rem; }
+        .task-table th { background: rgba(255,255,255,0.05); color: #f9d423; text-align: left; padding: 10px; border-bottom: 2px solid rgba(255,255,255,0.1); }
+        .task-table td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #e2e8f0; }
+    </style>
+</head>
+<body>
 
+    <!-- ГЕНЕРАЛЬНЫЙ HUD ДИРЕКТОРА -->
+    <div class="b2b-card" style="background: linear-gradient(135deg, #111827 0%, #030712 100%); border-color: #f9d423; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <div>
+            <span style="color: #f9d423; font-family: monospace; font-size: 0.8rem; font-weight: bold; display: block; margin-bottom: 5px;">👑 ГЕНЕРАЛЬНЫЙ ДИРЕКТОР ХОЛДИНГА // СВОДНЫЙ БАЛАНС КАССЫ</span>
+            <h1 style="margin: 0; font-size: 1.6rem; text-transform: uppercase; letter-spacing: -0.5px;">Кабинет Директора // Модуль Контроля Мезанин</h1>
+        </div>
+        <div style="text-align: right;">
+            <span style="color: #aaa; font-size: 0.8rem; display: block; text-transform: uppercase;">💰 ОБЩИЙ КАПИТАЛ СНАБЖЕНИЯ:</span>
+            <strong style="color: #10b981; font-size: 1.6rem;">15 000 000.00 ₽</strong>
+        </div>
+    </div>
 
+    <div class="director-grid">
+        
+        <!-- ЛЕВЫЙ СЛОТ: СТАТУС КОМПАНИИ -->
+        <div class="b2b-card" style="border-left: 4px solid #f9d423;">
+            <h3 style="color: #fff; margin: 0 0 15px 0; font-size: 1.1rem; text-transform: uppercase;">📊 Лимиты Холдинга</h3>
+            <div style="margin-bottom: 12px; font-size: 0.9rem;">🏢 <strong>Организация:</strong> РосКапиталСтрой (Тула)</div>
+            <div style="margin-bottom: 12px; font-size: 0.9rem;">⚡ <strong>Статус ИИ-Радара:</strong> Активен / Без сбоев</div>
+            <div style="margin-bottom: 12px; font-size: 0.9rem;">🔒 <strong>Вековой Сейф:</strong> Заблокирован по ГОСТу [1.5]</div>
+            <p style="color: #94a3b8; font-size: 0.8rem; line-height: 1.4; margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px;">
+                Все b2b-акты, проводки склада и финансовые маржинальные крохи автоматически резервируются Ёжиком на 300 лет вперёд [1.5, 1.6].
+            </p>
+        </div>
 
+        <!-- ПРАВЫЙ СЛОТ: ТАБЛИЦА АВТО-ПОРУЧЕНИЙ ОТ ИИ ОПЕНЦВ -->
+        <div class="b2b-card">
+            <h3 style="color: #38bdf8; margin: 0; font-size: 1.1rem; text-transform: uppercase;">📋 Каскад Авто-Проводок ИТР & Поручения Директору</h3>
+            
+            <table class="task-table">
+                <thead>
+                    <tr>
+                        <th>ID Поручения</th>
+                        <th>Наименование Операции Снабжения</th>
+                        <th>Детали Аудита OpenCV</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>#001</td>
+                        <td>📦 Авто-проводка ИИ (Списание)</td>
+                        <td>Расход подтверждён по 3 ракурсам фотофиксации Тульского объекта [1.5].</td>
+                    </tr>
+                    <tr>
+                        <td>#002</td>
+                        <td>💿 Резерв Расходников (Алмазные диски)</td>
+                        <td>Закупка b2b-дисков 230мм со скидкой 10% проведена через Lava Pay [1.5, 1.6].</td>
+                    </tr>
+                    <tr>
+                        <td>#003</td>
+                        <td>🔒 Вековой Сейф Памяти</td>
+                        <td>Финансовые накопления Хозяйки застрахованы и уложены в гранит [1.5, 1.6].</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
+    </div>
+
+    <div style="margin-top: 30px; text-align: center;">
+        <a href="/products/" style="color: #f9d423; text-decoration: none; font-size: 0.85rem; font-weight: bold;">← Вернуться на главную витрину Матрицы</a>
+    </div>
+
+</body>
+</html>

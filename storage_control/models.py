@@ -2,75 +2,64 @@
 from django.db import models
 
 class Agreement(models.Model):
-    title = models.CharField("Название соглашения/оферты", max_length=250)
+    agreement_number = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
-    def __str__(self): return self.title
 
 class VideoCapsule(models.Model):
-    video_title = models.CharField("Название ролика TikTok/YouTube", max_length=200)
-    video_file = models.FileField("Видеофайл OpenCV/FFmpeg", upload_to="videos/", blank=True, null=True)
-    is_public = models.BooleanField("Доступно для SHOP", default=False)
-    def __str__(self): return self.video_title
+    video_title = models.TextField()
+    video_file = models.CharField(max_length=500, blank=True, null=True)
+    is_public = models.BooleanField(default=False)
 
-class AvatarEzhik(models.Model):
-    status = models.CharField("Текущий Статус ИИ", max_length=100, default="Active_2026")
-    opencv_logs = models.TextField("Логи Нейро-Радара OpenCV", blank=True, null=True)
-    ai_recommendations = models.TextField("Рекомендации Ёжика Хозяйке", blank=True, null=True)
-    profit_alerts = models.TextField("Уведомления о прибыли Lava Pay ('лаве')", blank=True, null=True)
-    def __str__(self): return f"Статус Ёжика: {self.status}"
-
-class InteractiveComment(models.Model):
-    CONTENT_TYPES = [('news', 'Новость'), ('snip', 'СНиП Ссылка'), ('poetry', 'Стихи')]
-    category_type = models.CharField("Категория", max_length=20, choices=CONTENT_TYPES, default='news')
-    title = models.CharField("Заголовок находки", max_length=250)
-    comment_text = models.TextField("Очищенный текст материала")
-    is_approved_by_ezhik = models.BooleanField("Одобрено в печать", default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    def __str__(self): return f"[{self.category_type}] {self.title[:30]}"
+    def __str__(self):
+        return self.video_title[:50]
 
 class BloggerUsage(models.Model):
-    blogger_name = models.CharField("Имя Блогера / ИТР", max_length=150)
-    daily_limit = models.IntegerField("Лимит медиа в день", default=12)
-    accumulated_income = models.DecimalField("Заработанное 'лаве' (%)", max_digits=12, decimal_places=2, default=0.00)
-    def __str__(self): return f"Магазин: {self.blogger_name}"
+    blogger_name = models.CharField(max_length=100, default="max_kosarev")
+    daily_limit = models.IntegerField(default=12)
+    accumulated_income = models.DecimalField(max_digits=15, decimal_places=2, default=15000000.00)
+    accessible_capsules = models.ManyToManyField(VideoCapsule, blank=True)
 
+    def __str__(self):
+        return self.blogger_name
 
-# ==============================================================================
-# 🏗️ НОВЫЕ БРОНИРОВАННЫЕ МОДЕЛИ B2B КАСКАДА ДЛЯ КОРПОРАТИВНЫХ КЛИЕНТОВ
-# ==============================================================================
+class FamilyLegacy(models.Model):
+    """[👑 РОДОВАЯ ПАМЯТЬ ПОКОЛЕНИЙ] Хранилище имён, детских фраз Мирославы и слов Отца"""
+    entity_name = models.CharField(max_length=255, default="Мирослава Косарева")
+    record_type = models.CharField(max_length=100, default="Детское слово") # детское слово / отцовское наставление / имя рода
+    text_content = models.TextField() # Сама фраза
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.entity_name} - {self.record_type}"
+
+class AvatarEzhik(models.Model):
+    status = models.CharField(max_length=100, default="Active_2026")
+    profit_alerts = models.CharField(max_length=255, default="Lava Pay Active")
+
+class InteractiveComment(models.Model):
+    category_type = models.CharField(max_length=50, default="news")
+    title = models.CharField(max_length=255, default="")
+    comment_text = models.TextField(default="")
+    is_approved_by_ezhik = models.BooleanField(default=False)
 
 class ConstructionCompany(models.Model):
-    """Строительная компания, купившая лицензию на платформу"""
-    company_name = models.CharField("Название Холдинга/Компании", max_length=200, unique=True)
-    license_status = models.BooleanField("Лицензия Активна", default=True)
-    total_budget = models.DecimalField("Глобальный Бюджет Холдинга", max_digits=15, decimal_places=2, default=0.00)
-    
-    def __str__(self): return self.company_name
+    company_name = models.CharField(max_length=255, default="РосКапиталСтрой")
+    total_budget = models.DecimalField(max_digits=15, decimal_places=2, default=15000000.00)
 
 class CascadeTask(models.Model):
-    """Каскад упорядочивания задач Ёжика: сбор, анализ и статусы для ИТР ролей"""
-    ROLE_CHOICES = [
-        ('director', 'Директор Холдинга (Глобальный контроль)'),
-        ('manager', 'Руководитель проекта (Управление объектом)'),
-        ('prorab', 'Прораб на участке (Исполнение в зоне)'),
-    ]
-    company = models.ForeignKey(ConstructionCompany, on_delete=models.CASCADE, verbose_name="Компания/Объект")
-    target_role = models.CharField("Для какой роли задача", max_length=20, choices=ROLE_CHOICES)
-    task_title = models.CharField("Суть задачи / Наряд", max_length=250)
-    task_detail = models.TextField("Инструкция и ведомость СНиП")
-    
-    # Рекомендации и анализ от Ёжика под капотом
-    ezhik_ai_analysis = models.TextField("Анализ рисков и предложение Ёжика", blank=True, null=True)
-    
-    is_completed = models.BooleanField("Статус выполнения", default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self): return f"[{self.get_target_role_display()}] {self.task_title[:30]}"
+    task_title = models.CharField(max_length=255)
+    task_detail = models.TextField()
+    target_role = models.CharField(max_length=50)
 
 class PunchListItem(models.Model):
-    """Связываем дефекты и снабжение прорабов с каскадом задач"""
-    task = models.ForeignKey(CascadeTask, on_delete=models.CASCADE, null=True, blank=True, verbose_name="Привязанный наряд каскада")
-    defect_description = models.TextField("Дефект или объём заливки бетона")
-    paint_barrels = models.IntegerField("Закупка бочек краски (шт)", default=0)
-    is_fixed = models.BooleanField("Верифицировано OpenCV (ГОСТ 475-2016)", default=False)
-    def __str__(self): return self.defect_description[:30]
+    description = models.TextField()
+    is_fixed = models.BooleanField(default=False)
+
+class NetworkIncident(models.Model):
+    user_ip = models.GenericIPAddressField(default="127.0.0.1")
+    country = models.CharField(max_length=100, default="Российская Федерация")
+    timestamp = models.DateTimeField(auto_now_add=True)
+    detected_intent = models.TextField(default="Scan")
+    manager_comment = models.TextField(blank=True, null=True)
+    reviewer_role = models.CharField(max_length=50, default="РУКОВОДИТЕЛЬ ПРОЕКТА")
+    ezhik_verdict = models.TextField(default="Ждем проверки.")

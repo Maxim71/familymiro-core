@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
 from django.urls import path
-from .views import index_family, index_construction, index_director, project_manager_analytics, constructor_matrix, send_invite_sms
+from . import views
 
 urlpatterns = [
-    path('', index_family, name='index_family'),
-    path('construction/', index_construction, name='index_construction'),
-    path('director/', index_director, name='index_director'),
-    # Новые аналитические B2B-контуры снабжения Mezzanine
-    path('construction/analytics/', project_manager_analytics, name='pm_analytics'),
-    path('construction/matrix/', constructor_matrix, name='constructor_matrix'),
-    path('api/sms/invite/', send_invite_sms, name='send_invite_sms'),
+    path("", views.index_family, name="index_family"),
+    path("trends/", views.show_products_catalog, name="products_catalog"),
+    
+    # НОВЫЙ СОЧНЫЙ И МЕЖДУНАРОДНЫЙ b2b-МАРШРУТ СТРОИТЕЛЬНОЙ МАТРИЦЫ
+    path("matrix/", views.stroyka_platform_view, name="stroyka_platform"),
+    
+    path("welcome-ezhik/", views.custom_otp_admin_login_view, name="otp_admin_login"),
+    path("oto/", views.father_panel_view, name="father_panel"),
+    path("ii/", views.anarchic_intelligence_view, name="anarchic_intelligence"),
+    path("dxf-scan/", views.dxf_blueprint_scan_view, name="dxf_blueprint_scan"),
 ]

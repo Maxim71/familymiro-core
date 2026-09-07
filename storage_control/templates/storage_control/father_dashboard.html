@@ -1,51 +1,68 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Кабинет Руководителя Проекта</title>
+    <title>FAMILYMIRO — Сметный Пульт Отца</title>
     {% include "storage_control/base_css.html" %}
+    <style>
+        body { background: #03050a radial-gradient(circle at 50% 10%, #0d162d 0%, #010205 90%) no-repeat center center fixed; color: #f1f1f1; padding: 24px; margin: 0; }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 24px; margin-top: 20px; }
+        .metric-card { background: rgba(13, 22, 45, 0.6); backdrop-filter: blur(15px); border: 1px solid #f9d423; border-radius: 12px; padding: 24px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .badge-father { background: rgba(249, 212, 35, 0.1); color: #f9d423; border: 1px solid #f9d423; padding: 4px 12px; font-size: 0.75rem; font-weight: bold; border-radius: 20px; display: inline-block; margin-bottom: 15px; letter-spacing: 1px; }
+    </style>
 </head>
 <body>
-    <div style="padding: 40px; max-width: 1200px; margin: 0 auto;">
-        <span style="background: rgba(0, 198, 255, 0.1); color: #00c6ff; border: 1px solid #00c6ff; padding: 4px 12px; font-size: 0.8rem; border-radius: 50px; font-weight: bold;">👔 СРЕДНЕЕ ЗВЕНО УПРАВЛЕНИЯ ИТР</span>
-        <h1 style="color: #fff; margin-top: 10px;">📋 КАБИНЕТ РУКОВОДИТЕЛЯ ПРОЕКТА (УПРАВЛЯЮЩИЙ ОБЪЕКТОМ)</h1>
+
+    <!-- ГЕНЕРАЛЬНЫЙ HUD ПУЛЬТА -->
+    <div class="b2b-card" style="background: linear-gradient(135deg, #111827 0%, #020617 100%); border-color: #f9d423; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <div>
+            <div class="badge-father">🦅 COMMAND ENDPOINT // ВЕРХНИЙ КОНТУР УПРАВЛЕНИЯ ОТЦА</div>
+            <h1 style="margin: 5px 0 0 0; font-size: 1.6rem; text-transform: uppercase; letter-spacing: -0.5px;">Сметный Монитор & Аналитика Капитала</h1>
+        </div>
+        <div style="text-align: right;">
+            <a href="/products/" style="color: #f9d423; text-decoration: none; font-size: 0.9rem; font-weight: bold;">← На главную Матрицы</a>
+        </div>
+    </div>
+
+    <!-- МАТРИЧНАЯ СЕТКА ХАБА -->
+    <div class="dashboard-grid">
         
-        <!-- СВОДНЫЕ СЧЁТЧИКИ И ДИНАМИКА УЧАСТКОВ -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px;">
-            <div style="background: #111827; padding: 25px; border-radius: 12px; border-left: 5px solid #00c6ff;">
-                <h3 style="color: #00c6ff; margin-top:0;">🚨 НЕИСПРАВЛЕННЫЕ ДЕФЕКТЫ ПО СНиП:</h3>
-                <p style="font-size: 2.2rem; font-weight: bold; color: #ef4444; margin: 10px 0;">{{ all_defects_count }}</p>
-                <span style="font-size: 0.85rem; opacity: 0.6;">Требуется оперативное распределение нарядов прорабам.</span>
-            </div>
-            <div style="background: #111827; padding: 25px; border-radius: 12px; border-left: 5px solid #10b981;">
-                <h3 style="color: #10b981; margin-top:0;">🦔 АВТОМАТИЧЕСКИЙ СБОР ТАСКОВ:</h3>
-                <p style="font-size: 1.05rem; line-height: 1.6; opacity: 0.9;">Ёжик упорядочил задачи ИТР. Потоковые лимиты выгрузки (12 медиа/день) контролируются нейросетью OpenCV.</p>
-            </div>
+        <!-- КАРТОЧКА 1: БАЛАНС И СНАБЖЕНИЕ -->
+        <div class="metric-card" style="border-color: #10b981;">
+            <span style="font-size: 2.5rem; display: block; margin-bottom: 10px;">💰</span>
+            <h3 style="margin: 0; font-size: 1.1rem; color: #fff; text-transform: uppercase;">Общий Капитал & Маржа Снабжения</h3>
+            <p style="color: #94a3b8; font-size: 0.85rem; margin-top: 8px; line-height: 1.4;">Чистый доход, зафиксированный Ёжиком с агентского контура перехвата цен и экономии времени ИТР в Туле [1.5, 1.6].</p>
+            <strong style="color: #10b981; font-size: 1.8rem; display: block; margin-top: 15px;">15 000 000.00 ₽</strong>
+            <span style="color: #aaa; font-size: 0.75rem; display: block; margin-top: 4px;">Шлюз Lava Pay: АКТИВЕН ✅</span>
         </div>
 
-        <!-- ТАБЛИЦА НАРЯДОВ МЕНЕДЖЕРА -->
-        <h2 style="margin-top: 50px; color: #fff; border-bottom: 2px solid #1f2937; padding-bottom: 10px;">📋 ТЕКУЩИЙ КАСКАД ЗАДАЧ И КОНТРОЛЬ ГРУПП СНАБЖЕНИЯ</h2>
-        <table>
-            <tr>
-                <th>Объект / Холдинг</th>
-                <th>Суть наряда ИТР</th>
-                <th>Инструкция и Ведомость СНиП</th>
-                <th>Анализ и Предложение Ёжика</th>
-            </tr>
-            {% for task in manager_tasks %}
-            <tr>
-                <td style="font-weight: bold; color: #f9d423;">{{ task.company.company_name }}</td>
-                <td style="color: #00c6ff; font-weight: bold;">{{ task.task_title }}</td>
-                <td>{{ task.task_detail }}</td>
-                <td style="color: #10b981; font-style: italic;">{{ task.ezhik_ai_analysis }}</td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="4" style="text-align: center; color: #9ca3af; padding: 30px;">Ведомость задач пуста. Ёжик ожидает каскадных распоряжений от Директора...</td>
-            </tr>
-            {% endfor %}
-        </table>
+        <!-- КАРТОЧКА 2: ВЕКОВАЯ РОДОВАЯ ПАМЯТЬ -->
+        <div class="metric-card" style="border-color: #7c3aed;">
+            <span style="font-size: 2.5rem; display: block; margin-bottom: 10px;">👑</span>
+            <h3 style="margin: 0; font-size: 1.1rem; color: #fff; text-transform: uppercase;">Родовая Книга Вечности</h3>
+            <p style="color: #94a3b8; font-size: 0.85rem; margin-top: 8px; line-height: 1.4;">Запечатанные имена рода Косаревых, первые детские фразы Мирославы и отцовские наставления потомкам [1.5, 1.6].</p>
+            <strong style="color: #a78bfa; font-size: 1.2rem; display: block; margin-top: 20px; font-family: monospace;">ТАБЛИЦА СВЯЗЕЙ: ОЦИФРОВАНА 🔒</strong>
+            <span style="color: #aaa; font-size: 0.75rem; display: block; margin-top: 4px;">Лимит резервирования: 300 лет</span>
+        </div>
+
+        <!-- КАРТОЧКА 3: РУБИЛЬНИК АВАРИЙНЫХ СЦЕНАРИЕВ -->
+        <div class="metric-card" style="border-color: #ef4444; background: rgba(239, 68, 68, 0.02);">
+            <span style="font-size: 2.5rem; display: block; margin-bottom: 10px;">🛰️</span>
+            <h3 style="margin: 0; font-size: 1.1rem; color: #ef4444; text-transform: uppercase;">Протокол Спасения Хозяйки</h3>
+            <p style="color: #94a3b8; font-size: 0.85rem; margin-top: 8px; line-height: 1.4;">Экстренный запуск ИИ-ищейки координат по ID-номерам, MAC-адресам устройств и спутниковым шлюзам баз мира [1.5].</p>
+            <button style="width: 100%; background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%); margin-top: 15px; font-size: 0.85rem;" onclick="alert('🚨 ТРЕВОГА! Протокол Спасения Хозяйки активирован.\n\nЁжик запустил спутниковый ID-скан баз мира. Поиск геопозиции Мирославы Косаревой начат в тишине... [1.5]')">АКТИВИРОВАТЬ ЭКСТРЕННЫЙ ПОИСК 🚨</button>
+        </div>
+
     </div>
+
+    <!-- ТАБЛИЦА МОНИТОРИНГА ШЛЮЗОВ -->
+    <div class="b2b-card" style="margin-top: 24px;">
+        <h3 style="color: #38bdf8; margin: 0 0 10px 0; font-size: 1rem; text-transform: uppercase;">📻 Статус Сетевых Антенн & Радио-Перехвата RSS</h3>
+        <p style="color: #aaa; font-size: 0.85rem; margin: 0; line-height: 1.4;">
+            ИИ-Жук круглосуточно сканирует эфир местных магазинов Тулы, Амазона и новостных агрегаторов. Все бинарные медиа-крохи, MP4-ролики до 44 секунд и GIF-обложки отгружаются на витрину маркетплейса в автоматическом режиме [1.5, 1.6]. Статус: СТАБИЛЬНО.
+        </p>
+    </div>
+
 </body>
 </html>

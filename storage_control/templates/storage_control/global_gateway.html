@@ -1,26 +1,53 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Глобальный Шлюз Трансформера</title>
+    <title>FAMILYMIRO — Глобальный ИТР Тендер-Шлюз</title>
+    {% include "storage_control/base_css.html" %}
     <style>
-        body { background: #0a0b0d; color: #ff0055; font-family: monospace; padding: 40px; text-shadow: 0 0 8px #ff0055; }
-        .container { border: 2px solid #ff0055; padding: 20px; background: #0f1115; max-width: 600px; margin: 0 auto; box-shadow: 0 0 15px #ff0055; }
-        .neon-green { color: #00ffcc; text-shadow: 0 0 8px #00ffcc; }
+        body { background: #02050d radial-gradient(circle at 50% 15%, #09142d 0%, #010206 90%) no-repeat center center fixed; color: #f1f1f1; padding: 24px; margin: 0; }
+        .gateway-box { max-width: 850px; margin: 2vh auto; padding: 35px; background: rgba(9, 20, 45, 0.5); backdrop-filter: blur(20px); border: 1px solid #00f2fe; border-radius: 14px; box-shadow: 0 0 40px rgba(0, 242, 254, 0.15); }
+        .feature-row { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .stamp-zone { border: 2px dashed #10b981; padding: 15px; border-radius: 8px; background: rgba(16, 185, 129, 0.02); text-align: center; color: #10b981; font-weight: bold; font-family: monospace; font-size: 0.85rem; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>🌐 ГЛОБАЛЬНЫЙ ШЛЮЗ ТОКИО-РУНЕТ</h2>
-        <p><b>Текущий режим:</b> <span class="neon-green">{{ global_ui.mode }}</span></p>
-        <p><b>Неоновая тема:</b> <span class="neon-green">{{ global_ui.neon_theme }}</span></p>
-        <hr style="border-color: #00ffcc;">
-        <ul>
-            <li>{{ global_ui.core_functions.capsule }}</li>
-            <li>{{ global_ui.core_functions.construction }}</li>
-            <li>{{ global_ui.core_functions.media }}</li>
-        </ul>
-        <p class="neon-green">Баланс системы: {{ ezhik.total_revenue }}</p>
+
+    <div class="gateway-box">
+        <div style="text-align: center; margin-bottom: 30px;">
+            <span style="color: #00f2fe; font-family: monospace; font-size: 0.8rem; font-weight: bold; display: block; margin-bottom: 5px; text-transform: uppercase;">🛰️ b2b-КОНТУР МЕЗАНИН // GLOBAL TENDR STAMP GATEWAY</span>
+            <div style="font-size: 3.5rem; margin-bottom: 10px;">🛰️🦔🎯📋🎨🔐</div>
+            <h1 style="margin: 0; font-size: 1.8rem; color: #fff; text-transform: uppercase; letter-spacing: -0.5px;">Глобальный Шлюз Тендеров & Цифровой Печати</h1>
+            <p style="color: #94a3b8; font-size: 0.95rem; line-height: 1.5; margin-top: 10px; max-width: 750px; margin-left: auto; margin-right: auto;">
+                Инновационная экосистема для сторонних ИТР-пользователей (Users). После верификации по коду Ёжика Authenticator на лету разделяет роли, обучает юзера анализу, генерирует акты М-15 с цифровой печатью и находит прибыльные тендеры по всей Земле [1.5, 1.6]!
+            </p>
+        </div>
+
+        <!-- КОНТУР 1: ЦИФРОВОЕ ЗАВЕРЕНИЕ И ПЕЧАТЬ АКТОВ -->
+        <div class="feature-row" style="border-left: 4px solid #10b981;">
+            <div style="max-width: 60%; text-align: left;">
+                <strong style="color: #fff; font-size: 1.05rem; display: block;">📑 Быстрое создание и ЭЦП-Заверение Актов М-15</strong>
+                <span style="color: #94a3b8; font-size: 0.85rem; display: block; margin-top: 5px; line-height: 1.4;">Автоматическое формирование накладных перемещения расходников со склада. Наложение суверенной цифровой печати холдинга в один клик [1.5, 1.6].</span>
+            </div>
+            <div class="stamp-zone" id="stamp-box" onclick="this.style.background='#10b981'; this.style.color='#000'; this.innerText='🔒 ДОКУМЕНТ ЗАВЕРЕН ЭЦП // М-15 АКТ АКТИВЕН'; alert('⚡ Ёжик успешно наложил суверенную печать холдинга FAMILYMIRO! Акт М-15 юридически заверен и отгружен в архив [1.5, 1.6]!')">
+                [ 📑 НАЛОЖИТЬ ЦИФРОВУЮ ПЕЧАТЬ ]
+            </div>
+        </div>
+
+        <!-- КОНТУР 2: ИИ-РАДАР ТЕНДЕРОВ -->
+        <div class="feature-row" style="border-left: 4px solid #00f2fe;">
+            <div style="max-width: 65%; text-align: left;">
+                <strong style="color: #fff; font-size: 1.05rem; display: block;">🎯 ИИ-Ищейка Подрядчиков & Сканер Тендеров Земли</strong>
+                <span style="color: #94a3b8; font-size: 0.85rem; display: block; margin-top: 5px; line-height: 1.4;">Ёжик автоматически сканирует заказы, определяет, кому подойдёт тендер, рассчитывает смету в Мезанине и помогает юзеру выйти на стабильный b2b-оборот [1.5, 1.6].</span>
+            </div>
+            <button style="background: linear-gradient(135deg, #00f2fe 0%, #0284c7 100%); font-size: 0.85rem; font-weight: bold;" onclick="alert('🛰️ Ёжик запустил сканирование тендерных площадок Тулы и баз мира! Найдено 4 целевых контракта на поставку алмазных расходников. Аналитика отгружена в Лэптоп Юзера [1.5, 1.6]!')">ЗАПУСТИТЬ ПОИСК ЗАКАЗОВ 🚀</button>
+        </div>
+
+        <div style="margin-top: 35px; text-align: center;">
+            <a href="/products/" style="color: #00f2fe; text-decoration: none; font-size: 0.85rem; font-weight: bold;">← На главную витрину Матрицы</a>
+        </div>
     </div>
+
 </body>
 </html>

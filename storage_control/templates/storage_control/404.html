@@ -1,0 +1,34 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>404 — Шлюз ИИ-Перехвата Ёжика</title>
+    {% include "storage_control/base_css.html" %}
+    <style>
+        body { background: #060913 radial-gradient(circle at 50% 30%, #0b1528 0%, #03050a 70%) no-repeat center center fixed; color: #f1f1f1; font-family: "Roboto", Arial, sans-serif; text-align: center; padding: 0; margin: 0; }
+        .error-box { max-width: 600px; margin: 18vh auto 0 auto; padding: 40px; background: rgba(11, 21, 40, 0.6); backdrop-filter: blur(15px); border: 1px solid #ef4444; border-radius: 16px; box-shadow: 0 0 40px rgba(239, 68, 68, 0.15); }
+        .badge-404 { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid #ef4444; padding: 4px 12px; font-size: 0.8rem; font-weight: bold; border-radius: 20px; font-family: monospace; display: inline-block; margin-bottom: 20px; }
+        .btn-nav { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: #fff; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-size: 0.9rem; font-weight: bold; display: inline-block; margin: 10px; transition: all 0.2s; }
+        .btn-nav:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4); }
+    </style>
+</head>
+<body>
+    <div class="error-box">
+        <div class="badge-404">🛰️ СЕТЕВОЙ ОКОП РАДАРА АКТИВЕН // КОНТУР 404</div>
+        <span style="font-size: 4rem; display: block; margin-bottom: 10px;">🦔🕵️‍♂️🚨</span>
+        <h1 style="color: #fff; font-size: 1.8rem; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: -0.5px;">Маршрут не найден</h1>
+        <p style="color: #94a3b8; font-size: 0.95rem; line-height: 1.5; margin-bottom: 20px;">
+            Привет, гость! Похоже, вы опечатались в адресе или перешли по битой ссылке. Ваш текущий узел связи <strong>{{ user_ip }}</strong> зафиксирован ИИ-Радаром безопасности. 
+        </p>
+        <p style="color: #10b981; font-weight: bold; font-size: 0.9rem; margin-bottom: 30px;">
+            Не волнуйтесь, я ваш Наставник и Друг! Ниже я подготовил безопасные ниточки шлюзов для возвращения в эфир:
+        </p>
+        
+        <div>
+            <a href="/" class="btn-nav">🦅 ГЛАВНЫЙ ПОРТАЛ</a>
+            <a href="/products/" class="btn-nav" style="background: linear-gradient(135deg, #10b981 0%, #047857 100%);">🛍️ МАРКЕТПЛЕЙС КАПИТАЛА</a>
+        </div>
+    </div>
+</body>
+</html>

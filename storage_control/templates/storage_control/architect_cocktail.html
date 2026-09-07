@@ -1,94 +1,58 @@
-{% load static %} <!-- Загружаем систему статики Django -->
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>👑 FAMILYMIRO — ПУЛЬТ АРХИТЕКТОРА</title>
-    
-    <!-- ПОДКЛЮЧАЕМ ИЗОЛИРОВАННЫЙ CSS ИЗ СВОЕЙ ПАПКИ СТАТИКИ ✅ -->
-    <link rel="stylesheet" href="{% static 'storage_control/css/architect.css' %}">
+    <title>FAMILYMIRO — ИТР Лаунж Архитектора</title>
+    {% include "storage_control/base_css.html" %}
+    <style>
+        body { background: #0c0a1c radial-gradient(circle at 50% 20%, #1e1145 0%, #05040d 70%) no-repeat center center fixed; color: #f1f1f1; font-family: "Roboto", Arial, sans-serif; padding: 24px; margin: 0; }
+        .lounge-container { max-width: 800px; margin: 5vh auto 0 auto; padding: 35px; background: rgba(30, 17, 69, 0.4); backdrop-filter: blur(20px); border: 1px solid #a855f7; border-radius: 16px; box-shadow: 0 0 50px rgba(168, 85, 247, 0.2); }
+        .cocktail-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; margin-top: 25px; }
+        .cocktail-card { background: #0f0b26; border: 1px solid rgba(168, 85, 247, 0.2); border-radius: 10px; padding: 16px; cursor: pointer; transition: all 0.2s; text-align: center; }
+        .cocktail-card:hover { border-color: #00f2fe; transform: scale(1.03); box-shadow: 0 0 20px rgba(0, 242, 254, 0.15); }
+        .badge-lounge { background: rgba(168, 85, 247, 0.1); color: #c084fc; border: 1px solid #a855f7; padding: 4px 12px; font-size: 0.75rem; font-weight: bold; border-radius: 20px; display: inline-block; margin-bottom: 15px; letter-spacing: 1px; }
+    </style>
 </head>
 <body>
 
-<div class="master-container">
-    <div class="header-section">
-        <h1>👔 CENTRAL MASTER PULSAR 1.6</h1>
-        <div class="badge">ГЛАВНЫЙ АРХИТЕКТОР: МАКСИМ КОСАРЕВ</div>
-    </div>
+    <div class="lounge-container">
+        <div class="badge-lounge">🍸 ПРЕМЬЕРНЫЙ КЛУБ ИТР ПРОЕКТИРОВЩИКОВ холдинга // FAMILYMIRO 1.6</div>
+        <span style="font-size: 4rem; display: block; margin-bottom: 10px;">🍸🦔📐</span>
+        <h1 style="margin: 0; font-size: 1.8rem; color: #fff; text-transform: uppercase; letter-spacing: -0.5px;">Лаунж-Бар Главного Архитектора</h1>
+        <p style="color: #94a3b8; font-size: 0.95rem; line-height: 1.5; margin-top: 10px;">
+            Добро пожаловать в закрытый узел вещания для ГИПов и авторов концептов Тулы. Наш ИИ-Бармен Ёжик оцифровал лучшие b2b-кейсы снабжения и завернул их в интерактивные коктейли. Кликай по меню, чтобы изучить рецепт экономии смет [1.5, 1.6]!
+        </p>
 
-    <div class="dashboard-grid">
-        <div style="display: flex; flex-direction: column; gap: 20px;">
-            <div class="card-panel">
-                <div class="panel-title">💰 Автономный капитал (Сейф Опеки)</div>
-                <div class="balance-display">{{ total_revenue }} RUB</div>
-                <div style="font-size: 0.7rem; color: #64748b;">
-                    Статус: Сплитование LAVA API активно (6% ФНС / 16% Премия Отца за скорость).
-                </div>
-                
-                <a href="/architect/builders-pdf-report/" style="text-decoration: none; display: inline-block;">
-                    <button class="btn-send btn-pdf">🖨️ Сформировать Вековой PDF-Отчет (Кэш Клиентов)</button>
-                </a>
+        <div class="cocktail-grid">
+            
+            <!-- КОКТЕЙЛЬ 1 -->
+            <div class="cocktail-card" onclick="alert('🍸 Рецепт «СНиП-Бетон»:\n\nЗаложите в проект OpenCV-верификацию объемов. Это экономит до 15% жидкого бетона на Тульских объектах за счет ликвидации ручного воровства [1.5, 1.6]!')">
+                <span style="font-size: 2rem; display: block; margin-bottom: 8px;">🥛</span>
+                <h4 style="margin: 0; color: #fff; font-size: 0.95rem;">Коктейль «СНиП-Бетон»</h4>
+                <p style="margin: 4px 0 0 0; color: #a855f7; font-size: 0.8rem;">Для конструкторов ИТР</p>
             </div>
 
-            <div class="card-panel">
-                <div class="panel-title">🦔 ИИ-Сводка Смотрителя</div>
-                <div class="report-text">{{ ezhik_report }}</div>
+            <!-- КОКТЕЙЛЬ 2 -->
+            <div class="cocktail-card" onclick="alert('🍸 Рецепт «Алмазный Рез»:\n\nИспользуйте b2b-расходники Амазон контура. Спец-диски 230мм режут арматуру Тулы в 2.5 раза дольше стандартных, сберегая время снабжения [1.5]!')">
+                <span style="font-size: 2rem; display: block; margin-bottom: 8px;">💿</span>
+                <h4 style="margin: 0; color: #fff; font-size: 0.95rem;">Коктейль «Алмазный Рез»</h4>
+                <p style="margin: 4px 0 0 0; color: #10b981; font-size: 0.8rem;">Для мастеров резки</p>
             </div>
+
+            <!-- КОКТЕЙЛЬ 3 -->
+            <div class="cocktail-card" onclick="alert('🍸 Рецепт «Вековой Капитал»:\n\nЗапечатайте родовые файлы в Сейф на 300 лет. Автономное самопродление серверов обеспечит защиту ДНК вашего бренда на поколения вперед [1.5, 1.6]!')">
+                <span style="font-size: 2rem; display: block; margin-bottom: 8px;">👑</span>
+                <h4 style="margin: 0; color: #fff; font-size: 0.95rem;">Коктейль «Вековой Капитал»</h4>
+                <p style="margin: 4px 0 0 0; color: #38bdf8; font-size: 0.8rem;">Для инвесторов холдинга</p>
+            </div>
+
         </div>
 
-        <div style="display: flex; flex-direction: column; gap: 20px;">
-            <div class="card-panel">
-                <div class="panel-title">🤝 Перехваченные предложения партнеров</div>
-                <div style="max-height: 230px; overflow-y: auto;">
-                    {% for offer in partner_offers %}
-                        <div class="offer-item">
-                            <span style="color: var(--gold-glow); font-weight: bold; display: block; margin-bottom: 4px;">
-                                {{ offer.current_page }}
-                            </span>
-                            <span style="color: #cbd5e1;">{{ offer.last_error_log }}</span>
-                        </div>
-                    {% empty %}
-                        <div style="font-size: 0.8rem; color: #64748b; text-align: center; padding: 40px 0;">
-                            [Партнеры изучают манифест Слоя 0.0. Офферов нет]
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
-
-            <div class="card-panel">
-                <div class="panel-title">🛠️ Задать курс для Ёжика</div>
-                <div style="font-size: 0.75rem; color: #64748b; margin-bottom: 10px;">
-                    Ёжик тактично повторит ваш ответ партнерам за занавесом.
-                </div>
-                <textarea id="decision-text" class="input-decision" rows="3" placeholder="Задайте новое распоряжение или скорректируйте процент премии..."></textarea>
-                <button id="btn-submit-decision" class="btn-send">Утвердить курс</button>
-            </div>
+        <div style="margin-top: 30px; text-align: center;">
+            <a href="/products/" style="color: #a855f7; text-decoration: none; font-size: 0.85rem; font-weight: bold;">← Вернуться на Главную витрину Капитала</a>
         </div>
     </div>
-</div>
-
-<script>
-    document.getElementById('btn-submit-decision').addEventListener('click', function() {
-        const text = document.getElementById('decision-text').value.trim();
-        if (!text) return;
-
-        fetch('/api/ezhik/diplomacy/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify({ partner_name: "Архитектор Максим", offer_text: text })
-        })
-        .then(res => res.json())
-        .then(data => {
-            alert("Курс Архитектора намертво запечатан в систему! Ёжик принял инструкции.");
-            document.getElementById('decision-text').value = '';
-            location.reload();
-        });
-    });
-</script>
 
 </body>
 </html>

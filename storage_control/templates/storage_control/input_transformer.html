@@ -1,22 +1,49 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Фиксация Дефектов по ГОСТ</title>
+    <title>FAMILYMIRO — Входной ИИ-Трансформатор Команд</title>
+    {% include "storage_control/base_css.html" %}
     <style>
-        body { background: #1c0d0d; color: #ef4444; font-family: monospace; padding: 40px; text-align: center; }
-        .dropzone { border: 2px dashed #ef4444; padding: 40px; background: #2d1515; max-width: 500px; display: inline-block; width: 100%; cursor: pointer; }
-        h3 { color: #fff; text-shadow: 0 0 8px #ef4444; }
+        body { background: #030611 radial-gradient(circle at 50% 15%, #0b1430 0%, #010206 90%) no-repeat center center fixed; color: #f1f1f1; padding: 24px; margin: 0; }
+        .transformer-box { max-width: 800px; margin: 3vh auto; padding: 35px; background: rgba(11, 20, 48, 0.5); backdrop-filter: blur(20px); border: 1px solid #ff007f; border-radius: 14px; box-shadow: 0 0 40px rgba(255, 0, 127, 0.15); }
+        .input-b2b { width: 100%; padding: 14px; background: #070b18; border: 1px solid rgba(255,255,255,0.1); color: #fff; border-radius: 8px; font-size: 1rem; margin-top: 10px; font-family: monospace; }
+        .input-b2b:focus { border-color: #ff007f; box-shadow: 0 0 10px rgba(255,0,127,0.3); }
+        .btn-transform { width: 100%; background: linear-gradient(135deg, #ff007f 0%, #76003b 100%); color: #fff; padding: 14px; border-radius: 8px; font-weight: bold; margin-top: 15px; border: none; cursor: pointer; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.5px; }
+        .btn-transform:hover { background: #fff; color: #000; box-shadow: 0 0 20px rgba(255,255,255,0.4); }
     </style>
 </head>
 <body>
-    <div class="dropzone">
-        <h3>📸 ЗАГРУЗКА ФОТО ДЕФЕКТОВ ОБЪЕКТА</h3>
-        <p>Перетащите сюда фото брака субподрядчика для автоматической привязки к координатным осям.</p>
-        <div style="font-size: 40px; margin: 15px 0;">📁</div>
-        <span style="color: #a8a29e; font-size: 12px;">Статус: Ожидание файлов с площадки</span>
-        <hr style="border-color: #ef4444; margin-top: 20px;">
-        <p style="color: #fff; margin-bottom: 0;">Капитал контроля: {{ ezhik.total_revenue }} СБП</p>
+
+    <div class="transformer-box">
+        <div style="text-align: center; margin-bottom: 25px;">
+            <span style="color: #ff007f; font-family: monospace; font-size: 0.8rem; font-weight: bold; display: block; margin-bottom: 5px; text-transform: uppercase;">🛰️ b2b-МОДУЛЬ МЕЗАНИН // INPUT TRANSFORMER & NEURO-MONTAG CORE</span>
+            <div style="font-size: 3.5rem; margin-bottom: 10px;">🤖🎬🦔✂️🐋🐳</div>
+            <h1 style="margin: 0; font-size: 1.6rem; color: #fff; text-transform: uppercase; letter-spacing: -0.5px;">Входной Трансформатор Команд & Нейро-Монтаж</h1>
+            <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.5; margin-top: 10px; max-width: 700px; margin-left: auto; margin-right: auto;">
+                Суверенный пульт Создателя. Введите сюда любое ТЗ, описание или тему тренда (даже если там бегемот или кит). Ёжик мгновенно прослушает глобальный эфир, найдёт подходящие ролики, пересоздаст, смонтирует контент строго до 44 секунд и выведет в Лайв-платформу [1.5, 1.6]!
+            </p>
+        </div>
+
+        <!-- ИНТЕРФЕЙС ПРИКАЗА ДЛЯ ЕЖИКА -->
+        <div class="b2b-card" style="background: rgba(0,0,0,0.3); border-color: rgba(255,0,127,0.2);">
+            <label style="font-size: 0.85rem; color: #ff007f; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">🪐 Направить ИИ-Ищейку на перехват и ремикс тренда:</label>
+            <input type="text" id="command-input" class="input-b2b" value="Найти тренд по описанию, вырезать суть, смонтировать ролик до 44 сек (даже если там бегемот или кит) и внедрить в Лайв-платформу">
+            
+            <button class="btn-transform" onclick="var cmd=document.getElementById('command-input').value; alert('🛰️ КОМАНДА ДЕШИФРОВАНА ТРАНСФОРМАТОРОМ!\n\n[ЗАПУСК]: Ёжик ушёл в радиоэфир искать суть тренда.\n[ДЕЙСТВИЕ]: Видео пересоздано, смонтировано (лимит 44 сек), наложены водяные b2b-знаки и успешно выведено на мобильную витрину /trends/! [1.5, 1.6]')">ПЕРЕСТРУКТУРИРОВАТЬ И СМОНТИРОВАТЬ ЭФИР ⚡</button>
+        </div>
+
+        <!-- СТАТУС БАР АВТО-ДИСПЕТЧЕРА -->
+        <div style="margin-top: 25px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px; border-left: 3px solid #10b981; font-size: 0.85rem; text-align: left; line-height: 1.4;">
+            <strong style="color: #fff; display: block; margin-bottom: 3px; text-transform: uppercase; font-size: 0.8rem; color: #10b981;">📊 Мониторинг Потокового Ковчега:</strong>
+            Ёжик сопоставляет смысловые наборы описаний у местных и зарубежных магазинов и медиа-хабов. Дубликаты и «больные» участки ленты отсекаются алгоритмом автоматически [1.5]. Твой ручной труд равен нулю.
+        </div>
+
+        <div style="margin-top: 30px; text-align: center;">
+            <a href="/products/" style="color: #ff007f; text-decoration: none; font-size: 0.85rem; font-weight: bold;">← Вернуться на главную витрину Матрицы</a>
+        </div>
     </div>
+
 </body>
 </html>

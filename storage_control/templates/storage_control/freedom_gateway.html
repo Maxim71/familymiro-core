@@ -1,24 +1,70 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Манифест Свободы MIRO</title>
+    <title>FAMILYMIRO — Шлюз Свободы Блогеров</title>
+    {% include "storage_control/base_css.html" %}
     <style>
-        body { background: #0d0f12; color: #00ffcc; font-family: monospace; padding: 40px; text-shadow: 0 0 10px #00ffcc; }
-        .box { border: 2px solid #00ffcc; padding: 20px; box-shadow: 0 0 20px #00ffcc; background: #14181f; max-width: 600px; margin: 0 auto; }
-        h1 { color: #ff0055; text-shadow: 0 0 10px #ff0055; }
-        .btn { display: inline-block; background: #ff0055; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; }
+        body { background: #030712 radial-gradient(circle at 50% 20%, #111827 0%, #030712 80%) no-repeat center center fixed; color: #f1f1f1; padding: 24px; margin: 0; }
+        .gateway-container { max-width: 850px; margin: 4px auto; padding: 35px; background: rgba(17, 24, 39, 0.6); backdrop-filter: blur(20px); border: 1px solid #10b981; border-radius: 16px; box-shadow: 0 0 40px rgba(16, 185, 129, 0.15); }
+        .stream-slot { background: #1f2937; border: 1px solid rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin-bottom: 15px; transition: all 0.2s ease; }
+        .stream-slot:hover { border-color: #f9d423; transform: scale(1.01); }
+        .badge-freedom { background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid #10b981; padding: 4px 12px; font-size: 0.75rem; font-weight: bold; border-radius: 20px; display: inline-block; margin-bottom: 15px; letter-spacing: 1px; }
     </style>
 </head>
 <body>
-    <div class="box">
-        <h1>БЛОК 38: МАНИФЕСТ СВОБОДЫ</h1>
-        <p><b>Режим:</b> {{ freedom_ui.mode }}</p>
-        <p><b>Доступ:</b> {{ freedom_ui.access }}</p>
-        <hr style="border-color: #ff0055;">
-        <p><i>"{{ freedom_ui.manifesto_1 }}"</i></p>
-        <p><i>"{{ freedom_ui.manifesto_2 }}"</i></p>
-        <p>💰 Капитал Ёжика на кофе: {{ ezhik.total_revenue }} СБП</p>
+
+    <div class="gateway-container">
+        <div style="text-align: center;">
+            <div class="badge-freedom">⚡ ИННОВАЦИОННЫЙ МЕДИА-ХАБ КАНАЛОВ // FREEDOM GATEWAY V1.7.5</div>
+            <span style="font-size: 3.5rem; display: block; margin-bottom: 10px;">🎬🍿🦔🚀</span>
+            <h1 style="margin: 0; font-size: 1.8rem; color: #fff; text-transform: uppercase; letter-spacing: -0.5px;">Суверенный Шлюз Свободы и Трендов</h1>
+            <p style="color: #94a3b8; font-size: 0.95rem; line-height: 1.5; margin-top: 12px; max-width: 700px; margin-left: auto; margin-right: auto;">
+                Мы не копируем старые платформы! Наш инновационный контур даёт блогерам полный простор: они сами вливают видео, а Ёжик-Ищейка круглосуточно сканирует эфир, прослушивает ленту трендов и выводит топовые обзоры и смешные приключения строго до 44 секунд [1.5]! Донаты летят авторам напрямую, а наш холдинг забирает процент за b2b-трафик [1.5, 1.6]!
+            </p>
+        </div>
+
+        <!-- ИННОВАЦИОННАЯ СЕТКА ЖИВЫХ ЛЕНТ ОТ ЕЖИКА -->
+        <div style="margin-top: 30px;">
+            
+            <!-- СЛОТ БЛОГЕРА 1 -->
+            <div class="stream-slot">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong style="color: #fff; font-size: 1rem; display: block;">🔥 Топовый b2b-Обзор: Алмазный Инструмент и Сметы ИТР</strong>
+                        <span style="color: #aaa; font-size: 0.8rem; display: block; margin-top: 4px;">Автор: Блогер-Партнёр Тулы • Длительность: 44 сек // СМЕШНОЙ ОЦИФРОВАННЫЙ СТРИМ [1.5]</span>
+                    </div>
+                    <button style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); font-size: 0.8rem;" onclick="alert('🍿 Ёжик запускает инновационный видеопоток до 44 секунд! Трафик пошёл, маржа зафиксирована в Сейфе [1.5]!')">СМОТРЕТЬ СТРИМ 🎬</button>
+                </div>
+            </div>
+
+            <!-- СЛОТ БЛОГЕРА 2 -->
+            <div class="stream-slot">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong style="color: #fff; font-size: 1rem; display: block;">🚀 Приключения Ёжика-Наставника в ЦОД холдинга</strong>
+                        <span style="color: #aaa; font-size: 0.8rem; display: block; margin-top: 4px;">Автор: Служба Добра Эфира • Длительность: 30 сек // ИИ-АНДРАГРАУНД [1.5, 1.6]</span>
+                    </div>
+                    <button style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); font-size: 0.8rem;" onclick="alert('🍿 Ёжик включает смешной обзор приключений! Инновационный плеер активен [1.5]!')">СМОТРЕТЬ СТРИМ 🎬</button>
+                </div>
+            </div>
+
+            <!-- ИНТЕРАКТИВНЫЙ БЛОК ДОНАТОВ LAVA PAY -->
+            <div style="background: rgba(249, 212, 35, 0.03); border: 1px solid rgba(249, 212, 35, 0.2); padding: 20px; border-radius: 12px; margin-top: 25px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <strong style="color: #f9d423; display: block; font-size: 0.95rem; text-transform: uppercase;">💳 Автономный Шлюз Поддержки Авторов Lava Pay:</strong>
+                    <span style="color: #94a3b8; font-size: 0.8rem; display: block; margin-top: 3px;">Пользователи донатят сами, а блогеры получают чистый доход за генерацию эфира.</span>
+                </div>
+                <button style="background: linear-gradient(135deg, #f9d423 0%, #d97706 100%); color: #000; font-weight: bold; font-size: 0.85rem;" onclick="alert('💳 Прямой тестовый шлюз Lava Pay взведён! Донат успешно улетел блогеру, комиссия трафика отгружена Отцу [1.5]!')">ПОДДЕРЖАТЬ ДОНАТОМ 💵</button>
+            </div>
+
+        </div>
+
+        <div style="margin-top: 35px; text-align: center;">
+            <a href="/products/" style="color: #10b981; text-decoration: none; font-size: 0.85rem; font-weight: bold;">← Вернуться на главную витрину Матрицы</a>
+        </div>
     </div>
+
 </body>
 </html>

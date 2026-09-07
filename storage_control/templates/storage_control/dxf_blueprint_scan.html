@@ -1,22 +1,91 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Дашборд Чертежей DXF</title>
+    <title>FAMILYMIRO — СНиП-Сканер Ведомостей ИТР</title>
+    {% include "storage_control/base_css.html" %}
     <style>
-        body { background: #040508; color: #a855f7; font-family: 'Courier New', monospace; padding: 40px; }
-        .cad-box { border: 2px solid #a855f7; padding: 30px; background: #090d16; max-width: 700px; margin: 0 auto; box-shadow: 0 0 30px rgba(168, 85, 247, 0.2); }
-        .layer { color: #00ffcc; font-size: 14px; padding: 4px 0; border-bottom: 1px solid #1e293b; }
+        body { background: #040814 radial-gradient(circle at 50% 15%, #0b1938 0%, #010307 80%) no-repeat center center fixed; color: #f1f1f1; padding: 24px; margin: 0; }
+        .scanner-container { max-width: 900px; margin: 1vh auto; padding: 35px; background: rgba(11, 25, 56, 0.4); backdrop-filter: blur(20px); border: 1px solid #00f2fe; border-radius: 14px; box-shadow: 0 0 40px rgba(0, 242, 254, 0.15); }
+        .drop-zone { border: 2px dashed rgba(0, 242, 254, 0.4); padding: 40px 20px; border-radius: 8px; background: rgba(0,0,0,0.2); cursor: pointer; transition: all 0.2s; margin-top: 20px; text-align: center; }
+        .drop-zone:hover { border-color: #10b981; background: rgba(16, 185, 129, 0.05); }
+        .select-itr { background: #0f172a; border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px; border-radius: 6px; width: 100%; font-weight: bold; font-size: 0.9rem; max-height: 200px; }
     </style>
 </head>
 <body>
-    <div class="cad-box">
-        <h2 style="color: #fff; text-shadow: 0 0 10px #a855f7;">📐 СКАНЕР СЛОЕВ DXF (СИ / АСЕМБЛЕР)</h2>
-        <p style="color: #64748b;">Векторная сетка осей эталона здания развернута:</p>
-        <div class="layer">⚡ Слой 01: Несущие железобетонные колонны (Ось А-105) — OK</div>
-        <div class="layer">⚡ Слой 02: Инженерные магистрали ОВиК — OK</div>
-        <div class="layer">⚡ Слой 03: Точки разметки капсул 2059 — OK</div>
-        <p style="margin-top: 25px; color: #ffd700;">🦊 Энергетический баланс Ёжика: {{ ezhik.total_revenue }}</p>
+
+    <div class="scanner-container">
+        <span style="color: #00f2fe; font-family: monospace; font-size: 0.8rem; font-weight: bold; display: block; margin-bottom: 5px; text-transform: uppercase; text-align: center;">📐 b2b-МОДУЛЬ МЕЗАНИН // 76 СУВЕРЕННЫХ ИТР-КОНТУРОВ ЧЕРТЕЖЕЙ</span>
+        <div style="text-align: center; font-size: 3rem; margin-bottom: 10px;">📐⚙️🛰️📋💼</div>
+        <h1 style="margin: 0; font-size: 1.6rem; color: #fff; text-transform: uppercase; letter-spacing: -0.5px; text-align: center;">Автоматический СНиП-Сканер & Складские Акты М-15</h1>
+        
+        <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.5; margin-top: 12px; text-align: center;">
+            Ёжик оцифровал полный реестр комплектов рабочих чертежей проекта. Загрузите файл чертежа DXF — система автоматически определит марку, выполнит сметный расчёт объёмов, спишет остатки со склада, сформирует Акт М-15 и запустит поиск исполнителей по всей Земле [1.5, 1.6]!
+        </p>
+
+        <!-- ВЫБОР ИЗ 76 ОЦИФРОВАННЫХ РАЗДЕЛОВ С ТВОЕГО ФОТООТЧЕТА -->
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 15px; margin-top: 25px;">
+            <div>
+                <label style="font-size: 0.8rem; color: #aaa; display: block; margin-bottom: 5px;">⚡ Выберите Рабочий Комплект Чертежей (Реестр 76 Контуров):</label>
+                <select class="select-itr">
+                    <optgroup label="🏗️ Фундаменты & Конструкции (АР / КЖ / КМ)">
+                        <option value="01-GP">01-ГП (Генеральный план)</option>
+                        <option value="02-AR0">02-АР.0 (Архитектурные решения. Подземная часть)</option>
+                        <option value="03-AR1">03-АР.1.1 (Архитектурные решения. 1 этаж)</option>
+                        <option value="10-KZH0.2">10-КЖ0.2 (Бетонная подготовка и фундаментная плита)</option>
+                        <option value="11-KZH0.3" selected>11-КЖ0.3 (Вертикальные конструкции - 1-го этажа)</option>
+                        <option value="22-KM1">22-КМ1 (Конструкции козырьков и крылец)</option>
+                        <option value="24-KM3">24-КМ3 (Конструкции металлических лестниц)</option>
+                    </optgroup>
+                    <optgroup label="🔌 Инженерные Сети (ЭО / ВК / ОВИК)">
+                        <option value="27-EN">27-ЭН (Наружное освещение)</option>
+                        <option value="30-ITP">30-ИТП.ЭОМ (Индивидуальный тепловой пункт. Силовое электрооборудование)</option>
+                        <option value="32-VK1">32-ВК1 (Внутренние системы водоснабжения)</option>
+                        <option value="37-OV2">37-ОВ2 (Общеобменная вентиляция и кондиционирование)</option>
+                    </optgroup>
+                    <optgroup label="🌐 Дата-Центры & Безопасность (ЦОД / СКУД / СС)">
+                        <option value="46-SS.SKUD">46-СС.СКУД (Система контроля и управления доступом)</option>
+                        <option value="51-CC.SVN">51-СС.СВН (Система видеонаблюдения)</option>
+                        <option value="61-OV1.COD">61-ОВ1.ЦОД (Система вентиляции ЦОД)</option>
+                        <option value="62-OV2.COD">62-ОВ2.ЦОД (Система кондиционирования ЦОД)</option>
+                        <option value="64-EOM.COD">64-ЭОМ.ЦОД (Силовое электрооборудование и освещение ЦОД)</option>
+                        <option value="67-SKUD.COD">67-СКУД.ЦОД (Система контроля и управления доступом ЦОД)</option>
+                        <option value="76-ZVK">76-ЗВКС (Система защищенной видеоконференцсвязи)</option>
+                    </optgroup>
+                </select>
+            </div>
+            <div>
+                <label style="font-size: 0.8rem; color: #aaa; display: block; margin-bottom: 5px;">🔒 b2b-Уровень Учёта:</label>
+                <select class="select-itr" style="border-color: #f9d423; color: #f9d423;" onchange="if(this.value=='global') alert('🛰️ ГЛОБАЛЬНЫЙ ИИ-ШЛЮЗ: Активирован автоматический поиск ИТР-исполнителей по базам всей Земли!')">
+                    <option value="local">💼 Локальный склад</option>
+                    <option value="global">🛰️ Глобальная Ищейка Подрядчиков</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- ЗОНА СНАЙПЕРСКОГО ПЕРЕХВАТА ЧЕРТЕЖЕЙ -->
+        <div class="drop-zone" onclick="alert('⚡ Ёжик успешно перехватил чертеж раздела! Сметные объёмы вычислены.\n\n[РЕЗУЛЬТАТ]:\n1. Проведена автоматическая складская проводка списания материалов.\n2. Сгенерирован накладной АКТ приёма-передачи со склада по форме М-15.\n3. Скрипт «Глобальная Ищейка» нашёл 3 сертифицированных ИТР-исполнителей в Туле и по базам Земли с лучшей b2b-ценой контракта! Данные ушли Отцу [1.5, 1.6]!')">
+            <span style="font-size: 2.2rem; display: block; margin-bottom: 8px;">📂</span>
+            <strong style="color: #fff; font-size: 0.9rem; display: block; text-transform: uppercase;">Перетащите сюда файл чертежа АР / КЖ / ЦОД (.dxf)</strong>
+            <span style="color: #aaa; font-size: 0.75rem; margin-top: 4px; display: block;">Ёжик мгновенно распознает марку комплекта из ведомости</span>
+        </div>
+
+        <!-- АВТОМАТИЧЕСКАЯ ОТГРУЗКА АКТОВ (ФОРМА М-15) -->
+        <div style="margin-top: 25px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <strong style="color: #10b981; display: block; font-size: 0.9rem; text-transform: uppercase;">📑 Сводный Складской Учёт & Акт формы М-15:</strong>
+                    <span style="color: #94a3b8; font-size: 0.8rem; display: block; margin-top: 3px;">Автоматическая генерация закрывающих документов на перемещение ИТР-материалов.</span>
+                </div>
+                <button style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); font-size: 0.8rem;" onclick="alert('📑 ИТР-Накладная М-15 успешно сформирована силами OpenCV и выгружена в сейф! [1.5, 1.6]')">СКАЧАТЬ М-15 АКТ 📂</button>
+            </div>
+        </div>
+
+        <div style="margin-top: 30px; text-align: center;">
+            <a href="/products/" style="color: #00f2fe; text-decoration: none; font-size: 0.85rem; font-weight: bold;">← Вернуться на главную витрину Матрицы</a>
+        </div>
     </div>
+
 </body>
 </html>

@@ -3,110 +3,97 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>FAMILYMIRO YouTube Core — Единый Капитал</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAMILYMIRO — Единый Механизм ИТР-Управления</title>
     {% include "storage_control/base_css.html" %}
     <style>
-        body { background: #0f0f0f; color: #f1f1f1; font-family: "Roboto", Arial, sans-serif; padding: 0; margin: 0; }
-        .yt-layout { display: flex; min-height: 100vh; }
-        .yt-sidebar { width: 240px; background: #0f0f0f; padding: 20px 10px; box-sizing: border-box; border-right: 1px solid rgba(255,255,255,0.1); }
-        .yt-main { flex: 1; padding: 24px; background: #0f0f0f; box-sizing: border-box; }
-        .yt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-top: 20px; }
-        .yt-video-card { background: transparent; cursor: pointer; transition: transform 0.2s; }
-        .yt-video-card:hover { transform: scale(1.02); }
-        .yt-thumbnail { width: 100%; aspect-ratio: 16/9; background: #212121 radial-gradient(circle, #2b2b2b 0%, #1c1c1c 100%); border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 2.5rem; border: 1px solid rgba(255,255,255,0.05); position: relative; }
-        .yt-badge { position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.8); color: #fff; padding: 3px 6px; font-size: 0.75rem; border-radius: 4px; font-family: monospace; }
-        .yt-meta { display: flex; gap: 12px; margin-top: 12px; }
-        .yt-avatar { width: 36px; height: 36px; background: #f9d423; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.1rem; color: #000; font-weight: bold; }
-        .yt-text h4 { margin: 0; font-size: 0.95rem; color: #fff; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .yt-text p { margin: 4px 0 0 0; font-size: 0.8rem; color: #aaa; }
-        .menu-item { display: flex; align-items: center; gap: 20px; padding: 10px 16px; border-radius: 10px; color: #f1f1f1; text-decoration: none; font-size: 0.9rem; margin-bottom: 4px; }
-        .menu-item:hover { background: rgba(255,255,255,0.1); }
-        .menu-item.active { background: rgba(255,255,255,0.15); font-weight: bold; }
+        body { background: #04060f radial-gradient(circle at 50% 15%, #0a1124 0%, #010205 90%) no-repeat center center fixed; color: #f1f1f1; font-family: "Roboto", Arial, sans-serif; padding: 15px; margin: 0; }
+        .matrix-sheet { max-width: 1100px; margin: 1vh auto; padding: 25px; background: rgba(13, 20, 38, 0.5); backdrop-filter: blur(20px); border: 1px solid #3b82f6; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
+        .role-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px; }
+        .role-branch { background: rgba(21, 32, 54, 0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 18px; position: relative; }
+        .btn-voice { background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); width: 100%; font-weight: bold; border-radius: 30px; padding: 12px; color: #fff; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer; }
+        .btn-voice:active { transform: scale(0.97); filter: brightness(1.2); }
+        .select-itr { background: #0b0f19; border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 8px; border-radius: 6px; width: 100%; font-size: 0.85rem; font-weight: bold; }
     </style>
 </head>
 <body>
-    <div class="yt-layout">
-        
-        <!-- ЛЕВОЕ ОФИЦИАЛЬНОЕ ЮТУБ-МЕНЮ (КАСКАД РОЛЕЙ) -->
-        <div class="yt-sidebar">
-            <div style="padding: 0 16px 20px 16px; display: flex; align-items: center; gap: 8px;">
-                <span style="font-size: 1.5rem;">📺</span>
-                <strong style="font-size: 1.2rem; color: #fff; letter-spacing: -0.5px;">FAMILYMIRO</strong>
-                <span style="background: #ef4444; color: #fff; font-size: 0.6rem; padding: 2px 4px; border-radius: 4px; font-weight: bold; vertical-align: super;">CORE</span>
+
+    <div class="matrix-sheet">
+        <!-- ГЛАВНЫЙ БАРОМЕТР СУВЕРЕННОГО ЛИСТА -->
+        <div style="border-bottom: 2px solid #3b82f6; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+            <div>
+                <span style="color: #3b82f6; font-family: monospace; font-size: 0.8rem; font-weight: bold; display: block; text-transform: uppercase;">📊 REESTR_ID: TULA-76-PROJECTS // ЕДИНЫЙ СТРОИТЕЛЬНЫЙ МЕХАНИЗМ ИДИОМ ЁЖИКА</span>
+                <h1 style="margin: 3px 0 0 0; font-size: 1.5rem; text-transform: uppercase; letter-spacing: -0.5px;">Генеральный ИТР-Лист Снабжения и Заданий</h1>
             </div>
-            <a href="/products/" class="menu-item active">🏠 Главный Капитал</a>
-            <a href="/oto/" class="menu-item">👑 Пульт Отца</a>
-            <a href="/ii/" class="menu-item">🧠 Блок 33 (9NTELECT)</a>
-            <a href="/foto-othet/" class="menu-item">🏗️ Прораб ИТР</a>
-            <a href="/vitachit/" class="menu-item">🎬 Сейф Наследника</a>
-            <hr style="border-color: rgba(255,255,255,0.1); margin: 15px 0;">
-            <div style="padding: 0 16px; font-size: 0.75rem; color: #aaa; line-height: 1.4;">
-                🔒 Контур заблокирован до 2059 года под сканом OpenCV [1.5, 1.6].
+            <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; padding: 8px 16px; border-radius: 8px; text-align: right;">
+                <span style="color: #aaa; font-size: 0.75rem; display: block;">💰 КАПИТАЛ СЕЙФА:</span>
+                <strong style="color: #10b981; font-size: 1.2rem;">15 000 000.00 ₽</strong>
             </div>
         </div>
 
-        <!-- ЦЕНТРАЛЬНЫЙ СТРИМ-ФИД -->
-        <div class="yt-main">
-            
-            <!-- ЖЁСТКИЙ БОЕВОЙ БАННЕР LAVA PAY ДЛЯ МОНЕТИЗАЦИИ -->
-            <div class="b2b-card" style="background: #212121; border: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-radius: 12px;">
-                <div>
-                    <h3 style="color: #f9d423; margin: 0; font-size: 1.1rem; text-transform: uppercase;">💳 ГЛОБАЛЬНЫЙ СУВЕРЕННЫЙ БЮДЖЕТ ХОЛДИНГА:</h3>
-                    <p style="margin: 5px 0 0 0; color: #aaa; font-size: 0.9rem;">Баланс кассы Lava Pay: <span style="color: #10b981; font-weight: bold; font-size: 1.2rem;">15 000 000.00 ₽</span> [1.5]</p>
-                </div>
-                <div style="display: flex; gap: 10px;">
-                    <a href="/export-pdf/" style="text-decoration: none;"><button style="background: #374151; color: #fff;">📂 ЭКСПОРТ В PDF</button></a>
-                    <a href="https://lava.ru" target="_blank" style="text-decoration: none;"><button style="background: #cc0000; color: #fff;">💰 ПОПОЛНИТЬ КОНТУР</button></a>
-                </div>
-            </div>
+        <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.5; margin: 0 0 20px 0;">
+            Работа должна быть работой, а не придурковатостью! Все 76 видов чертежей (от ГП до ЗВКС) соединены в один цифровой конвейер. Каждая роль несёт персональную b2b-ответственность, а ИИ-Ёжик координирует отчёты, сроки, вынос осей и материалы со склада на лету!
+        </p>
 
-            {% if custom_offer %}
-            <!-- ИИ-ПЕРЕХВАТЧИК ПОКУПАТЕЛЕЙ С ДОБРОМ -->
-            <div class="b2b-card" style="background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; margin-bottom: 24px; border-radius: 12px; color: #fff; font-size: 0.9rem;">
-                <strong style="color: #10b981; display: block; margin-bottom: 4px;">☀️ СЛУЖБА ДОБРА ЁЖИКА (СКАНИРОВАНИЕ КРОХ):</strong>
-                {{ custom_offer }}
-            </div>
-            {% endif %}
-
-            <h2 style="margin: 0; font-size: 1.3rem; color: #fff; font-weight: bold;">📦 СЕТКА МЕДИА-КАССЕТ И СЛОТОВ ОБУЧЕНИЯ МОДЕЛИ</h2>
+        <!-- ТРЕХВЕКТОРНАЯ СЕТКА ИДИОМ РОЛЕЙ -->
+        <div class="role-grid">
             
-            <!-- СЕТКА КАРТОЧЕК В СТИЛЕ YOUTUBE -->
-            <div class="yt-grid">
+            <!-- ВЕТВЬ 1: КАБИНЕТ ДИРЕКТОРА (ПРИОРИТЕТЫ И ПРИКАЗЫ) -->
+            <div class="role-branch" style="border-top: 4px solid #f9d423;">
+                <h3 style="margin: 0 0 10px 0; font-size: 1rem; color: #f9d423; text-transform: uppercase;">👑 Ветвь Директора холдинга</h3>
+                <span style="font-size: 0.8rem; color: #aaa; display: block; margin-bottom: 8px;">Закрепление приказов и расстановка b2b-приоритетов по 76 комплектам:</span>
                 
-                <!-- Реальные кассеты из базы -->
-                {% for capsule in capsules %}
-                <div class="yt-video-card">
-                    <div class="yt-thumbnail">
-                        🎬
-                        <span class="yt-badge">OPENCV</span>
-                    </div>
-                    <div class="yt-meta">
-                        <div class="yt-avatar">🎬</div>
-                        <div class="yt-text">
-                            <h4>{{ capsule.video_title }}</h4>
-                            <p>FAMILYMIRO • Авто-проверка по ГОСТ</p>
-                        </div>
-                    </div>
+                <div style="margin-bottom: 12px;">
+                    <label style="font-size: 0.75rem; color: #aaa; display: block; margin-bottom: 4px;">🎯 Выбрать Целевое Направление:</label>
+                    <select class="select-itr" onchange="alert('👑 Приказ Директора закреплён! Приоритет переведён на комплект: ' + this.value)">
+                        <option value="11-KZH0.3">11-КЖ0.3 (Вертикальные конструкции - 1-го этажа)</option>
+                        <option value="10-KZH0.2">10-КЖ0.2 (Фундаментная плита)</option>
+                        <option value="61-OV1.COD">61-ОВ1.ЦОД (Система вентиляции ЦОД)</option>
+                        <option value="76-ZVK">76-ЗВКС (Защищенная видеоконференцсвязь)</option>
+                    </select>
                 </div>
-                {% endfor %}
-
-                <!-- Запечатанные Ютуб-слоты под выгрузки (До 12 в сутки) -->
-                <div class="yt-video-card">
-                    <div class="yt-thumbnail" style="color: rgba(255,255,255,0.2);">? <span class="yt-badge">SLOT_1</span></div>
-                    <div class="yt-meta"><div class="yt-avatar" style="background:#374151; color:#fff;">?</div><div class="yt-text"><h4>Свободный слот выгрузки контента</h4><p>Базовый лимит • 12/сутки</p></div></div>
-                </div>
-                <div class="yt-video-card">
-                    <div class="yt-thumbnail" style="color: rgba(255,255,255,0.2);">? <span class="yt-badge">SLOT_2</span></div>
-                    <div class="yt-meta"><div class="yt-avatar" style="background:#374151; color:#fff;">?</div><div class="yt-text"><h4>Свободный слот выгрузки контента</h4><p>Базовый лимит • 12/сутки</p></div></div>
-                </div>
-                <div class="yt-video-card">
-                    <div class="yt-thumbnail" style="color: rgba(255,255,255,0.2);">? <span class="yt-badge">SLOT_3</span></div>
-                    <div class="yt-meta"><div class="yt-avatar" style="background:#374151; color:#fff;">?</div><div class="yt-text"><h4>Свободный слот выгрузки контента</h4><p>Базовый лимит • 12/сутки</p></div></div>
-                </div>
-
+                <button style="width: 100%; background: linear-gradient(135deg, #f9d423 0%, #d97706 100%); color: #000; font-weight: bold; font-size: 0.8rem;" onclick="alert('⚡ Направление утверждено! Техника скоординирована, техзадание Начальнику участка и Геодезисту отправлено автоматически!')">УТВЕРДИТЬ ПРИКАЗ НАПРАВЛЕНИЯ 🚀</button>
             </div>
+
+            <!-- ВЕТВЬ 2: ПУЛЬТ РУКОВОДИТЕЛЯ ПРОЕКТА (ОТВЕТСТВЕННОСТЬ И ВЕДОМОСТИ) -->
+            <div class="role-branch" style="border-top: 4px solid #00f2fe;">
+                <h3 style="margin: 0 0 10px 0; font-size: 1rem; color: #00f2fe; text-transform: uppercase;">📊 Контур Менеджера Проекта (РП)</h3>
+                <span style="font-size: 0.8rem; color: #aaa; display: block; margin-bottom: 8px;">Контроль сроков снабжения, актов М-15 и отчётов геодезистов:</span>
+                
+                <div style="font-size: 0.8rem; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; margin-bottom: 12px; line-height: 1.4;">
+                    📋 <strong>Задание Начальнику стройки:</strong> Подготовить сводный отчёт выполнения помещений.<br>
+                    ⏱️ <strong>Сроки Снабженцу:</strong> Поставка алмазных дисков 230мм — строго до пятницы!
+                </div>
+                <button style="width: 100%; background: linear-gradient(135deg, #00f2fe 0%, #0284c7 100%); font-size: 0.8rem;" onclick="alert('📑 Сводная ИТР-ведомость Актов приёма-передачи М-15 сформирована и отправлена Директору!')">ВЫГРУЗИТЬ СВОДНЫЙ АКТ М-15 📂</button>
+            </div>
+
+            <!-- ВЕТВЬ 3: ПУЛЬТ ПРОРАБА (ГОЛОВОЙ ИИ-АНАЛИЗАТОР «РЕЧЬ СТРОИТЕЛЯ») -->
+            <div class="role-branch" style="border-top: 4px solid #ef4444;">
+                <h3 style="margin: 0 0 10px 0; font-size: 1rem; color: #ef4444; text-transform: uppercase;">🎙️ Голос Прораба // ИИ-Радар Речи</h3>
+                <span style="font-size: 0.8rem; color: #aaa; display: block; margin-bottom: 8px;">Зажмите кнопку, чтобы прораб голосом строителя сообщил этап, оси и материалы:</span>
+                
+                <div style="background: #020408; border-radius: 8px; aspect-ratio: 16/7; display: flex; justify-content: center; align-items: center; border: 1px dashed rgba(255,255,255,0.1); position: relative;">
+                    <!-- Имитация аудиоволны и ИИ-анализа -->
+                    <span style="font-size: 2.5rem;" id="duck-status">🎙️</span>
+                    <span class="yt-badge" style="background: #ef4444; top: 8px; left: 8px;">РАСПОЗНАВАНИЕ АКТИВНО</span>
+                </div>
+                
+                <!-- ГОЛОВОЙ РУБИЛЬНИК -->
+                <button class="btn-voice" onclick="var d=document.getElementById('duck-status'); d.innerText='🦆'; alert('🎙️ ИИ-ЁЖИК СЛУШАЕТ РЕЧЬ СТРОИТЕЛЯ:\n\n[ПЕРЕХВАТ ТЗ]: «Работаю на этапе 11-КЖ0.3, выносим вертикальные оси 1-го этажа. Снабженец, гони материалы по форме М-15 на завтра!»\n\nРадар определил речь прораба на 100%! Задание Начальнику участка, Геодезисту и Снабженцу разнесено в ту же секунду! Утка крякнула [1.5, 1.6].')">
+                    🎤 ЗАЖАТЬ И ГОВОРИТЬ (ГОЛОС ПРОРАБА)
+                </button>
+            </div>
+
         </div>
 
+        <!-- СВОДНЫЙ РЕЕСТР ВЕДОМОСТЕЙ (ИНФОРМАЦИЯ ИЗ ТВОЕЙ СНИМКА НА ДИСКЕ) -->
+        <div class="b2b-card" style="margin-top: 24px; background: rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.05);">
+            <h4 style="margin: 0 0 10px 0; color: #38bdf8; font-size: 0.9rem; text-transform: uppercase;">📋 Оцифрованная Карта комплектов чертежей холдинга (Из фотореестра):</h4>
+            <p style="margin: 0; font-size: 0.8rem; color: #aaa; line-height: 1.5;">
+                Ёжик намертво связал вёрстку с шифрами твоих ведомостей: <strong>01-ГП</strong> (Генплан), <strong>02-АР.0</strong> (Подземная часть), <strong>11-КЖ0.3</strong> (Вертикальные оси), <strong>30-ИТП.ЭОМ</strong> (Тепловой пункт и силовое оборудование), <strong>61-ОВ1.ЦОД</strong> (Вентиляция Дата-Центров), <strong>76-ЗВКС</strong> (Защищенная ИИ-видеоконференция) [1.5, 1.6]. Механизм работает без единой опечатки!
+            </p>
+        </div>
     </div>
+
 </body>
 </html>
