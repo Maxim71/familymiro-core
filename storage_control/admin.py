@@ -1,69 +1,36 @@
 # -*- coding: utf-8 -*-
-# FAMILYMIRO THREE-CONTOUR MATRIX V7.1.0 — СТЕРИЛЬНАЯ АДМИНКА БЕЗ СИСТЕМНЫХ ОШИБОК
 from django.contrib import admin
 from django.utils.html import format_html
-from django.contrib import messages
-from .models import VideoCapsule, ConstructionCompany, NetworkIncident
+from .models import VideoCapsule, ConstructionCompany, NetworkIncident, MezaninProduct
 
-KILL_SWITCH_ACTIVE = False
+@admin.register(MezaninProduct)
+class MezaninProductAdmin(admin.ModelAdmin):
+    list_display = ('title', 'source_platform', 'base_price', 'margin_percent', 'final_price_display', 'product_image_preview')
+    list_filter = ('source_platform', 'is_available')
+    search_fields = ('title',)
+
+    def final_price_display(self, obj):
+        return format_html('<b style="color: #10b981; font-family: monospace;">{} ₽</b>', obj.final_price)
+    final_price_display.short_description = "Цена с маржой"
+
+    def product_image_preview(self, obj):
+        if obj.image:
+            return format_html('<img src="{}" style="width: 50px; aspect-ratio: 4/3; object-fit: cover; border-radius: 4px; border: 1px solid #1a73e8;" />', obj.image.url)
+        return format_html('<span style="color: #64748b; font-size: 0.75rem;">Нет фото</span>')
+    product_image_preview.short_description = "Превью"
 
 @admin.register(NetworkIncident)
 class NetworkIncidentAdmin(admin.ModelAdmin):
-    """🛠️ УПРАВЛЕНИЕ СИСТЕМОЙ ВЫЖИВАНИЯ FAILOVER И КНОПКА ПАНИКИ """
-    # Выводим только гарантированные кастомные ИИ-методы и статус, исключая спорные поля базы
     list_display = ('id', 'kill_switch_status')
-    actions = ['activate_global_kill_switch', 'deactivate_global_kill_switch']
-    
     def kill_switch_status(self, obj):
-        global KILL_SWITCH_ACTIVE
-        if KILL_SWITCH_ACTIVE:
-            return format_html('<span style="color: #d90420; font-weight: bold; background: rgba(217,4,32,0.1); padding: 3px 8px; border-radius: 4px;">🛑 KAFKA BLOCKED (KILL SWITCH ON)</span>')
-        return format_html('<span style="color: #10b981; font-weight: bold; background: rgba(16,185,129,0.1); padding: 3px 8px; border-radius: 4px;">🟢 WORKERS ACTIVE (RUNNING)</span>')
-    kill_switch_status.short_description = "Статус Кнопки Паники"
-
-    def activate_global_kill_switch(self, request, queryset):
-        global KILL_SWITCH_ACTIVE
-        KILL_SWITCH_ACTIVE = True
-        import subprocess
-        subprocess.run("docker-compose -f /root/app/docker-compose.yml stop kafka_kraft", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        self.message_user(request, "🛑 АВАРИЙНОЕ ДЕЙСТВИЕ: Кнопка паники активирована! Поток Кафки заморожен. База в безопасности!", messages.ERROR)
-    activate_global_kill_switch.short_description = "🛑 ВКЛЮЧИТЬ КНОПКУ ПАНИКИ"
-
-    def deactivate_global_kill_switch(self, request, queryset):
-        global KILL_SWITCH_ACTIVE
-        KILL_SWITCH_ACTIVE = False
-        import subprocess
-        subprocess.run("docker-compose -f /root/app/docker-compose.yml start kafka_kraft", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        self.message_user(request, "🟢 ВОССТАНОВЛЕНИЕ ПЕРИМЕТРА: Кнопка паники отключена. Конвейер Кафки запущен.", messages.SUCCESS)
-    deactivate_global_kill_switch.short_description = "🟢 ОТКЛЮЧИТЬ КНОПКУ ПАНИКИ"
-
+        return format_html('<span style="color: #10b981; font-weight: bold;">🟢 WORKERS ACTIVE</span>')
 
 @admin.register(VideoCapsule)
 class VideoCapsuleAdmin(admin.ModelAdmin):
-    """🎬 ЛОГИ ТРАНЗАКЦИЙ С ВИДЕО-ПОДТВЕРЖДЕНИЕМ УТРЕННИКОВ НА СТЕНЕ """
-    list_display = ('id', 'monetization_bar', 'video_verification_player')
-    readonly_fields = ('video_verification_player',)
-    
-    def monetization_bar(self, obj):
-        return format_html('<b style="color: #f97316; font-family: monospace;">250.00 ₽ (ИИ-Донат кофе)</b>')
-    monetization_bar.short_description = "Лог транзакции"
-
+    list_display = ('id', 'video_verification_player')
     def video_verification_player(self, obj):
-        return format_html(
-            '<div style="width: 140px; aspect-ratio: 16/9; background: #000; border-radius: 4px; overflow: hidden; border: 1px solid #1a73e8;">'
-            '<video style="width:100%; height:100%; object-fit:cover;" muted loop autoplay playsinline>'
-            '<source src="/static/storage_control/capsule_777.mp4" type="video/mp4">'
-            '</video>'
-            '</div>'
-        )
-    video_verification_player.short_description = "🎞️ Видео-подтверждение сделки ГОСТ"
-
+        return format_html('<div style="width: 60px; height: 35px; background: #000;"></div>')
 
 @admin.register(ConstructionCompany)
 class ConstructionCompanyAdmin(admin.ModelAdmin):
-    """🏗️ КОНТУР СТРОИТЕЛЬНЫХ МАГНАТОВ ТУЛЫ """
-    list_display = ('id', 'margin_balance')
-    
-    def margin_balance(self, obj): 
-        return "56 900.00 ₽"
-    margin_balance.short_description = "Текущая маржа Мезанина"
+    list_display = ('id',)
