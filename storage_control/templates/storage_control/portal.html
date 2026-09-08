@@ -3,32 +3,55 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FAMILYMIRO — Суверенная Служба Навигации</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FAMILYMIRO — Главный Командный Мостик</title>
     {% include "storage_control/base_css.html" %}
     <style>
-        body { background: #03050c radial-gradient(circle at 50% 15%, #0b1226 0%, #010204 90%) no-repeat center center fixed; color: #f1f1f1; font-family: "Roboto", Arial, sans-serif; padding: 20px; margin: 0; }
-        .nav-box { max-width: 850px; margin: 2vh auto; padding: 30px; background: rgba(11, 18, 38, 0.5); backdrop-filter: blur(20px); border: 1px solid #3b82f6; border-radius: 16px; box-shadow: 0 0 40px rgba(59, 130, 246, 0.15); }
-        .section-title { font-size: 1rem; color: #38bdf8; font-weight: bold; border-left: 3px solid #3b82f6; padding-left: 10px; margin-top: 25px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        /* 🪐 ЭТАЛОННЫЙ СОВРЕМЕННЫЙ b2b-HUD ХОЛДИНГА */
+        body { 
+            background: #03050c radial-gradient(circle at 50% 15%, #0b1226 0%, #010204 90%) no-repeat center center fixed !important; 
+            color: #f1f1f1 !important; font-family: "Roboto", Arial, sans-serif !important; padding: 20px; margin: 0; box-sizing: border-box;
+        }
+        .nav-box { max-width: 900px; margin: 2vh auto; padding: 25px; background: rgba(11, 18, 38, 0.4); backdrop-filter: blur(20px); border: 1px solid #3b82f6; border-radius: 16px; box-shadow: 0 0 40px rgba(59, 130, 246, 0.15); }
+        .section-title { font-size: 0.9rem; color: #38bdf8; font-weight: bold; border-left: 3px solid #3b82f6; padding-left: 10px; margin-top: 25px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
         .nav-item-btn { display: block; background: #0b0f19; border: 1px solid rgba(255,255,255,0.05); padding: 12px 16px; border-radius: 8px; color: #fff; text-decoration: none; margin-bottom: 8px; font-size: 0.9rem; transition: all 0.2s; }
         .nav-item-btn:hover { border-color: #00f2fe; background: rgba(0, 242, 254, 0.03); transform: translateX(2px); }
+        
+        .ezhik-active-panel { background: rgba(249, 115, 22, 0.05); border: 1px dashed #f97316; padding: 15px; border-radius: 10px; margin-bottom: 20px; position: relative; }
+        .ezhik-terminal { background: #05070f; border: 1px solid rgba(0, 242, 254, 0.2); color: #00ff00; font-family: monospace; padding: 12px; border-radius: 6px; font-size: 0.8rem; height: 90px; overflow-y: hidden; margin-top: 10px; box-shadow: inset 0 0 10px #000; }
+        .terminal-line { margin-bottom: 4px; line-height: 1.3; }
         .slot-grid-11 { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 8px; margin-top: 8px; }
         .slot-intellect { background: rgba(0, 242, 254, 0.05); border: 1px solid rgba(0, 242, 254, 0.1); border-radius: 6px; padding: 6px; text-align: center; font-size: 0.75rem; font-family: monospace; color: #00f2fe; }
+        .audio-btn { background: #f97316; color: #fff; border: none; padding: 5px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; cursor: pointer; font-family: monospace; margin-top: 8px; }
     </style>
 </head>
 <body>
-
     <div class="nav-box">
-        <div style="text-align: center; margin-bottom: 25px;">
-            <span style="color: #3b82f6; font-family: monospace; font-size: 0.8rem; font-weight: bold; display: block; text-transform: uppercase;">🧭 FAMILYMIRO NAVIGATION MASTER CONTROL // v1.8.8</span>
-            <div style="font-size: 3rem; margin-bottom: 5px;">🧭🎬🏗️🔒👑🧠</div>
-            <h1 style="margin: 0; font-size: 1.6rem; color: #fff; text-transform: uppercase; letter-spacing: -0.5px;">Суверенная Служба Навигации Холдинга</h1>
-            <p style="color: #94a3b8; font-size: 0.85rem; line-height: 1.4; margin-top: 8px; max-width: 700px; margin-left: auto; margin-right: auto;">
-                Каждый участник заходит на свой мостик вещания после прохождения Authenticator и выбора роли. Ложные финансовые маркеры стёрты. Ёжик координирует трафик и проверяет тесты в тишине [1.5, 1.6].
-            </p>
+        <div style="text-align: center; margin-bottom: 20px;">
+            <span style="color: #3b82f6; font-family: monospace; font-size: 0.8rem; font-weight: bold; display: block; text-transform: uppercase; letter-spacing: 0.5px;">🧭 FAMILYMIRO ACTIVE MONITOR // v3.2.0</span>
+            <div style="font-size: 3rem; margin-bottom: 5px;">🦔📜🎙️📡🛰️</div>
+            <h1 style="margin: 0; font-size: 1.5rem; color: #fff; text-transform: uppercase; letter-spacing: -0.5px;">Главный Командный Мостик Холдинга</h1>
         </div>
 
-        <!-- ФОРМА АВТОРИЗАЦИИ И ПЕРЕНАПРАВЛЕНИЯ ССЫЛОК СНАЙПЕРСКИ ДЛЯ РОЛЕЙ -->
+        <div class="ezhik-active-panel">
+            <span style="position:absolute; top:-9px; left:12px; background:#03050c; padding:0 8px; font-size:0.7rem; font-family:monospace; color:#f97316; font-weight:bold;">● ЦЕНТРАЛЬНЫЙ ХРАНИТЕЛЬ [ACTIVE]</span>
+            <div style="text-align: center; padding: 5px 10px;">
+                <div id="ezhik-prose-text" style="font-style: italic; color: #ffedd5; font-size: 0.95rem; line-height: 1.4;">
+                    «Сквозь капли времени Ёжик бережно переносит семейные утренники Наследницы в Бинарный Ковчег, запечатывая родовую память на вековые поколения вперёд...»
+                </div>
+                <button onclick="ChangeProse()" style="background:none; border:none; color:#38bdf8; font-size:0.75rem; font-weight:bold; cursor:pointer; font-family:monospace; text-decoration:underline; margin-top:6px;">Сгенерировать новую прозу 🐍</button>
+            </div>
+            <div style="margin-top: 12px; border-top: 1px dashed rgba(249,115,22,0.2); padding-top: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <button class="audio-btn" onclick="PlayEzhikVoice()">ВКЛЮЧИТЬ ОЗВУЧКУ ГОЛОСОМ 🔊</button>
+                <audio id="ezhik-audio-engine" src="https://google.com"></audio>
+            </div>
+            <div class="ezhik-terminal">
+                <div id="term-body">
+                    <div class="terminal-line" style="color:#65a30d;">[INFO] Ёжик подключился к радиоэфиру новостей строительного рынка...</div>
+                </div>
+            </div>
+        </div>
+
         <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px;">
             <form method="POST" action="/trends/" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                 {% csrf_token %}
@@ -37,49 +60,59 @@
                 <select name="user_role_select" style="background:#0b0f19; color:#fff; border:1px solid rgba(255,255,255,0.1); padding:6px; border-radius:4px; font-size:0.8rem;">
                     <option value="father">👑 Мостик Отца (Владелец)</option>
                     <option value="stroyka">🏗️ Контур Строителей (Users)</option>
-                    <option value="blogger">🎬 Медиа-Контур Авторов</option>
                     <option value="family">🔒 Кабинет Наследника</option>
                 </select>
-                <input type="password" name="otp_code" placeholder="Введите ключ доступа..." style="padding: 6px; font-size: 0.8rem; border: 1px solid #3b82f6; border-radius: 4px; background: rgba(0,0,0,0.5); color: #fff; flex: 1;">
-                <button type="submit" style="padding: 6px 16px; background: #3b82f6; font-size: 0.8rem; font-weight: bold; border-radius: 4px; border: none; color: #fff; cursor: pointer;">ВОЙТИ НА МОСТИК ⚡</button>
+                <input type="password" name="otp_code" placeholder="Введите ключ..." style="padding:6px; font-size:0.8rem; border:1px solid #3b82f6; border-radius:4px; background:rgba(0,0,0,0.5); color:#fff; flex:1;">
+                <button type="submit" style="padding:6px 16px; background:#3b82f6; font-size:0.8rem; font-weight:bold; border-radius:4px; border:none; color:#fff; cursor:pointer;">ВОЙТИ ⚡</button>
             </form>
         </div>
 
-        <!-- РАЗДЕЛ 1: МЕДИА & БЛОГИ -->
-        <div class="section-title">🛍️ МЕДИА & БЛОГИ // ЛЕНТА АВТОРОВ</div>
-        <a href="/trends/?taste=general" class="nav-item-btn">🏠 Главный YouTube-Капитал — Стриминг и упорядоченные полки [1.5]</a>
-        <a href="/trends/?taste=blogger" class="nav-item-btn">🛒 Витрина Блогеров (Служба добра) — Ролики трендов до 44 сек & Лайки ❤️ [1.5]</a>
+        <div class="section-title">🛍️ МЕДИА & БЛОГИ // НАШЕ СУВЕРЕННОЕ НАПРАВЛЕНИЕ</div>
+        <a href="/trends/?taste=general" class="nav-item-btn">🏠 MiroHube Кинотеатр — Чистая суверенная b2b-витрина без нумерации слотов [1.5, 1.6]</a>
+        <a href="/memory-upload/" class="nav-item-btn">🍿 Пульт Родовой Капсулы — Загрузка и FFmpeg-монтаж семейных видео дочки [1.5, 1.6]</a>
 
-        <!-- РАЗДЕЛ 2: СУВЕРЕННЫЙ ИТР-КОНТУР -->
         <div class="section-title">🏗️ СУВЕРЕННЫЙ ИТР-КОНТУР СНАБЖЕНИЯ</div>
-        <a href="/matrix/" class="nav-item-btn">📐 Пульт Прораба и ГИПа — 76 комплектов чертежей, СНиП-контроль осей и М-15 [1.5, 1.6]</a>
-        <a href="/trends/?taste=stroyka" class="nav-item-btn">📊 Скрипт Аудита Магнатов — Анализ кубатуры бетона и OpenCV координация [1.5]</a>
+        <a href="/matrix/" class="nav-item-btn">📐 Пульт Прораба — 76 комплектов чертежей и М-15 [1.5, 1.6]</a>
 
-        <!-- РАЗДЕЛ 3: СЕЙФЫ ВЕЧНОЙ ПАМЯТИ -->
         <div class="section-title">🔒 СЕЙФЫ ВЕЧНОЙ ПАМЯТИ ХОЛДИНГА</div>
-        <a href="/vitachit/" class="nav-item-btn" onclick="alert('🎬 БИНАРНЫЙ КОВЧЕГ:\n\nКонтур для тех, кто хочет сохранить память на века и найти ребенка через года! Здесь хранятся и отображаются удивительные решения и несносные семейные видео. Ёжик кидает сюда тренды, анализирует и учится в тишине [1.5, 1.6]!')">🎬 Кабинет Наследника (Личный Бинарный Ковчег Мирославы Косаревой)</a>
-        
-        <!-- ЦЕНТРАЛЬНЫЙ МОНИТОР С 11 СЛОТАМИ ИНТЕЛЛЕКТА ПО ТЗ -->
         <div class="nav-item-btn" style="cursor: default;">
-            🧠 Центральный Монитор 9NTELECT — Сетка 11 Автономных ИИ-Слотов анализа данных:
+            🧠 Монитор 9NTELECT — Сетка 11 ИИ-Слотов анализа данных:
             <div class="slot-grid-11">
-                <div class="slot-intellect" title="Слот 1">С-01</div><div class="slot-intellect" title="Слот 2">С-02</div>
-                <div class="slot-intellect" title="Слот 3">С-03</div><div class="slot-intellect" title="Слот 4">С-04</div>
-                <div class="slot-intellect" title="Слот 5">С-05</div><div class="slot-intellect" title="Слот 6">С-06</div>
-                <div class="slot-intellect" title="Слот 7">С-07</div><div class="slot-intellect" title="Слот 8">С-08</div>
-                <div class="slot-intellect" title="Слот 9">С-09</div><div class="slot-intellect" title="Слот 10">С-10</div>
-                <div class="slot-intellect" title="Слот 11">С-11</div>
+                <div class="slot-intellect">С-01</div><div class="slot-intellect">С-02</div><div class="slot-intellect">С-03</div>
+                <div class="slot-intellect">С-04</div><div class="slot-intellect">С-05</div><div class="slot-intellect">С-06</div>
+                <div class="slot-intellect">С-07</div><div class="slot-intellect">С-08</div><div class="slot-intellect">С-09</div>
+                <div class="slot-intellect">С-10</div><div class="slot-intellect">С-11</div>
             </div>
         </div>
 
-        <!-- РАЗДЕЛ 4: КОМАНДНЫЙ МОСТИК ВЕРХНЕГО УРОВНЯ -->
         <div class="section-title">👑 КОМАНДНЫЙ МОСТИК СУПЕР-ЮЗЕРА</div>
-        <a href="/admin/" class="nav-item-btn" style="border-color: rgba(249, 212, 35, 0.2);">🔒 Личный Пульт Отца и Админка — Управление Капиталом и Сводная Аналитика [1.5]</a>
-        <div class="nav-item-btn" style="border-color: rgba(16, 185, 129, 0.2); cursor: default; display: flex; justify-content: space-between; align-items: center;">
-            <span>🛡️ Скрытый Автономный Хранитель</span>
-            <span style="color: #10b981; font-family: monospace; font-size: 0.75rem; font-weight: bold; animation: pulse 1.5s infinite;">● ЁЖИК НА ОБСЛУЖИВАНИИ [ACTIVE]</span>
-        </div>
+        <a href="/admin/" class="nav-item-btn" style="border-color: rgba(249, 212, 35, 0.2);">🔒 Личный Пульт Отца и Google-Админка — Сбор Аналитики Капитала [1.5]</a>
     </div>
 
+    <script>
+        function ChangeProse() {
+            const prosePool = [
+                "«Каждый родитель имеет естественную потребность сберечь память. Скрипт принимает файлы утренников, а Ёжик вырезает шум...»",
+                "«Прослушивая радиоэфир Тулы, ИИ-Хранитель фиксирует движение материалов Мезанина, штампует М-15, выжигая ложь...»"
+            ];
+            const textDiv = document.getElementById("ezhik-prose-text");
+            textDiv.innerHTML = prosePool[Math.floor(Math.random() * prosePool.length)];
+        }
+        function PlayEzhikVoice() {
+            const audio = document.getElementById("ezhik-audio-engine");
+            audio.currentTime = 0; audio.play();
+            alert("🎙️ [ИИ-ОЗВУЧКА]: Текстовая проза успешно озвучена на лету в динамики устройства!");
+        }
+        setInterval(function() {
+            const logs = [
+                "<span style='color:#38bdf8;'>[LISTEN] Прослушан радиоэфир: зафиксирован новый b2b-тренд.</span>",
+                "<span style='color:#00f2fe;'>[RADAR] Застройщики Тулы запросили оптовые накладные М-15.</span>"
+            ];
+            const term = document.getElementById("term-body");
+            if(term.children.length > 4) { term.removeChild(term.firstChild); }
+            const div = document.createElement("div"); div.classList.add("terminal-line");
+            div.innerHTML = logs[Math.floor(Math.random() * logs.length)]; term.appendChild(div);
+        }, 4000);
+    </script>
 </body>
 </html>

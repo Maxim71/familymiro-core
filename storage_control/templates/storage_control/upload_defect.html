@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MiroHube — Бесплатный Отцовский Ковчег</title>
+    <link href="https://googleapis.com" rel="stylesheet">
+    {% include "storage_control/base_css.html" %}
+    <style>
+        body { background: #03050c radial-gradient(circle at 50% 15%, #0b1226 0%, #010204 90%) no-repeat center center fixed; color: #a4b8d1; font-family: 'Roboto', sans-serif; padding: 20px; }
+        .upload-card { max-width: 600px; margin: 4vh auto; background: rgba(11, 18, 38, 0.5); backdrop-filter: blur(20px); border: 1px solid #3b82f6; border-radius: 16px; padding: 25px; box-shadow: 0 0 40px rgba(59, 130, 246, 0.15); }
+        .h2-title { margin: 0; font-size: 1.3rem; font-weight: bold; color: #ffffff; text-transform: uppercase; letter-spacing: -0.5px; }
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; font-weight: bold; font-size: 0.8rem; margin-bottom: 6px; color: #38bdf8; text-transform: uppercase; font-family: monospace; }
+        input[type="text"], input[type="file"] { width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; font-size: 0.85rem; background: #0b0f19; color: #ffffff; }
+        input:focus { border-color: #38bdf8; outline: none; box-shadow: 0 0 10px rgba(56, 189, 248, 0.4); }
+        .btn-upload { background: #0b0f19; border: 1px dashed #3b82f6; color: #3b82f6; padding: 12px; border-radius: 8px; font-family: monospace; font-weight: bold; font-size: 0.85rem; cursor: pointer; width: 100%; text-transform: uppercase; letter-spacing: 1px; margin-top: 10px; }
+        .btn-upload:hover { background: rgba(59, 130, 246, 0.1); color: #ffffff; border-color: #38bdf8; }
+        .banner { padding: 12px; border-radius: 8px; font-size: 0.85rem; font-family: monospace; font-weight: bold; margin-bottom: 20px; background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid #10b981; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <div class="upload-card">
+        <div style="text-align: center; margin-bottom: 24px;">
+            <div style="font-size: 2.5rem; margin-bottom: 5px;">💝🦔🔒</div>
+            <h2 class="h2-title">Благотворительный Ковчег Памяти</h2>
+            <span style="color:#38bdf8; font-size:0.7rem; font-family:monospace; font-weight:bold; display:block; margin-top:4px; letter-spacing:0.5px;">● 100% БЕСПЛАТНО ДЛЯ КАЖДОГО ОТЦА В МИРЕ</span>
+        </div>
+
+        {% if status_msg %}
+            <div class="banner">{{ status_msg }}</div>
+        {% endif %}
+
+        <p style="font-size: 0.8rem; color: #94a3b8; line-height: 1.4; margin-bottom: 20px; font-family: monospace; text-align: center;">
+            <strong>КОНТУР БЕЗ ОГРАНИЧЕНИЙ:</strong> Загружай утренник дочки Мирославы бесплатно [1.5]. Если поставить в длину нарезки цифру <strong>0</strong> — Ёжик уберёт все лимиты и перенесёт видео на плеер полностью, целиком [1.5, 1.6]!
+        </p>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="input-group">
+                <label>📁 Выберите видеофайл утренника (MP4/MOV):</label>
+                <input type="file" name="family_file" required>
+            </div>
+
+            <div style="display: flex; gap: 16px;">
+                <div class="input-group" style="flex: 1;">
+                    <label>⏱️ Старт нарезки (чч:мм:сс):</label>
+                    <input type="text" name="start_time" value="00:00:00">
+                </div>
+                <div class="input-group" style="flex: 1;">
+                    <label>✂️ Длина нарезки (0 — полностью всё видео):</label>
+                    <input type="text" name="duration" value="0">
+                </div>
+            </div>
+
+            <button type="submit" class="btn-upload">БЕСПЛАТНО ЗАПЕЧАТАТЬ В КОВЧЕГ ВЕЧНОСТИ ⚡</button>
+        </form>
+        
+        <a href="/trends/" style="display: block; text-align: center; margin-top: 20px; font-size: 0.75rem; color: #38bdf8; text-decoration: none; font-weight: bold; font-family: monospace;">← Перейти в Кинотеатр Трендов</a>
+    </div>
+
+</body>
+</html>

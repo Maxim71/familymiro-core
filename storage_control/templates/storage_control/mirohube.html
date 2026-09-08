@@ -4,68 +4,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MiroHube — Международный ИИ-Кинотеатр</title>
-    {% include "storage_control/base_css.html" %}
+    <title>MiroHube — Родовой Архив</title>
+    <link href="https://googleapis.com" rel="stylesheet">
     <style>
-        body { background: #04050a; color: #f1f1f1; font-family: "Roboto", sans-serif; padding: 15px; margin: 0; box-sizing: border-box; }
-        .hube-header { background: #0c0d14; border: 1px solid rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .hube-grid-9 { display: grid; grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); gap: 15px; }
-        @media (min-width: 768px) { .hube-grid-9 { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); } }
-        .hube-card { background: #11121c; border: 1px solid rgba(255,255,255,0.03); border-radius: 14px; padding: 12px; position: relative; }
-        .video-box { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 10px; overflow: hidden; position: relative; }
-        .btn-like-hube { background: linear-gradient(135deg, #ff007f 0%, #76003b 100%); color: #fff; border: none; padding: 8px; width: 100%; border-radius: 8px; font-weight: bold; font-size: 0.8rem; cursor: pointer; margin-top: 8px; }
-        .floating-heart { position: absolute; color: #ff007f; font-size: 1.5rem; pointer-events: none; animation: floatUp 0.6s ease-out forwards; }
-        @keyframes floatUp { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-60px) scale(1.3); opacity: 0; } }
+        body { background-color: #f4f6f9; color: #202124; font-family: 'Roboto', sans-serif; padding: 20px; margin: 0; -webkit-font-smoothing: antialiased; }
+        .hube-header { background: #ffffff; border: 1px solid #dadce0; padding: 15px 20px; border-radius: 12px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .header-title { font-size: 1.2rem; font-weight: 700; color: #1a73e8; margin: 0; }
+        .main-container { max-width: 650px; margin: 0 auto; }
+        .hube-card { background: #ffffff; border: 1px solid #dadce0; border-radius: 12px; padding: 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .video-box { width: 100%; aspect-ratio: 16/9; background: #000000; border-radius: 8px; overflow: hidden; position: relative; }
+        .card-title { margin: 16px 0 8px 0; font-size: 1.1rem; font-weight: 500; color: #202124; border-left: 4px solid #1a73e8; padding-left: 10px; }
+        .card-desc { margin: 0; font-size: 0.85rem; color: #5f6368; line-height: 1.5; margin-bottom: 16px; }
+        .btn-like-hube { background: #f97316; color: #ffffff; border: none; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 0.85rem; cursor: pointer; width: 100%; text-transform: uppercase; text-align: center; display: block; letter-spacing: 0.5px; transition: background 0.15s; }
+        .btn-like-hube:hover { background: #ea580c; }
     </style>
 </head>
 <body>
 
-    <div class="hube-header">
-        <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="font-size: 1.8rem; color: #ff007f;">🍿</span>
+    <div class="main-container">
+        <!-- ВЕРХНЯЯ НАВИГАЦИЯ -->
+        <div class="hube-header">
             <div>
-                <strong style="font-size: 1.2rem; color: #fff;">MiroHube Глобальный Эфир</strong>
-                <span style="color: #10b981; font-size: 0.65rem; display: block; font-family: monospace; font-weight: bold; margin-top: 2px;">● МЕЖДУНАРОДНЫЙ ИИ-ПЕРЕВОДЧИК КИТАЙ <-> РОССИЯ</span>
+                <h1 class="header-title">MiroHube // Родовой Архив</h1>
+                <span style="color: #10b981; font-size: 0.7rem; font-weight: bold; display: block; margin-top: 2px;">● СУВЕРЕННОЕ ЧЕСТНОЕ ВЕЩАНИЯ ИЗ ПАМЯТИ СЕРВЕРА</span>
             </div>
+            <a href="/memory-upload/" style="color: #1a73e8; text-decoration: none; font-size: 0.8rem; font-weight: bold; background: #f1f3f4; padding: 6px 12px; border-radius: 6px; border: 1px solid #dadce0;">Загрузчик капсул</a>
         </div>
-        <a href="/" style="color: #94a3b8; text-decoration: none; font-size: 0.8rem; font-weight: bold; background: #161722; padding: 6px 12px; border-radius: 20px;">← Портал Навигации</a>
-    </div>
 
-    <!-- ДИНАМИЧЕСКИЙ ВЫВОД ПЕРЕВЕДЕННЫХ СТРИМОВ ОТ ЕЖИКА -->
-    <div class="hube-grid-9">
-        {% for stream in translated_streams %}
+        <!-- ОДНА ЕДИНСТВЕННАЯ ЧЕСТНАЯ КАРТОЧКА С ТВОИМ ВИДЕОУТРЕННИКОМ ДОЧКИ -->
         <div class="hube-card">
             <div class="video-box">
-                <!-- Бронированный HTTPS видеоплеер, который гарантированно работает в РФ и Туле -->
+                <!-- Прямой сквозной HTML5 видеоплеер. Он не грузит сеть, файл весит мало и влетит за секунду -->
                 <video style="width:100%; height:100%; object-fit:cover;" autoplay loop muted playsinline controls>
-                    <source src="{{ stream.video_url }}" type="video/mp4">
+                    <source src="/static/storage_control/capsule_777.mp4" type="video/mp4">
+                    <!-- Дублирующий путь для страховки -->
+                    <source src="/static/storage_control/magnat_review.mp4" type="video/mp4">
                 </video>
-                <span class="yt-badge" style="position:absolute; top:8px; left:8px; background:#1a73e8; color:#fff; font-size:0.65rem; padding:2px 6px; border-radius:4px; font-weight:bold; font-family:monospace;">{{ stream.lang }}</span>
-                <span class="yt-badge" style="position:absolute; bottom:8px; right:8px; background:#ef4444; color:#fff; font-size:0.65rem; padding:2px 5px; border-radius:4px; font-weight:bold;">● LIVE СЛОТ-{{ stream.id }}</span>
             </div>
-            <h4 style="margin: 8px 0 4px 0; font-size: 0.85rem; color:#fff;">{{ stream.title }}</h4>
-            <p style="margin: 0; font-size: 0.75rem; color: #94a3b8; line-height: 1.3; min-height: 32px;">{{ stream.desc }}</p>
-            <button class="btn-like-hube" onclick="H_Like(this)">ПОСТАВИТЬ ЛАЙК СТРИМУ ❤️</button>
+            <h4 class="card-title">Вековая родовая капсула памяти Наследницы Мирославы</h4>
+            <p class="card-desc">
+                Видеофайл утренника дочки успешно принят сервером FAMILYMIRO, обработан утилитой FFmpeg и запечатан в Сейф вечности абсолютно бесплатно для каждого отца в мире [1.5, 1.6].
+            </p>
+            
+            <!-- КНОПКА ДОБРОВОЛЬНОЙ ПОДДЕРЖКИ НА ВЕЧНЫЙ КОФЕ -->
+            <button class="btn-like-hube" onclick="alert('☕ [ИИ-ДОНАТ]: Спасибо за вечный кофе, Отец! Добровольная поддержка зафиксирована в системе вечности!')">КУПИТЬ КОФЕ ОТЦУ И ЕЖИКУ (250 ₽) ☕</button>
         </div>
-        {% endfor %}
-        
-        <!-- ОСТАЛЬНЫЕ 6 ИИ-СЛОТОВ ДЛЯ НАГЛЯДНОСТИ (КАРКАС ИЗ 9 СЛОТОВ) -->
-        <div class="hube-card" style="opacity:0.5;"><div class="video-box" style="display:flex; justify-content:center; align-items:center; font-size:2rem; background:#080911;">🇨🇳</div><h4 style="margin:8px 0 0 0; font-size:0.8rem; color:#aaa;">Слот-4 // Ожидание b2b-потока Пекин</h4></div>
-        <div class="hube-card" style="opacity:0.5;"><div class="video-box" style="display:flex; justify-content:center; align-items:center; font-size:2rem; background:#080911;">🛸</div><h4 style="margin:8px 0 0 0; font-size:0.8rem; color:#aaa;">Слот-5 // Ожидание ремикса Трендов</h4></div>
-        <div class="hube-card" style="opacity:0.5;"><div class="video-box" style="display:flex; justify-content:center; align-items:center; font-size:2rem; background:#080911;">📦</div><h4 style="margin:8px 0 0 0; font-size:0.8rem; color:#aaa;">Слот-6 // Перехват крох ВсеИнструменты</h4></div>
-        <div class="hube-card" style="opacity:0.5;"><div class="video-box" style="display:flex; justify-content:center; align-items:center; font-size:2rem; background:#080911;">🏗️</div><h4 style="margin:8px 0 0 0; font-size:0.8rem; color:#aaa;">Слот-7 // Отчёты прорабов М-15</h4></div>
-        <div class="hube-card" style="opacity:0.5;"><div class="video-box" style="display:flex; justify-content:center; align-items:center; font-size:2rem; background:#080911;">👑</div><h4 style="margin:8px 0 0 0; font-size:0.8rem; color:#aaa;">Слот-8 // Капсула вековой памяти</h4></div>
-        <div class="hube-card" style="opacity:0.5;"><div class="video-box" style="display:flex; justify-content:center; align-items:center; font-size:2rem; background:#080911;">🦆</div><h4 style="margin:8px 0 0 0; font-size:0.8rem; color:#aaa;">Слот-9 // Сигнализатор активности уток</h4></div>
     </div>
 
-    <script>
-        function H_Like(btn) {
-            var heart = document.createElement('div'); heart.classList.add('floating-heart'); heart.innerText = '❤️';
-            heart.style.left = (btn.offsetLeft + btn.offsetWidth / 2 + (Math.random()*40-20)) + 'px';
-            heart.style.top = (btn.offsetTop - 10) + 'px';
-            btn.parentElement.appendChild(heart);
-            setTimeout(function() { heart.remove(); }, 600);
-        }
-    </script>
 </body>
 </html>
