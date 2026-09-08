@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from django.db import models
+from django.contrib.auth.models import User
 
 class Agreement(models.Model):
-    title = models.CharField(max_length=255, blank=True, null=True, verbose_name="Наименование соглашения")
+    title = models.CharField(max_length=255, blank=True, null=True)
 
 class VideoCapsule(models.Model):
     capsule_id = models.CharField(max_length=100, blank=True, null=True)
@@ -18,36 +19,23 @@ class InteractiveComment(models.Model):
 class BloggerUsage(models.Model):
     score = models.IntegerField(default=0)
 
+# 🏢 КОНТУР ЗАСТРОЙЩИКОВ ТУЛЫ
 class ConstructionCompany(models.Model):
-    company_id = models.CharField(max_length=100, blank=True, null=True)
-    company_name = models.CharField(max_length=255, blank=True, null=True)
-    inn_code = models.CharField(max_length=100, blank=True, null=True)
+    company_name = models.CharField(max_length=255, verbose_name="Наименование застройщика")
+    inn_code = models.CharField(max_length=100, verbose_name="ИНН компании")
 
-class CascadeTask(models.Model):
-    name = models.CharField(max_length=100)
+    def __str__(self):
+        return self.company_name
 
-class PunchListItem(models.Model):
-    description = models.CharField(max_length=255)
-
-class NetworkIncident(models.Model):
-    incident_id = models.CharField(max_length=100, blank=True, null=True)
-    node_name = models.CharField(max_length=100, blank=True, null=True)
-    status_flag = models.CharField(max_length=100, blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-# 🛍️ СУВЕРЕННАЯ СТРУКТУРА ТОВАРОВ МЕЗАНИНА С РУЧНОЙ ЗАГРУЗКОЙ КАРТИНОК И ФОТО
+# 🛍️ ТОВАРЫ МЕЗАНИНА С НАКРУТКОЙ МАРЖИ ОТ 1% ДО 33%
 class MezaninProduct(models.Model):
     title = models.CharField(max_length=255, verbose_name="Наименование товара")
-    source_platform = models.CharField(max_length=100, default="Суверенный Склад 🦾", verbose_name="Источник / Платформа")
-    base_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Базовая цена (закупка)")
-    margin_percent = models.IntegerField(default=20, verbose_name="Процент накрутки маржи (от 1 до 33)")
-    delivery_days = models.IntegerField(default=7, verbose_name="Срок доставки в РФ (дней)")
-    is_available = models.BooleanField(default=True, verbose_name="В наличии")
-    image = models.ImageField(upload_to="products/", blank=True, null=True, verbose_name="Изображение товара")
-
-    class Meta:
-        verbose_name = "Товар Мезанина"
-        verbose_name_plural = "Товары Мезанина"
+    source_platform = models.CharField(max_length=100, default="Суверенный Склад 🦾")
+    base_price = models.DecimalField(max_digits=10, decimal_places=2)
+    margin_percent = models.IntegerField(default=20)
+    delivery_days = models.IntegerField(default=7)
+    is_available = models.BooleanField(default=True)
+    image = models.ImageField(upload_to="products/", blank=True, null=True)
 
     def __str__(self):
         return self.title
@@ -55,3 +43,15 @@ class MezaninProduct(models.Model):
     @property
     def final_price(self):
         return round(float(self.base_price) * (1 + self.margin_percent / 100.0), 2)
+
+# 🧾 Отношение МНОГИЕ К ОДНОМУ (ForeignKey): Много инвойсов привязаны к одному Застройщику
+class AutoInvoice(models.Model):
+    company = models.ForeignKey(ConstructionCompany, on_delete=models.CASCADE, verbose_name="Строительная Компания (Many-to-One)")
+    invoice_number = models.CharField(max_length=100, verbose_name="Номер инвойса")
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    # 🛒 Отношение МНОГИЕ КО МНОГИМ (ManyToManyField): Много инвойсов содержат много товаров Мезанина
+    products = models.ManyToManyField(MezaninProduct, verbose_name="Товары в инвойсе (Many-to-Many)")
+
+    def __str__(self):
+        return self.invoice_number
