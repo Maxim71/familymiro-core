@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>MIROHA CORE // B2B AMAZON</title>
+    <!-- Подключаем стерильный изолированный файл стилей -->
+    <link rel="stylesheet" href="/static/moba_style.css">
+</head>
+<body>
+
+<!-- Встроенный аудио-эфир («эфир звучит, шлюз поет») -->
+<audio id="click_sound" src="https://mixkit.co" preload="auto"></audio>
+<audio id="success_sound" src="https://mixkit.co" preload="auto"></audio>
+
+<div class="container">
+    
+    <!-- КОРЗИНА WILDBERRIES -->
+    <div class="moba-card" style="border-color: #00f0ff;">
+        <div class="moba-badge" style="background: #00f0ff; box-shadow: 0 0 10px #00f0ff;">🛒 КОРЗИНА СНАБЖЕНИЯ</div>
+        <div style="font-size: 14px; color: #fff; font-weight: bold; margin-top: 5px; display: flex; justify-content: space-between;">
+            <span>МАТЕРИАЛОВ: <span id="cart_counter" style="color: #00f0ff;">{{ cart_count }}</span></span>
+            <span style="color: #00ff66;">СУММА: <span id="total_price_display">{{ total_price }}</span> ₽</span>
+        </div>
+    </div>
+
+    <!-- ВИТРИНА С ЖИВЫМИ КАРТИНКАМИ И СЧЕТЧИКАМИ -->
+    <div class="grid-marketplace">
+        {% for prod in products %}
+        <div class="moba-prod-card">
+            <div class="sales-counter">🔥 КУПЛЕНО: {{ prod.sales_count }} раз</div>
+            <img class="prod-img" src="{{ prod.image_url }}" alt="{{ prod.title }}">
+            
+            <div style="font-size: 13px; color: #fff; font-weight: bold; margin-top: 10px; font-family: monospace; height: 35px;">{{ prod.title }}</div>
+            <div style="font-size: 10px; color: #8b949e; margin-top: 2px;">Партнер: {{ prod.partner_name }}</div>
+            
+            <div style="font-size: 18px; color: #00ff66; font-weight: bold; margin-top: 10px; font-family: monospace;">
+                {{ prod.price }} ₽ <span style="font-size: 10px; color: #8b949e;">/ {{ prod.unit }}</span>
+            </div>
+            <button class="moba-btn-action" style="padding: 10px; font-size: 11px; margin-top: 10px;" onclick="addToMirohaCart({{ prod.id }})">В КОРЗИНУ</button>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- ПЛАТЕЖНЫЙ СБП-ШЛЮЗ -->
+    <div class="sbp-payment-box">
+        <h4 style="color: #ff0055; margin: 0 0 10px 0; text-transform: uppercase;">💎 КОРНЕВОЙ СБП ШЛЮЗ // ИНВОЙС {{ sbp_invoice_code }}</h4>
+        <p style="font-size: 12px; color: #8b949e; margin: 0 0 15px 0;">Авторизация инвойса, автоматическое списание остатков склада и мгновенное звуковое оповещение.</p>
+        <button class="moba-btn-action moba-btn-green" onclick="executeSbpCheckout()">🔒 АВТОРИЗОВАТЬ И ОПЛАТИТЬ ПО СБП</button>
+    </div>
+
+    <button class="moba-btn-action" style="margin-top: 20px; background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2);" onclick="location.href='/'">返回 На главный пульт монолита</button>
+
+</div>
+
+<!-- Подключаем стерильный изолированный файл логики скриптов -->
+<script src="/static/moba_core.js"></script>
+</body>
+</html>
