@@ -1,0 +1,89 @@
+/* 🌌 ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ FAMILYMIRO 1.6 */
+:root {
+    --bg-dark: #060913;
+    --panel-bg: rgba(10, 16, 32, 0.7);
+    --neon-blue: #66fcf1;
+    --gold-glow: #f5a623;
+    --text-main: #ccced1;
+    --error-red: #ef4444;
+}
+
+/* 🔄 АНИМАЦИЯ ДЫХАНИЯ ЦЕНТРАЛЬНОГО МАЯКА (СБП) */
+@keyframes beaconPulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 15px var(--gold-glow), 0 0 20px rgba(255,215,0,0.2);
+    }
+    100% {
+        transform: scale(1.03);
+        box-shadow: 0 0 25px var(--gold-glow), 0 0 45px rgba(255,215,0,0.5);
+    }
+}
+
+/* 🎯 ИНТЕРАКТИВНЫЕ КНОПКИ ПУЛЬТА */
+#main-qr-beacon:hover {
+    transform: scale(1.06) translateY(-2px) !important;
+    filter: brightness(1.1);
+    box-shadow: 0 0 35px var(--gold-glow), 0 0 60px rgba(255,215,0,0.7) !important;
+}
+
+#btn-submit-news:hover {
+    background: var(--neon-blue) !important;
+    color: #000 !important;
+    box-shadow: 0 0 20px var(--neon-blue) !important;
+    transform: translateY(-1px);
+}
+
+.btn-send:hover {
+    background: var(--gold-glow);
+    color: #000;
+    box-shadow: 0 0 20px rgba(245, 166, 35, 0.4);
+}
+
+/* ==============================================================================
+   🪐 СУВЕРЕННЫЙ МАРКЕТИНГ И СТИЛЬ ХОЛДИНГА FAMILYMIRO
+   ============================================================================== */
+:root {
+    --bg-dark: #070b12;
+    --neon-blue: #00c6ff;
+    --gold: #f9d423;
+    --emerald: #10b981;
+}
+.shield-header {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+    padding: 30px; border-radius: 24px; margin-bottom: 40px;
+    backdrop-filter: blur(10px); text-align: center;
+}
+.gate-grid {
+    display: flex; gap: 25px; justify-content: center; flex-wrap: wrap; margin-top: 30px;
+}
+.gate-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 40px 30px; border-radius: 20px; text-align: center;
+    width: 280px; box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+    transition: transform 0.3s, border-color 0.3s; text-decoration: none; color: #fff;
+}
+.gate-card:hover {
+    transform: translateY(-10px); border-color: var(--neon-blue);
+    box-shadow: 0 20px 40px rgba(0, 198, 255, 0.2);
+}
+.gate-icon { font-size: 3.5rem; margin-bottom: 15px; }
+.gate-title { font-size: 1.4rem; font-weight: bold; margin-bottom: 10px; color: var(--gold); }
+
+.user-login-zone {
+    background: rgba(16, 185, 129, 0.03); border: 1px solid rgba(16, 185, 129, 0.2);
+    max-width: 450px; margin: 50px auto 0 auto; padding: 35px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); text-align: center;
+}
+.input-field {
+    width: 85%; padding: 12px 20px; margin: 10px 0; background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: #fff; font-size: 1rem; outline: none;
+}
+.input-field:focus { border-color: var(--emerald); }
+.btn-submit {
+    width: 93%; padding: 14px; margin-top: 15px; background: linear-gradient(135deg, #10b981, #059669);
+    border: none; border-radius: 10px; color: #fff; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: transform 0.2s;
+}
+.btn-submit:hover { transform: scale(1.02); }
+

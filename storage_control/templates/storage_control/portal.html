@@ -3,132 +3,215 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FAMILYMIRO — Главный Командный Центр</title>
-    {% include "storage_control/base_css.html" %}
-    <style>
-        body { background: #03050c radial-gradient(circle at 50% 15%, #0b1226 0%, #010204 90%) no-repeat center center fixed !important; color: #f1f1f1 !important; font-family: "Roboto", Arial, sans-serif !important; padding: 0; margin: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
-        
-        /* 🟣 УЛЬТРА-СОВРЕМЕННЫЙ WB STYLE HEADER В КРАСЕ */
-        .wb-header-wrapper { background: #ffffff !important; color: #000000 !important; padding: 8px 24px 14px 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); border-bottom: 1px solid #e2e8f0; }
-        .wb-top-line { display: flex; gap: 20px; font-size: 0.8rem; color: #64748b; margin-bottom: 12px; font-weight: 500; }
-        .wb-top-link { color: #475569; text-decoration: none; transition: color 0.15s; cursor: pointer; }
-        .wb-top-link:hover { color: #cb11ab; }
-        
-        .wb-main-line { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
-        .wb-logo { font-size: 1.3rem; font-weight: 800; color: #cb11ab; text-transform: uppercase; letter-spacing: -0.5px; text-decoration: none; min-width: 140px; }
-        .wb-logo span { color: #000; }
-        
-        .wb-search-bar-container { flex-grow: 1; position: relative; max-width: 600px; }
-        .wb-search-input { width: 100%; box-sizing: border-box; padding: 12px 45px 12px 16px; border: 2px solid #cb11ab; border-radius: 24px; font-size: 0.9rem; background: #f1f5f9; color: #000; font-weight: 500; outline: none; }
-        .wb-search-btn-icon { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #cb11ab; font-weight: bold; cursor: pointer; }
-        
-        .wb-nav-actions { display: flex; align-items: center; gap: 24px; font-size: 0.85rem; font-weight: 600; }
-        .wb-action-item { color: #0f172a; text-decoration: none; display: flex; align-items: center; gap: 6px; transition: color 0.15s; cursor: pointer; }
-        .wb-action-item:hover { color: #cb11ab; }
-        
-        .nav-box { max-width: 950px; margin: 3vh auto; padding: 30px; background: rgba(11, 18, 38, 0.4); backdrop-filter: blur(20px); border: 1px solid #3b82f6; border-radius: 16px; box-shadow: 0 0 40px rgba(59, 130, 246, 0.15); }
-        .section-title { font-size: 0.9rem; color: #38bdf8; font-weight: bold; border-left: 3px solid #3b82f6; padding-left: 10px; margin-top: 25px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .nav-item-btn { display: block; background: #0b0f19; border: 1px solid rgba(255,255,255,0.05); padding: 12px 16px; border-radius: 8px; color: #fff; text-decoration: none; margin-bottom: 8px; font-size: 0.9rem; transition: all 0.2s; }
-        .nav-item-btn:hover { border-color: #00f2fe; background: rgba(0, 242, 254, 0.03); transform: translateX(2px); }
-        .mezanin-table { width: 100%; border-collapse: collapse; margin-top: 10px; background: rgba(5, 7, 15, 0.6); border-radius: 8px; overflow: hidden; border: 1px solid rgba(59, 130, 246, 0.2); font-size: 0.85rem; }
-        .mezanin-table th { background: rgba(59, 130, 246, 0.2); color: #38bdf8; text-transform: uppercase; font-family: monospace; font-weight: bold; padding: 10px; text-align: left; border-bottom: 1px solid rgba(59, 130, 246, 0.3); font-size: 0.75rem; }
-        .mezanin-table td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.03); color: #e2e8f0; font-family: monospace; }
-        .bosibar-panel { background: rgba(16, 185, 129, 0.03); border: 1px dashed #10b981; border-radius: 12px; padding: 15px; margin-top: 20px; font-family: monospace; font-size: 0.8rem; }
-        .ezhik-active-panel { background: rgba(249, 115, 22, 0.05); border: 1px dashed #f97316; padding: 18px; border-radius: 12px; margin-bottom: 20px; position: relative; }
-        .ezhik-terminal { background: #05070f; border: 1px solid rgba(0, 242, 254, 0.2); color: #00ff00; font-family: monospace; padding: 12px; border-radius: 6px; font-size: 0.8rem; height: 75px; overflow-y: hidden; margin-top: 10px; }
-        .terminal-line { margin-bottom: 4px; line-height: 1.3; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAMILYMIRO CORE [1.6]</title>
+    <link rel="stylesheet" href="{% static 'storage_control/css/portal.css' %}">
+    <link rel="stylesheet" href="{% static 'storage_control/css/media.css' %}?v={{ request.user.id|default:'anonymous' }}">
+    <script src="https://jquery.com"></script>
 </head>
 <body>
 
-    <!-- 🟣 ЛЕГЕНДАРНЫЙ СУВЕРЕННЫЙ WILDBERRIES STYLE HEADER -->
-    <div class="wb-header-wrapper">
-        <div class="wb-top-line">
-            <span class="wb-top-link" onclick="alert('Wibes Контур Активен ГОСТ!')">Wibes</span>
-            <span class="wb-top-link" onclick="alert('Бронирование Отелей Мезанина запущено!')">Отели</span>
-            <span class="wb-top-link" onclick="location.href='/matrix/'">Для бизнеса</span>
-            <span class="wb-top-link" onclick="alert('Еаптека Хранителя: b2b-расходники укомплектованы!')">Еаптека</span>
-            <span class="wb-top-link" onclick="alert('Работа в RWB: Конвейер вакансий прорабов Тулы!')">Работа в RWB</span>
-            <span class="wb-top-link">Ещё</span>
-            <span style="margin-left: auto; color:#0f172a; font-weight:700;">RUB</span>
+<div class="lobby-frame">
+    
+    <!-- ☀️ ЛЕВОЕ КРЫЛО: ЛИЧНЫЙ СЛОТ ОТЕЦ / ДОЧЬ (КОНТУР ВЕЧНОСТИ) -->
+    <div class="lobby-panel" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+            <h3 style="color: var(--gold-glow); margin-top: 0; font-size: 1.1rem; text-align: center; letter-spacing: 1px;">☀️ ВЕКОВОЙ СЕЙФ</h3>
+            <p style="font-size: 0.75rem; opacity: 0.8; line-height: 1.4; margin-bottom: 15px;">
+                {{ display_title|default:"Уговор рода (Мирослава)" }} запечатан до 24 мая 2059 года. Вход по крылатому SHA-256 хэшу.
+            </p>
+            
+            {% if is_unlocked %}
+                <div style="border: 1px solid #10b981; padding: 10px; border-radius: 8px; background: rgba(16,185,129,0.05); text-align: center; margin-bottom: 15px;">
+                    <span style="color: #10b981; font-weight: bold; font-size: 0.8rem;">🔓 ДОСТУП ОТКРЫТ</span>
+                    <p style="font-size: 0.75rem; font-style: italic; margin: 4px 0;">"{{ matched_phrase }}"</p>
+                </div>
+            {% else %}
+                <div style="border: 1px solid #ef4444; padding: 10px; border-radius: 8px; background: rgba(239,68,68,0.05); text-align: center; margin-bottom: 15px;">
+                    <span style="color: #ef4444; font-weight: bold; font-size: 0.75rem;">🔒 ЗАМОК АКТИВЕН</span>
+                </div>
+            {% endif %}
         </div>
-        
-        <div class="wb-main-line">
-            <a href="/" class="wb-logo">MIROHA<span>.RU</span></a>
-            
-            <div class="wb-search-bar-container">
-                <input type="text" class="wb-search-input" placeholder="Найти на Wildberries Мезанин..." onkeypress="if(event.key==='Enter') alert('🔍 Радар Ёжика просканировал склады AliExpress/Amazon по запросу: ' + this.value)">
-                <span class="wb-search-btn-icon" onclick="alert('🔍 Поиск активен!')">🔍</span>
+
+        <!-- 🦔 ЖИВОЙ ИИ-КОНТУР ЁЖИКА: Бортовой экран Хранителя -->
+<div style="background: rgba(4, 7, 12, 0.7); border: 1px solid rgba(102, 252, 241, 0.25); box-shadow: 0 0 20px rgba(102, 252, 241, 0.1); backdrop-filter: blur(8px); border-radius: 12px; padding: 16px 20px; width: 90%; max-width: 420px; margin: 20px 0; text-align: left; transition: all 0.3s ease;">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+        <span style="font-size: 0.75rem; color: var(--gold-glow); font-weight: bold; letter-spacing: 1px;">🦔 ЕЖИК-СМОТРИТЕЛЬ СЧИТАЕТ ПОТОК:</span>
+        <span style="background: rgba(102,252,241,0.1); border: 1px solid var(--neon-blue); color: var(--neon-blue); font-size: 0.6rem; padding: 1px 6px; border-radius: 10px; font-weight: bold;">
+            {{ display_badge|default:"🌐 СТРАННИК ПЛАТФОРМЫ" }}
+        </span>
+    </div>
+    <p style="font-size: 0.8rem; color: #e2e8f0; line-height: 1.5; margin: 0; font-style: italic; letter-spacing: 0.3px;">
+        "{{ ezhik_greeting|default:"Приветствую в Эфире. Слой 0.0 активирован. Система стабильна на 390 лет." }}"
+    </p>
+</div>
+
+        <div>
+            <div style="background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 10px; font-size: 0.7rem; color: #64748b; margin-bottom: 15px;">
+                💎 Капитал Ёжика: <span style="color: #10b981; font-weight: bold;">{{ total_revenue|default:"0.00" }} RUB</span>
             </div>
-            
-            <div class="wb-nav-actions">
-                <span class="wb-action-item" onclick="alert('📍 Адреса ПВЗ Мезанина в Туле проверены!')">📍 Адреса</span>
-                <a href="/admin/" class="wb-action-item">👤 Войти</a>
-                <a href="/trends/" class="wb-action-item">🛒 Корзина (<span id="cart-global-count" style="color:#cb11ab;">0</span>)</a>
-            </div>
+            <button class="btn-start-game" style="padding: 10px 20px; font-size: 0.8rem; width: 100%; border-radius: 8px; background: transparent; color: var(--gold-glow); border: 1px solid var(--gold-glow);">ЯКОРЬ ПРАВ</button>
         </div>
     </div>
 
-    <div class="nav-box">
-        <div style="text-align: center; margin-bottom: 24px;">
-            <div style="font-size: 3rem; margin-bottom: 5px;">🦔📊🇮🇹🧾👥🔒</div>
-            <h2 style="margin: 0; font-size: 1.4rem; color: #fff; text-transform: uppercase; letter-spacing: -0.5px;">Интернет-Платформа Мезанина</h2>
+    <!-- 🎛️ ЦЕНТР: СЛОТЫ РАСПРЕДЕЛЕНИЯ ПОТОКОВ (СЛОТЫ ИГРОКОВ В ЛОББИ) -->
+    <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0;">
+        <div style="text-align: center;">
+            <h1 style="margin: 0; font-size: 1.8rem; color: var(--neon-blue); letter-spacing: 2px; text-shadow: 0 0 15px rgba(102,252,241,0.3);">FAMILYMIRO 1.6</h1>
+            <p style="color: #4a5568; font-size: 0.8rem; margin: 4px 0 0 0;">Глобальное распределение ИИ-потоков</p>
         </div>
 
-        <div style="background: rgba(11, 18, 38, 0.3); border: 1px solid rgba(56,189,248,0.15); padding: 18px; border-radius: 12px; margin-bottom: 20px;">
-            <div style="font-size:0.8rem; color:#38bdf8; font-weight:bold; font-family:monospace; text-transform:uppercase; margin-bottom:8px;">
-                <span>👥 ТАБЛИЦА ПОЛЬЗОВАТЕЛЕЙ МЕЗАНИНА (_POLS // USERS):</span>
+        <!-- 4 СЛОТА ИГРОКОВ КАК НА СКРИНШОТЕ MOBILE LEGENDS -->
+        <div class="central-slots-grid">
+            <div class="slot-card" onclick="location.href='/'" style="border-color: var(--gold-glow); color: var(--gold-glow);"><span style="font-size:1.5rem;">☀️</span><span style="font-size:0.65rem; margin-top:8px;">ВЕЧНОСТЬ</span></div>
+            <div class="slot-card" onclick="location.href='/director/'"><span>🎬</span><span style="font-size:0.65rem; margin-top:8px;">РЕЖИССЕР</span></div>
+            <div class="slot-card" onclick="location.href='/construction/'" style="border-color: var(--neon-blue); color: var(--neon-blue);"><span>🏗️</span><span style="font-size:0.65rem; margin-top:8px;">СТРОЙКА</span></div>
+            <div class="slot-card"><span>❓</span><span style="font-size:0.65rem; margin-top:8px;">РЕЗЕРВ</span></div>
+        </div>
+
+       <div style="text-align: center; width: 100%; position: relative;">
+    <button id="main-qr-beacon" class="btn-start-game" style="
+        padding: 14px 36px; 
+        font-size: 0.95rem; 
+        font-weight: bold;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: #000; 
+        background: var(--gold-glow); 
+        border: none; 
+        border-radius: 30px; 
+        box-shadow: 0 0 15px var(--gold-glow), 0 0 30px rgba(255,215,0,0.2);
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        animation: beaconPulse 2s infinite alternate;">
+        Начать работу
+    </button>
+    
+    <!-- Спутниковый лог-бокс СБП под кнопкой -->
+    <div id="gateway-log" style="
+        display: none; 
+        margin-top: 15px; 
+        background: rgba(0,0,0,0.8); 
+        border: 1px solid var(--neon-blue); 
+        border-radius: 8px; 
+        padding: 12px; 
+        font-family: monospace; 
+        font-size: 0.75rem; 
+        color: #fff; 
+        text-align: left; 
+        max-width: 400px; 
+        margin-left: auto; 
+        margin-right: auto;
+        box-shadow: 0 0 15px rgba(102,252,241,0.1);">
+    </div>
+</div>
+
+    </div>
+    <!-- 🦔 ПРАВОЕ КРЫЛО: ЖИВАЯ ЛЕНТА ГЛОБАЛЬНОГО ЭФИРА ЁЖИКА (СПИСОК ОФЛАЙН/ОНЛАЙН) -->
+    <div class="lobby-panel" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+            <h3 style="color: var(--neon-blue); margin-top: 0; font-size: 1.1rem; text-align: center; letter-spacing: 1px;">🦔 Глобальный Эфир</h3>
+            <p style="font-size: 0.7rem; color: #4a5568; margin-top: -10px; margin-bottom: 15px; text-align: center;">Цепочка обновлений системы на весь мир</p>
+            
+            <!-- Сюда Ёжик складывает комментарии и логи цепочкой вниз -->
+            <div id="comments-list" style="max-height: 320px; overflow-y: auto; padding-right: 5px;">
+                {% for comment in comments %}
+                    <div style="background: rgba(4, 7, 12, 0.5); border-left: 3px solid var(--neon-blue); padding: 10px; border-radius: 0 8px 8px 0; margin-bottom: 8px; text-align: left;">
+                        <strong style="color: var(--neon-blue); font-size: 0.75rem; display: block;">{{ comment.author_name }}:</strong>
+                        <span style="font-size: 0.8rem; color: #ccced1; line-height: 1.3;">{{ comment.comment_text|default:comment.author_name }}</span>
+                    </div>
+                {% empty %}
+                    <div style="color: #4a5568; text-align: center; font-size: 0.8rem; padding: 40px 0;" id="empty-alert">
+                        [В эфире тихо. Поток стерилен. Друзей в сети нет]
+                    </div>
+                {% endfor %}
             </div>
-            <table class="mezanin-table">
-                <thead>
-                    <tr>
-                        <th>Имя Пользователя (_pols)</th>
-                        <th>Роль в Контуре</th>
-                        <th>Доступ к Марже</th>
-                        <th>Взведённый Ключ</th>
-                        <th>VIP-Карман (S3)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td style="color:#ffffff; font-weight:bold;">👑 max_kosarev (Отец)</td>
-                        <td>Генеральный Конструктор</td>
-                        <td style="color:#10b981;">ПОЛНЫЙ (Владелец)</td>
-                        <td>miroha-key-master</td>
-                        <td style="color:#f97316; font-weight:bold;">11 000.00 ₽ ☕</td>
-                    </tr>
-                    <tr>
-                        <td>🇮🇹 user_italian_partner</td>
-                        <td>Итальянский Поставщик</td>
-                        <td style="color:#3b82f6;">ReadOnly Access</td>
-                        <td>token-boto3-s3</td>
-                        <td>0.00 ₽ (Инвойсы)</td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
 
-        <div class="bosibar-panel">
-            <span style="color:#10b981; font-weight:bold; display:block; margin-bottom:4px;">🛡️ BOSIBAR_DJANGO_MEZANIN RADAR:</span>
-            Служба прослушивания трафика `BOSIBAR` активна фоном. Бинарный контроль буферов выполнен. Очереди Kafka застрахованы. 2 ГБ RAM в идеальном состоянии!
+        <!-- Форма мгновенной отправки весточки прямо в Эфир Ёжика -->
+        <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
+            {% csrf_token %}
+            <input type="text" id="comment-author" class="slot-card" placeholder="Ваше имя" style="width: 100%; height: 35px; font-size: 0.8rem; font-weight: normal; color: #fff; background: rgba(0,0,0,0.3); margin-bottom: 8px; text-align: left; padding: 0 10px; box-sizing: border-box;">
+            <textarea id="comment-text" class="slot-card" rows="2" placeholder="Слова от сердца..." style="width: 100%; height: 50px; font-size: 0.8rem; font-weight: normal; color: #fff; background: rgba(0,0,0,0.3); text-align: left; padding: 6px 10px; box-sizing: border-box; font-family: inherit; resize: none;"></textarea>
+            <button id="btn-submit-news" class="btn-start-game" style="
+    padding: 12px; 
+    font-size: 0.8rem; 
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    width: 100%; 
+    border-radius: 8px; 
+    margin-top: 8px;
+    background: transparent;
+    color: var(--neon-blue);
+    border: 1px solid var(--neon-blue);
+    box-shadow: 0 0 10px rgba(102,252,241,0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;">
+    Передать в Эфир
+</button>
+
         </div>
-
-        <div class="section-title">🛍️ МЕДИА & БЛОГИ // МАРКЕТПЛЕЙС</div>
-        <a href="/trends/" class="nav-item-btn">🏠 Mezanin Global Trade — Оптовый Маркетплейс со скидками до 33% [1.5, 1.6]</a>
-        <a href="/memory-upload/" class="nav-item-btn">🍿 Пульт Родовой Капсулы — Загрузка утренников дочки бесплатно [1.5, 1.6]</a>
-
-        <div class="section-title">🏗️ СУВЕРЕННЫЙ ИТР-КОНТУР СНАБЖЕНИЯ</div>
-        <a href="/matrix/" class="nav-item-btn">📐 Пульт Прораба — Календарь времени, СНиП-контроль осей и М-15 [1.5, 1.6]</a>
     </div>
 
-    <script>
-        setInterval(function() {
-            const logs = [
-                "<span style='color:#10b981;'>[BOSIBAR] Поток WB-Style проверен: задержек нет.</span>",
-                "<span style='color:#38bdf8;'>[SHOP_INT] Парсер Ёжика синхронизировал шапку Wildberries.</span>"
-            ];
-        }, 4000);
-    </script>
+</div> <!-- Закрытие lobby-frame -->
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    
+    // 1. ЦЕНТРАЛЬНАЯ КНОПКА ЗАПУСКА ПОТОКОВ (СБП И ИИ-ШЛЮЗ)
+    const qrBeacon = document.getElementById('main-qr-beacon');
+    if (qrBeacon) {
+        qrBeacon.addEventListener('click', function() {
+            const logBox = document.getElementById('gateway-log'); if (!logBox) return;
+            logBox.style.display = 'block'; logBox.style.borderColor = 'var(--neon-blue)';
+            logBox.innerHTML = '🛰️ [MIRO CORE]: Подключение к спутниковому Альфа-шлюзу СБП...';
+            
+            fetch('/api/qr-pulsar/')
+                .then(res => res.json())
+                .then(data => {
+                    logBox.style.borderColor = '#10b981';
+                    logBox.innerHTML = 
+                        `<strong style="color:#10b981;">✅ АВТОРИЗАЦИЯ УСПЕШНА:</strong><br>` +
+                        `• Код СБП: ${data.invoice}<br>` +
+                        `• Поток: ${data.target_pool}<br>` +
+                        `• База Django: <span style="color:#66fcf1; font-weight:bold;">${data.registered_user}</span><br>` +
+                        `<span style="color:#10b981;">• Лог: ${data.message}</span>`;
+                });
+        });
+    }
+
+    // 2. ОТПРАВКА ДОБРЫХ ВЕСТЕЙ В ГЛОБАЛЬНУЮ ЦЕПОЧКУ ЁЖИКА
+    if (window.jQuery) {
+        $('#btn-submit-news').on('click', function() {
+            let auth = $('#comment-author').val(); let txt = $('#comment-text').val();
+            if (!auth || !txt) return;
+            
+            $.ajax({
+                url: '/api/comment/submit/', type: 'POST', 
+                data: { author: auth, text: txt, csrfmiddlewaretoken: '{{ csrf_token }}' },
+                success: function(data) {
+                    if (data.status === 'success') {
+                        $('#empty-alert').remove();
+                        let item = $(`<div style="background: rgba(4, 7, 12, 0.5); border-left: 3px solid var(--neon-blue); padding: 10px; border-radius: 0 8px 8px 0; margin-bottom: 8px; text-align: left; display: none;"><strong style="color: var(--neon-blue); font-size: 0.75rem; display: block;">${data.author}:</strong><span style="font-size: 0.8rem; color: #ccced1;">${data.text}</span></div>`);
+                        $('#comments-list').prepend(item);
+                        item.slideDown(400);
+                        $('#comment-text').val('');
+                    }
+                }
+            });
+        });
+    }
+
+    // 3. ИНТЕРАКТИВНЫЙ ПАРАЛЛАКС ФОНА (РАБОТАЕТ ОТ ДВИЖЕНИЯ МЫШИ КАК В ML)
+    document.addEventListener('mousemove', function(e) {
+        let amountMovedX = (e.clientX * -0.03);
+        let amountMovedY = (e.clientY * -0.03);
+        document.body.style.backgroundPosition = `${amountMovedX}px ${amountMovedY}px`;
+    });
+});
+</script>
 </body>
 </html>

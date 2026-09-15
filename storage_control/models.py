@@ -1,57 +1,73 @@
-# -*- coding: utf-8 -*-
 from django.db import models
-from django.contrib.auth.models import User
 
-class Agreement(models.Model):
-    title = models.CharField(max_length=255, blank=True, null=True)
 
-class VideoCapsule(models.Model):
-    capsule_id = models.CharField(max_length=100, blank=True, null=True)
-    owner_name = models.CharField(max_length=100, blank=True, null=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
-class AvatarEzhik(models.Model):
-    status = models.CharField(max_length=50)
 
-class InteractiveComment(models.Model):
-    text = models.TextField()
 
-class BloggerUsage(models.Model):
-    score = models.IntegerField(default=0)
 
-# 🏢 КОНТУР ЗАСТРОЙЩИКОВ ТУЛЫ
-class ConstructionCompany(models.Model):
-    company_name = models.CharField(max_length=255, verbose_name="Наименование застройщика")
-    inn_code = models.CharField(max_length=100, verbose_name="ИНН компании")
-
-    def __str__(self):
-        return self.company_name
-
-# 🛍️ ТОВАРЫ МЕЗАНИНА С НАКРУТКОЙ МАРЖИ ОТ 1% ДО 33%
-class MezaninProduct(models.Model):
-    title = models.CharField(max_length=255, verbose_name="Наименование товара")
-    source_platform = models.CharField(max_length=100, default="Суверенный Склад 🦾")
-    base_price = models.DecimalField(max_digits=10, decimal_places=2)
-    margin_percent = models.IntegerField(default=20)
-    delivery_days = models.IntegerField(default=7)
-    is_available = models.BooleanField(default=True)
-    image = models.ImageField(upload_to="products/", blank=True, null=True)
-
-    def __str__(self):
-        return self.title
-
-    @property
-    def final_price(self):
-        return round(float(self.base_price) * (1 + self.margin_percent / 100.0), 2)
-
-# 🧾 Отношение МНОГИЕ К ОДНОМУ (ForeignKey): Много инвойсов привязаны к одному Застройщику
-class AutoInvoice(models.Model):
-    company = models.ForeignKey(ConstructionCompany, on_delete=models.CASCADE, verbose_name="Строительная Компания (Many-to-One)")
-    invoice_number = models.CharField(max_length=100, verbose_name="Номер инвойса")
+class ConstructionObject(models.Model):
+    name = models.CharField("Название объекта", max_length=255)
+    address = models.CharField("Адрес площадки", max_length=500)
     created_at = models.DateTimeField(auto_now_add=True)
-    
-    # 🛒 Отношение МНОГИЕ КО МНОГИМ (ManyToManyField): Много инвойсов содержат много товаров Мезанина
-    products = models.ManyToManyField(MezaninProduct, verbose_name="Товары в инвойсе (Many-to-Many)")
+    def __str__(self): return self.name
 
-    def __str__(self):
-        return self.invoice_number
+class SpaceTransferAct(models.Model):
+    construction_object = models.ForeignKey(ConstructionObject, on_delete=models.CASCADE, verbose_name="Объект")
+    subcontractor_name = models.CharField("Субподрядная организация", max_length=255)
+    floor = models.CharField("Этаж / Уровень", max_length=50, blank=True, null=True)
+    axes = models.CharField("Привязка по осям", max_length=100, blank=True, null=True)
+    room = models.CharField("Номер помещения / Позиция", max_length=100, blank=True, null=True)
+    description = models.TextField("Описание фронта работ")
+    created_at = models.DateTimeField("Дата составления", auto_now_add=True)
+    chief_approved = models.BooleanField("Виза Начальника Участка", default=False)
+    chief_approved_at = models.DateTimeField("Время согласования", blank=True, null=True)
+    def __str__(self): return f"Акт Фронта №{self.id} — {self.subcontractor_name}"
+
+class MaterialM15Invoice(models.Model):
+    act_link = models.ForeignKey(SpaceTransferAct, on_delete=models.CASCADE, verbose_name="Привязка к Акту", blank=True, null=True)
+    material_name = models.CharField("Наименование материала", max_length=255)
+    unit = models.CharField("Единица измерения", max_length=50, default="куб.м")
+    quantity = models.DecimalField("Переданный объем", max_digits=10, decimal_places=2)
+    sender_name = models.CharField("Отпустил (Прораб)", max_length=150)
+    receiver_name = models.CharField("Получил (Субподряд)", max_length=150)
+    is_signed_by_chief = models.BooleanField("Утверждено Начучастка", default=False)
+        # Добавь эти три строки внутрь класса MaterialM15Invoice, прямо перед def __str__(self):
+    passport_required = models.BooleanField("Запрос паспорта изделия (ПТО)", default=False)
+    passport_file_url = models.CharField("Ссылка на скачанный PDF сертификат", max_length=500, blank=True, null=True)
+    passport_status = models.CharField("Статус проверки ГОСТ", max_length=100, default="Не затребован")
+
+    def __str__(self): return f"М-15 №{self.id} — {self.material_name}"
+    
+
+class WarehouseStock(models.Model):
+    """Текущие остатки на складе холдинга в реальном времени"""
+    material_name = models.CharField("Материал", max_length=255, unique=True)
+    quantity = models.DecimalField("Запасы на складе", max_digits=10, decimal_places=2)
+    unit = models.CharField("Ед. изм.", max_length=50, default="куб.м")
+    in_transit = models.DecimalField("В пути (скоро поступит)", max_digits=10, decimal_places=2, default=0)
+    updated_at = models.DateTimeField(auto_now=True)
+    def __str__(self): return f"{self.material_name}: {self.quantity} {self.unit}"
+
+class SupplyRequest(models.Model):
+    """Заявки прорабов на день наперед (Стиль Ванкувер)"""
+    STATUS_CHOICES = [
+        ('pending', 'На согласовании (3 дня)'),
+        ('approved', 'Утверждено / Тайм-слот выдан'),
+        ('deficit', 'Отсутствует / Срочный дозаказ'),
+        ('discrepancy', 'Акт несоответствия (Пересортица)'),
+    ]
+    construction_object = models.ForeignKey(ConstructionObject, on_delete=models.CASCADE)
+    material_name = models.CharField("Материал", max_length=255)
+    quantity_requested = models.DecimalField("Требуемый объем", max_digits=10, decimal_places=2)
+    target_date = models.DateField("Дата поставки (на день наперед)")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+    def __str__(self): return f"Заявка №{self.id} — {self.material_name} ({self.status})"
+
+class EzhikRouteCard(models.Model):
+    """Оптимальные ИИ-карты маршрутов Робота-Ёжика"""
+    request_link = models.OneToOneField(SupplyRequest, on_delete=models.CASCADE)
+    route_map_data = models.TextField("Оптимальный маршрут (Тула - Объект)")
+    assigned_driver = models.CharField("Водитель снабжения", max_length=150)
+    is_dispatched = models.BooleanField("Задание направлено", default=False)
+    def __str__(self): return f"Маршрут Ёжика для Заявки №{self.request_link.id}"

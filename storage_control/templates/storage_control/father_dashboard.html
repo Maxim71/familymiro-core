@@ -1,68 +1,23 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>FAMILYMIRO — Сметный Пульт Отца</title>
-    {% include "storage_control/base_css.html" %}
+    <title>Дашборд Отца — Пульсар Наций</title>
     <style>
-        body { background: #03050a radial-gradient(circle at 50% 10%, #0d162d 0%, #010205 90%) no-repeat center center fixed; color: #f1f1f1; padding: 24px; margin: 0; }
-        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 24px; margin-top: 20px; }
-        .metric-card { background: rgba(13, 22, 45, 0.6); backdrop-filter: blur(15px); border: 1px solid #f9d423; border-radius: 12px; padding: 24px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .badge-father { background: rgba(249, 212, 35, 0.1); color: #f9d423; border: 1px solid #f9d423; padding: 4px 12px; font-size: 0.75rem; font-weight: bold; border-radius: 20px; display: inline-block; margin-bottom: 15px; letter-spacing: 1px; }
+        body { background: #000; color: #00bfff; font-family: monospace; padding: 40px; text-align: center; }
+        .radar { border: 3px double #00bfff; padding: 30px; display: inline-block; background: #050a10; box-shadow: 0 0 30px #00bfff; border-radius: 10px; }
+        .pulse { animation: blink 2s infinite; color: #ff0055; font-size: 20px; font-weight: bold; }
+        @keyframes blink { 0% { opacity: 0.2; } 50% { opacity: 1; } 100% { opacity: 0.2; } }
     </style>
 </head>
 <body>
-
-    <!-- ГЕНЕРАЛЬНЫЙ HUD ПУЛЬТА -->
-    <div class="b2b-card" style="background: linear-gradient(135deg, #111827 0%, #020617 100%); border-color: #f9d423; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-        <div>
-            <div class="badge-father">🦅 COMMAND ENDPOINT // ВЕРХНИЙ КОНТУР УПРАВЛЕНИЯ ОТЦА</div>
-            <h1 style="margin: 5px 0 0 0; font-size: 1.6rem; text-transform: uppercase; letter-spacing: -0.5px;">Сметный Монитор & Аналитика Капитала</h1>
-        </div>
-        <div style="text-align: right;">
-            <a href="/products/" style="color: #f9d423; text-decoration: none; font-size: 0.9rem; font-weight: bold;">← На главную Матрицы</a>
-        </div>
+    <div class="radar">
+        <h2>📡 ЖИВАЯ НЕОНОВАЯ МАТРИЦА «ПУЛЬСАР»</h2>
+        <div class="pulse">● ИМПУЛЬС МИРА АКТИВЕН</div>
+        <p><b>Регион триггера:</b> {{ pulsar.country }}</p>
+        <p><b>Метка времени:</b> {{ pulsar.timestamp }}</p>
+        <hr style="border-color: #00bfff;">
+        <p style="color: #00ffcc;">Текущий приток золотистой волны: {{ ezhik.total_revenue }}</p>
     </div>
-
-    <!-- МАТРИЧНАЯ СЕТКА ХАБА -->
-    <div class="dashboard-grid">
-        
-        <!-- КАРТОЧКА 1: БАЛАНС И СНАБЖЕНИЕ -->
-        <div class="metric-card" style="border-color: #10b981;">
-            <span style="font-size: 2.5rem; display: block; margin-bottom: 10px;">💰</span>
-            <h3 style="margin: 0; font-size: 1.1rem; color: #fff; text-transform: uppercase;">Общий Капитал & Маржа Снабжения</h3>
-            <p style="color: #94a3b8; font-size: 0.85rem; margin-top: 8px; line-height: 1.4;">Чистый доход, зафиксированный Ёжиком с агентского контура перехвата цен и экономии времени ИТР в Туле [1.5, 1.6].</p>
-            <strong style="color: #10b981; font-size: 1.8rem; display: block; margin-top: 15px;">15 000 000.00 ₽</strong>
-            <span style="color: #aaa; font-size: 0.75rem; display: block; margin-top: 4px;">Шлюз Lava Pay: АКТИВЕН ✅</span>
-        </div>
-
-        <!-- КАРТОЧКА 2: ВЕКОВАЯ РОДОВАЯ ПАМЯТЬ -->
-        <div class="metric-card" style="border-color: #7c3aed;">
-            <span style="font-size: 2.5rem; display: block; margin-bottom: 10px;">👑</span>
-            <h3 style="margin: 0; font-size: 1.1rem; color: #fff; text-transform: uppercase;">Родовая Книга Вечности</h3>
-            <p style="color: #94a3b8; font-size: 0.85rem; margin-top: 8px; line-height: 1.4;">Запечатанные имена рода Косаревых, первые детские фразы Мирославы и отцовские наставления потомкам [1.5, 1.6].</p>
-            <strong style="color: #a78bfa; font-size: 1.2rem; display: block; margin-top: 20px; font-family: monospace;">ТАБЛИЦА СВЯЗЕЙ: ОЦИФРОВАНА 🔒</strong>
-            <span style="color: #aaa; font-size: 0.75rem; display: block; margin-top: 4px;">Лимит резервирования: 300 лет</span>
-        </div>
-
-        <!-- КАРТОЧКА 3: РУБИЛЬНИК АВАРИЙНЫХ СЦЕНАРИЕВ -->
-        <div class="metric-card" style="border-color: #ef4444; background: rgba(239, 68, 68, 0.02);">
-            <span style="font-size: 2.5rem; display: block; margin-bottom: 10px;">🛰️</span>
-            <h3 style="margin: 0; font-size: 1.1rem; color: #ef4444; text-transform: uppercase;">Протокол Спасения Хозяйки</h3>
-            <p style="color: #94a3b8; font-size: 0.85rem; margin-top: 8px; line-height: 1.4;">Экстренный запуск ИИ-ищейки координат по ID-номерам, MAC-адресам устройств и спутниковым шлюзам баз мира [1.5].</p>
-            <button style="width: 100%; background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%); margin-top: 15px; font-size: 0.85rem;" onclick="alert('🚨 ТРЕВОГА! Протокол Спасения Хозяйки активирован.\n\nЁжик запустил спутниковый ID-скан баз мира. Поиск геопозиции Мирославы Косаревой начат в тишине... [1.5]')">АКТИВИРОВАТЬ ЭКСТРЕННЫЙ ПОИСК 🚨</button>
-        </div>
-
-    </div>
-
-    <!-- ТАБЛИЦА МОНИТОРИНГА ШЛЮЗОВ -->
-    <div class="b2b-card" style="margin-top: 24px;">
-        <h3 style="color: #38bdf8; margin: 0 0 10px 0; font-size: 1rem; text-transform: uppercase;">📻 Статус Сетевых Антенн & Радио-Перехвата RSS</h3>
-        <p style="color: #aaa; font-size: 0.85rem; margin: 0; line-height: 1.4;">
-            ИИ-Жук круглосуточно сканирует эфир местных магазинов Тулы, Амазона и новостных агрегаторов. Все бинарные медиа-крохи, MP4-ролики до 44 секунд и GIF-обложки отгружаются на витрину маркетплейса в автоматическом режиме [1.5, 1.6]. Статус: СТАБИЛЬНО.
-        </p>
-    </div>
-
 </body>
 </html>

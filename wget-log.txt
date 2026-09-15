@@ -1,0 +1,45 @@
+2026-09-08 13:27:05 URL:https://miroha.ru/ [13256/13256] -> "miroha.ru/index.html.tmp.tmp" [1]
+https://miroha.ru/robots.txt:
+2026-09-08 13:27:05 ERROR 404: Not Found.
+2026-09-08 13:27:05 URL:https://miroha.ru/admin/login/?next=/admin/ [7579/7579] -> "miroha.ru/admin/index.html.tmp.tmp" [1]
+https://miroha.ru/trends/:
+https://miroha.ru/trends/:
+Remote file does not exist -- broken link!!!
+https://miroha.ru/trends/:
+https://miroha.ru/trends/:
+Remote file does not exist -- broken link!!!
+2026-09-08 13:27:07 URL:https://miroha.ru/matrix/ [13574/13574] -> "miroha.ru/matrix/index.html.tmp.tmp" [1]
+https://miroha.ru/static/admin/css/base.css:
+Remote file does not exist -- broken link!!!
+https://miroha.ru/static/admin/css/dark_mode.css:
+Remote file does not exist -- broken link!!!
+https://miroha.ru/static/admin/js/theme.js:
+Remote file does not exist -- broken link!!!
+https://miroha.ru/static/admin/css/nav_sidebar.css:
+Remote file does not exist -- broken link!!!
+https://miroha.ru/static/admin/js/nav_sidebar.js:
+Remote file does not exist -- broken link!!!
+https://miroha.ru/static/admin/css/login.css:
+Remote file does not exist -- broken link!!!
+https://miroha.ru/static/admin/css/responsive.css:
+Remote file does not exist -- broken link!!!
+https://miroha.ru/dxf-scan/:
+Remote file does not exist -- broken link!!!
+https://miroha.ru/export-pdf/:
+Remote file does not exist -- broken link!!!
+Found 10 broken links.
+
+https://miroha.ru/static/admin/js/theme.js
+https://miroha.ru/static/admin/css/responsive.css
+https://miroha.ru/static/admin/css/base.css
+https://miroha.ru/trends/
+https://miroha.ru/static/admin/css/dark_mode.css
+https://miroha.ru/static/admin/js/nav_sidebar.js
+https://miroha.ru/static/admin/css/nav_sidebar.css
+https://miroha.ru/dxf-scan/
+https://miroha.ru/static/admin/css/login.css
+https://miroha.ru/export-pdf/
+
+FINISHED --2026-09-08 13:27:07--
+Total wall clock time: 2.1s
+Downloaded: 3 files, 34K in 0s (515 MB/s)

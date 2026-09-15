@@ -1,0 +1,4 @@
+nohup: ignoring input
+[11/Sep/2026 09:36:29] "GET / HTTP/1.0" 301 0
+[11/Sep/2026 09:36:32] "GET / HTTP/1.0" 301 0
+[11/Sep/2026 09:36:40] "GET / HTTP/1.0" 301 0
