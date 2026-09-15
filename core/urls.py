@@ -3,6 +3,7 @@ from django.urls import path
 from storage_control import views
 
 urlpatterns = [
+    path('api/upload-video/', views.upload_video_to_vault_api, name='upload_video'),
     path('admin/', admin.site.urls),
     path('', views.index_vancouver, name='index_vancouver'),
     path('pto/<int:act_id>/', views.pto_cabinet, name='pto_cabinet'),

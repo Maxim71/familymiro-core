@@ -103,3 +103,31 @@ class ServerBalance(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self): return f"Реальный Баланс Сервера: {self.balance_rub} RUB"
+
+class EzhikUserCabinet(models.Model):
+    """Суверенный ИИ-Кабинет пользователя, кастомизированный Роботом-Ёжиком"""
+    session_key = models.CharField("Ключ сессии / Идентификатор", max_length=255, unique=True)
+    assigned_name = models.CharField("Имя, присвоенное Ёжиком", max_length=150, default="Странник Наследия")
+    moba_style_preference = models.CharField("Личный неоновый стиль", max_length=100, default="cyan") # pink, green, gold, cyan
+    ezhik_charm_level = models.IntegerField("Уровень Шарма Ёжика", default=100)
+    user_country = models.CharField("Локация пользователя", max_length=100, default="Россия")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self): return f"Кабинет Ёжика: {self.assigned_name} [{self.moba_style_preference}]"
+
+class EzhikVideoVault(models.Model):
+    """Мультимодальное видео-наследие: Слой Зрения и Слуха Робота-Ёжика"""
+    video_title = models.CharField("Название / Описание видео", max_length=255, default="Детская улыбка / Вечность")
+    video_file_url = models.CharField("Ссылка на видеофайл", max_length=500)
+    country_origin = models.CharField("Страна загрузки", max_length=100, default="Россия")
+    
+    # ИИ-маркеры распознавания Ёжика (Синонимы рук, глаз, улыбки)
+    eyes_detected = models.BooleanField("Фиксация взгляда (Глаза)", default=True)
+    smile_detected = models.BooleanField("Фиксация эмоций (Улыбка)", default=True)
+    hands_detected = models.BooleanField("Фиксация жестов (Руки)", default=True)
+    audio_cleaned = models.BooleanField("Очистка звука и речи выполнена", default=True)
+    
+    is_approved_by_ezhik = models.BooleanField("Прошел ИИ-Сито (Мусор удален)", default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self): return f"Видео Памяти №{self.id} [{self.country_origin}]"

@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>MIROHA CORE // GOOGLE VAULT</title>
+    <title>MIROHA CORE // MULTIMEDIA VAULT</title>
     <link rel="stylesheet" href="/static/moba_style.css">
     <style>
         .auth-gate-box { background: rgba(6, 11, 25, 0.9); border: 2px dashed #00f0ff; padding: 20px; border-radius: 20px; margin-top: 15px; }
         .totp-input { width: 90%; background: #070a0e; border: 1px solid #30363d; color: #00ff66; text-align: center; font-size: 20px; letter-spacing: 4px; padding: 8px; font-family: monospace; border-radius: 12px; }
-        .msg-history { background: rgba(0,0,0,0.4); padding: 10px; border-radius: 12px; font-size: 11px; margin-top: 15px; border: 1px solid rgba(255,255,255,0.05); text-align: left; }
+        .video-stream-box { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); margin-top: 15px; text-align: left; }
+        .moba-video-player { width: 100%; border-radius: 12px; border: 1px solid #ffaa00; box-shadow: 0 0 10px rgba(255,170,0,0.2); margin-top: 8px; }
     </style>
 </head>
 <body style="background: #030712;">
@@ -19,62 +20,64 @@
 <div class="vault-box">
     <div class="vault-inner">
         
-        <!-- ЕСЛИ ВОШЁЛ КАПИТАН МАКСИМ ЧЕРЕЗ GOOGLE AUTHENTICATOR -->
+        <!-- ЕСЛИ КРИПТО-КЛЮЧ ОПЕКИ ПОДТВЕРЖДЕН -->
         {% if is_captain %}
-        <div style="text-align: center; color: #00ff66; font-size: 10px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase;">✅ ВИЗА КАПИТАНА КРИПТОГРАФИЧЕСКИ ПОДТВЕРЖДЕНА</div>
+        <div style="text-align: center; color: #00ff66; font-size: 10px; font-weight: bold; text-transform: uppercase;">✅ ВИЗА КАПИТАНА КРИПТОГРАФИЧЕСКИ ПОДТВЕРЖДЕНА</div>
         <h2 style="color: #fff; font-size: 15px; text-align: center; margin-top: 15px; text-transform: uppercase; font-family: monospace;">🦔 ЗАКРЫТЫЙ ВЕКОВОЙ СЕЙФ ОПЕКИ ДОЧЕРИ</h2>
         
-        <!-- Живой тикающий таймер -->
         <div class="timer-grid-capsule">
             <div class="timer-card-capsule"><div class="timer-num-capsule" id="capsule_years">00</div><div style="font-size:7px; color:#8b949e; text-transform:uppercase;">Лет</div></div>
             <div class="timer-card-capsule"><div class="timer-num-capsule" id="capsule_days">00</div><div style="font-size:7px; color:#8b949e; text-transform:uppercase;">Дней</div></div>
             <div class="timer-card-capsule"><div class="timer-num-capsule" id="capsule_hours">00</div><div style="font-size:7px; color:#8b949e; text-transform:uppercase;">Час</div></div>
             <div class="timer-card-capsule"><div class="timer-num-capsule" id="capsule_seconds" style="color:#ff0055;">00</div><div style="font-size:7px; color:#8b949e; text-transform:uppercase;">Сек</div></div>
         </div>
-
-        <div class="sbp-badge-capsule">
-            🔐 <strong>ИНВОЙС СБП:</strong> INV-ALFA-288003<br>
-            📄 <strong>СТАТУС:</strong> Капитал холдинга заблокирован в ОЗУ. Автоматическое вскрытие сейфа: <strong>24 мая 2059 года</strong>. Контур защищен TOTП-ключом.
-        </div>
         
-        <!-- ЕСЛИ ЗАШЁЛ ОБЫЧНЫЙ ПОЛЬЗОВАТЕЛЬ ИЛИ ОШИБКА КОДА -->
+        <!-- ВНЕШНИЙ СКРЫТЫЙ ШЛЮЗ ДЛЯ ОСТАЛЬНЫХ ЛЮДЕЙ ВЕЧНОСТИ -->
         {% else %}
-        <div style="text-align: center; color: #ff0055; font-size: 10px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase;">🔒 ШЛЮЗ ВЕЧНОСТИ // ДВОЙНОЙ КРИПТО-ЗАМОК</div>
+        <div style="text-align: center; color: #ff0055; font-size: 10px; font-weight: bold; text-transform: uppercase;">🔒 ШЛЮЗ ВЕЧНОСТИ // МУЛЬТИМЕДИА СИТО НАБЛЮДЕНИЯ</div>
         
-        {% if error_msg %}
-            <div style="color: #ff0055; font-size: 11px; margin-top: 10px; font-family: monospace;">{{ error_msg }}</div>
-        {% endif %}
-
-        <!-- Форма авторизации Капитана через Google Authenticator -->
-        <div class="auth-gate-box">
-            <div style="font-size: 10px; color: #00f0ff; margin-bottom: 8px; text-transform: uppercase;">ВХОД ДЛЯ АВТОРОВ (GOOGLE TOTP)</div>
-            <form method="POST" action="/capsule/">
-                {% csrf_token %}<input type="text" name="totp_code" placeholder="000000" maxlength="6" class="totp-input" required autocomplete="off">
-                <button type="submit" class="moba-btn-action" style="margin-top: 10px; padding: 10px; font-size: 11px;">Проверить Крипто-Ключ</button>
+        <!-- Загрузка видео архива с телефона в один клик -->
+        <div class="auth-gate-box" style="border-color: #00ff66;">
+            <div style="font-size: 11px; color: #00ff66; font-weight: bold; text-transform: uppercase; margin-bottom: 8px;">🎬 Скинуть Видео в Вечность (Сито Памяти):</div>
+            <form id="moba_video_form" onsubmit="uploadEzhikVideo(event)">
+                {% csrf_token %}
+                <input type="text" name="title" placeholder="Описание (Пример: Дочка смеется / Первый шаг)" style="width:92%; background:#070a0e; border:1px solid #30363d; color:#fff; padding:6px; font-size:11px; border-radius:6px; margin-bottom:8px;" required>
+                <button type="submit" class="moba-btn-action" style="background: linear-gradient(90deg, #00ff66 0%, #009933 100%); color:#fff; font-size:11px; padding:10px;">⚡ Залить Видео Памятства</button>
             </form>
-            
-            <!-- Скрытый QR-ярлык для первичной настройки Капитана -->
-            <div style="margin-top:15px; font-size:9px; color:#8b949e;">
-                <details>
-                    <summary style="cursor:pointer; color:#ffaa00;">[Показать QR-настройки Капитана]</summary>
-                    <div style="text-align:center; margin-top:10px; background:#fff; padding:10px; border-radius:10px; display:inline-block;">
-                        <img src="{{ qr_setup_url }}" alt="Google Authenticator QR">
-                    </div>
-                    <div style="margin-top:5px; color:#ffaa00;">Отсканируй этот QR в мобильном приложении Google Authenticator, чтобы получать живые 6-значные коды доступа!</div>
-                </details>
-            </div>
         </div>
 
-        <!-- Секция для внешних пользователей (Италия, мир) — Отправка строк потомству -->
-        <div style="color: #ffaa00; font-size: 11px; text-transform: uppercase; font-weight: bold; text-align: left; margin-top: 20px;">📜 Послания Потомству от Людей Вечности:</div>
-        <div class="msg-history">
-            {% for m in global_messages %}
-            <div style="margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 4px;">
-                <strong style="color: #00f0ff;">{{ m.author }}:</strong> <span style="color:#fff;">{{ m.text }}</span>
+        <!-- ЖИВОЙ ПЛЕЕР СТРАН И ОБЩЕГО НАБЛЮДЕНИЯ (Детские сохраненные крохи) -->
+        <div style="color: #ffaa00; font-size: 11px; text-transform: uppercase; font-weight: bold; text-align: left; margin-top: 20px;">🎬 Лента Памятства: Сохраненные Смешные Видео</div>
+        
+        {% for v in templates_video_placeholder_loop_var_do_not_use_directly_if_not_needed %}{% endfor %}
+        {% for video in videos %}
+        <div class="video-stream-box">
+            <div style="display:flex; justify-content:space-between; font-size:10px;">
+                <span style="color:#00f0ff; font-weight:bold;">📍 ИСТОЧНИК: {{ video.country_origin }}</span>
+                <span style="color:#00ff66;">👁️ ИИ-СИТО: ВЗГЛЯД / УЛЫБКА ВЕРИФИЦИРОВАНЫ</span>
             </div>
-            {% endfor %}
-            <textarea placeholder="Оставить свою ИТР-строку потомству на века (Услуга за пожертвование)..." style="width: 93%; background: #070a0e; border: 1px solid #30363d; color: #fff; padding: 6px; font-size: 11px; font-family: monospace; height: 35px; resize: none; margin-top: 5px;"></textarea>
-            <button class="moba-btn-action" style="padding: 6px; font-size: 10px; margin-top: 5px; background: rgba(255,255,255,0.05);" onclick="alert('🦔 [ЁЖИК]: Послание зафиксировано! Для запечатывания на 300 лет в базу результатов — авторизуйте инвойс СБП!')">Запечатать Строку</button>
+            <div style="color:#fff; font-size:11px; margin-top:5px; font-family:monospace;">{{ video.video_title }}</div>
+            
+            <!-- Родной HTML5 плеер прослушивания звука, речи и картинки -->
+            <video class="moba-video-player" controls preload="metadata">
+                <source src="{{ video.video_file_url }}" type="video/mp4">
+                Ваш браузер не поддерживает видеошлюз.
+            </video>
+        </div>
+        {% endfor %}
+
+        <!-- Панель скрытого входа для Капитана -->
+        <div style="margin-top: 20px;">
+            <details>
+                <summary style="cursor:pointer; color:#8b949e; font-size:10px;">[Вход в Кабинет Капитана через Google Authenticator]</summary>
+                <div class="auth-gate-box">
+                    <form method="POST" action="/capsule/">
+                        {% csrf_token %}
+                        <input type="text" name="totp_code" placeholder="000000" maxlength="6" class="totp-input" required autocomplete="off">
+                        <button type="submit" class="moba-btn-action" style="margin-top:10px; padding:8px; font-size:11px;">Авторизовать Крипто-Ключ</button>
+                    </form>
+                </div>
+            </details>
         </div>
         {% endif %}
 
@@ -82,6 +85,21 @@
     </div>
 </div>
 
+<!-- Привязываем обработчик отправки видео в moba_core.js -->
 <script src="/static/moba_core.js"></script>
+<script>
+function uploadEzhikVideo(e) {
+    e.preventDefault();
+    let formData = new FormData(document.getElementById('moba_video_form'));
+    fetch('/api/upload-video/', { method: 'POST', body: formData })
+        .then(res => res.json())
+        .then(data => {
+            let successSound = document.getElementById('success_sound');
+            if (successSound) successSound.play();
+            alert(data.message);
+            location.reload(); // Перегружаем, чтобы плеер подтянул новое ИИ-видео
+        });
+}
+</script>
 </body>
 </html>
