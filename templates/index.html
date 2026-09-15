@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>MIROHA PLATFORM // МАТРИЦА СНАБЖЕНИЯ</title>
+    <style>
+        body { background: #070a0e; color: #c9d1d9; font-family: 'Courier New', monospace; margin: 0; padding: 0; overflow-x: hidden; }
+        .parallax-bg { position: fixed; top: 0; left: 0; width: 110%; height: 110%; background: radial-gradient(circle, #111b27 0%, #070a0e 100%); z-index: -1; transform: translateZ(0); transition: transform 0.1s ease-out; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        .header { border: 2px solid #00ff66; padding: 25px; margin-bottom: 40px; box-shadow: 0 0 20px rgba(0,255,102,0.1); }
+        .grid-portals { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
+        .portal-card { border: 1px solid #58a6ff; background: #0d1117; padding: 30px; position: relative; transition: all 0.3s ease; cursor: pointer; }
+        .portal-card:hover { border-color: #00ff66; box-shadow: 0 0 25px rgba(0,255,102,0.2); transform: translateY(-5px); }
+        .portal-card h3 { color: #58a6ff; text-transform: uppercase; margin-top: 0; letter-spacing: 1px; }
+        .portal-card:hover h3 { color: #00ff66; }
+        .badge { position: absolute; top: 15px; right: 15px; font-size: 11px; border: 1px solid #ff3366; color: #ff3366; padding: 2px 6px; }
+        .btn-trigger { background: transparent; border: 1px solid #00ff66; color: #00ff66; padding: 10px 15px; width: 100%; cursor: pointer; font-weight: bold; text-transform: uppercase; margin-top: 15px; }
+        .btn-trigger:hover { background: #00ff66; color: #070a0e; }
+    </style>
+</head>
+<body>
+
+<div class="parallax-bg" id="parallax"></div>
+
+<div class="container">
+    <!-- Шапка платформы Miroha -->
+    <div class="header">
+        <h1 style="color: #00ff66; margin: 0; text-transform: uppercase; letter-spacing: 2px; font-size: 24px;">
+            🏗️ MIROHA ИТР // СУВЕРЕННАЯ МАТРИЦА СНАБЖЕНИЯ
+        </h1>
+        <p style="color: #8b949e; margin: 5px 0 0 0;">[КАПИТАЛ ОБЪЕКТА: 15 000 000.00 ₽] // РИТМ ВАНКУВЕР АКТИВЕН // СЕРВЕР TANGERINE NATRIUM</p>
+    </div>
+
+    <!-- Входы трех порталов -->
+    <div class="grid-portals">
+        
+        <!-- ВХОД 1: ШЛЮЗ ПТО И АКТЫ ПО ОСЯМ -->
+        <div class="portal-card" onclick="location.href='/pto/1/'">
+            <div class="badge">ПТО КОНТУР</div>
+            <h3>Вход 1 // Кабинет ПТО</h3>
+            <p style="color: #8b949e; font-size: 13px;">Акты приема-передачи фронта работ по осям и этажам. Ведомость отпуска давальческих материалов по форме М-15.</p>
+            <button class="btn-trigger">Открыть шлюз</button>
+        </div>
+
+        <!-- ВХОД 2: БОЕВАЯ CRM МАТРИЦА ИТР -->
+        <div class="portal-card" onclick="location.href='/admin/'">
+            <div class="badge">CRM БАЗА</div>
+            <h3>Вход 2 // База Данных</h3>
+            <p style="color: #8b949e; font-size: 13px;">Вклад знаний Робота-Ёжика. Добавление строительных объектов холдинга, субподрядчиков и накладных М-15.</p>
+            <button class="btn-trigger" style="border-color: #58a6ff; color: #58a6ff;">Войти в базу</button>
+        </div>
+
+        <!-- ВХОД 3: АСИНХРОННЫЙ СКЛАД И ТРИГГЕР ПАРСИНГА -->
+        <div class="portal-card">
+            <div class="badge" style="border-color: #ff3366; color: #ff3366;">ИИ-ПАРСЕР</div>
+            <h3>Вход 3 // Логистика Склада</h3>
+            <p style="color: #8b949e; font-size: 13px;">Заявки на день наперед. Точечный парсинг паспортов качества товаров Лемана ПРО в Туле по радио-кнопкам.</p>
+            <input type="text" id="prod_name" placeholder="Название материала (MONLID, профиль, бетон...)" 
+                   style="width:90%; background:#161b22; border:1px solid #30363d; color:#fff; padding:8px; margin-top:10px;">
+            <button class="btn-trigger" onclick="event.stopPropagation(); triggerParsing();" style="border-color: #ff3366; color: #ff3366;">Запустить ищейку</button>
+        </div>
+
+    </div>
+    
+    <div id="parser_log" style="margin-top: 30px; padding: 15px; background: #0d1117; border-left: 3px solid #ff3366; display: none; font-size: 13px;"></div>
+</div>
+
+<script>
+    // Цифровой параллакс Ванкувера
+    document.addEventListener('mousemove', function(e) {
+        const moveX = (e.clientX - window.innerWidth / 2) * 0.015;
+        const moveY = (e.clientY - window.innerHeight / 2) * 0.015;
+        document.getElementById('parallax').style.transform = `translate(${moveX}px, ${moveY}px) scale(1.05)`;
+    });
+
+    // Асинхронный AJAX-вызов Робота-Ёжика к Лемана ПРО
+    function triggerParsing() {
+        const name = document.getElementById('prod_name').value;
+        if(!name) return alert('Введите название материала!');
+        const logBox = document.getElementById('parser_log');
+        logBox.style.display = 'block';
+        logBox.innerHTML = '🦔 [ЁЖИК]: Сканирую шлюзы Лемана ПРО в Туле, обхожу защиту...';
+        
+        fetch(`/api/parse-trigger/?product_name=${encodeURIComponent(name)}&source=warehouse`)
+            .then(res => res.json())
+            .then(data => {
+                logBox.innerHTML = `<span style="color:#00ff66;">${data.message}</span><br>📁 Ссылка на паспорт: <a href="${data.file_url}" target="_blank" style="color:#58a6ff;">Открыть PDF карточку</a>`;
+            });
+    }
+</script>
+</body>
+</html>

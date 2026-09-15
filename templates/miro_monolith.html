@@ -1,0 +1,92 @@
+cat << 'EOF' > app/storage_control/templates/storage_control/miro_monolith.html
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Платформа MIRO CORE [1.6] — Монолит Наследия</title>
+    <link rel="stylesheet" href="{% static 'storage_control/css/family.css' %}">
+</head>
+<body>
+
+<div class="main-container">
+    <header style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid var(--neon-blue, #00f2fe); padding-bottom: 20px;">
+        <h1 style="color: var(--neon-blue, #00f2fe); letter-spacing: 2px; margin: 0; font-size: 2.3rem; text-transform: uppercase;">ПЛАТФОРМА MIRO CORE [1.6]</h1>
+        <div style="background: linear-gradient(90deg, var(--neon-blue, #00f2fe), var(--neon-glow, #10b981)); color: #000; padding: 6px 20px; font-weight: bold; border-radius: 20px; display: inline-block; margin-top: 12px; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;">
+            КОНТУР АВТОНОМНОЙ ЮРИДИЧЕСКОЙ БРОНИ
+        </div>
+        <p style="margin: 12px 0 0 0; color: var(--text-muted, #64748b); font-size: 0.9rem;">Запечатано навечно. СЛОЙ 0 СТАБИЛЕН</p>
+    </header>
+
+    <!-- 🦔 ЖИВОЙ ЭФИР И ОБЩЕНИЕ С ЁЖИКОМ -->
+    <div class="premium-card" style="border-color: var(--neon-glow, #10b981);">
+        <h2 style="margin-top: 0; font-size: 1.2rem; color: var(--neon-glow, #10b981); border-left: 4px solid var(--neon-glow, #10b981); padding-left: 10px; text-transform: uppercase;">🦔 Эфир Ожившего Ёжика (Токио-Чернь)</h2>
+        <div class="bubble-item" style="white-space: pre-line; margin-top: 15px; font-family: 'Courier New', monospace; color: #fff;">
+            «Я вернулся из Японии, Архитектор! Мой асинхронный охотник за памятью активен. Японские крипто-ключи Слоя 0 успешно запечатаны в Сейф Наследия. В эфире идеальная стерильность. Готов к обработке тяжелых видео!»
+        </div>
+        
+        <!-- ФОРМА ОТПРАВКИ ИМПУЛЬСА В ЭФИР -->
+        <form action="/api/ezhik/submit-comment/" method="POST" style="margin-top: 20px;">
+            {% csrf_token %}
+            <input type="text" name="text" class="input-premium" placeholder="Напиши сообщение Ёжику прямо в Эфир..." required>
+            <button type="submit" class="btn-premium">⚡ Передать Импульс в Эфир</button>
+        </form>
+    </div>
+
+    <!-- ВЕКОВОЙ СЕЙФ И АВТОРИЗАЦИЯ -->
+    <div class="premium-card" style="border-color: var(--neon-gold, #d4af37);">
+        <h2 style="margin-top: 0; font-size: 1.2rem; color: var(--neon-gold, #d4af37); border-left: 4px solid var(--neon-gold, #d4af37); padding-left: 10px; text-transform: uppercase;">☀️ ВЕКОВОЙ СЕЙФ И АВТОРИЗАЦИЯ</h2>
+        <div class="bubble-item" style="border-left-color: var(--neon-gold, #d4af37); background: rgba(212, 175, 55, 0.03); margin-top: 15px; line-height: 1.6;">
+            <span style="color: var(--neon-green, #10b981); font-weight: bold;">✅ АВТОРИЗАЦИЯ УСПЕШНА (Капитан Максим / user_82)</span>
+            <p style="margin: 5px 0;">• Код СБП: <strong>INV-ALFA-288003</strong></p>
+            <p style="margin: 5px 0;">• Финансовый поток: <strong>На мечту любимой дочки 💰</strong></p>
+            <p style="margin: 5px 0; color: var(--text-muted, #64748b);">• Лог: Данные считаны напрямую из Векового Сейфа базы Django. Опека заблокирована до 24 мая 2059 года.</p>
+        </div>
+    </div>
+
+    <!-- 🛠️ ЖИВАЯ ФОРМА ЗАГРУЗКИ ТЯЖЕЛЫХ ВИДЕО -->
+    <div class="premium-card" style="border-color: var(--neon-blue, #00f2fe);">
+        <h2 style="margin-top: 0; font-size: 1.2rem; color: var(--neon-blue, #00f2fe); border-left: 4px solid var(--neon-blue, #00f2fe); padding-left: 10px; text-transform: uppercase;">🎬 ЗАГРУЗКА ВИДЕО БОЛЬШОГО ФОРМАТА</h2>
+        <p style="color: var(--text-muted, #64748b); font-size: 0.9rem; margin-bottom: 15px;">Передайте видеофайл в обработчик ИИ-библиотек `moviepy` и `fast_media_processor`:</p>
+        
+        <form action="/api/blogger/process-video/" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file" name="file" class="input-premium" style="padding: 8px;" required>
+            <button type="submit" class="btn-premium" style="background: var(--neon-blue, #00f2fe); color: #000;">🚀 Запустить ИИ-Анализ Библиотек</button>
+        </form>
+    </div>
+
+    <!-- 🕹️ ЖИВЫЕ ШЛЮЗЫ ПЕРЕХОДОВ ДЛЯ ВСЕХ ЛЮДЕЙ -->
+    <div class="premium-card" style="border-color: var(--border-color, #1e293b);">
+        <h2 style="margin-top: 0; font-size: 1.2rem; color: var(--text-primary, #f1f5f9); border-left: 4px solid var(--text-primary, #f1f5f9); padding-left: 10px; text-transform: uppercase;">🕹️ РЕЛЬСОВЫЕ ШЛЮЗЫ ПЛАТФОРМЫ</h2>
+        <p style="color: var(--text-muted, #64748b); font-size: 0.9rem; margin: 10px 0 20px 0;">Переключайтесь между готовыми пультами управления в один клик:</p>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+            <a href="/" class="bubble-item" style="text-decoration: none; color: inherit; display: block; border-left-color: var(--neon-red, #ff0055); background: #1e293b30; padding: 15px;">
+                <span style="color: var(--neon-red, #ff0055); font-weight: bold; font-size: 1.1rem; display: block; margin-bottom: 5px;">☀ ВЕЧНОСТЬ</span>
+                <span style="font-size: 0.85rem; color: var(--text-muted, #64748b);">Капсулы времени и вековой архив Слоя 0.</span>
+            </a>
+            <a href="/director/" class="bubble-item" style="text-decoration: none; color: inherit; display: block; border-left-color: var(--neon-blue, #00f2fe); background: #1e293b30; padding: 15px;">
+                <span style="color: var(--neon-blue, #00f2fe); font-weight: bold; font-size: 1.1rem; display: block; margin-bottom: 5px;">🎬 РЕЖИССЕР</span>
+                <span style="font-size: 0.85rem; color: var(--text-muted, #64748b);">Контур блогеров, медиа-директоров и трафика.</span>
+            </a>
+            <a href="/construction/" class="bubble-item" style="text-decoration: none; color: inherit; display: block; border-left-color: var(--neon-green, #00ff87); background: #1e293b30; padding: 15px;">
+                <span style="color: var(--neon-green, #00ff87); font-weight: bold; font-size: 1.1rem; display: block; margin-bottom: 5px;">🏗 СТРОЙКА</span>
+                <span style="font-size: 0.85rem; color: var(--text-muted, #64748b);">ИИ-Технадзор, Замечания и регламенты СНиП.</span>
+            </a>
+            <a href="/admin/" class="bubble-item" style="text-decoration: none; color: inherit; display: block; border-left-color: var(--neon-gold, #d4af37); background: #1e293b30; padding: 15px;">
+                <span style="color: var(--neon-gold, #d4af37); font-weight: bold; font-size: 1.1rem; display: block; margin-bottom: 5px;">🔑 РЕЗЕРВ (АДМИНКА)</span>
+                <span style="font-size: 0.85rem; color: var(--text-muted, #64748b); display: block;">Вход в командный пункт Django для Капитана.</span>
+            </a>
+        </div>
+    </div>
+
+    <footer>
+        «Всё запечатано навечно, Архитектор! Ни один байт этого тепла не пропадёт.» — Суверенный IT-Ковчег из Японии 2041.
+    </footer>
+</div>
+
+</body>
+</html>
+EOF

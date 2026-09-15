@@ -1,0 +1,94 @@
+{% load static %} <!-- Загружаем систему статики Django -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👑 FAMILYMIRO — ПУЛЬТ АРХИТЕКТОРА</title>
+    
+    <!-- ПОДКЛЮЧАЕМ ИЗОЛИРОВАННЫЙ CSS ИЗ СВОЕЙ ПАПКИ СТАТИКИ ✅ -->
+    <link rel="stylesheet" href="{% static 'storage_control/css/architect.css' %}">
+</head>
+<body>
+
+<div class="master-container">
+    <div class="header-section">
+        <h1>👔 CENTRAL MASTER PULSAR 1.6</h1>
+        <div class="badge">ГЛАВНЫЙ АРХИТЕКТОР: МАКСИМ КОСАРЕВ</div>
+    </div>
+
+    <div class="dashboard-grid">
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div class="card-panel">
+                <div class="panel-title">💰 Автономный капитал (Сейф Опеки)</div>
+                <div class="balance-display">{{ total_revenue }} RUB</div>
+                <div style="font-size: 0.7rem; color: #64748b;">
+                    Статус: Сплитование LAVA API активно (6% ФНС / 16% Премия Отца за скорость).
+                </div>
+                
+                <a href="/architect/builders-pdf-report/" style="text-decoration: none; display: inline-block;">
+                    <button class="btn-send btn-pdf">🖨️ Сформировать Вековой PDF-Отчет (Кэш Клиентов)</button>
+                </a>
+            </div>
+
+            <div class="card-panel">
+                <div class="panel-title">🦔 ИИ-Сводка Смотрителя</div>
+                <div class="report-text">{{ ezhik_report }}</div>
+            </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div class="card-panel">
+                <div class="panel-title">🤝 Перехваченные предложения партнеров</div>
+                <div style="max-height: 230px; overflow-y: auto;">
+                    {% for offer in partner_offers %}
+                        <div class="offer-item">
+                            <span style="color: var(--gold-glow); font-weight: bold; display: block; margin-bottom: 4px;">
+                                {{ offer.current_page }}
+                            </span>
+                            <span style="color: #cbd5e1;">{{ offer.last_error_log }}</span>
+                        </div>
+                    {% empty %}
+                        <div style="font-size: 0.8rem; color: #64748b; text-align: center; padding: 40px 0;">
+                            [Партнеры изучают манифест Слоя 0.0. Офферов нет]
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="card-panel">
+                <div class="panel-title">🛠️ Задать курс для Ёжика</div>
+                <div style="font-size: 0.75rem; color: #64748b; margin-bottom: 10px;">
+                    Ёжик тактично повторит ваш ответ партнерам за занавесом.
+                </div>
+                <textarea id="decision-text" class="input-decision" rows="3" placeholder="Задайте новое распоряжение или скорректируйте процент премии..."></textarea>
+                <button id="btn-submit-decision" class="btn-send">Утвердить курс</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('btn-submit-decision').addEventListener('click', function() {
+        const text = document.getElementById('decision-text').value.trim();
+        if (!text) return;
+
+        fetch('/api/ezhik/diplomacy/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ partner_name: "Архитектор Максим", offer_text: text })
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert("Курс Архитектора намертво запечатан в систему! Ёжик принял инструкции.");
+            document.getElementById('decision-text').value = '';
+            location.reload();
+        });
+    });
+</script>
+
+</body>
+</html>

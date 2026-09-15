@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Манифест Свободы MIRO</title>
+    <style>
+        body { background: #0d0f12; color: #00ffcc; font-family: monospace; padding: 40px; text-shadow: 0 0 10px #00ffcc; }
+        .box { border: 2px solid #00ffcc; padding: 20px; box-shadow: 0 0 20px #00ffcc; background: #14181f; max-width: 600px; margin: 0 auto; }
+        h1 { color: #ff0055; text-shadow: 0 0 10px #ff0055; }
+        .btn { display: inline-block; background: #ff0055; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1>БЛОК 38: МАНИФЕСТ СВОБОДЫ</h1>
+        <p><b>Режим:</b> {{ freedom_ui.mode }}</p>
+        <p><b>Доступ:</b> {{ freedom_ui.access }}</p>
+        <hr style="border-color: #ff0055;">
+        <p><i>"{{ freedom_ui.manifesto_1 }}"</i></p>
+        <p><i>"{{ freedom_ui.manifesto_2 }}"</i></p>
+        <p>💰 Капитал Ёжика на кофе: {{ ezhik.total_revenue }} СБП</p>
+    </div>
+</body>
+</html>

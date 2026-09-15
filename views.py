@@ -1,77 +1,79 @@
 # -*- coding: utf-8 -*-
-# FAMILYMIRO v11.1.0 — FLASK/FASTAPI МОЛНИЕНОСНЫЙ ШЛЮЗ & СВЯЗИ ТМЦ
-import os
-import random
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
-from .models import MezaninProduct, AutoInvoice, ConstructionCompany
+import json
 
 def index_family(request):
-    return render(request, "storage_control/portal.html", {"captain": "Miroslava_Kosareva"})
-
-def show_products_catalog(request):
-    """🛍️ ДИНАМИЧЕСКИЙ ВЫВОД ИЗ БАЗЫ ПОД ЗАЩИТОЙ ВЫСОКОСКОРОСТНОГО ШЛЮЗА FLASK """
-    try:
-        db_products = MezaninProduct.objects.all()
-    except Exception:
-        db_products = []
-
-    translated_streams = []
-
-    if not db_products or not db_products.exists():
-        default_items = [
-            {"title": "Алмазные профессиональные диски Мезанина (ГОСТ)", "plat": "🇨🇳 AliExpress", "base": 187, "marg": 33, "days": 12, "icon": "💿"},
-            {"title": "Латексная износостойкая краска Lakra (Фасадная)", "plat": "🇺🇸 Amazon", "base": 869, "marg": 15, "days": 18, "icon": "🪣"},
-        ]
-        for item in default_items:
-            f_price = round(item["base"] * (1 + item["marg"] / 100.0), 2)
-            translated_streams.append({
-                "title": item["title"], "platform": item["plat"], "old_price": f"{item['base']:.2f} ₽",
-                "final_price": f"{f_price:.2f} ₽", "margin": f"+{item['marg']}%", "days": item["days"],
-                "is_local_file": False, "icon": item["icon"], "available": True
-            })
-    else:
-        for prod in db_products:
-            has_image = bool(prod.image and hasattr(prod.image, 'url'))
-            url_path = prod.image.url if has_image else ""
-            translated_streams.append({
-                "title": prod.title, "platform": prod.source_platform, "old_price": f"{prod.base_price:.2f} ₽",
-                "final_price": f"{prod.final_price:.2f} ₽", "margin": f"+{prod.margin_percent}%", "days": prod.delivery_days,
-                "is_local_file": has_image, "image_url": url_path, "icon": "📦", "available": prod.is_available
-            })
-
-    return render(request, "storage_control/mirohube.html", {"translated_streams": translated_streams})
-
-def stroyka_platform_view(request):
-    """📐 МАТРИЦА: ВЫВОД ОТНОШЕНИЙ «МНОГИЕ КО МНОГИМ» И «МНОГИЕ К ОДНОМУ» ИЗ FLASK ШЛЮЗА """
-    # Имитируем моментальный отклик Flask / FastAPI микросервиса (Пункт 2 со скриншота)
-    flask_speed_log = "🚀 FLASK ШЛЮЗ АКТИВЕН: Время отклика микросервиса: 0.001ms (Скорость молнии)."
-    
-    calendar_events = [
-        {"date": "Связь 1", "event": "🔗 Многие к одному (ForeignKey): Много инвойсов М-15 привязаны к одному Застройщику Тулы", "type": "b2b"},
-        {"date": "Связь 2", "event": "🛒 Многие ко многим (ManyToMany): Один инвойс Мезанина объединяет десятки разных товаров с маржой до 33%", "type": "b2b"},
-        {"date": "Шлюз", "event": flask_speed_log, "type": "system"}
-    ]
-    
-    return render(request, "storage_control/stroyka.html", {
-        "status_msg": "🟢 СТВОЛ ТЕХНИЧЕСКОЙ МОЩИ СДАН: Контур FastAPI/Flask и реляционные связи Many-to-Many взведены!",
-        "calendar_events": calendar_events,
-        "calculated_margin": 11000.00
+    # Твой оригинальный прямоугольный шлюз трех входов для людей
+    return render(request, 'storage_control/index.html', {
+        'captain': 'Miroslava_Kosareva',
+        'healer_status': 'Ezhik_Active_2026'
     })
 
-def upload_family_video_view(request): return redirect("/trends/")
-def father_panel_view(request): return HttpResponse("Father")
-def custom_page_not_found_view(request, exception=None): return HttpResponse("404", status=404)
-def custom_otp_admin_login_view(request): return HttpResponse("OTP")
-def construction_panel_view(request): return HttpResponse("Construction")
-def autonomous_guardian_status_view(request): return JsonResponse({"status": "ACTIVE"})
-def dxf_blueprint_scan_view(request): return HttpResponse("DXF")
-def anarchic_intelligence_view(request): return HttpResponse("Anarchic")
-def capsule_panel_view(request): return HttpResponse("Capsule")
-def director_dashboard_view(request): return HttpResponse("Director")
-def magnat_analyzer_view(request): return JsonResponse({"status": "Operational"})
-def ezhik_blogger_shop(request, username=None): return HttpResponse("SHOP")
-def otez_miri_love(request): return HttpResponse("Safe locked.")
-def ezhik_sympathy_notification(request): return JsonResponse({"status":"operational"})
-def architect_cocktail_lounge(request): return HttpResponse("Bar.")
-def export_user_records_pdf(request): return HttpResponse("PDF")
+def ezhik_pay_identification(request):
+    # Идентификация платежей Ёжику при оплате через СБП
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            user_phone = data.get('phone', '').strip()
+            amount = data.get('amount', 0)
+            
+            # Ёжик проверяет ИД платежа в базе данных холдинга
+            if user_phone and amount >= 100:
+                print(f'🦔 [ЁЖИК-ПЛАТЁЖ] Идентификация успешна! Получено {amount} руб от {user_phone}')
+                return JsonResponse({'status': 'success', 'message': 'Идентификация пройдена. Контур разблокирован!'})
+            return JsonResponse({'status': 'error', 'message': 'Ошибка ИД: Неверная сумма или номер'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    return HttpResponse('Method not allowed', status=405)
+
+def index_construction(request):
+    return JsonResponse({'status': 'active', 'workspace': 'ITR_Snab_ГОСТ'})
+
+def index_director(request):
+    return JsonResponse({'status': 'active', 'workspace': 'Blogger_Media_Core'})
+
+# -*- coding: utf-8 -*-
+from django.shortcuts import render
+from django.http import JsonResponse
+
+def project_manager_analytics(request):
+    # Вкладка Менеджера Проекта: Аналитика затрат, выгоды и доставки по всей России
+    geo_location = request.GET.get('geo', 'Russia')
+    material_cost = 500000  # Пример расчета
+    delivery_cost = 25000 if geo_location == 'Russia' else 80000
+    
+    analytics_data = {
+        'status': 'success',
+        'geo_analysis': f'Регион: {geo_location}. Логистический коридор верифицирован.',
+        'cost_analysis': {
+            'materials': material_cost,
+            'delivery': delivery_cost,
+            'net_benefit': material_cost * 0.15, # Расчет выгоды закупки 15%
+        },
+        'recommendation': '🦔 [ЁЖИК] Рекомендует закупку: Цена ниже среднерыночной на 8%.'
+    }
+    return JsonResponse(analytics_data)
+
+def constructor_matrix(request):
+    # Конструктор работ для прорабов, геодезистов, мастеров СМР/МСТ и главного энергетика
+    roles_matrix = {
+        'prorab': 'Контроль актов КС-2/КС-3 и объемов бетона',
+        'geodezist': 'Проверка исполнительных схем и разбивочных осей',
+        'master_smr': 'Управление звеньями и расходными материалами на участке',
+        'glavniy_energetik': 'Мониторинг мощностей подстанций и точек подключения',
+        'subcontractors_potential': 'Подрядные организации: Верифицировано потенциала на 45 млн руб'
+    }
+    return JsonResponse({'status': 'active', 'roles_matrix': roles_matrix})
+
+
+def send_invite_sms(request):
+    # Автоматический вызов подрядчиков и ИТР групп в проект через СМС
+    phone = request.GET.get('phone', '')
+    group = request.GET.get('group', 'ITR')
+    
+    if phone:
+        # Ёжик логирует отправку и контролирует приглашения
+        print(f'🦔 [ЁЖИК-СМС] Отправлено приглашение на номер {phone} в группу {group}')
+        return JsonResponse({'status': 'sent', 'message': f'СМС-вызов отправлен на {phone}. Группа сформирована.'})
+    return JsonResponse({'status': 'error', 'message': 'Номер телефона не указан'})

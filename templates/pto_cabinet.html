@@ -1,0 +1,37 @@
+<div style="background: #0d1117; color: #c9d1d9; padding: 40px; font-family: 'Courier New', monospace; min-height: 100vh;">
+    <div style="border: 2px solid #58a6ff; padding: 40px; background: #161b22; max-width: 900px; margin: 0 auto; box-shadow: 0 0 30px rgba(88,166,255,0.15);">
+        <table style="width: 100%; border-bottom: 2px solid #30363d; padding-bottom: 20px;">
+            <tr>
+                <td>
+                    <h1 style="color: #58a6ff; margin: 0; text-transform: uppercase; font-size: 20px;">ФОРМА М-15 И АКТ ПРИЕМА-ПЕРЕДАЧИ ПО ОСЯМ</h1>
+                    <p style="color: #8b949e; margin: 5px 0 0 0;">ХОЛДИНГ MIROHA СНАБЖЕНИЕ // База знаний Ёжика</p>
+                </td>
+            </tr>
+        </table>
+        <div style="margin-top: 30px; font-size: 15px;">
+            <p><strong>ОБЪЕКТ:</strong> {{ act.construction_object.name }}</p>
+            <p><strong>СУБПОДРЯДЧИК:</strong> {{ act.subcontractor_name }}</p>
+            <div style="background: #0d1117; padding: 15px; border-left: 4px solid #00ff66; margin: 20px 0;">
+                <strong>📍 ГЕОМЕТРИЧЕСКАЯ ПРИВЯЗКА ФРОНТА РАБОТ:</strong><br>
+                ЭТАЖ: {{ act.floor|default:"—" }} | ОСИ: {{ act.axes|default:"—" }} | ПОМЕЩЕНИЕ: {{ act.room|default:"—" }}
+            </div>
+            <p><strong>ОПИСАНИЕ:</strong> {{ act.description }}</p>
+            <h3 style="color: #58a6ff; text-transform: uppercase; font-size: 16px; margin-top:30px;">📦 МАТЕРИАЛЫ ПО ФОРМЕ М-15:</h3>
+            <p style="color: #00ff66; font-weight: bold;">- {{ mat.material_name }}: {{ mat.quantity }} {{ mat.unit }}</p>
+        </div>
+        <div style="margin-top: 50px; border-top: 2px dashed #30363d; padding-top: 30px;">
+            <table style="width: 100%;">
+                <tr>
+                    <td><div style="width: 120px; height: 120px; border: 2px dashed #30363d; text-align: center; line-height: 120px; color: #30363d; font-size: 11px;">М.П. СУБПОДРЯД</div></td>
+                    <td style="text-align: right;">
+                        {% if act.chief_approved %}
+                            <div style="border: 2px solid #00ff66; color: #00ff66; padding: 10px; font-weight: bold; display: inline-block;">🛡️ ВИЗА НАЧУЧАСТКА АКТИВНА</div>
+                        {% else %}
+                            <button style="background: #ff3366; color: #fff; border: none; padding: 10px 20px; font-weight: bold; cursor: pointer;">✍️ ПОДПИСАТЬ НАЧ. УЧАСТКА</button>
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
