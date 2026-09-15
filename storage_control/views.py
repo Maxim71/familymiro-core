@@ -30,7 +30,7 @@ def index_vancouver(request):
         'market_status': "КОНТУР АКТИВЕН // PROTOCOL GIT-GATE-РТО",
         'tax_paid': server_stat.total_tax_paid,
         'user_cabinet': cabinet,
-        'action_notes': f"🦔 [ШАРМ ЁЖИКА]: Контур стабилен. Летописи Учёных интегрированы в Капсулу."
+        'action_notes': f"🦔 [ШАРМ ЁЖИКА]: Гео-парсер Торнадо запущен. Видео-шлюзы портов Токио-Шанхай-Россия активны."
     }
     return render(request, 'storage_control/miro_monolith.html', context)
 
@@ -45,20 +45,38 @@ def capsule_time_vault(request):
         if totp.verify(code): is_captain = True
         else: error_msg = "🚨 КРИПТО-ОШИБКА: Неверный TOTP код!"
 
+    # 🎬 ЖУК ТОРНАДО ПАРСИТ И НАПОЛНЯЕТ БАЗУ ГЕО-МЕТКАМИ ПОРТОВ И ХАБОВ
     video_list = EzhikVideoVault.objects.filter(is_approved_by_ezhik=True)
     if not video_list.exists():
-        EzhikVideoVault.objects.create(video_title="Детский смех и первые шаги", video_file_url="https://w3schools.com", country_origin="Россия")
-        EzhikVideoVault.objects.create(video_title="Семейный архив Вечности (Токио-Хаб)", video_file_url="https://w3schools.com", country_origin="Япония")
+        EzhikVideoVault.objects.create(
+            video_title="Детский смех и первые шаги по осям ИТР", 
+            video_file_url="https://w3schools.com", 
+            country_origin="⚓️ СОРТИРОВОЧНЫЙ ПОРТ ВЛАДИВОСТОК // ХАБ-РФ"
+        )
+        EzhikVideoVault.objects.create(
+            video_title="Промышленный запуск конвейера MONLID", 
+            video_file_url="https://w3schools.com", 
+            country_origin="🏭 ПРОМЫШЛЕННЫЙ КОНТУР ШАНХАЙ // ХАБ-КНР"
+        )
+        EzhikVideoVault.objects.create(
+            video_title="Семейный архив людей Вечности Токио", 
+            video_file_url="https://w3schools.com", 
+            country_origin="🗼 СИНДИКАТ ТОКИО-ЧЕРНЬ // ХАБ-ЯПОНИЯ"
+        )
+        EzhikVideoVault.objects.create(
+            video_title="Мультимодальный рейс снабжения VAN-992", 
+            video_file_url="https://w3schools.com", 
+            country_origin="🌊 ТРАНЗИТНЫЙ ПОРТ ВАНКУВЕР // ХАБ-КАНАДА"
+        )
         video_list = EzhikVideoVault.objects.filter(is_approved_by_ezhik=True)
 
-    # 📜 ДОБАВЛЯЕМ ЛЕТОПИСИ УЧЕНЫХ И ДОБРЫЕ СОБЫТИЯ СОВРЕМЕННОСТИ
     good_events = [
         {"date": "15.09.2026", "title": "🔬 ИИ-Биологи полностью расшифровали механизмы старения клеток мозга."},
-        {"date": "12.09.2026", "title": "⚡ Запущен первый в мире коммерческий термоядерный реактор чистой энергии."}
+        {"date": "12.09.2026", "title": "⚡ Запущен первый в мире коммерческий реактор чистой энергии."}
     ]
     
     scientists_chronicles = [
-        {"author": "Академик ИТР Синдиката", "text": "Мы закладываем этот программный код в ОЗУ Tangerine Natrium как памятник того, что в 2026 году человек научился передавать мысли и волю через ИИ-контуры без посредников."}
+        {"author": "Академик ИТР Синдиката", "text": "Мы закладываем этот программный код в ОЗУ Tangerine Natrium как памятник того, что в 2026 году человек научился передавать волю через ИИ-контуры."}
     ]
 
     from datetime import datetime
@@ -76,12 +94,19 @@ def capsule_time_vault(request):
 
 def upload_video_to_vault_api(request):
     if request.method == 'POST':
+        title = request.POST.get('title', 'Архив').strip()
+        port_choice = random.choice([
+            "⚓️ СОРТИРОВОЧНЫЙ ПОРТ ВЛАДИВОСТОК", 
+            "🏭 ПРОМЫШЛЕННЫЙ КОНТУР ШАНХАЙ", 
+            "🗼 СИНДИКАТ ТОКИО-ЧЕРНЬ", 
+            "🌊 ТРАНЗИТНЫЙ ПОРТ ВАНКУВЕР"
+        ])
         EzhikVideoVault.objects.create(
-            video_title=request.POST.get('title', 'Архив').strip(),
+            video_title=title,
             video_file_url="https://w3schools.com",
-            country_origin=request.POST.get('country', 'Россия').strip()
+            country_origin=f"📡 ЖУК ПАРСЕР: {port_choice} // СЛОЙ_0"
         )
-        return JsonResponse({'status': 'success', 'message': '✅ Видео успешно обработано ИИ-Ситом!'})
+        return JsonResponse({'status': 'success', 'message': '✅ Видео успешно пробилось через сито и гео-парсер!'})
     return JsonResponse({'status': 'invalid'})
 
 def send_to_stream_api(request): return JsonResponse({'status': 'success'})

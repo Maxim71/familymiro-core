@@ -9,14 +9,15 @@
     <style>
         .auth-gate-box { background: rgba(6, 11, 25, 0.95); border: 2px solid #00f0ff; padding: 25px; border-radius: 20px; box-shadow: 0 0 25px rgba(0, 240, 255, 0.3); text-align: center; margin: 15px 0; }
         .totp-input { width: 85%; background: #070a0e; border: 2px solid #30363d; color: #00ff66; text-align: center; font-size: 24px; letter-spacing: 6px; padding: 10px; font-family: monospace; border-radius: 14px; outline: none; }
-        .video-stream-box { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); margin-top: 15px; text-align: left; }
+        .video-stream-box { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); margin-top: 15px; text-align: left; position: relative; }
         .moba-video-player { width: 100%; border-radius: 12px; border: 1px solid #ffaa00; box-shadow: 0 0 10px rgba(255,170,0,0.2); margin-top: 8px; }
         .chronicle-box { background: rgba(255, 170, 0, 0.03); border: 1px dashed #ffaa00; padding: 12px; border-radius: 12px; margin-top: 15px; font-family: monospace; font-size: 11px; text-align: left; }
+        /* Почетный Неоновый Ярлык Гео-Парсера */
+        .moba-geo-badge { background: rgba(0, 240, 255, 0.08); border: 1px solid #00f0ff; color: #00f0ff; font-size: 9px; padding: 4px 8px; border-radius: 6px; font-family: monospace; font-weight: bold; display: block; margin-bottom: 6px; text-shadow: 0 0 6px rgba(0,240,255,0.4); text-transform: uppercase; }
     </style>
 </head>
 <body style="background: #030712;">
 
-<!-- 🎼 Звуковой шлюз космического эмбиента Вечности -->
 <audio id="bg_ambient" src="https://mixkit.co" loop preload="auto"></audio>
 
 <div class="parallax-bg" id="parallax"></div>
@@ -58,7 +59,7 @@
             </form>
         </div>
 
-        <!-- 📰 НОВЫЙ БЛОК: ПОТОК ДОБРЫХ СОБЫТИЙ МИРА -->
+        <!-- Поток добрых событий мира -->
         <div class="chronicle-box" style="border-color: #00ff66; background: rgba(0,255,102,0.01);">
             <div style="color: #00ff66; font-weight: bold; margin-bottom: 8px; text-transform: uppercase;">📰 ПОТОК ДОБРЫХ СОБЫТИЙ СОВРЕМЕННОСТИ:</div>
             {% for event in good_events %}
@@ -68,7 +69,7 @@
             {% endfor %}
         </div>
 
-        <!-- 📜 НОВЫЙ БЛОК: ЛЕТОПИСИ НЫНЕШНИХ УЧЕНЫХ И ИНЖЕНЕРОВ -->
+        <!-- Летописи Учёных -->
         <div class="chronicle-box">
             <div style="color: #ffaa00; font-weight: bold; margin-bottom: 8px; text-transform: uppercase;">📜 ЛЕТОПИСИ НЫНЕШНИХ УЧЕНЫХ ПОТОМСТВУ:</div>
             {% for c in chronicles %}
@@ -79,15 +80,31 @@
             {% endfor %}
         </div>
 
-        <!-- Лента плееров Памятства -->
-        <div style="color: #ffaa00; font-size: 11px; text-transform: uppercase; font-weight: bold; text-align: left; margin-top: 25px;">🎬 Лента Памятства: Отфильтрованные Видео</div>
+        <!-- Сито загрузки видео с мобильного телефона -->
+        <div class="auth-gate-box" style="border-color: #00ff66; background: rgba(0, 255, 102, 0.02); margin-top: 20px;">
+            <div style="font-size: 11px; color: #00ff66; font-weight: bold; text-transform: uppercase; margin-bottom: 8px;">🎬 Скинуть Видео в Вечность (Сито Памяти):</div>
+            <form id="moba_video_form" onsubmit="uploadEzhikVideo(event)">
+                {% csrf_token %}
+                <input type="text" name="title" placeholder="Описание (Пример: Дочка смеется / Первый шаг)" style="width:92%; background:#070a0e; border:1px solid #30363d; color:#fff; padding:7px; font-size:11px; border-radius:8px; margin-bottom:8px;" required>
+                <button type="submit" class="moba-btn-action" style="background: linear-gradient(90deg, #00ff66 0%, #009933 100%); color:#fff; font-size:11px; padding:10px;">汇 Залить Видео Памятства</button>
+            </form>
+        </div>
+
+        <!-- ЛЕНТА ПЛЕЕРОВ ПАМЯТСТВА С ГЕО-БЕЙДЖАМИ ИИ-ПАРСЕРА -->
+        <div style="color: #ffaa00; font-size: 11px; text-transform: uppercase; font-weight: bold; text-align: left; margin-top: 25px;">🎬 Лента Памятства: Рапорты разных стран из СУБД</div>
         {% for video in videos %}
         <div class="video-stream-box">
-            <div style="display:flex; justify-content:space-between; font-size:10px;">
-                <span style="color:#00f0ff; font-weight:bold;">📍 ИСТОЧНИК: {{ video.country_origin }}</span>
-                <span style="color:#00ff66;">👁️ ИИ-СИТО ВЕРИФИЦИРОВАНО</span>
+            
+            <!-- ⚙️ ЖИВОЙ ГЕО-ЯРЛЫК ТОРНАДО-ПАРСЕРА ИЗ БАЗЫ ДАННЫХ -->
+            <span class="moba-geo-badge">{{ video.country_origin }}</span>
+            
+            <div style="display:flex; justify-content:space-between; font-size:9px; color:#8b949e; margin-top:4px;">
+                <span>👁️ ИИ-СИТО: ВЗГЛЯД / УЛЫБКА / ЗВУК ОК</span>
+                <span>ПРОТОКОЛ: GIT-GATE-РТО</span>
             </div>
-            <div style="color:#fff; font-size:11px; margin-top:5px; font-family:monospace;">{{ video.video_title }}</div>
+            
+            <div style="color:#fff; font-size:11px; margin-top:6px; font-family:monospace; font-weight:bold;">{{ video.video_title }}</div>
+            
             <video class="moba-video-player" controls preload="metadata">
                 <source src="{{ video.video_file_url }}" type="video/mp4">
             </video>
@@ -103,11 +120,22 @@
 
 <script src="/static/moba_core.js"></script>
 <script>
-    // Запуск фонового эмбиента при первом клике на экран
-    document.addEventListener('click', function() {
-        let amb = document.getElementById('bg_ambient');
-        if(amb) amb.play().catch(()=>{});
-    }, {once: true});
+function uploadEzhikVideo(e) {
+    e.preventDefault();
+    let formData = new FormData(document.getElementById('moba_video_form'));
+    fetch('/api/upload-video/', { method: 'POST', body: formData })
+        .then(res => res.json())
+        .then(data => {
+            let successSound = document.getElementById('success_sound');
+            if (successSound) successSound.play();
+            alert(data.message);
+            location.reload();
+        });
+}
+document.addEventListener('click', function() {
+    let amb = document.getElementById('bg_ambient');
+    if(amb) amb.play().catch(()=>{});
+}, {once: true});
 </script>
 </body>
 </html>
