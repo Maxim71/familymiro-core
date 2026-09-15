@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Miroha Core — RFI Автоматизация выполненных скрытых работ Россия - Китай.">
     <title>MIROHA PLATFORM // LEGEND MONOLITH</title>
-    <!-- Подключаем изолированные файлы из шлюза Nginx -->
     <link rel="stylesheet" href="/static/moba_style.css">
     <style>
         .grid-donat { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; }
@@ -25,7 +24,7 @@
 
 <div class="parallax-bg" id="parallax"></div>
 
-<div class="container" style="max-width: 480px;"> <!-- Возвращаем идеальный узкий экран как на твоем скриншоте -->
+<div class="container" style="max-width: 480px;">
     
     <!-- КАПСУЛА 1: МАТРИЦА СНАБЖЕНИЯ РОССИЯ - КИТАЙ -->
     <div class="moba-card">
@@ -33,7 +32,6 @@
         <div style="font-size: 11px; color: #8b949e; text-transform: uppercase;">Miroha Platform // {{ market_status }}</div>
         <div style="font-size: 16px; color: #00f0ff; font-weight: bold; margin-top: 5px;">КАПИТАЛ СИНДИКАТА: <span style="color:#00ff66;">15 000 000.00 ₽</span></div>
         
-        <!-- Датчик хостинга -->
         <div class="server-monitor">
             ⚡ <strong>РЕАЛЬНЫЙ БАЛАНС СЕРВЕРА (⚙️ КОМИССИЯ 2%):</strong><br>
             🇷🇺 РФ: <span style="color:#00ff66; font-weight:bold;">{{ server_balance_rub }} ₽</span> | 🇨🇳 КНР: <span style="color:#ff0000; font-weight:bold;">{{ server_balance_cny }} ¥</span>
@@ -42,12 +40,11 @@
         <button class="moba-btn-action" style="margin-top: 10px; padding: 10px; font-size: 11px;" onclick="executeSbpCheckout()">🔒 АВТОРИЗОВАТЬ СБП INV-ALFA-288003</button>
     </div>
 
-    <!-- КАРТОЧКА 2: ЦЕНТРАЛЬНЫЙ СТЕРЕО ЭФИР МАКСИМА -->
+    <!-- КАРТОЧКА 2: ЦЕНТРАЛЬНЫЙ СТЕРЕО ЭФИР -->
     <div class="moba-card pink">
         <div class="moba-badge">📡 СТЕРЕО ПОТОК</div>
         <div style="font-size: 14px; color: #fff; font-weight: bold;">Максим // Снабжение ИТР</div>
         
-        <!-- Живой чат эфира -->
         <div id="live_stream_box" style="max-height: 200px; margin: 15px 0; padding: 10px; background: rgba(0,0,0,0.4); border-radius: 12px; font-size: 11px; border: 1px solid rgba(255,255,255,0.05);"></div>
         
         <div style="background: rgba(6, 11, 25, 0.8); padding: 10px; border-radius: 14px; border: 1px dashed #ff0055;">
@@ -55,7 +52,6 @@
             <button class="moba-btn-action" style="padding: 6px; font-size: 11px; margin-top: 5px; background: linear-gradient(90deg, #ff0055 0%, #990033 100%);" onclick="pushSignalToEzhikStream()">П ПЕРЕДАТЬ В ЭФИР</button>
         </div>
         
-        <!-- Сетка 4 направлений Наследия -->
         <div class="moba-grid" style="margin-top: 15px;">
             <div class="moba-icon-btn" onclick="location.href='/capsule/'">☀️<br><br>ВЕЧНОСТЬ</div>
             <div class="moba-icon-btn" onclick="triggerEzhikRSS()">🎬<br><br>РАДАР</div>
@@ -72,15 +68,15 @@
             <div style="font-size:11px; color:#fff;">Битумная Броня Слой 0 // 1,420 ботов заблокировано</div>
         </div>
 
-        <!-- 📊 КОМПАКТНЫЙ ИЗЯЩНЫЙ ИТР-ФУТЕР ДЛЯ ТРЕНДОВ И КОММЕНТАРИЕВ -->
+        <!-- КОМПАКТНЫЙ ИЗЯЩНЫЙ ИТР-ФУТЕР -->
         <div class="moba-footer-trends">
-            <div style="color: #ffaa00; font-weight: bold; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">🎬 Жук Торнадо: Крохи Мировых Трендов</div>
+            <div style="color: #ffaa00; font-weight: bold; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">🎬 identity_block: Крохи Мировых Трендов</div>
             
             <div class="trend-capsule-btn" onclick="openTrendCommentGate(1)">
                 <strong>КНР ➔ СНиП-стандарты ЕАЭС</strong>
                 <div id="comment_gate_1" class="comment-box-gate" onclick="event.stopPropagation()">
                     <div id="list_trend_1" style="max-height:60px; overflow-y:auto; margin-bottom:5px; color:#8b949e;">
-                        <div><span style="color:#ff0055;">👷 Наталья В.:</span> Это упростит RFI-приёмку.</div>
+                        <div><span style="color:#ff0055;">规格 👷 Наталья В.:</span> Это упростит RFI-приёмку.</div>
                     </div>
                     <form onsubmit="submitTrendComment(event, 1)">
                         <input type="text" id="input_trend_1" placeholder="Ваш комментарий..." class="comment-input-vhd">

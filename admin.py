@@ -1,6 +1,9 @@
 from django.contrib import admin
 from .models import Agreement, VideoCapsule, AvatarEzhik, InteractiveComment, PunchListItem, BloggerUsage
 
+from django.utils.safestring import mark_safe
+from .models import ConstructionObject
+
 @admin.register(Agreement)
 class AgreementAdmin(admin.ModelAdmin):
     """
@@ -97,3 +100,32 @@ class BloggerUsageAdmin(admin.ModelAdmin):
 admin.site.site_heаder = "КОВЧЕГ MIROHA.RU"
 admin.site.site_title = "Панель - Архитектора"
 admin.site.index_title = "Упровлене Вековыми Выгрузками"
+
+@admin.register(ConstructionObject)
+class ConstructionObjectAdmin(admin.ModelAdmin):
+    list_display = ('name', 'city', 'country', 'object_capital', 'currency', 'created_at')
+    list_filter = ('city', 'country', 'created_at')
+    search_fields = ('name', 'city', 'address')
+    
+    # Прямоугольная обтекаемая MOBA-кнопка запуска Робота-Ёжика по всей России
+    readonly_fields = ('ezhik_parser_console',)
+    
+    def ezhik_parser_console(self, obj):
+        return mark_safe('''
+            <div style="background: rgba(13, 27, 42, 0.9); border: 2px solid #00f0ff; border-radius: 16px; padding: 20px; box-shadow: 0 0 15px rgba(0, 240, 255, 0.2); max-width: 400px;">
+                <h4 style="color: #00f0ff; margin: 0 0 10px 0; font-family: monospace; text-transform: uppercase;">📡 Всероссийский ИИ-Парсер Реестров</h4>
+                <form method="POST" action="/api/federal-parse/">
+                    <input type="hidden" name="csrfmiddlewaretoken" value="'''+'''+'''">
+                    <label style="color: #8b949e; font-size: 11px; display: block; margin-bottom: 5px;">ПЛАНОВЫЙ ГОД ЗАСТРОЙКИ:</label>
+                    <select name="year" style="width: 100%; background: #161b22; color: #fff; border: 1px solid #30363d; padding: 5px; margin-bottom: 10px;">
+                        <option value="2026">Текущий 2026 год</option>
+                        <option value="2027">Запланированный 2027 год</option>
+                        <option value="2028">Ближайшие до 2030 года</option>
+                    </select>
+                    <button type="submit" style="width: 100%; background: linear-gradient(90deg, #00f0ff 0%, #0077ff 100%); border: none; border-radius: 12px; color: #fff; padding: 10px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 11px; letter-spacing: 1px;">
+                        ⚡ Запустить Охотника по России
+                    </button>
+                </form>
+            </div>
+        ''')
+    ezhik_parser_console.short_description = "Капитанский пульт Робота-Ёжика"
