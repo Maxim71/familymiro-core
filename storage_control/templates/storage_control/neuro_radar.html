@@ -2,58 +2,119 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ИИ-Нейрорадар Технадзора</title>
+    <title>MIROHA CORE // МУЛЬТИМОДАЛЬНЫЙ НЕЙРО-РАДАР</title>
     <style>
-        body { 
-            background: #090c15; 
-            color: #38bdf8; 
-            font-family: monospace; 
-            padding: 40px; 
-            text-align: center;
-        }
-        .radar-box { 
-            border: 2px solid #38bdf8; 
-            padding: 30px; 
-            display: inline-block; 
-            background: #111827; 
-            box-shadow: 0 0 30px rgba(56, 189, 248, 0.3); 
-            border-radius: 12px; 
-            max-width: 600px;
-            width: 100%;
-        }
-        .scanner {
-            width: 120px;
-            height: 120px;
-            border: 2px dashed #00ffcc;
-            border-radius: 50%;
-            margin: 20px auto;
-            position: relative;
-            animation: rotate_radar 4s linear infinite;
-        }
-        .scanner::after {
-            content: '';
-            position: absolute;
-            top: 50%; left: 50%; width: 50%; height: 2px;
-            background: #00ffcc;
-            transform-origin: left center;
-        }
-        @keyframes rotate_radar {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        .pulse { color: #ff0055; font-weight: bold; animation: blink 1.5s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+        body { background: #070a0e; color: #c9d1d9; font-family: 'Courier New', monospace; margin: 0; padding: 0; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        .header { border: 2px solid #ff3366; padding: 25px; margin-bottom: 30px; box-shadow: 0 0 20px rgba(255,51,102,0.1); }
+        .layout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .panel { border: 1px solid #58a6ff; background: #0d1117; padding: 25px; box-shadow: 0 0 15px rgba(88,166,255,0.05); }
+        .snip-alert { background: rgba(255,51,102,0.05); border-left: 4px solid #ff3366; padding: 15px; margin-top: 15px; font-size: 13px; }
+        .map-box { border: 2px solid #00ff66; height: 500px; background: #161b22; box-shadow: 0 0 20px rgba(0,255,102,0.1); margin-top: 15px; }
+        .btn-portal { background: transparent; border: 1px solid #58a6ff; color: #58a6ff; padding: 10px 15px; width: 100%; margin-top: 20px; cursor: pointer; font-weight: bold; text-transform: uppercase; }
+        .eta-badge { background: #ff3366; color: #fff; padding: 6px 12px; font-weight: bold; font-size: 12px; display: inline-block; margin-top: 10px; }
+        .flight-badge { background: #161b22; border: 1px solid #58a6ff; color: #58a6ff; padding: 4px 8px; font-size: 11px; font-weight: bold; display: inline-block; }
     </style>
+    <script src="https://yandex.ru" type="text/javascript"></script>
 </head>
 <body>
-    <div class="radar-box">
-        <h2>🏗️ НЕЙРО-РАДАР СТРОИТЕЛЬНОГО КОНТРОЛЯ</h2>
-        <div class="scanner"></div>
-        <p class="pulse">● СКАНИРОВАНИЕ ОБЪЕКТА НА 300 МЕТРОВ... СТАТУС: ОК</p>
-        <hr style="border-color: #38bdf8; margin: 20px 0;">
-        <p>Все СНиПы и ГОСТы верифицированы автоматически.</p>
-        <p style="color: #ffd700;">☕ Капитал Ёжика на кофе: {{ ezhik.total_revenue }} СБП</p>
+
+<div class="container">
+    <div class="header">
+        <h1 style="color: #ff3366; margin: 0; text-transform: uppercase; letter-spacing: 2px; font-size: 22px;">
+            🛰️ MIROHA CORE // МУЛЬТИМОДАЛЬНАЯ ГЕО-МАТРИЦА СНАБЖЕНИЯ
+        </h1>
+        <p style="color: #8b949e; margin: 5px 0 0 0;">[МОНИТОРИНГ РЕЙСОВ] // АВТО, ЖД, АВИА И МОРСКОЙ ТРАНСПОРТ // СТИЛЬ ВАНКУВЕР</p>
     </div>
+
+    <div class="layout-grid">
+        <!-- ЛЕВАЯ ПАНЕЛЬ: СПИСОК РЕЙСОВ -->
+        <div class="panel">
+            <h3 style="color: #58a6ff; margin-top: 0; text-transform: uppercase; border-bottom: 1px solid #30363d; padding-bottom: 10px;">
+                🌍 Диспетчеризация Сборных Рейсов
+            </h3>
+            
+            {% for rep in radar_reports %}
+            <div style="border-bottom: 1px solid #21262d; padding: 20px 0; cursor: pointer;" 
+                 onclick="focusOnTracker('{{ rep.city }}', {{ rep.tracker_lat }}, {{ rep.tracker_lng }}, '{{ rep.eta }}', '{{ rep.flight_number }}', '{{ rep.transport_icon }}')">
+                <p style="margin: 0 0 8px 0; font-size: 16px; color: #fff; font-weight: bold;">
+                    🏢 {{ rep.object_name }} <span style="color: #8b949e; font-size: 12px;">[{{ rep.location }}]</span>
+                </p>
+                
+                <!-- Номер уникального мультимодального рейса -->
+                <div class="flight-badge">
+                    ⚡ {{ rep.flight_number }}
+                </div>
+                
+                <div style="font-size: 13px; color: #8b949e; margin-top: 8px;">
+                    Бюджет: <span style="color: #00ff66;">{{ rep.capital }}</span> | Груз: <span style="color: #fff;">{{ rep.material }} ({{ rep.quantity }})</span>
+                </div>
+                
+                <div class="eta-badge">
+                    ⏱️ ETA ПРИБЫТИЯ: {{ rep.eta }}
+                </div>
+                
+                <div class="snip-alert">
+                    {{ rep.snip_status }}
+                </div>
+            </div>
+            {% endfor %}
+            
+            <button class="btn-portal" onclick="location.href='/'">返回 На главную страницу монолита</button>
+        </div>
+
+        <!-- ПРАВАЯ ПАНЕЛЬ: ЖИВАЯ КАРТА -->
+        <div class="panel" style="border-color: #00ff66;">
+            <h3 style="color: #00ff66; margin-top: 0; text-transform: uppercase; border-bottom: 1px solid #30363d; padding-bottom: 10px;">
+                🌐 Спутниковый Радар Позиционирования
+            </h3>
+            
+            <div id="live_eta_display" style="background: #161b22; border: 1px solid #00ff66; padding: 10px; font-size: 13px; color: #00ff66; font-weight: bold;">
+                📡 ТРЕКЕР: Ожидание выбора активного рейса снабжения...
+            </div>
+            
+            <div id="map" class="map-box"></div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var myMap;
+    var currentPlacemark;
+
+    ymaps.ready(init);
+    function init(){
+        myMap = new ymaps.Map("map", {
+            center: [54.193122, 37.617348],
+            zoom: 12,
+            controls: ['zoomControl', 'fullscreenControl']
+        });
+        
+        // Автозапуск первого рейса
+        focusOnTracker('Тула', 54.1915, 37.6290, '18 минут (Затор на Пролетарском мосту)', 'РЕЙС: АВТО-ТЛ-408', 'islands#redTruckIcon');
+    }
+
+    function focusOnTracker(city, lat, lng, eta, flight, iconStyle) {
+        if (!myMap) return;
+        
+        myMap.setCenter([lat, lng], city === 'Тула' ? 13 : 10, { duration: 500 });
+        
+        document.getElementById('live_eta_display').innerHTML = `📡 АКТИВЕН ${flight} // ДО ПРИБЫТИЯ ОСТАЛОСЬ: ${eta}`;
+
+        if (currentPlacemark) {
+            myMap.geoObjects.remove(currentPlacemark);
+        }
+
+        // Динамически подставляем уникальную иконку транспорта (самолет, фура, корабль)
+        currentPlacemark = new ymaps.Placemark([lat, lng], {
+            balloonContent: `<strong>${flight}</strong><br>Транспорт верифицирован ИИ.<br><strong>ETA: ${eta}</strong>`
+        }, {
+            preset: iconStyle,
+            iconColor: '#ff3366'
+        });
+
+        myMap.geoObjects.add(currentPlacemark);
+    }
+</script>
 </body>
 </html>
