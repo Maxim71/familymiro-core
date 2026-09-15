@@ -4,18 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Miroha Core — RFI Автоматизация выполненных скрытых работ Россия - Китай.">
-    <title>MIROHA PLATFORM // БИЗНЕС-КОНТУР РФ-КНР</title>
+    <title>MIROHA PLATFORM // SPLIT DASHBOARD</title>
+    <!-- Подключаем изолированные файлы из шлюза Nginx -->
     <link rel="stylesheet" href="/static/moba_style.css">
-    <style>
-        .grid-donat { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; }
-        .donat-card { background: rgba(6, 11, 25, 0.8); border: 1px solid #ffaa00; border-radius: 16px; padding: 12px; text-align: center; font-size: 11px; }
-        .server-monitor { font-size: 10px; color: #ffaa00; background: rgba(255,170,0,0.05); border: 1px dashed #ffaa00; padding: 10px; margin-top: 8px; border-radius: 12px; text-align: left; line-height: 1.5; }
-        .hub-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 10px; }
-        .hub-tag { font-size: 11px; padding: 8px; border-radius: 10px; font-family: monospace; text-align: center; font-weight: bold; }
-        .tag-ru { background: rgba(0, 240, 255, 0.1); border: 1px solid #00f0ff; color: #00f0ff; }
-        .tag-cn { background: rgba(255, 0, 0, 0.15); border: 1px solid #ff0000; color: #ff0000; }
-        .itr-label { display: inline-block; background: rgba(0, 255, 102, 0.1); border: 1px solid #00ff66; color: #00ff66; font-size: 8px; padding: 2px 6px; border-radius: 4px; font-weight: bold; text-transform: uppercase; margin-top: 5px; }
-    </style>
 </head>
 <body>
 
@@ -24,7 +15,7 @@
 
 <div class="parallax-bg" id="parallax"></div>
 
-<div class="container">
+<div class="container" style="max-width: 1000px;"> <!-- Расширяем контейнер под две колонки -->
     
     <!-- КАПСУЛА 1: МАТРИЦА СНАБЖЕНИЯ РОССИЯ - КИТАЙ -->
     <div class="moba-card">
@@ -32,53 +23,92 @@
         <div style="font-size: 11px; color: #8b949e; text-transform: uppercase;">Miroha Platform // {{ market_status }}</div>
         <div style="font-size: 15px; color: #00f0ff; font-weight: bold; margin-top: 5px;">КАПИТАЛ СИНДИКАТА: <span style="color:#00ff66;">{{ object_capital_rub }}</span></div>
         
-        <div class="itr-label">МЕТА-ЯРЛЫК: АВТОМАТИЗАЦИЯ_АОСР_РФ_КНР</div>
-        
-        <!-- ⚙️ ДАТЧИК ХОСТИНГА: ТОЛЬКО РУБЛИ И ЮАНИ -->
         <div class="server-monitor">
-            ⚡ <strong>РЕАЛЬНЫЙ БАЛАНС СЕРВЕРА (⚙️ КОМИССИЯ 2%):</strong><br>
-            🇷🇺 РОССИЯ: <span style="color:#00ff66; font-weight:bold;">{{ server_balance_rub }} ₽</span><br>
-            🇨🇳 КИТАЙ: <span style="color:#ff0000; font-weight:bold;">{{ server_balance_cny }} ¥ (Юани)</span>
+            ⚡ <strong>РЕАЛЬНЫЙ БАЛАНС СЕРВЕРА (⚙️ КОМИССИЯ 2%):</strong>
+            🇷🇺 РФ: <span style="color:#00ff66; font-weight:bold;">{{ server_balance_rub }} ₽</span> | 🇨🇳 КНР: <span style="color:#ff0000; font-weight:bold;">{{ server_balance_cny }} ¥</span>
         </div>
         
         <button class="moba-btn-action" style="margin-top: 10px; padding: 10px; font-size: 11px;" onclick="executeSbpCheckout()">🔒 АВТОРИЗОВАТЬ СБП INV-ALFA-288003</button>
     </div>
 
-    <!-- КАРТОЧКА 2: ЦЕНТРАЛЬНЫЙ СТЕРЕО ЭФИР -->
-    <div class="moba-card pink">
-        <div class="moba-badge">📡 СТЕРЕО ПОТОК</div>
-        <div style="font-size: 14px; color: #fff; font-weight: bold;">Максим // Снабжение ИТР</div>
-        <div id="live_stream_box" style="max-height: 200px; margin: 15px 0; padding: 10px; background: rgba(0,0,0,0.4); border-radius: 12px; font-size: 11px; border: 1px solid rgba(255,255,255,0.05);"></div>
-        <div style="background: rgba(6, 11, 25, 0.8); padding: 10px; border-radius: 14px; border: 1px dashed #ff0055;">
-            <textarea id="stream_message_text" placeholder="Написать в живой эфир прорабам..." style="width: 93%; background: #070a0e; border: 1px solid #30363d; color: #fff; padding: 6px; font-size: 11px; font-family: monospace; height: 35px; resize: none;"></textarea>
-            <button class="moba-btn-action" style="padding: 6px; font-size: 11px; margin-top: 5px; background: linear-gradient(90deg, #ff0055 0%, #990033 100%);" onclick="pushSignalToEzhikStream()">П ПЕРЕДАТЬ В ЭФИР</button>
+    <!-- 📊 ЛАЗЕРНЫЙ СПЛИТ-ИНТЕРФЕЙС ИЗ ДВУХ КОЛОНОК -->
+    <div class="moba-split-layout">
+        
+        <!-- ЛЕВАЯ КОЛОНКА: ЖИВОЙ МОНИТОР МИРОВЫХ ТРЕНДОВ И ОБСУЖДЕНИЙ -->
+        <div>
+            <div style="font-size: 12px; color: #ffaa00; text-transform: uppercase; font-weight: bold; margin-bottom: 12px; letter-spacing: 1px;">
+                🎬 Жук Торнадо: Крохи Мировых Трендов ПТО
+            </div>
+            
+            <!-- Тренд 1 -->
+            <div class="trend-card" onclick="openTrendCommentGate(1)">
+                <div style="font-size: 12px; color: #fff; font-weight: bold;">🇨🇳 Фабрики КНР переходят на СНиП-стандарты ЕАЭС</div>
+                <div style="font-size: 10px; color: #8b949e; margin-top: 4px;">Парсер зафиксировал унификацию паспортов стальных опалубок MONLID.</div>
+                
+                <!-- Шлюз обсуждений и комментариев -->
+                <div id="comment_gate_1" class="comment-box-gate" onclick="event.stopPropagation()">
+                    <div class="comment-list" id="list_trend_1">
+                        <div><span style="color:#ff0055;">👷 Наталья Викторовна:</span> Отличный тренд, это упростит RFI-приёмку.</div>
+                    </div>
+                    <form onsubmit="submitTrendComment(event, 1)">
+                        <input type="text" id="input_trend_1" placeholder="Ваш комментарий в эфир..." class="comment-input-vhd">
+                    </form>
+                </div>
+            </div>
+
+            <!-- Тренд 2 -->
+            <div class="trend-card" onclick="openTrendCommentGate(2)">
+                <div style="font-size: 12px; color: #fff; font-weight: bold;">🇷🇺 Минстрой РФ автоматизирует выдачу электронных АОСР</div>
+                <div style="font-size: 10px; color: #8b949e; margin-top: 4px;">Крохи новостей: ручное заполнение журналов скрытых работ отменяется с осени.</div>
+                
+                <div id="comment_gate_2" class="comment-box-gate" onclick="event.stopPropagation()">
+                    <div class="comment-list" id="list_trend_2">
+                        <div><span style="color:#00ff66;">🤖 Робот-Ёжик:</span> Мой Журнал ВХД по 4 фото уже опередил этот регламент!</div>
+                    </div>
+                    <form onsubmit="submitTrendComment(event, 2)">
+                        <input type="text" id="input_trend_2" placeholder="Написать комментарий..." class="comment-input-vhd">
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="moba-grid" style="margin-top: 15px;">
-            <div class="moba-icon-btn" onclick="location.href='/capsule/'">☀️<br><br>ВЕЧНОСТЬ</div>
-            <div class="moba-icon-btn" onclick="triggerEzhikRSS()">🎬<br><br>РАДАР</div>
-            <div class="moba-icon-btn" onclick="toggleHydroSubcards()">💧<br><br>ИЗОЛЯЦИЯ</div>
-            <div class="moba-icon-btn" onclick="location.href='/pto/1/'">🏗️<br><br>СТРОЙКА</div>
+
+        <!-- ПРАВАЯ КОЛОНКА: СТЕРЕО ПОТОК МАКСИМА -->
+        <div class="moba-card pink" style="margin-bottom:0;">
+            <div class="moba-badge">📡 СТЕРЕО ПОТОК</div>
+            <div style="font-size: 14px; color: #fff; font-weight: bold;">Максим // Снабжение ИТР</div>
+            <div id="live_stream_box" style="max-height: 200px; margin: 15px 0; padding: 10px; background: rgba(0,0,0,0.4); border-radius: 12px; font-size: 11px; border: 1px solid rgba(255,255,255,0.05);"></div>
+            <div style="background: rgba(6, 11, 25, 0.8); padding: 10px; border-radius: 14px; border: 1px dashed #ff0055;">
+                <textarea id="stream_message_text" placeholder="Написать в живой эфир прорабам..." style="width: 93%; background: #070a0e; border: 1px solid #30363d; color: #fff; padding: 6px; font-size: 11px; font-family: monospace; height: 35px; resize: none;"></textarea>
+                <button class="moba-btn-action" style="padding: 6px; font-size: 11px; margin-top: 5px; background: linear-gradient(90deg, #ff0055 0%, #990033 100%);" onclick="pushSignalToEzhikStream()">ПЕРЕДАТЬ В ЭФИР</button>
+            </div>
+            <div class="moba-grid" style="margin-top: 15px;">
+                <div class="moba-icon-btn" onclick="location.href='/capsule/'">☀️<br><br>ВЕЧНОСТЬ</div>
+                <div class="moba-icon-btn" onclick="triggerEzhikRSS()">🎬<br><br>РАДАР</div>
+                <div class="moba-icon-btn" onclick="toggleHydroSubcards()">💧<br><br>ИЗОЛЯЦИЯ</div>
+                <div class="moba-icon-btn" onclick="location.href='/pto/1/'">🏗️<br><br>СТРОЙКА</div>
+            </div>
+            <div id="rss_media_subcard" style="display: none; background: rgba(12, 30, 54, 0.9); border: 1px dashed #ffaa00; padding: 15px; border-radius: 14px; margin: 15px 0; font-size: 12px;">
+                <div style="color: #ffaa00; font-weight: bold; margin-bottom: 8px; text-transform: uppercase;">📰 RSS-ПОТОК:</div>
+                <div id="rss_facts_container" style="color: #e2e8f0; font-family: monospace; line-height: 1.4;">[Ожидание данных...]</div>
+            </div>
+            <div id="hydro_subcards" style="display: none; background: rgba(5, 8, 12, 0.9); border: 1px dashed #ff0055; padding: 15px; border-radius: 14px; margin: 15px 0; font-size: 12px;">
+                <div style="color: #00ff66; font-weight: bold; margin-bottom: 5px;">🌊 CONTOUR ОТВОДА ВОДЫ:</div>
+                <div style="font-size:11px; color:#fff;">Битумная Броня Слой 0 // 1,420 ботов заблокировано</div>
+            </div>
+            <div id="action_console" style="background: rgba(0,240,255,0.03); border: 1px solid #00f0ff; border-radius: 12px; padding: 10px; font-size: 11px; margin-top: 15px; color: #00f0ff; font-family: monospace;">
+                🤖 [ОКНО ДЕЙСТВИЙ]: Контур стабилен. Мониторинг рынка Россия - Китай активен.
+            </div>
         </div>
-        <div id="rss_media_subcard" style="display: none; background: rgba(12, 30, 54, 0.9); border: 1px dashed #ffaa00; padding: 15px; border-radius: 14px; margin: 15px 0; font-size: 12px;">
-            <div style="color: #ffaa00; font-weight: bold; margin-bottom: 8px; text-transform: uppercase;">📰 RFI ПОТОК ФАКТОВ:</div>
-            <div id="rss_facts_container" style="color: #e2e8f0; font-family: monospace; line-height: 1.4;">[Ожидание данных...]</div>
-        </div>
-        <div id="hydro_subcards" style="display: none; background: rgba(5, 8, 12, 0.9); border: 1px dashed #ff0055; padding: 15px; border-radius: 14px; margin: 15px 0; font-size: 12px;">
-            <div style="color: #00ff66; font-weight: bold; margin-bottom: 5px;">🌊 CONTOUR ОТВОДА ВОДЫ:</div>
-            <div style="font-size:11px; color:#fff;">Битумная Броня Слой 0 // 1,420 ботов заблокировано</div>
-        </div>
-        <div id="action_console" style="background: rgba(0,240,255,0.03); border: 1px solid #00f0ff; border-radius: 12px; padding: 10px; font-size: 11px; margin-top: 15px; color: #00f0ff; font-family: monospace;">
-            🤖 [ОКНО ДЕЙСТВИЙ]: Контур стабилен. Мониторинг рынка Россия - Китай активен.
-        </div>
+
     </div>
 
-    <!-- КАРТОЧКА 3: ИИ-МАГАЗИН МАТЕРИАЛОВ ИЗ КИТАЯ -->
-    <div class="moba-card green">
+    <!-- КАРТОЧКА 3: КИТАЙСКИЙ МАГАЗИН -->
+    <div class="moba-card green" style="margin-top: 20px;">
         <div class="moba-badge" style="background: #00ff66; box-shadow: 0 0 10px #00ff66;">🇨🇳 ПОСТАВКИ ИЗ КИТАЯ</div>
         <div style="font-size: 12px; color: #fff; font-weight: bold; text-align: center;">Автоматическое формирование RFI-заявок закупа</div>
         <div class="grid-donat">
             <div class="donat-card">
-                🎬<br><strong style="color:#fff;">Профиль MONLID КНР</strong><br><span style="color:#00ff66;">500 ₽</span>
+                🏢<br><strong style="color:#fff;">Профиль MONLID КНР</strong><br><span style="color:#00ff66;">500 ₽</span>
                 <button class="moba-btn-action" style="padding:4px; font-size:10px; margin-top:5px;" onclick="addDonatProduct(2)">Закупка</button>
             </div>
             <div class="donat-card">
@@ -90,6 +120,7 @@
 
 </div>
 
+<!-- Подключаем стерильный изолированный файл логики скриптов -->
 <script src="/static/moba_core.js"></script>
 </body>
 </html>
