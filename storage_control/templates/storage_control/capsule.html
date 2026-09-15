@@ -5,8 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
     <title>MIROHA CORE // MULTIMEDIA VAULT</title>
-    <!-- Стерильное подключение изолированного дизайна -->
+    <!-- Подключаем изолированные файлы из шлюза Nginx -->
     <link rel="stylesheet" href="/static/moba_style.css">
+    <style>
+        .auth-gate-box { background: rgba(6, 11, 25, 0.95); border: 2px solid #00f0ff; padding: 25px; border-radius: 20px; box-shadow: 0 0 25px rgba(0, 240, 255, 0.3); text-align: center; margin: 15px 0; }
+        .totp-input { width: 85%; background: #070a0e; border: 2px solid #30363d; color: #00ff66; text-align: center; font-size: 24px; letter-spacing: 6px; padding: 10px; font-family: monospace; border-radius: 14px; outline: none; transition: border-color 0.2s; }
+        .totp-input:focus { border-color: #00ff66; box-shadow: 0 0 10px rgba(0,255,102,0.2); }
+        .video-stream-box { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); margin-top: 15px; text-align: left; }
+        .moba-video-player { width: 100%; border-radius: 12px; border: 1px solid #ffaa00; box-shadow: 0 0 10px rgba(255,170,0,0.2); margin-top: 8px; }
+    </style>
 </head>
 <body style="background: #030712;">
 
@@ -15,12 +22,14 @@
 <div class="vault-box">
     <div class="vault-inner">
         
-        <!-- ЕСЛИ КРИПТО-КЛЮЧ ОПЕКИ ПОДТВЕРЖДЕН КАПИТАНОМ -->
+        <!-- ========================================== -->
+        <!-- СЛУЧАЙ 1: ВИЗА КАПИТАНА ПОДТВЕРЖДЕНА (ВХОД ВЫПОЛНЕН) -->
+        <!-- ========================================== -->
         {% if is_captain %}
         <div style="text-align: center; color: #00ff66; font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">✅ ВИЗА КАПИТАНА КРИПТОГРАФИЧЕСКИ ПОДТВЕРЖДЕНА</div>
         <h2 style="color: #fff; font-size: 15px; text-align: center; margin-top: 15px; text-transform: uppercase; font-family: monospace;">🦔 ЗАКРЫТЫЙ ВЕКОВОЙ СЕЙФ ОПЕКИ ДОЧЕРИ</h2>
         
-        <!-- 🔮 ПОЧЁТНЫЙ СОВРЕМЕННЫЙ СПИДОМЕТР ЦИФР ВРЕМЕНИ ИЗ КОЛЛАЖА -->
+        <!-- Почётный ультрасовременный спидометр цифр времени -->
         <div class="moba-legend-timer">
             <div class="time-capsule-slot">
                 <div class="digital-hero-num" id="capsule_years">00</div>
@@ -44,29 +53,56 @@
             🔐 <strong>ИНВОЙС СБП:</strong> INV-ALFA-288003<br>
             📄 <strong>СТАТУС:</strong> Капитал холдинга заблокирован в ОЗУ. Автоматическое вскрытие сейфа: <strong>24 мая 2059 года</strong>. Контур защищен TOTП-ключом Google.
         </div>
-        
-        <!-- ЕСЛИ ЗАШЁЛ ОБЫЧНЫЙ ПОЛЬЗОВАТЕЛЬ С ТЕЛЕФОНА -->
+
+        <!-- ========================================== -->
+        <!-- СЛУЧАЙ 2: ЭКРАН ОБЫЧНОГО ПОЛЬЗОВАТЕЛЯ С ТЕЛЕФОНА (ОКНО ПО ЦЕНТРУ) -->
+        <!-- ========================================== -->
         {% else %}
-        <div style="text-align: center; color: #ff0055; font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">🔒 ШЛЮЗ ВЕЧНОСТИ // МУЛЬТИМЕДИА СИТО НАБЛЮДЕНИЯ</div>
+        <div style="text-align: center; color: #ff0055; font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">Document: Layer_0 // Защита Наследия</div>
         
-        <!-- Загрузка видео архива с телефона -->
-        <div class="auth-gate-box" style="border-color: #00ff66;">
+        <!-- Вывод криптографических ошибок Джанго -->
+        {% if error_msg %}
+            <div style="color: #ff0055; font-size: 11px; margin: 10px 0; font-family: monospace; text-align: center;">{{ error_msg }}</div>
+        {% endif %}
+
+        <!-- 🔑 ЦЕНТРАЛЬНОЕ ОКНО АВТОРИЗАЦИИ GOOGLE AUTHENTICATOR (КАК У GOOGLE) -->
+        <div class="auth-gate-box">
+            <div style="font-size: 11px; color: #00f0ff; margin-bottom: 12px; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px;">🔑 КОНТРОЛЬ ДОСТУПА (GOOGLE TOTP)</div>
+            <form method="POST" action="/capsule/">
+                {% csrf_token %}
+                <input type="text" name="totp_code" placeholder="000000" maxlength="6" class="totp-input" required autocomplete="off">
+                <button type="submit" class="moba-btn-action" style="margin-top: 15px; padding: 12px; font-size: 12px;">🔒 Проверить Крипто-Ключ</button>
+            </form>
+            
+            <!-- Скрытый QR-ярлык первичной настройки -->
+            <div style="margin-top: 15px; font-size: 10px;">
+                <details>
+                    <summary style="cursor:pointer; color:#ffaa00;">[Показать QR-код синхронизации приложений]</summary>
+                    <div style="text-align:center; margin-top:10px; background:#fff; padding:10px; border-radius:12px; display:inline-block;">
+                        <img src="{{ qr_setup_url }}" alt="Google Authenticator QR">
+                    </div>
+                    <div style="margin-top:5px; color:#ffaa00; font-family: monospace;">Отсканируй этот QR через Google Authenticator на телефоне для генерации живых ИТР-кодов.</div>
+                </details>
+            </div>
+        </div>
+
+        <!-- Сито загрузки видео с мобильного телефона -->
+        <div class="auth-gate-box" style="border-color: #00ff66; background: rgba(0, 255, 102, 0.02); margin-top: 20px;">
             <div style="font-size: 11px; color: #00ff66; font-weight: bold; text-transform: uppercase; margin-bottom: 8px;">🎬 Скинуть Видео в Вечность (Сито Памяти):</div>
             <form id="moba_video_form" onsubmit="uploadEzhikVideo(event)">
                 {% csrf_token %}
-                <input type="text" name="title" placeholder="Описание (Пример: Дочка смеется / Первый шаг)" style="width:92%; background:#070a0e; border:1px solid #30363d; color:#fff; padding:6px; font-size:11px; border-radius:6px; margin-bottom:8px;" required>
-                <button type="submit" class="moba-btn-action" style="background: linear-gradient(90deg, #00ff66 0%, #009933 100%); color:#fff; font-size:11px; padding:10px;">⚡ Залить Видео Памятства</button>
+                <input type="text" name="title" placeholder="Описание (Пример: Дочка смеется / Первый шаг)" style="width:92%; background:#070a0e; border:1px solid #30363d; color:#fff; padding:7px; font-size:11px; border-radius:8px; margin-bottom:8px;" required>
+                <button type="submit" class="moba-btn-action" style="background: linear-gradient(90deg, #00ff66 0%, #009933 100%); color:#fff; font-size:11px; padding:10px;">汇 Залить Видео Памятства</button>
             </form>
         </div>
 
-        <!-- ЛЕНТА ПЛЕЕРОВ ПАМЯТСТВА (Детские сохраненные крохи) -->
-        <div style="color: #ffaa00; font-size: 11px; text-transform: uppercase; font-weight: bold; text-align: left; margin-top: 20px;">🎬 Лента Памятства: Сохраненные Видео</div>
-        
+        <!-- ЛЕНТА ПЛЕЕРОВ ПАМЯТСТВА (Детские ролики разных стран) -->
+        <div style="color: #ffaa00; font-size: 11px; text-transform: uppercase; font-weight: bold; text-align: left; margin-top: 25px; letter-spacing: 0.5px;">🎬 Лента Памятства: Отфильтрованные Видео</div>
         {% for video in videos %}
         <div class="video-stream-box">
             <div style="display:flex; justify-content:space-between; font-size:10px;">
                 <span style="color:#00f0ff; font-weight:bold;">📍 ИСТОЧНИК: {{ video.country_origin }}</span>
-                <span style="color:#00ff66;">👁️ ИИ-СИТО ВЕРИФИЦИРОВАНО</span>
+                <span style="color:#00ff66;">👁️ ИИ-СИТО: ВЗГЛЯД / УЛЫБКА ВЕРИФИЦИРОВАНЫ</span>
             </div>
             <div style="color:#fff; font-size:11px; margin-top:5px; font-family:monospace;">{{ video.video_title }}</div>
             <video class="moba-video-player" controls preload="metadata">
@@ -76,26 +112,12 @@
         </div>
         {% endfor %}
 
-        <!-- Панель входа для Капитана через Google Authenticator -->
-        <div style="margin-top: 20px;">
-            <details>
-                <summary style="cursor:pointer; color:#8b949e; font-size:10px;">[Вход в Кабинет Капитана через Google Authenticator]</summary>
-                <div class="auth-gate-box">
-                    <form method="POST" action="/capsule/">
-                        {% csrf_token %}
-                        <input type="text" name="totp_code" placeholder="000000" maxlength="6" class="totp-input" required autocomplete="off">
-                        <button type="submit" class="moba-btn-action" style="margin-top:10px; padding:8px; font-size:11px;">Авторизовать Крипто-Ключ</button>
-                    </form>
-                </div>
-            </details>
-        </div>
         {% endif %}
 
         <button class="moba-btn-action" style="margin-top: 20px; background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1);" onclick="location.href='/'">返回 На главный пульт</button>
     </div>
 </div>
 
-<!-- Подключаем стерильный изолированный JS скрипт логики -->
 <script src="/static/moba_core.js"></script>
 <script>
 function uploadEzhikVideo(e) {
