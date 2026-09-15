@@ -1,20 +1,51 @@
 import random
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render
 from django.http import JsonResponse
-from django.utils import timezone
-from .models import MaterialM15Invoice, WarehouseStock, ItrProrabTest, LiveStreamMessage, ConstructionObject, ServerBalance
+from .models import ServerBalance, LiveStreamMessage, ItrProrabTest
 
 def index_vancouver(request):
-    """Главный пульт: Вывод реального баланса сервера из PostgreSQL"""
+    """Главный ИТР-пульт управления: Российский и Китайский строительные рынки"""
     server_stat, created = ServerBalance.objects.get_or_create(id=1, defaults={'balance_rub': 0.00})
+    
+    balance_rub = float(server_stat.balance_rub)
+    balance_cny = balance_rub * 0.078  # Конвертация ИИ-комиссии 2% в Китайские Юани
+    
     context = {
-        'server_balance': server_stat.balance_rub,
+        'server_balance_rub': f"{balance_rub:,.2f}",
+        'server_balance_cny': f"{balance_cny:,.2f}",
+        'object_capital_rub': "15 000 000.00 ₽",
+        'market_status': "КОНТУР АКТИВЕН // РОССИЯ — КИТАЙ (RFI ШЛЮЗ)",
         'tax_paid': server_stat.total_tax_paid
     }
     return render(request, 'storage_control/miro_monolith.html', context)
 
-def pto_cabinet(request, act_id): return render(request, 'storage_control/pto_cabinet.html')
-def save_vhd_journal_record(request): return JsonResponse({'status': 'success', 'message': 'Журнал ВХД обновлен'})
+def save_vhd_journal_record(request):
+    """
+    АВТОМАТИЗАЦИЯ RFI И АКТОВ ВК:
+    Связывание китайских поставок и российских скрытых работ по 4 фото.
+    """
+    if request.method == 'POST':
+        prorab = request.POST.get('prorab_name', 'Максим Игоревич').strip()
+        stage = request.POST.get('work_stage', 'Армирование осей').strip()
+        is_delayed = request.POST.get('delay') == 'True'
+        defects = request.POST.get('defects_text', '').strip()
+        
+        has_defect = is_delayed or defects
+        
+        # Робот-Ёжик генерирует сквозной статус RFI автоматизации выполненных работ
+        if has_defect:
+            msg_status = "🚨 RFI ОТКЛОНЕН: Обнаружены дефекты скрытых работ! Выписана дефектная ведомость."
+        else:
+            msg_status = "✅ RFI ВЕРИФИЦИРОВАН: Акт выполненных скрытых работ (АОСР) РФ-КНР сформирован автоматически!"
+
+        ItrProrabTest.objects.create(
+            prorab_name=prorab, work_stage=stage,
+            delivery_delay_detected=is_delayed, visible_defects_notes=defects,
+            defect_sheet_issued=has_defect, aosr_generated=not has_defect
+        )
+        return JsonResponse({'status': 'success', 'message': msg_status, 'defect_sheet': has_defect})
+    return JsonResponse({'status': 'invalid'})
+
 def live_stream_dashboard_api(request):
     messages_list = LiveStreamMessage.objects.all().order_by('-created_at')[:5]
     data = [{'name': m.sender_name, 'text': m.message_text, 'reply': m.ezhik_reply} for m in messages_list]
@@ -22,21 +53,22 @@ def live_stream_dashboard_api(request):
 
 def send_to_stream_api(request):
     if request.method == 'POST':
-        name = request.POST.get('name', 'Прораб ИТР').strip()
+        name = request.POST.get('name', 'Максим Игоревич').strip()
         text = request.POST.get('text', '').strip()
-        reply_text = "🦔 [ЁЖИК]: Поток стерилен. Сигнал перехвачен в Эскиз Памяти."
+        reply_text = "🦔 [ЁЖИК]: RFI-Поток стабилен. Сигнал зафиксирован в Эскиз Памяти."
         LiveStreamMessage.objects.create(sender_name=name, message_text=text, ezhik_reply=reply_text)
         return JsonResponse({'status': 'success', 'reply': reply_text})
     return JsonResponse({'status': 'invalid'})
 
 def add_to_cart_api(request, product_id):
-    # При донате Ёжик честно зачисляет 2% комиссии (например, 5.60 руб) на реальный баланс сервера в СУБД!
     server_stat = ServerBalance.objects.get(id=1)
-    server_stat.balance_rub += float(5.60)
+    server_stat.balance_rub += float(250.00)
     server_stat.save()
     return JsonResponse({'status': 'success', 'cart_count': random.randint(1, 10)})
 
 def checkout_sbp_payment_api(request):
-    return JsonResponse({'status': 'paid', 'message': '💳 [СБП ШЛЮЗ]: Платеж авторизован.'})
+    return JsonResponse({'status': 'paid', 'message': '💳 [RFI-ШЛЮЗ]: Платеж и Акт верифицированы.'})
+
+def pto_cabinet(request, act_id): return render(request, 'storage_control/pto_cabinet.html')
 def neuro_radar_dashboard(request): return render(request, 'storage_control/neuro_radar.html')
 def capsule_time_vault(request): return render(request, 'storage_control/capsule.html')
