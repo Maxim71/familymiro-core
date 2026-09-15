@@ -1,13 +1,27 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    <!-- ⚙️ РАСШИРЕННЫЕ МЕТАДАННЫЕ И ТЕГИ ЮРИДИЧЕСКОЙ БРОНИ -->
     <meta charset="UTF-8">
-    <title>MIROHA PLATFORM // LEGEND MONOLITH</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Платформа автономной юридической брони холдинга Miroha. Мультимодальное снабжение Дубай-Ванкувер-Тула. Капсула Вечности до 2059 года.">
+    <meta name="keywords" content="Miroha Core, ИТР снабжение, СНиП, ГОСТ, бетон М300, Лемана ПРО Тула, Дубай застройки, М-15, АОСР, Капсула Вечности">
+    <meta name="author" content="Главный Конструктор Максим Игоревич">
+    
+    <!-- Open Graph Ярлыки для мессенджеров (Telegram/WhatsApp перехват) -->
+    <meta property="og:title" content="🏗️ MIROHA CORE // ЦИФРОВАЯ ТОРГОВАЯ МАТРИЦА">
+    <meta property="og:description" content="Автономное управление рейсами снабжения, автоматизация Журнала ВХД и СБП-инвойсы.">
+    <meta property="og:image" content="https://unsplash.com">
+    <meta property="og:url" content="https://miroha.ru">
+
+    <title>MIROHA PLATFORM // LEGEND DUBAI</title>
     <link rel="stylesheet" href="/static/moba_style.css">
     <style>
         .grid-donat { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; }
         .donat-card { background: rgba(6, 11, 25, 0.8); border: 1px solid #ffaa00; border-radius: 16px; padding: 12px; text-align: center; font-size: 11px; }
-        .server-monitor { font-size: 10px; color: #ffaa00; background: rgba(255,170,0,0.05); border: 1px dashed #ffaa00; padding: 8px; margin-top: 8px; border-radius: 10px; text-align: left; }
+        .server-monitor { font-size: 10px; color: #ffaa00; background: rgba(255,170,0,0.05); border: 1px dashed #ffaa00; padding: 10px; margin-top: 8px; border-radius: 12px; text-align: left; line-height: 1.5; }
+        /* Ярлыки ИТР-статусов */
+        .itr-label { display: inline-block; background: rgba(0, 240, 255, 0.1); border: 1px solid #00f0ff; color: #00f0ff; font-size: 8px; padding: 2px 6px; border-radius: 4px; font-weight: bold; text-transform: uppercase; margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -19,16 +33,20 @@
 
 <div class="container">
     
-    <!-- КАПСУЛА 1: ЯДРО С РЕАЛЬНЫМ МОНИТОРОМ БАЛАНСА ХОСТИНГА -->
+    <!-- КАПСУЛА 1: МУЛЬТИВАЛЮТНОЕ ЯДРО -->
     <div class="moba-card">
         <div class="moba-badge" style="background: #0077ff; box-shadow: 0 0 10px #0077ff;">🔒 ЗАМОК АКТИВЕН</div>
-        <div style="font-size: 11px; color: #8b949e; text-transform: uppercase;">Miroha Platform // Ядро</div>
-        <div style="font-size: 16px; color: #00f0ff; font-weight: bold; margin-top: 5px;">Накоплено в Капсуле: <span id="cart_counter" style="color:#00ff66;">0</span> позиций</div>
+        <div style="font-size: 11px; color: #8b949e; text-transform: uppercase;">Miroha Platform // Dubai Hub</div>
+        <div style="font-size: 15px; color: #00f0ff; font-weight: bold; margin-top: 5px;">КАПИТАЛ ХОЛДИНГА: <span style="color:#00ff66;">{{ object_capital_aed }}</span></div>
         
-        <!-- ⚙️ ЖИВОЙ ДАТЧИК ХОСТИНГА ИЗ ПОСТГРЕСА -->
+        <!-- ИТР-Ярлык метаданных -->
+        <div class="itr-label">МЕТА-ИНДЕКС: СЛОЙ_0_СТАБИЛЕН</div>
+        
         <div class="server-monitor">
-            🤖 <strong>БАЛАНС СЕРВЕРА (2%):</strong> <span style="color:#00ff66; font-weight:bold;">{{ server_balance }} RUB</span><br>
-            💸 <strong>НАЛОГОВЫЙ КОНТУР:</strong> Удержано: {{ tax_paid }} RUB (Чистая честность)
+            ⚡ <strong>РЕАЛЬНЫЙ БАЛАНС СЕРВЕРА (2%):</strong><br>
+            🇷🇺 RUB: <span style="color:#00ff66; font-weight:bold;">{{ server_balance_rub }} ₽</span><br>
+            🇦🇪 AED: <span style="color:#00f0ff; font-weight:bold;">{{ server_balance_aed }} DH</span><br>
+            🇺🇸 USD: <span style="color:#ffaa00; font-weight:bold;">$ {{ server_balance_usd }}</span>
         </div>
         
         <button class="moba-btn-action" style="margin-top: 10px; padding: 10px; font-size: 11px;" onclick="executeSbpCheckout()">🔒 АВТОРИЗОВАТЬ СБП INV-ALFA-288003</button>
@@ -38,7 +56,11 @@
     <div class="moba-card pink">
         <div class="moba-badge">📡 СТЕРЕО ПОТОК</div>
         <div style="font-size: 14px; color: #fff; font-weight: bold;">Максим // Снабжение ИТР</div>
+        
+        <div class="itr-label" style="border-color:#ff0055; color:#ff0055;">ЯРЛЫК: ТОРНАДО_ОХОТНИК</div>
+
         <div id="live_stream_box" style="max-height: 200px; margin: 15px 0; padding: 10px; background: rgba(0,0,0,0.4); border-radius: 12px; font-size: 11px; border: 1px solid rgba(255,255,255,0.05);"></div>
+        
         <div style="background: rgba(6, 11, 25, 0.8); padding: 10px; border-radius: 14px; border: 1px dashed #ff0055;">
             <textarea id="stream_message_text" placeholder="Написать в живой эфир прорабам..." style="width: 93%; background: #070a0e; border: 1px solid #30363d; color: #fff; padding: 6px; font-size: 11px; font-family: monospace; height: 35px; resize: none;"></textarea>
             <button class="moba-btn-action" style="padding: 6px; font-size: 11px; margin-top: 5px; background: linear-gradient(90deg, #ff0055 0%, #990033 100%);" onclick="pushSignalToEzhikStream()">ПЕРЕДАТЬ В ЭФИР</button>
@@ -58,11 +80,11 @@
             <div style="font-size:11px; color:#fff;">Битумная Броня Слой 0 // 1,420 ботов заблокировано</div>
         </div>
         <div id="action_console" style="background: rgba(0,240,255,0.03); border: 1px solid #00f0ff; border-radius: 12px; padding: 10px; font-size: 11px; margin-top: 15px; color: #00f0ff; font-family: monospace;">
-            🤖 [ОКНО ДЕЙСТВИЙ]: Контур стабилен. Честный мониторинг запущен.
+            🤖 [ОКНО ДЕЙСТВИЙ]: Контур стабилен. Метаданные расширены.
         </div>
     </div>
 
-    <!-- КАРТОЧКА 3: МАГАЗИН -->
+    <!-- КАРТОЧКА 3: МАГАЗИН ДОНАТОВ -->
     <div class="moba-card green">
         <div class="moba-badge" style="background: #00ff66; box-shadow: 0 0 10px #00ff66;">💎 ИИ-МАГАЗИН ПРОДУКТОВ</div>
         <div style="font-size: 12px; color: #fff; font-weight: bold; text-align: center;">Запуск Донатов на Продукт Наследия Дочки</div>
