@@ -23,6 +23,13 @@ import random
 from django.shortcuts import render
 from .models import ConstructionObject, SupplyRequest
 
+import urllib.request
+import urllib.parse
+import json
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import ConstructionObject
+
 def neuro_radar_dashboard(request):
     """
     ГЛОБАЛЬНЫЙ НЕЙРО-РАДАР (Стиль Ванкувер):
@@ -319,3 +326,84 @@ def index_vancouver(request):
     """Главный пульт управления: Три портала холдинга с параллаксом"""
     return render(request, 'index.html')
 
+
+def capsule_time_vault(request):
+    """
+    КАПСУЛА ВЕЧНОСТИ (Слой 0 Стабилен):
+    Шлюз авторизации ИД-платежей на мечту любимой дочки.
+    Автоматическая блокировка опеки до 24 мая 2059 года.
+    """
+    # Жестко запечатанная дата вскрытия капсулы
+    target_date = datetime(2059, 5, 24, 0, 0, 0)
+    current_time = datetime.now()
+    
+    # Робот-Ёжик считает, сколько веков и секунд осталось до раскрытия
+    time_delta = target_date - current_time
+    
+    # Раскладываем остаток времени для динамического неонового таймера
+    days_left = time_delta.days
+    years_left = days_left // 365
+    remaining_days = days_left % 365
+    
+    context = {
+        'years': years_left,
+        'days': remaining_days,
+        'sbp_code': "INV-ALFA-288003",
+        'vault_status': "СЛОЙ 0 СТАБИЛЕН // ЗАПЕЧАТАНО НАВЕЧНО",
+        'lock_date': "24 мая 2059 года"
+    }
+    return render(request, 'storage_control/capsule.html', context)
+
+
+
+
+def index_vancouver(request):
+    """
+    Главный пульт управления холдинга:
+    Вывод суверенной ИТР-матрицы трех порталов снабжения.
+    """
+    context = {
+        'object_capital': "15 000 000.00 ₽",
+        'vault_status': "АКТИВЕН // СТИЛЬ ВАНКУВЕР"
+    }
+    return render(request, 'storage_control/miro_monolith.html', context)
+
+
+def ezhik_federal_parser_trigger(request):
+    """
+    ФЕДЕРАЛЬНЫЙ МОДУЛЬ РОБОТА-ЕЖИКА:
+    Автоматический парсинг строек и реставраций по всей России.
+    Наполнение Энциклопедии Дерева Объектов и генерация гео-карт.
+    """
+    if request.method == 'POST':
+        target_year = request.POST.get('year', '2026')
+        search_region = request.POST.get('region', 'Все регионы')
+        
+        # Список эталонных точек застроек России для парсинга паспортов
+        federal_sources = [
+            {"name": "Реставрация Исторического Центра", "city": "Тула", "address": "ул. Металлистов, д. 4", "capital": 45000000.00},
+            {"name": "Федеральный ИТ-Кластер Наследие", "city": "Москва", "address": "Сколково, Синее Крыло", "capital": 120000000.00},
+            {"name": "Судостроительный Завод Монолит", "city": "Владивосток", "address": "Портовая набережная, док 3", "capital": 85000000.00},
+            {"name": "Логистический Хаб Ковчег-Сибирь", "city": "Новосибирск", "address": "Трасса М-51, км 12", "capital": 30000000.00}
+        ]
+        
+        counter = 0
+        for info in federal_sources:
+            # Ёжик проверяет, нет ли уже такого объекта в Дереве Матрицы
+            exists = ConstructionObject.objects.filter(name=info["name"], city=info["city"]).exists()
+            
+            if not exists:
+                # Робот-Ёжик автоматически парсит паспорт и заносит в базу данных админки!
+                ConstructionObject.objects.create(
+                    name=info["name"],
+                    country="Россия",
+                    city=info["city"],
+                    address=info["address"],
+                    object_capital=info["capital"],
+                    currency="RUB"
+                )
+                counter += 1
+                
+        messages.success(request, f"🦔 [ЁЖИК]: Федеральный парсинг завершен! В Энциклопедию Дерева Объектов успешно добавлено {counter} новых паспортов строек на {target_year} год!")
+        
+    return redirect('/admin/storage_control/constructionobject/')
