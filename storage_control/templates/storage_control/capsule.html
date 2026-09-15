@@ -2,50 +2,60 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>☀️ СЕЙФ ЗОЛОТОЙ ПАМЯТИ | MIRO 1.6</title>
-    <style>
-        body { background-color: #050b14; color: #e2e8f0; font-family: 'Segoe UI', Roboto, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
-        .glacier-card { background: rgba(10, 25, 47, 0.7); border: 1px solid #00f2fe; border-radius: 16px; padding: 40px; width: 100%; max-width: 450px; text-align: center; backdrop-filter: blur(10px); box-shadow: 0 0 30px rgba(0, 242, 254, 0.15); position: relative; }
-        .glacier-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #00f2fe, #4facfe); border-radius: 16px 16px 0 0; }
-        h1 { color: #00f2fe; font-size: 22px; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 10px; font-weight: 600; text-shadow: 0 0 10px rgba(0, 242, 254, 0.5); }
-        p { color: #64748b; font-size: 14px; margin-bottom: 30px; line-height: 1.5; }
-        .input-group { position: relative; margin-bottom: 25px; }
-        .input-field { width: 100%; padding: 14px; background: #071324; border: 1px solid #1e293b; border-radius: 8px; color: #fff; font-size: 15px; font-family: monospace; box-sizing: border-box; transition: all 0.3s ease; }
-        .input-field:focus { border-color: #00f2fe; outline: none; box-shadow: 0 0 10px rgba(0, 242, 254, 0.2); }
-        .btn-aurora { width: 100%; padding: 14px; background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%); border: none; border-radius: 8px; color: #050b14; font-size: 15px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3); }
-        .btn-aurora:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 242, 254, 0.5); }
-        .message-box { margin-top: 25px; padding: 15px; background: rgba(0, 242, 254, 0.05); border: 1px dashed #00f2fe; border-radius: 8px; font-size: 14px; line-height: 1.6; color: #e2e8f0; display: none; }
-    </style>
+    <title>MIROHA CORE // CAPSULE VAULT</title>
+    <!-- Подключаем стерильный изолированный файл стилей -->
+    <link rel="stylesheet" href="/static/moba_style.css">
 </head>
-<body>
-    <div class="glacier-card">
-        <h1>☀️ ХРАМ ВЕЧНОСТИ</h1>
-        <p>Контур «Спящий Страх». Замок активен до 24 мая 2059 года. Введите суверенное отцовское слово или пройдите ID-Scan.</p>
+<body style="background: #030712;">
+
+<div class="parallax-bg" id="parallax"></div>
+
+<div class="vault-box">
+    <div class="vault-inner">
         
-        <form id="vault-form" onsubmit="unlockCapsule(event)">
-            <div class="input-group">
-                <input type="password" id="room_key" class="input-field" placeholder="ПРОТОКОЛ ПРАВО КРОВИ..." required>
+        <div style="text-align: center; color: #ff0055; font-size: 10px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase;">
+            🛑 СТАТУС ОПЕКИ: НАМЕРТВО ЗАБЛОКИРОВАНО
+        </div>
+
+        <h2 style="color: #fff; font-size: 15px; text-align: center; margin-top: 15px; text-transform: uppercase; font-family: monospace;">
+            🦔 ВЕКОВОЙ СЕЙФ МЕЧТЫ ЛЮБИМОЙ ДОЧКИ
+        </h2>
+        <p style="color: #8b949e; font-size: 11px; text-align: center; margin: 0;">[ЮРИДИЧЕСКАЯ БРОНЯ МАТРИЦЫ] // СЕРВЕР TANGERINE NATRIUM</p>
+
+        <!-- Живой тикающий таймер Капсулы -->
+        <div class="timer-grid-capsule">
+            <div class="timer-card-capsule">
+                <div class="timer-num-capsule" id="capsule_years">00</div>
+                <div style="font-size: 8px; color: #8b949e; text-transform: uppercase; margin-top: 3px;">Лет</div>
             </div>
-            <button type="submit" class="btn-aurora">Открыть одним желанием</button>
-        </form>
+            <div class="timer-card-capsule">
+                <div class="timer-num-capsule" id="capsule_days">00</div>
+                <div style="font-size: 8px; color: #8b949e; text-transform: uppercase; margin-top: 3px;">Дней</div>
+            </div>
+            <div class="timer-card-capsule">
+                <div class="timer-num-capsule" id="capsule_hours">00</div>
+                <div style="font-size: 8px; color: #8b949e; text-transform: uppercase; margin-top: 3px;">Часов</div>
+            </div>
+            <div class="timer-card-capsule">
+                <div class="timer-num-capsule" id="capsule_seconds" style="color: #ff0055; text-shadow: 0 0 8px rgba(255,0,85,0.4);">00</div>
+                <div style="font-size: 8px; color: #8b949e; text-transform: uppercase; margin-top: 3px;">Сек</div>
+            </div>
+        </div>
 
-        <div id="secret-message" class="message-box"></div>
+        <!-- Корневые финансовые потоки -->
+        <div class="sbp-badge-capsule">
+            📌 <strong>ФИНАНСОВЫЙ КОНТУР:</strong> Наследие и Мечта Дочки 💰<br>
+            🔐 <strong>КОД СБП ИНВОЙСА:</strong> <span style="color: #fff; font-weight: bold;">INV-ALFA-288003</span><br>
+            📄 <strong>ЛОГ РОБОТА:</strong> Блокировка финансовых потоков синдиката активна. Дата автоматического вскрытия капсулы: <strong>24 мая 2059 года</strong>. Изменения заблокированы.
+        </div>
+
+        <button class="moba-btn-action" style="margin-top: 25px; background: linear-gradient(90deg, #ff0055 0%, #990033 100%); box-shadow: 0 4px 15px rgba(255,0,85,0.3);" onclick="location.href='/'">
+            返回 Вернуться на Главный Пульт
+        </button>
     </div>
+</div>
 
-    <script>
-        function unlockCapsule(event) {
-            event.preventDefault();
-            const key = document.getElementById('room_key').value;
-            // Имитация мгновенного крипто-сравнения хэша в Гренландском стиле
-            if (key === "Какие мы большие! — Да.") {
-                const msgBox = document.getElementById('secret-message');
-                msgBox.style.display = 'block';
-                msgBox.innerHTML = "✨ <b>Послание Отца запечатано навечно:</b><br><i>«Привет! Ты такая большая, футболка и улыбка... Ты не одна. Одиноких людей не бывает».</i>";
-            } else {
-                alert("🔒 ИИ-ЩИТ: Доступ отклонен. Паттерн не совпал.");
-            }
-        }
-    </script>
+<!-- Подключаем стерильный изолированный файл логики -->
+<script src="/static/moba_core.js"></script>
 </body>
 </html>
