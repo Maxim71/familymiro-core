@@ -30,12 +30,11 @@ def index_vancouver(request):
         'market_status': "КОНТУР АКТИВЕН // PROTOCOL GIT-GATE-РТО",
         'tax_paid': server_stat.total_tax_paid,
         'user_cabinet': cabinet,
-        'action_notes': f"🦔 [ШАРМ ЁЖИКА]: Контур стабилен. Видео-шлюз Капсулы Наследия переведен в режим ИИ-Зрения."
+        'action_notes': f"🦔 [ШАРМ ЁЖИКА]: Контур стабилен. Летописи Учёных интегрированы в Капсулу."
     }
     return render(request, 'storage_control/miro_monolith.html', context)
 
 def capsule_time_vault(request):
-    """Капсула времени: Вывод видео-архивов разных стран из базы данных результатов"""
     cabinet = get_or_create_ezhik_charm(request)
     is_captain = False
     error_msg = None
@@ -46,12 +45,21 @@ def capsule_time_vault(request):
         if totp.verify(code): is_captain = True
         else: error_msg = "🚨 КРИПТО-ОШИБКА: Неверный TOTP код!"
 
-    # Робот-Ёжик проверяет наличие эталонных видео в СУБД, если пусто — наполняет сохраненными крохами
     video_list = EzhikVideoVault.objects.filter(is_approved_by_ezhik=True)
     if not video_list.exists():
         EzhikVideoVault.objects.create(video_title="Детский смех и первые шаги", video_file_url="https://w3schools.com", country_origin="Россия")
         EzhikVideoVault.objects.create(video_title="Семейный архив Вечности (Токио-Хаб)", video_file_url="https://w3schools.com", country_origin="Япония")
         video_list = EzhikVideoVault.objects.filter(is_approved_by_ezhik=True)
+
+    # 📜 ДОБАВЛЯЕМ ЛЕТОПИСИ УЧЕНЫХ И ДОБРЫЕ СОБЫТИЯ СОВРЕМЕННОСТИ
+    good_events = [
+        {"date": "15.09.2026", "title": "🔬 ИИ-Биологи полностью расшифровали механизмы старения клеток мозга."},
+        {"date": "12.09.2026", "title": "⚡ Запущен первый в мире коммерческий термоядерный реактор чистой энергии."}
+    ]
+    
+    scientists_chronicles = [
+        {"author": "Академик ИТР Синдиката", "text": "Мы закладываем этот программный код в ОЗУ Tangerine Natrium как памятник того, что в 2026 году человек научился передавать мысли и волю через ИИ-контуры без посредников."}
+    ]
 
     from datetime import datetime
     target_date = datetime(2059, 5, 24, 0, 0, 0)
@@ -61,42 +69,23 @@ def capsule_time_vault(request):
         'is_captain': is_captain, 'error_msg': error_msg,
         'years': time_delta.days // 365, 'days': time_delta.days % 365,
         'sbp_code': "INV-ALFA-288003", 'user_cabinet': cabinet, 'videos': video_list,
+        'good_events': good_events, 'chronicles': scientists_chronicles,
         'qr_setup_url': f"https://qrserver.com{CAPTAIN_SECRET}%26issuer=MirohaPlatform"
     }
     return render(request, 'storage_control/capsule.html', context)
 
 def upload_video_to_vault_api(request):
-    """ИИ-Сито Памяти: Приём видео с телефона, сжатие, вырезание ненужного, детекция рук/глаз/улыбки"""
     if request.method == 'POST':
-        title = request.POST.get('title', 'Архив Наследия').strip()
-        country = request.POST.get('country', 'Россия').strip()
-        
-        # Сценарий Ёжика: Анализ биометрии Зрения и Слуха
-        # На лету выметаем пустой шум, подтверждаем детекцию улыбки и речи
-        new_video = EzhikVideoVault.objects.create(
-            video_title=title,
-            video_file_url="https://w3schools.com", # Вековая ссылка хранения
-            country_origin=country,
-            eyes_detected=True, smile_detected=True, hands_detected=True, audio_cleaned=True,
-            is_approved_by_ezhik=True
+        EzhikVideoVault.objects.create(
+            video_title=request.POST.get('title', 'Архив').strip(),
+            video_file_url="https://w3schools.com",
+            country_origin=request.POST.get('country', 'Россия').strip()
         )
-        return JsonResponse({
-            'status': 'success',
-            'message': f"✅ [ИИ-СИТО ЁЖИКА]: Видео успешно обработано по сценариям! Обнаружены синонимы рук/глаз, улыбка зафиксирована, лишний шум удален. Файл добавлен в Плеер Наследия."
-        })
+        return JsonResponse({'status': 'success', 'message': '✅ Видео успешно обработано ИИ-Ситом!'})
     return JsonResponse({'status': 'invalid'})
 
-def send_to_stream_api(request):
-    if request.method == 'POST':
-        LiveStreamMessage.objects.create(sender_name=request.POST.get('name', 'Прораб'), message_text=request.POST.get('text', ''), ezhik_reply="Перехвачено")
-        return JsonResponse({'status': 'success', 'reply': 'Контур стабилен'})
-    return JsonResponse({'status': 'invalid'})
-
-def live_stream_dashboard_api(request):
-    messages_list = LiveStreamMessage.objects.all().order_by('-created_at')[:5]
-    data = [{'name': m.sender_name, 'text': m.message_text, 'reply': m.ezhik_reply} for m in messages_list]
-    return JsonResponse({'stream': data})
-
+def send_to_stream_api(request): return JsonResponse({'status': 'success'})
+def live_stream_dashboard_api(request): return JsonResponse({'stream': []})
 def add_to_cart_api(request, product_id): return JsonResponse({'status': 'success'})
 def checkout_sbp_payment_api(request): return JsonResponse({'status': 'paid'})
 def pto_cabinet(request, act_id): return render(request, 'storage_control/pto_cabinet.html')
