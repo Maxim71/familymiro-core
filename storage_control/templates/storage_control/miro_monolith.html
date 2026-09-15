@@ -3,195 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <title>MIROHA PLATFORM // LEGEND MONOLITH</title>
+    <link rel="stylesheet" href="/static/moba_style.css">
     <style>
-        body { 
-            background: #030712; 
-            color: #e2e8f0; 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            margin: 0; 
-            padding: 0; 
-            overflow-x: hidden; 
-        }
-        
-        /* Глубокий космический фон с градиентом */
-        .parallax-bg { 
-            position: fixed; 
-            top: -5%; 
-            left: -5%; 
-            width: 110%; 
-            height: 110%; 
-            background: radial-gradient(circle at 50% 30%, #0c1e36 0%, #030712 80%); 
-            z-index: -1; 
-            transition: transform 0.1s ease-out; 
-        }
-        
-        .container { 
-            max-width: 480px; /* Сужаем под идеальный мобильный экран как на скрине */
-            margin: 0 auto; 
-            padding: 25px 15px; 
-        }
-        
-        /* Скругленные неоновые капсулы-карточки из Mobile Legends */
-        .moba-card { 
-            background: rgba(13, 27, 42, 0.6); 
-            border: 2px solid #00f0ff; 
-            border-radius: 24px; /* Мягкие круглые углы как на твоем скрине */
-            padding: 20px; 
-            margin-bottom: 20px; 
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.15), inset 0 0 15px rgba(0, 240, 255, 0.1);
-            backdrop-filter: blur(10px);
-            position: relative;
-        }
-        
-        .moba-card.pink {
-            border-color: #ff0055;
-            box-shadow: 0 0 20px rgba(255, 0, 85, 0.15), inset 0 0 15px rgba(255, 0, 85, 0.1);
-        }
-
-        .moba-card.green {
-            border-color: #00ff66;
-            box-shadow: 0 0 20px rgba(0, 255, 102, 0.15), inset 0 0 15px rgba(0, 255, 102, 0.1);
-        }
-
-        /* Маленькие скругленные датчики статуса */
-        .moba-badge { 
-            position: absolute; 
-            top: -12px; 
-            left: 30px; 
-            background: #ff0055; 
-            color: #fff; 
-            font-size: 10px; 
-            font-weight: bold; 
-            padding: 4px 14px; 
-            border-radius: 20px; 
-            letter-spacing: 1px;
-            box-shadow: 0 0 10px #ff0055;
-            text-transform: uppercase;
-        }
-        
-        /* Сетка круглых иконок-модулей (ВЕЧНОСТЬ, СТРОЙКА...) */
-        .moba-grid { 
-            display: grid; 
-            grid-template-columns: repeat(4, 1fr); 
-            gap: 12px; 
-            margin: 20px 0; 
-        }
-        
-        .moba-icon-btn { 
-            background: rgba(6, 11, 25, 0.8);
-            border: 1.5px solid #ffaa00; 
-            border-radius: 14px; 
-            padding: 12px 5px; 
-            text-align: center; 
-            color: #ffaa00; 
-            cursor: pointer; 
-            font-size: 9px; 
-            font-weight: bold;
-            transition: all 0.2s;
-            text-transform: uppercase;
-        }
-        .moba-icon-btn:hover {
-            box-shadow: 0 0 12px #ffaa00;
-            transform: scale(1.05);
-        }
-
-        /* Градиентные обтекаемые кнопки «ПЕРЕДАТЬ В ЭФИР» / «НАЧАТЬ РАБОТУ» */
-        .moba-btn-action { 
-            width: 100%; 
-            background: linear-gradient(90deg, #00f0ff 0%, #0077ff 100%); 
-            border: none; 
-            border-radius: 18px; /* Капсульная обтекаемая форма */
-            color: #fff; 
-            padding: 14px; 
-            font-size: 13px; 
-            font-weight: bold; 
-            text-transform: uppercase; 
-            letter-spacing: 1.5px; 
-            cursor: pointer; 
-            box-shadow: 0 4px 15px rgba(0, 240, 255, 0.4);
-            transition: all 0.2s;
-        }
-        .moba-btn-action:hover { 
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 240, 255, 0.6);
-        }
-
-        .moba-btn-green {
-            background: linear-gradient(90deg, #00ff66 0%, #009933 100%);
-            box-shadow: 0 4px 15px rgba(0, 255, 102, 0.4);
-        }
-        .moba-btn-green:hover {
-            box-shadow: 0 6px 20px rgba(0, 255, 102, 0.6);
-        }
-
-        .stream-status {
-            color: #8b949e;
-            font-size: 12px;
-            text-align: center;
-            background: rgba(0,0,0,0.3);
-            padding: 10px;
-            border-radius: 12px;
-            margin: 15px 0;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
+        .grid-donat { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; }
+        .donat-card { background: rgba(6, 11, 25, 0.8); border: 1px solid #ffaa00; border-radius: 16px; padding: 12px; text-align: center; font-size: 11px; }
+        .server-monitor { font-size: 10px; color: #ffaa00; background: rgba(255,170,0,0.05); border: 1px dashed #ffaa00; padding: 8px; margin-top: 8px; border-radius: 10px; text-align: left; }
     </style>
 </head>
 <body>
+
+<audio id="click_sound" src="https://mixkit.co" preload="auto"></audio>
+<audio id="success_sound" src="https://mixkit.co" preload="auto"></audio>
 
 <div class="parallax-bg" id="parallax"></div>
 
 <div class="container">
     
-    <!-- КАРТОЧКА 1: ЗАМОК АКТИВЕН & ЯКОРЬ ПРАВ -->
+    <!-- КАПСУЛА 1: ЯДРО С РЕАЛЬНЫМ МОНИТОРОМ БАЛАНСА ХОСТИНГА -->
     <div class="moba-card">
         <div class="moba-badge" style="background: #0077ff; box-shadow: 0 0 10px #0077ff;">🔒 ЗАМОК АКТИВЕН</div>
-        <div style="font-size: 11px; color: #8b949e; text-transform: uppercase; letter-spacing: 1px; margin-top: 5px;">Miroha Platform // Ядро</div>
-        <div style="font-size: 18px; color: #00f0ff; font-weight: bold; margin-top: 5px;">Капитал Ёжика: <span style="color: #00ff66;">0.00 RUB</span></div>
+        <div style="font-size: 11px; color: #8b949e; text-transform: uppercase;">Miroha Platform // Ядро</div>
+        <div style="font-size: 16px; color: #00f0ff; font-weight: bold; margin-top: 5px;">Накоплено в Капсуле: <span id="cart_counter" style="color:#00ff66;">0</span> позиций</div>
         
-        <div style="margin-top: 15px;">
-            <button class="moba-btn-action" onclick="location.href='/admin/'">ЯКОРЬ ПРАВ</button>
+        <!-- ⚙️ ЖИВОЙ ДАТЧИК ХОСТИНГА ИЗ ПОСТГРЕСА -->
+        <div class="server-monitor">
+            🤖 <strong>БАЛАНС СЕРВЕРА (2%):</strong> <span style="color:#00ff66; font-weight:bold;">{{ server_balance }} RUB</span><br>
+            💸 <strong>НАЛОГОВЫЙ КОНТУР:</strong> Удержано: {{ tax_paid }} RUB (Чистая честность)
         </div>
+        
+        <button class="moba-btn-action" style="margin-top: 10px; padding: 10px; font-size: 11px;" onclick="executeSbpCheckout()">🔒 АВТОРИЗОВАТЬ СБП INV-ALFA-288003</button>
     </div>
 
-    <!-- КАРТОЧКА 2: ЦЕНТРАЛЬНЫЙ ИИ-ПУЛЬТ МАКСИМА -->
+    <!-- КАРТОЧКА 2: ЦЕНТРАЛЬНЫЙ СТЕРЕО ЭФИР -->
     <div class="moba-card pink">
         <div class="moba-badge">📡 СТЕРЕО ПОТОК</div>
-        <div style="font-size: 14px; color: #fff; font-weight: bold; margin-top: 5px;">Максим // Снабжение ИТР</div>
-        
-        <div class="stream-status">
-            [В эфире тихо. Поток стерилен. Друзей в сети нет]
+        <div style="font-size: 14px; color: #fff; font-weight: bold;">Максим // Снабжение ИТР</div>
+        <div id="live_stream_box" style="max-height: 200px; margin: 15px 0; padding: 10px; background: rgba(0,0,0,0.4); border-radius: 12px; font-size: 11px; border: 1px solid rgba(255,255,255,0.05);"></div>
+        <div style="background: rgba(6, 11, 25, 0.8); padding: 10px; border-radius: 14px; border: 1px dashed #ff0055;">
+            <textarea id="stream_message_text" placeholder="Написать в живой эфир прорабам..." style="width: 93%; background: #070a0e; border: 1px solid #30363d; color: #fff; padding: 6px; font-size: 11px; font-family: monospace; height: 35px; resize: none;"></textarea>
+            <button class="moba-btn-action" style="padding: 6px; font-size: 11px; margin-top: 5px; background: linear-gradient(90deg, #ff0055 0%, #990033 100%);" onclick="pushSignalToEzhikStream()">ПЕРЕДАТЬ В ЭФИР</button>
         </div>
-        
-        <!-- Сетка круглых MOBA-кнопок из твоего интерфейса -->
-        <div class="moba-grid">
+        <div class="moba-grid" style="margin-top: 15px;">
             <div class="moba-icon-btn" onclick="location.href='/capsule/'">☀️<br><br>ВЕЧНОСТЬ</div>
-            <div class="moba-icon-btn">🎬<br><br>РЕЖИССЕР</div>
+            <div class="moba-icon-btn" onclick="triggerEzhikRSS()">🎬<br><br>РАДАР</div>
+            <div class="moba-icon-btn" onclick="toggleHydroSubcards()">💧<br><br>ИЗОЛЯЦИЯ</div>
             <div class="moba-icon-btn" onclick="location.href='/pto/1/'">🏗️<br><br>СТРОЙКА</div>
-            <div class="moba-icon-btn" style="border-color:#ff0055; color:#ff0055;">❓<br><br>РЕЗЕРВ</div>
         </div>
-
-        <button class="moba-btn-action" onclick="location.href='/neuro-radar/'">ПЕРЕДАТЬ В ЭФИР</button>
+        <div id="rss_media_subcard" style="display: none; background: rgba(12, 30, 54, 0.9); border: 1px dashed #ffaa00; padding: 15px; border-radius: 14px; margin: 15px 0; font-size: 12px;">
+            <div style="color: #ffaa00; font-weight: bold; margin-bottom: 8px; text-transform: uppercase;">📰 RSS-ПОТОК:</div>
+            <div id="rss_facts_container" style="color: #e2e8f0; font-family: monospace; line-height: 1.4;">[Ожидание данных...]</div>
+        </div>
+        <div id="hydro_subcards" style="display: none; background: rgba(5, 8, 12, 0.9); border: 1px dashed #ff0055; padding: 15px; border-radius: 14px; margin: 15px 0; font-size: 12px;">
+            <div style="color: #00ff66; font-weight: bold; margin-bottom: 5px;">🌊 CONTOUR ОТВОДА ВОДЫ:</div>
+            <div style="font-size:11px; color:#fff;">Битумная Броня Слой 0 // 1,420 ботов заблокировано</div>
+        </div>
+        <div id="action_console" style="background: rgba(0,240,255,0.03); border: 1px solid #00f0ff; border-radius: 12px; padding: 10px; font-size: 11px; margin-top: 15px; color: #00f0ff; font-family: monospace;">
+            🤖 [ОКНО ДЕЙСТВИЙ]: Контур стабилен. Честный мониторинг запущен.
+        </div>
     </div>
 
-    <!-- КАРТОЧКА 3: НАЧАТЬ РАБОТУ -->
+    <!-- КАРТОЧКА 3: МАГАЗИН -->
     <div class="moba-card green">
-        <div class="moba-badge" style="background: #00ff66; box-shadow: 0 0 10px #00ff66;">⚔️ ШЛЮЗ АКТИВЕН</div>
-        <div style="font-size: 13px; color: #fff; font-weight: bold; text-align: center; margin-top: 5px;">Управление Мультимодальными Рейсами</div>
-        
-        <div style="margin-top: 15px;">
-            <button class="moba-btn-action moba-btn-green" onclick="location.href='/pto/1/'">НАЧАТЬ РАБОТУ</button>
+        <div class="moba-badge" style="background: #00ff66; box-shadow: 0 0 10px #00ff66;">💎 ИИ-МАГАЗИН ПРОДУКТОВ</div>
+        <div style="font-size: 12px; color: #fff; font-weight: bold; text-align: center;">Запуск Донатов на Продукт Наследия Дочки</div>
+        <div class="grid-donat">
+            <div class="donat-card">
+                🏢<br><strong style="color:#fff;">Профиль MONLID</strong><br><span style="color:#00ff66;">280 ₽</span>
+                <button class="moba-btn-action" style="padding:4px; font-size:10px; margin-top:5px;" onclick="addDonatProduct(2)">Донат</button>
+            </div>
+            <div class="donat-card">
+                🧱<br><strong style="color:#fff;">Бетон Товарный</strong><br><span style="color:#00ff66;">6,400 ₽</span>
+                <button class="moba-btn-action" style="padding:4px; font-size:10px; margin-top:5px;" onclick="addDonatProduct(1)">Донат</button>
+            </div>
         </div>
     </div>
 
 </div>
 
-<script>
-    // Мягкий игровой параллакс фона
-    document.addEventListener('mousemove', function(e) {
-        const moveX = (e.clientX - window.innerWidth / 2) * 0.012;
-        const moveY = (e.clientY - window.innerHeight / 2) * 0.012;
-        document.getElementById('parallax').style.transform = `translate(${moveX}px, ${moveY}px) scale(1.03)`;
-    });
-</script>
+<script src="/static/moba_core.js"></script>
 </body>
 </html>

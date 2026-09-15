@@ -95,3 +95,11 @@ class ItrProrabTest(models.Model):
     defect_sheet_issued = models.BooleanField("Дефектная ведомость выписана", default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     def __str__(self): return f"Журнал ВХД №{self.id} — {self.prorab_name}"
+
+class ServerBalance(models.Model):
+    """Реальный баланс копеек, накопленных с комиссии 2% на хостинг и ОЗУ сервера"""
+    balance_rub = models.DecimalField("Баланс хостинга (Реальный)", max_digits=10, decimal_places=2, default=0.00)
+    total_tax_paid = models.DecimalField("Уплаченный налог самозанятости", max_digits=10, decimal_places=2, default=0.00)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self): return f"Реальный Баланс Сервера: {self.balance_rub} RUB"
