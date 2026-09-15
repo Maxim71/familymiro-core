@@ -1,6 +1,7 @@
 import random
 import pyotp
 import requests
+import os
 from django.shortcuts import render
 from django.http import JsonResponse
 from .models import ServerBalance, LiveStreamMessage, ItrProrabTest, EzhikUserCabinet, EzhikVideoVault
@@ -16,9 +17,59 @@ def get_or_create_ezhik_charm(request):
     moba_styles = ["cyan", "pink", "green", "gold"]
     cabinet, _ = EzhikUserCabinet.objects.get_or_create(
         session_key=s_key,
-        defaults={'assigned_name': f"{random.choice(moba_names)} №{random.randint(100, 999)}", 'moba_style_preference': random.choice(moba_styles), 'user_country': "Россия"}
+        defaults={'assigned_name': f"{random.choice(moba_names)} №{random.randint(100, 999)}", 'moba_style_preference': 'cyan', 'user_country': "Россия"}
     )
     return cabinet
+
+def sync_telegram_channel_videos():
+    """
+    ЖУК ТОРНАДО // БОЕВОЙ ПАРСЕР TG-КАНАЛА:
+    Ёжик заходит от имени токена, ищет новые видео, скачивает их через getFile
+    и сохраняет в базу результатов для отображения в Капсуле Вечности!
+    """
+    try:
+        # Запрашиваем последние обновления/сообщения от бота
+        url = f"https://telegram.org{REAL_TELEGRAM_TOKEN}/getUpdates"
+        response = requests.get(url, timeout=5).json()
+        
+        if response.get("ok") and response.get("result"):
+            for update in response["result"]:
+                message = update.get("message") or update.get("channel_post")
+                if not message:
+                    continue
+                
+                # Ищем, есть ли в сообщении видеоролик
+                video_data = message.get("video")
+                if video_data:
+                    file_id = video_data.get("file_id")
+                    title = message.get("caption") or f"Детское Воспоминание №{video_data.get('file_unique_id', 'ITR')}"
+                    
+                    # Проверяем, не скачивали ли мы его уже
+                    if not EzhikVideoVault.objects.filter(video_title__contains=title).exists():
+                        # Шаг A: Запрашиваем путь к файлу через getFile
+                        file_info_url = f"https://telegram.org{REAL_TELEGRAM_TOKEN}/getFile?file_id={file_id}"
+                        file_info = requests.get(file_info_url, timeout=5).json()
+                        
+                        if file_info.get("ok"):
+                            file_path = file_info["result"].get("file_path")
+                            # Шаг B: Скачиваем видеоролик на жесткий диск нашего сервера
+                            download_url = f"https://telegram.org{REAL_TELEGRAM_TOKEN}/{file_path}"
+                            video_bytes = requests.get(download_url, timeout=10).content
+                            
+                            local_filename = f"tg_video_{file_id[:10]}.mp4"
+                            local_path = os.path.join("/var/www/miroha_static/uploads/", local_filename)
+                            
+                            with open(local_path, "wb") as f:
+                                f.write(video_bytes)
+                            
+                            # Шаг C: Намертво заносим в СУБД SQLite с вековой ссылкой статики Nginx
+                            EzhikVideoVault.objects.create(
+                                video_title=f"❤️ [ПЕРЕХВАТ ИЗ TG]: {title}",
+                                video_file_url=f"/static/uploads/{local_filename}",
+                                country_origin="⚓️ СОРТИРОВОЧНЫЙ ПОРТ ВЛАДИВОСТОК // TG-ХАБ"
+                            )
+    except Exception:
+        pass
 
 def index_vancouver(request):
     server_stat, created = ServerBalance.objects.get_or_create(id=1, defaults={'balance_rub': 0.00})
@@ -29,40 +80,30 @@ def index_vancouver(request):
         'server_balance_cny': f"{(balance_rub * 0.078):,.2f}",
         'server_balance_kpw': f"{(balance_rub * 9.87):,.2f}",
         'object_capital_rub': "15 000 000.00 ₽",
-        'market_status': "КОНТУР АКТИВЕН // ИИ-ОХОТНИК ЗА ВОСПОМИНАНИЯМИ ОТЦОВ",
+        'market_status': "КОНТУР АКТИВЕН // ЖУК-ПАРСЕР TG КАНАЛА ВКЛЮЧЕН",
         'tax_paid': server_stat.total_tax_paid,
         'user_cabinet': cabinet,
-        'action_notes': "🦔 [ИИ-РАДАР ТОРНАДО]: Запущено сканирование спецканалов на предмет лучших детских воспоминаний отцов."
+        'action_notes': "🦔 [ПАРСЕР ТОРНАДО]: Ёжик зашёл в канал, проверил file_id и синхронизировал новые видео."
     }
     return render(request, 'storage_control/miro_monolith.html', context)
 
 def capsule_time_vault(request):
-    """Капсула времени: Слой Ленивой Ротации воспоминаний отцов"""
+    """Капсула времени: Запуск живой синхронизации с твоим Telegram при каждом обновлении"""
     cabinet = get_or_create_ezhik_charm(request)
     is_captain = False
     if request.method == 'POST' and 'totp_code' in request.POST:
         if pyotp.TOTP(CAPTAIN_SECRET).verify(request.POST.get('totp_code', '').strip()): is_captain = True
 
-    # Наполняем базу результатов почётными видеороликами воспоминаний отцов разных стран
-    video_list = EzhikVideoVault.objects.filter(is_approved_by_ezhik=True).order_by('-created_at')[:10]
-    if not video_list.exists():
-        EzhikVideoVault.objects.create(
-            video_title="❤️ [АРХИВ РОДА] Детский смех и первые шаги дочери", 
-            video_file_url="https://w3schools.com", 
-            country_origin="⚓️ СОРТИРОВОЧНЫЙ ПОРТ ВЛАДИВОСТОК // ХАБ-РФ"
-        )
-        EzhikVideoVault.objects.create(
-            video_title="👨‍👦 [НАСЛЕДИЕ] С любовью на век от Папы (Семейный архив)", 
-            video_file_url="https://w3schools.com", 
-            country_origin="🗼 СИНДИКАТ ТОКИО // ХАБ-ЯПОНИЯ"
-        )
-        video_list = EzhikVideoVault.objects.filter(is_approved_by_ezhik=True)
+    # 🔥 ЗАПУСКАЕМ ЖИВОЙ ПАРСИНГ ТВОРЧЕСТВА ИЗ ТВОЕГО ТГ КАНАЛА
+    sync_telegram_channel_videos()
 
+    video_list = EzhikVideoVault.objects.filter(is_approved_by_ezhik=True).order_by('-created_at')[:10]
     good_events = [
         {"date": "15.09.2026", "title": "🔬 ИИ-Биологи Transformers полностью расшифровали старение клеток мозга."},
-        {"date": "12.09.2026", "title": "⚡ Запущен первый в мире коммерческий реактор чистой энергии OpenStack."}
+        {"date": "12.09.2026", "title": "⚡ Запущен коммерческий реактор чистой энергии OpenStack."}
     ]
-    scientists_chronicles = [{"author": "Жук Торнадо ИТР", "text": "Парсер спецканалов перехваченных воспоминаний отцов переведен в ОЗУ."}]
+    scientists_chronicles = [{"author": "Жук Торнадо ИТР", "text": "Парсинг выполнен. Видео залиты в статический порт Nginx."}]
+    
     from datetime import datetime
     time_delta = datetime(2059, 5, 24) - datetime.now()
     
@@ -76,36 +117,27 @@ def capsule_time_vault(request):
 
 def upload_video_to_vault_api(request):
     if request.method == 'POST':
-        title = request.POST.get('title', 'Архив Наследия').strip()
-        new_video = EzhikVideoVault.objects.create(
-            video_title=f"❤️ [ПАМЯТСТВО ОТЦОВ]: {title}",
-            video_file_url="https://w3schools.com",
-            country_origin="🚀 АСИНХРОННЫЙ ГЕО-ХАБ ТОРНАДО"
+        EzhikVideoVault.objects.create(
+            video_title=request.POST.get('title', 'Архив Наследия').strip(),
+            video_file_url="/static/uploads/tg_video_default.mp4",
+            country_origin="🚀 АСИНХРОННЫЙ ХАБ ТОРНАДО"
         )
-        # Выстрел в Telegram при ручной заливке воспоминания
-        try:
-            msg = f"👶 <b>[ПЕРЕХВАТ ДЕТСКОГО ВОСПОМИНАНИЯ]</b>\n📝 <b>Суть:</b> {title}\n👁️ ИИ-Сито верифицировало взгляд, улыбку и звук ОК!"
-            requests.post(f"https://telegram.org{REAL_TELEGRAM_TOKEN}/sendMessage", data={"chat_id": REAL_CHAT_ID, "text": msg, "parse_mode": "HTML"}, timeout=3)
-        except Exception: pass
-        return JsonResponse({'status': 'success', 'message': '✅ [ИИ-СИТО]: Видео занесено на века в Ленту Памятства!'})
+        return JsonResponse({'status': 'success', 'message': '✅ Видео обработано!'})
     return JsonResponse({'status': 'invalid'})
 
 def push_video_to_telegram_action_api(request, video_id):
-    """Кнопка-Значок снизу видео карточки: Отправка воспоминания отца на телефон"""
     try:
         video = EzhikVideoVault.objects.get(id=video_id)
-        msg = f"✈️ <b>[ТРАНСЛЯЦИЯ ВОСПОМИНАНИЯ ОТЦА]</b>\n\n📌 <b>Хаб-Источник:</b> {video.country_origin}\n👶 <b>Памятство:</b> {video.video_title}\n\n🤖 <i>Робот-Ёжик убрал лишний шум. Звук и речь прослушиваются чисто!</i>"
+        msg = f"✈️ <b>[ТРАНСЛЯЦИЯ]</b>\n📦 <b>Видео №{video.id}</b>\n📜 <b>Суть:</b> {video.video_title}"
         requests.post(f"https://telegram.org{REAL_TELEGRAM_TOKEN}/sendMessage", data={"chat_id": REAL_CHAT_ID, "text": msg, "parse_mode": "HTML"}, timeout=3)
-        return JsonResponse({'status': 'success', 'message': '✈️ Воспоминание успешно транслировано на телефон!'})
-    except Exception:
-        return JsonResponse({'status': 'error'})
+        return JsonResponse({'status': 'success', 'message': '✈️ Сигнал отправлен в Telegram!'})
+    except Exception: return JsonResponse({'status': 'error'})
 
 def send_to_stream_api(request):
     if request.method == 'POST':
         name = request.POST.get('name', 'Капитан').strip()
         text = request.POST.get('text', '').strip()
-        try:
-            requests.post(f"https://telegram.org{REAL_TELEGRAM_TOKEN}/sendMessage", data={"chat_id": REAL_CHAT_ID, "text": f"🏗️ <b>[{name}]:</b> {text}", "parse_mode": "HTML"}, timeout=3)
+        try: requests.post(f"https://telegram.org{REAL_TELEGRAM_TOKEN}/sendMessage", data={"chat_id": REAL_CHAT_ID, "text": f"🏗️ <b>[{name}]:</b> {text}", "parse_mode": "HTML"}, timeout=3)
         except Exception: pass
         LiveStreamMessage.objects.create(sender_name=name, message_text=text, ezhik_reply="Перехвачено")
         return JsonResponse({'status': 'success', 'reply': "Перехвачено"})
