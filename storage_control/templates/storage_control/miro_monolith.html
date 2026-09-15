@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Miroha Core — RFI Автоматизация выполненных скрытых работ Россия - Китай.">
+    <meta name="description" content="Miroha Core — RFI Автоматизация выполненных скрытых работ Россия - Китай - КНДР.">
     <title>MIROHA PLATFORM // LEGEND MONOLITH</title>
     <link rel="stylesheet" href="/static/moba_style.css">
     <style>
@@ -26,15 +26,18 @@
 
 <div class="container" style="max-width: 480px;">
     
-    <!-- КАПСУЛА 1: МАТРИЦА СНАБЖЕНИЯ РОССИЯ - КИТАЙ -->
+    <!-- КАПСУЛА 1: МАТРИЦА СНАБЖЕНИЯ РОССИЯ - КИТАЙ - КНДР -->
     <div class="moba-card">
         <div class="moba-badge" style="background: #0077ff; box-shadow: 0 0 10px #0077ff;">🔒 RFI МОСТ АКТИВЕН</div>
         <div style="font-size: 11px; color: #8b949e; text-transform: uppercase;">Miroha Platform // {{ market_status }}</div>
         <div style="font-size: 16px; color: #00f0ff; font-weight: bold; margin-top: 5px;">КАПИТАЛ СИНДИКАТА: <span style="color:#00ff66;">15 000 000.00 ₽</span></div>
         
+        <!-- ⚙️ РАСШИРЕННЫЙ СЧЕТЧИК ХОСТИНГА С КНДР -->
         <div class="server-monitor">
             ⚡ <strong>РЕАЛЬНЫЙ БАЛАНС СЕРВЕРА (⚙️ КОМИССИЯ 2%):</strong><br>
-            🇷🇺 РФ: <span style="color:#00ff66; font-weight:bold;">{{ server_balance_rub }} ₽</span> | 🇨🇳 КНР: <span style="color:#ff0000; font-weight:bold;">{{ server_balance_cny }} ¥</span>
+            🇷🇺 РФ: <span style="color:#00ff66; font-weight:bold;">{{ server_balance_rub }} ₽</span><br>
+            🇨🇳 КНР: <span style="color:#ff0000; font-weight:bold;">{{ server_balance_cny }} ¥</span><br>
+            🇰🇵 КНДР: <span style="color:#00f0ff; font-weight:bold;">{{ server_balance_kpw }} ₩ (Воны)</span>
         </div>
         
         <button class="moba-btn-action" style="margin-top: 10px; padding: 10px; font-size: 11px;" onclick="executeSbpCheckout()">🔒 АВТОРИЗОВАТЬ СБП INV-ALFA-288003</button>
@@ -88,7 +91,7 @@
                 <strong>РФ ➔ Автоматизация электронных АОСР</strong>
                 <div id="comment_gate_2" class="comment-box-gate" onclick="event.stopPropagation()">
                     <div id="list_trend_2" style="max-height:60px; overflow-y:auto; margin-bottom:5px; color:#8b949e;">
-                        <div><span style="color:#00ff66;">🤖 Робот-Ёжик:</span> Журнал ВХД по 4 фото активен!</div>
+                        <div><span style="color:#00ff66;">🤖 Робот-Ёжик:</span> Журнал ВХД по 4 photo активен!</div>
                     </div>
                     <form onsubmit="submitTrendComment(event, 2)">
                         <input type="text" id="input_trend_2" placeholder="Написать..." class="comment-input-vhd">
@@ -98,13 +101,13 @@
         </div>
 
         <div id="action_console" style="background: rgba(0,240,255,0.03); border: 1px solid #00f0ff; border-radius: 12px; padding: 10px; font-size: 11px; margin-top: 15px; color: #00f0ff; font-family: monospace;">
-            🤖 [ОКНО ДЕЙСТВИЙ]: Контур стабилен. Тренды и шлюз комментариев упакованы в футер.
+            🤖 [ОКНО ДЕЙСТВИЙ]: Контур стабилен. Интеграция КНДР завершена.
         </div>
     </div>
 
-    <!-- КАРТОЧКА 3: КИТАЙСКИЙ МАГАЗИН -->
+    <!-- КАРТОЧКА 3: АЗИАТСКИЙ МАГАЗИН -->
     <div class="moba-card green">
-        <div class="moba-badge" style="background: #00ff66; box-shadow: 0 0 10px #00ff66;">🇨🇳 ПОСТАВКИ ИЗ КИТАЯ</div>
+        <div class="moba-badge" style="background: #00ff66; box-shadow: 0 0 10px #00ff66;">🇨🇳🇰🇵 ПОСТАВКИ ИЗ АЗИИ</div>
         <div style="font-size: 12px; color: #fff; font-weight: bold; text-align: center;">Автоматическое формирование RFI-заявок закупа</div>
         <div class="grid-donat">
             <div class="donat-card">

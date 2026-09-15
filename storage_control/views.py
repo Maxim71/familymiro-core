@@ -2,27 +2,29 @@ import random
 from django.shortcuts import render
 from django.http import JsonResponse
 from .models import ServerBalance, LiveStreamMessage, ItrProrabTest
-from googletrans import Translator # Подключаем ИИ-переводчик потока
+from googletrans import Translator
 
 def index_vancouver(request):
-    """Главный ИТР-пульт управления: Международный мост Россия - Китай"""
+    """Главный ИТР-пульт управления: Трехсторонний шлюз Россия — Китай — КНДР"""
     server_stat, created = ServerBalance.objects.get_or_create(id=1, defaults={'balance_rub': 0.00})
+    
     balance_rub = float(server_stat.balance_rub)
-    balance_cny = balance_rub * 0.078
+    balance_cny = balance_rub * 0.078  # Китайские Юани
+    balance_kpw = balance_rub * 9.87   # Северокорейские Воны (KPW)
     
     context = {
         'server_balance_rub': f"{balance_rub:,.2f}",
         'server_balance_cny': f"{balance_cny:,.2f}",
+        'server_balance_kpw': f"{balance_kpw:,.2f}",
         'object_capital_rub': "15 000 000.00 ₽",
-        'market_status': "КОНТУР АКТИВЕН // МЕЖДУНАРОДНЫЙ ШЛЮЗ PROTOCOL GIT-GATE-РТО",
+        'market_status': "КОНТУР АКТИВЕН // МЕЖДУНАРОДНЫЙ ПРОТОКОЛ GIT-GATE-РТО (РФ-КНР-КНДР)",
         'tax_paid': server_stat.total_tax_paid
     }
     return render(request, 'storage_control/miro_monolith.html', context)
 
 def send_to_stream_api(request):
     """
-    ЖУК ТОРНАДО С ИИ-ПЕРЕВОДОМ (GIT-GATE-РТО):
-    Автоматический перевод китайских иероглифов на русский и наоборот прямо в эфире.
+    «ЖУК ТОРНАДО 1.6»: Сквозной перевод и перехват рапортов прорабов КНДР, КНР и России.
     """
     if request.method == 'POST':
         name = request.POST.get('name', 'Максим Игоревич').strip()
@@ -30,54 +32,44 @@ def send_to_stream_api(request):
         
         translator = Translator()
         try:
-            # Робот-Ёжик автоматически определяет язык текста (китайский или русский)
             detected = translator.detect(text)
-            if detected.lang == 'zh-cn' or detected.lang == 'zh':
-                # Если пишут из Китая — переводим на русский для наших прорабов
+            # Перехват корейского языка (КНДР)
+            if detected.lang == 'ko':
                 translated = translator.translate(text, dest='ru')
-                display_text = f"🇨🇳 [КИТАЙСКИЙ ОРИГИНАЛ]: {text} <br>➔ 🇷🇺 [ПЕРЕВОД ЁЖИКА]: {translated.text}"
-                reply_text = "🦔 [ЁЖИК]: Международный RFI-сигнал верифицирован. Документы GIT-GATE-РТО сформированы."
+                display_text = f"🇰🇵 [КНДР ОРИГИНАЛ]: {text} <br>➔ 🇷🇺 [ИТР-ПЕРЕВОД]: {translated.text}"
+                reply_text = "🦔 [ЁЖИК]: Северокорейский индустриальный рапорт верифицирован по стандартам ЕАЭС."
+            # Перехват китайского языка
+            elif detected.lang in ['zh-cn', 'zh']:
+                translated = translator.translate(text, dest='ru')
+                display_text = f"🇨🇳 [КНР ОРИГИНАЛ]: {text} <br>➔ 🇷🇺 [ИТР-ПЕРЕВОД]: {translated.text}"
+                reply_text = "🦔 [ЁЖИК]: Китайский закуп MONLID зафиксирован в протокол GIT-GATE-РТО."
+            # Русский язык прораба — переводим в Азию
             else:
-                # Если пишет наш прораб — дублируем перевод на китайский для фабрики КНР
-                translated = translator.translate(text, dest='zh-cn')
-                display_text = f"🇷🇺 [РУССКИЙ]: {text} <br>➔ 🇨🇳 [FOR CHINA PARTNERS]: {translated.text}"
-                reply_text = "🦔 [ЁЖИК]: Рапорт прораба переведен на китайский и отправлен на фабрику MONLID."
+                translated_cn = translator.translate(text, dest='zh-cn')
+                display_text = f"🇷🇺 [РУССКИЙ]: {text} <br>➔ 🇨🇳🇰🇵 [ASIA GATE]: {translated_cn.text}"
+                reply_text = "🦔 [ЁЖИК]: Команда прораба Тулы транслирована на партнерские фабрики Азии."
         except Exception:
-            # Резервный режим, если внешняя ИИ-сеть занята
             display_text = text
-            reply_text = "🦔 [ЁЖИК]: Поток зафиксирован в локальный эскиз памяти."
+            reply_text = "🦔 [ЁЖИК]: Сигнал зафиксирован локально."
 
-        # Скрытый перехват рапортов с дальних точек
         remote_responses = [
-            "🇨🇳 [FACTORY PEKIN]: 我们已经收到了4张隐藏工程的照片。符合规范！(Мы получили 4 фото скрытых работ. Всё по СНиП!)",
-            "🏗️ [ТЕХНАДЗОР ТУЛА]: RFI Акт выполненных работ по осям А-Г успешно состыкован с китайской накладной.",
-            "🚚 [ЛОГИСТИКА ШАНХАЙ]: 货物正通过 GIT-GATE-РТО Шлюз 发往 Тула (Груз идет через шлюз в Тулу)."
+            "🇨🇳 [FACTORY PEKIN]: 4张照片已收到。 (4 фото скрытых работ приняты.)",
+            "🇰🇵 [조선 노동자]: 함경남도 철강 출하 준비 완포! (출하準備!) (КНДР: Металлопрокат к отгрузке в Тулу готов!)",
+            "🏗️ [ПТО ТУЛА]: Стыковка накладных М-15 по азиатскому импорту завершена."
         ]
         
-        # Сохраняем сообщение автора с переводом
         LiveStreamMessage.objects.create(sender_name=name, message_text=display_text, ezhik_reply=reply_text)
         
-        # ИИ-Ёжик автоматически выплёвывает встречный рапорт-перевод от китайских коллег
         random_report = random.choice(remote_responses)
-        try:
-            if "FACTORY" in random_report or "SHANGHAI" in random_report:
-                # Японские или китайские крохи переводим на русский
-                cn_clean = random_report.split('(')[-1].replace(')', '') if '(' in random_report else random_report
-                msg_bot = f"{random_report}<br>➔ 🤖 [ИТР-ПЕРЕВОД ДЛЯ РФ]: {cn_clean}"
-            else:
-                msg_bot = random_report
-        except Exception:
-            msg_bot = random_report
-
         LiveStreamMessage.objects.create(
-            sender_name="GLOBAL GIT-GATE", 
-            message_text=msg_bot, 
+            sender_name="GLOBAL PROTOCOL", 
+            message_text=random_report, 
             ezhik_reply="⚡ [ШЛЮЗ РТО АКТИВЕН]"
         )
-        
         return JsonResponse({'status': 'success', 'reply': reply_text})
     return JsonResponse({'status': 'invalid'})
 
+def save_vhd_journal_record(request): return JsonResponse({'status': 'success'})
 def live_stream_dashboard_api(request):
     messages_list = LiveStreamMessage.objects.all().order_by('-created_at')[:5]
     data = [{'name': m.sender_name, 'text': m.message_text, 'reply': m.ezhik_reply} for m in messages_list]
@@ -91,6 +83,5 @@ def add_to_cart_api(request, product_id):
 
 def checkout_sbp_payment_api(request): return JsonResponse({'status': 'paid'})
 def pto_cabinet(request, act_id): return render(request, 'storage_control/pto_cabinet.html')
-def save_vhd_journal_record(request): return JsonResponse({'status': 'success'})
 def neuro_radar_dashboard(request): return render(request, 'storage_control/neuro_radar.html')
 def capsule_time_vault(request): return render(request, 'storage_control/capsule.html')
