@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Miroha Core — RFI Автоматизация выполненных скрытых работ Россия - Китай - КНДР.">
     <title>MIROHA PLATFORM // LEGEND MONOLITH</title>
     <link rel="stylesheet" href="/static/moba_style.css">
     <style>
@@ -15,6 +14,10 @@
         .trend-capsule-btn:hover { border-color: #00ff66; color: #00ff66; }
         .comment-box-gate { background: rgba(7, 10, 14, 0.95); border: 1px solid #00f0ff; border-radius: 10px; padding: 8px; margin-top: 8px; display: none; }
         .comment-input-vhd { width: 88%; background: #070a0e; border: 1px solid #30363d; color: #fff; padding: 5px; font-size: 10px; font-family: monospace; border-radius: 6px; }
+        
+        /* Динамические ИИ-стили Шарма Робота-Ёжика */
+        .charm-text-style { color: {% if user_cabinet.moba_style_preference == 'pink' %}#ff0055{% elif user_cabinet.moba_style_preference == 'green' %}#00ff66{% elif user_cabinet.moba_style_preference == 'gold' %}#ffaa00{% else %}#00f0ff{% endif %}; }
+        .charm-border-style { border-color: {% if user_cabinet.moba_style_preference == 'pink' %}#ff0055{% elif user_cabinet.moba_style_preference == 'green' %}#00ff66{% elif user_cabinet.moba_style_preference == 'gold' %}#ffaa00{% else %}#00f0ff{% endif %}; }
     </style>
 </head>
 <body>
@@ -27,34 +30,32 @@
 <div class="container" style="max-width: 480px;">
     
     <!-- КАПСУЛА 1: МАТРИЦА СНАБЖЕНИЯ РОССИЯ - КИТАЙ - КНДР -->
-    <div class="moba-card">
+    <div class="moba-card charm-border-style">
         <div class="moba-badge" style="background: #0077ff; box-shadow: 0 0 10px #0077ff;">🔒 RFI МОСТ АКТИВЕН</div>
         <div style="font-size: 11px; color: #8b949e; text-transform: uppercase;">Miroha Platform // {{ market_status }}</div>
         <div style="font-size: 16px; color: #00f0ff; font-weight: bold; margin-top: 5px;">КАПИТАЛ СИНДИКАТА: <span style="color:#00ff66;">15 000 000.00 ₽</span></div>
         
-        <!-- ⚙️ РАСШИРЕННЫЙ СЧЕТЧИК ХОСТИНГА С КНДР -->
+        <!-- Вывод ИИ-профиля, созданного Ёжиком -->
+        <div style="font-size: 10px; margin-top: 5px; font-family: monospace;">
+            👤 ВАШ ИИ-КАБИНЕТ: <span class="charm-text-style" style="font-weight:bold;">{{ user_cabinet.assigned_name }}</span>
+        </div>
+
         <div class="server-monitor">
             ⚡ <strong>РЕАЛЬНЫЙ БАЛАНС СЕРВЕРА (⚙️ КОМИССИЯ 2%):</strong><br>
-            🇷🇺 РФ: <span style="color:#00ff66; font-weight:bold;">{{ server_balance_rub }} ₽</span><br>
-            🇨🇳 КНР: <span style="color:#ff0000; font-weight:bold;">{{ server_balance_cny }} ¥</span><br>
-            🇰🇵 КНДР: <span style="color:#00f0ff; font-weight:bold;">{{ server_balance_kpw }} ₩ (Воны)</span>
+            🇷🇺 РФ: <span style="color:#00ff66; font-weight:bold;">{{ server_balance_rub }} ₽</span> | 🇨🇳 КНР: <span style="color:#ff0000; font-weight:bold;">{{ server_balance_cny }} ¥</span> | 🇰🇵 КНДР: <span style="color:#00f0ff; font-weight:bold;">{{ server_balance_kpw }} ₩</span>
         </div>
-        
         <button class="moba-btn-action" style="margin-top: 10px; padding: 10px; font-size: 11px;" onclick="executeSbpCheckout()">🔒 АВТОРИЗОВАТЬ СБП INV-ALFA-288003</button>
     </div>
 
     <!-- КАРТОЧКА 2: ЦЕНТРАЛЬНЫЙ СТЕРЕО ЭФИР -->
     <div class="moba-card pink">
         <div class="moba-badge">📡 СТЕРЕО ПОТОК</div>
-        <div style="font-size: 14px; color: #fff; font-weight: bold;">Максим // Снабжение ИТР</div>
-        
+        <div style="font-size: 14px; color: #fff; font-weight: bold;">Maxim // Снабжение ИТР</div>
         <div id="live_stream_box" style="max-height: 200px; margin: 15px 0; padding: 10px; background: rgba(0,0,0,0.4); border-radius: 12px; font-size: 11px; border: 1px solid rgba(255,255,255,0.05);"></div>
-        
         <div style="background: rgba(6, 11, 25, 0.8); padding: 10px; border-radius: 14px; border: 1px dashed #ff0055;">
             <textarea id="stream_message_text" placeholder="Написать в живой эфир прорабам..." style="width: 92%; background: #070a0e; border: 1px solid #30363d; color: #fff; padding: 6px; font-size: 11px; font-family: monospace; height: 35px; resize: none;"></textarea>
             <button class="moba-btn-action" style="padding: 6px; font-size: 11px; margin-top: 5px; background: linear-gradient(90deg, #ff0055 0%, #990033 100%);" onclick="pushSignalToEzhikStream()">П ПЕРЕДАТЬ В ЭФИР</button>
         </div>
-        
         <div class="moba-grid" style="margin-top: 15px;">
             <div class="moba-icon-btn" onclick="location.href='/capsule/'">☀️<br><br>ВЕЧНОСТЬ</div>
             <div class="moba-icon-btn" onclick="triggerEzhikRSS()">🎬<br><br>РАДАР</div>
@@ -74,7 +75,6 @@
         <!-- КОМПАКТНЫЙ ИЗЯЩНЫЙ ИТР-ФУТЕР -->
         <div class="moba-footer-trends">
             <div style="color: #ffaa00; font-weight: bold; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">🎬 identity_block: Крохи Мировых Трендов</div>
-            
             <div class="trend-capsule-btn" onclick="openTrendCommentGate(1)">
                 <strong>КНР ➔ СНиП-стандарты ЕАЭС</strong>
                 <div id="comment_gate_1" class="comment-box-gate" onclick="event.stopPropagation()">
@@ -86,7 +86,6 @@
                     </form>
                 </div>
             </div>
-
             <div class="trend-capsule-btn" onclick="openTrendCommentGate(2)">
                 <strong>РФ ➔ Автоматизация электронных АОСР</strong>
                 <div id="comment_gate_2" class="comment-box-gate" onclick="event.stopPropagation()">
@@ -100,8 +99,9 @@
             </div>
         </div>
 
-        <div id="action_console" style="background: rgba(0,240,255,0.03); border: 1px solid #00f0ff; border-radius: 12px; padding: 10px; font-size: 11px; margin-top: 15px; color: #00f0ff; font-family: monospace;">
-            🤖 [ОКНО ДЕЙСТВИЙ]: Контур стабилен. Интеграция КНДР завершена.
+        <!-- 🔮 Живое Окно Действий с Шармом Ёжика -->
+        <div id="action_console" class="charm-border-style" style="background: rgba(0,240,255,0.03); border: 1px solid; border-radius: 12px; padding: 10px; font-size: 11px; margin-top: 15px; font-family: monospace;">
+            {{ action_notes }}
         </div>
     </div>
 
@@ -126,3 +126,72 @@
 <script src="/static/moba_core.js"></script>
 </body>
 </html>
+
+<!-- 🦔 АСИНХРОННЫЙ ИИ-КОНТУР ГЛАВНОГО БЛОКНОТА ПРОРАБА -->
+<script>
+function triggerMainVoiceNotepad() {
+    let notesField = document.querySelector("textarea[placeholder*='Коля привез арматуру']");
+    // Если поле не найдено по плейсхолдеру, ищем любое текстовое поле в блоке блокнота
+    if (!notesField) { notesField = document.getElementById("raw_notes_field") || document.querySelector("textarea"); }
+    
+    // Блок вывода результата ИИ
+    let outputBox = document.getElementById("main_ii_output");
+    if (!outputBox) {
+        outputBox = document.createElement("div");
+        outputBox.id = "main_ii_output";
+        outputBox.style.marginTop = "15px";
+        outputBox.style.fontSize = "0.8rem";
+        outputBox.style.fontFamily = "monospace";
+        outputBox.style.lineHeight = "1.4";
+        outputBox.style.color = "#00ff66";
+        if (notesField && notesField.parentNode) { notesField.parentNode.appendChild(outputBox); }
+    }
+
+    if (!notesField || !notesField.value.trim()) {
+        alert("🚨 Введите черновик мыслей прораба перед стерилизацией через ИИ!");
+        return;
+    }
+
+    outputBox.innerHTML = "⏳ <i>Робот-Ёжик запускает ИИ-Стек Антропик. Очистка мыслей от шума...</i>";
+
+    let formData = new FormData();
+    formData.append("raw_notes", notesField.value);
+
+    fetch("/api/ezhik-voice-notepad/", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            outputBox.innerHTML = data.structured_text;
+            notesField.value = ""; // Очищаем черновик после победы
+        } else {
+            outputBox.innerHTML = "🚨 Ошибка ИИ-маршрутизации контура.";
+        }
+    })
+    .catch(err => {
+        outputBox.innerHTML = "🚨 Ошибка сетевого контура шлюза.";
+    });
+}
+
+// Принудительно привязываем клик к кнопке "Стерилизовать Мысли через ИИ"
+document.addEventListener("DOMContentLoaded", function() {
+    let btn = document.querySelector("button[onclick*='Thoughts']");
+    if (!btn) {
+        // Ищем кнопку по тексту, если встроенный onclick имел другое имя
+        let buttons = document.querySelectorAll("button");
+        for (let b of buttons) {
+            if (b.textContent.includes("Стерилизовать Мысли")) {
+                btn = b;
+                break;
+            }
+        }
+    }
+    if (btn) {
+        btn.removeAttribute("onclick");
+        btn.addEventListener("click", triggerMainVoiceNotepad);
+        console.log("✅ [ЖУК-ПЕРЕХВАТЧИК]: Кнопка ИИ-Блокнота успешно перевязана на главной!");
+    }
+});
+</script>
