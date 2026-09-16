@@ -1,120 +1,56 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>MIROHA CORE // МУЛЬТИМОДАЛЬНЫЙ НЕЙРО-РАДАР</title>
-    <style>
-        body { background: #070a0e; color: #c9d1d9; font-family: 'Courier New', monospace; margin: 0; padding: 0; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
-        .header { border: 2px solid #ff3366; padding: 25px; margin-bottom: 30px; box-shadow: 0 0 20px rgba(255,51,102,0.1); }
-        .layout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-        .panel { border: 1px solid #58a6ff; background: #0d1117; padding: 25px; box-shadow: 0 0 15px rgba(88,166,255,0.05); }
-        .snip-alert { background: rgba(255,51,102,0.05); border-left: 4px solid #ff3366; padding: 15px; margin-top: 15px; font-size: 13px; }
-        .map-box { border: 2px solid #00ff66; height: 500px; background: #161b22; box-shadow: 0 0 20px rgba(0,255,102,0.1); margin-top: 15px; }
-        .btn-portal { background: transparent; border: 1px solid #58a6ff; color: #58a6ff; padding: 10px 15px; width: 100%; margin-top: 20px; cursor: pointer; font-weight: bold; text-transform: uppercase; }
-        .eta-badge { background: #ff3366; color: #fff; padding: 6px 12px; font-weight: bold; font-size: 12px; display: inline-block; margin-top: 10px; }
-        .flight-badge { background: #161b22; border: 1px solid #58a6ff; color: #58a6ff; padding: 4px 8px; font-size: 11px; font-weight: bold; display: inline-block; }
-    </style>
-    <script src="https://yandex.ru" type="text/javascript"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Miroha ИТР // Нейро-Радар Мультимодальной Логистики</title>
+    <!-- 🎨 CSS ОТДЕЛЬНО -->
+    <link rel="stylesheet" href="{% static 'storage_control/css/radar_style.css' %}">
 </head>
 <body>
 
-<div class="container">
-    <div class="header">
-        <h1 style="color: #ff3366; margin: 0; text-transform: uppercase; letter-spacing: 2px; font-size: 22px;">
-            🛰️ MIROHA CORE // МУЛЬТИМОДАЛЬНАЯ ГЕО-МАТРИЦА СНАБЖЕНИЯ
-        </h1>
-        <p style="color: #8b949e; margin: 5px 0 0 0;">[МОНИТОРИНГ РЕЙСОВ] // АВТО, ЖД, АВИА И МОРСКОЙ ТРАНСПОРТ // СТИЛЬ ВАНКУВЕР</p>
-    </div>
-
-    <div class="layout-grid">
-        <!-- ЛЕВАЯ ПАНЕЛЬ: СПИСОК РЕЙСОВ -->
-        <div class="panel">
-            <h3 style="color: #58a6ff; margin-top: 0; text-transform: uppercase; border-bottom: 1px solid #30363d; padding-bottom: 10px;">
-                🌍 Диспетчеризация Сборных Рейсов
-            </h3>
-            
-            {% for rep in radar_reports %}
-            <div style="border-bottom: 1px solid #21262d; padding: 20px 0; cursor: pointer;" 
-                 onclick="focusOnTracker('{{ rep.city }}', {{ rep.tracker_lat }}, {{ rep.tracker_lng }}, '{{ rep.eta }}', '{{ rep.flight_number }}', '{{ rep.transport_icon }}')">
-                <p style="margin: 0 0 8px 0; font-size: 16px; color: #fff; font-weight: bold;">
-                    🏢 {{ rep.object_name }} <span style="color: #8b949e; font-size: 12px;">[{{ rep.location }}]</span>
-                </p>
-                
-                <!-- Номер уникального мультимодального рейса -->
-                <div class="flight-badge">
-                    ⚡ {{ rep.flight_number }}
-                </div>
-                
-                <div style="font-size: 13px; color: #8b949e; margin-top: 8px;">
-                    Бюджет: <span style="color: #00ff66;">{{ rep.capital }}</span> | Груз: <span style="color: #fff;">{{ rep.material }} ({{ rep.quantity }})</span>
-                </div>
-                
-                <div class="eta-badge">
-                    ⏱️ ETA ПРИБЫТИЯ: {{ rep.eta }}
-                </div>
-                
-                <div class="snip-alert">
-                    {{ rep.snip_status }}
-                </div>
-            </div>
-            {% endfor %}
-            
-            <button class="btn-portal" onclick="location.href='/'">返回 На главную страницу монолита</button>
-        </div>
-
-        <!-- ПРАВАЯ ПАНЕЛЬ: ЖИВАЯ КАРТА -->
-        <div class="panel" style="border-color: #00ff66;">
-            <h3 style="color: #00ff66; margin-top: 0; text-transform: uppercase; border-bottom: 1px solid #30363d; padding-bottom: 10px;">
-                🌐 Спутниковый Радар Позиционирования
-            </h3>
-            
-            <div id="live_eta_display" style="background: #161b22; border: 1px solid #00ff66; padding: 10px; font-size: 13px; color: #00ff66; font-weight: bold;">
-                📡 ТРЕКЕР: Ожидание выбора активного рейса снабжения...
-            </div>
-            
-            <div id="map" class="map-box"></div>
+<div class="radar-box">
+    <div class="radar-header">
+        <h1>🛰️ ИИ-РАДАР ТЕЛЕМЕТРИИ РЕЙСОВ ИЗ КНР</h1>
+        <div style="font-size:0.7rem; color:var(--neon-cyan); margin-top:5px; text-transform:uppercase;">
+            Слой_0: Автоматический перехват портов Шанхай-Владивосток
         </div>
     </div>
+
+    <!-- 🎙️ ИИ-БЛОКНОТ ДИСПЕТЧЕРА (ЧЕРНОВИК МЫСЛЕЙ ПО КООРДИНАТАМ) -->
+    <div class="vessel-card" style="border-left-color: var(--neon-pink); background: rgba(255,0,127,0.01); border-style: dashed;">
+        <div class="vessel-name" style="color: var(--neon-pink);">🎙️ ИИ-БЛОКНОТ ДИСПЕТЧЕРА КАРГО</div>
+        <div style="font-size:0.7rem; color:#8a99ad; margin-bottom:8px;">Наговори голосом или текстом апдейт по координатам. ИИ мгновенно обновит ПТО и Снабжение.</div>
+        <textarea id="radar_notes" placeholder="Пример: Судно с редукторами Komatsu подходит к Приморью, Снабженцу заказать контейнеровоз к 18 числу..." style="width:100%; background:#070a0e; border:1px solid #1c203a; color:#fff; border-radius:8px; padding:8px; font-size:0.75rem; height:55px; resize:none; outline:none; margin-bottom:10px;"></textarea>
+        <button type="button" class="btn-radar" style="background:linear-gradient(135deg, var(--neon-pink), #aa0055); color:#fff;" onclick="sendRadarThoughts()">
+            🛰️ Направить ИТР-директиву в Telegram
+        </button>
+        <div id="radar_output" style="margin-top:10px; font-size:0.75rem; color:#fff; line-height:1.4;"></div>
+    </div>
+
+    <div style="font-size: 0.8rem; text-transform: uppercase; color: #8a99ad; margin-bottom: 10px; letter-spacing: 0.5px;">🚢 Активные суда на маршруте:</div>
+
+    <!-- ТЕЛЕМЕТРИЯ СУДОВ -->
+    {% for v in vessels %}
+    <div class="vessel-card {% if v.color_theme == 'green' %}green{% endif %}">
+        <div class="vessel-name">{{ v.name }}</div>
+        <div class="vessel-detail">📦 <b>Груз ликвидного дефицита:</b> {{ v.cargo }}</div>
+        <div class="vessel-detail">🗺️ <b>Маршрут:</b> {{ v.route }}</div>
+        <div class="vessel-detail">📍 <b>Координаты:</b> <span style="color: var(--neon-cyan);">{{ v.coordinates }}</span></div>
+        <div class="vessel-detail">⏱️ <b>Расчетное прибытие (ETA):</b> {{ v.eta }}</div>
+        <div style="font-size: 0.75rem; font-weight: bold; margin-top: 8px; color: {% if v.color_theme == 'green' %}var(--neon-green){% else %}var(--neon-cyan){% endif %};">
+            ⚡ Статус: {{ v.status }}
+        </div>
+    </div>
+    {% endfor %}
+
+    <button class="btn-radar" onclick="location.href='/pto/1/'" style="background: rgba(255,255,255,0.05); color: #fff; border: 1px solid #1c203a; margin-top: 15px;">
+        ⬅️ На главный пульт ПТО
+    </button>
 </div>
 
-<script type="text/javascript">
-    var myMap;
-    var currentPlacemark;
-
-    ymaps.ready(init);
-    function init(){
-        myMap = new ymaps.Map("map", {
-            center: [54.193122, 37.617348],
-            zoom: 12,
-            controls: ['zoomControl', 'fullscreenControl']
-        });
-        
-        // Автозапуск первого рейса
-        focusOnTracker('Тула', 54.1915, 37.6290, '18 минут (Затор на Пролетарском мосту)', 'РЕЙС: АВТО-ТЛ-408', 'islands#redTruckIcon');
-    }
-
-    function focusOnTracker(city, lat, lng, eta, flight, iconStyle) {
-        if (!myMap) return;
-        
-        myMap.setCenter([lat, lng], city === 'Тула' ? 13 : 10, { duration: 500 });
-        
-        document.getElementById('live_eta_display').innerHTML = `📡 АКТИВЕН ${flight} // ДО ПРИБЫТИЯ ОСТАЛОСЬ: ${eta}`;
-
-        if (currentPlacemark) {
-            myMap.geoObjects.remove(currentPlacemark);
-        }
-
-        // Динамически подставляем уникальную иконку транспорта (самолет, фура, корабль)
-        currentPlacemark = new ymaps.Placemark([lat, lng], {
-            balloonContent: `<strong>${flight}</strong><br>Транспорт верифицирован ИИ.<br><strong>ETA: ${eta}</strong>`
-        }, {
-            preset: iconStyle,
-            iconColor: '#ff3366'
-        });
-
-        myMap.geoObjects.add(currentPlacemark);
-    }
-</script>
+<!-- ⚙️ JS ОТДЕЛЬНО -->
+<script src="{% static 'storage_control/js/radar_logic.js' %}"></script>
 </body>
 </html>
