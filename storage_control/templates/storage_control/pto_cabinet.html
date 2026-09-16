@@ -1,74 +1,69 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>MIROHA CORE // PTO CABINET</title>
-    <!-- Подключаем стерильный изолированный файл стилей -->
-    <link rel="stylesheet" href="/static/moba_style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Miroha ИТР // Автоматизация ПТО и Снабжения</title>
+    <!-- 🎨 CSS ОТДЕЛЬНО -->
+    <link rel="stylesheet" href="{% static 'storage_control/css/pto_style.css' %}">
 </head>
-<body style="background: #070a0e; color: #c9d1d9; padding: 40px; font-family: 'Courier New', monospace;">
+<body>
 
-<div class="container" style="max-width: 900px;">
-    
-    <!-- КОВЧЕГ ПТО // ШЛЮЗ ВАНКУВЕР -->
-    <div class="moba-card" style="border-color: #58a6ff; background: #0d1117; padding: 30px;">
-        <h2 style="color: #58a6ff; margin: 0; text-transform: uppercase; font-size: 18px; letter-spacing: 1px;">ФОРМА М-15 И АКТЫ ПО ОСЯМ</h2>
-        <p style="color: #8b949e; font-size: 12px; margin: 5px 0 20px 0;">Холдинг Miroha Снабжение // Слой Юридической Брони</p>
-        
-        <div style="font-size: 14px; line-height: 1.6;">
-            <p><strong>ОБЪЕКТ:</strong> <span style="color: #fff;">Объект ИТР Тула / Реставрация</span></p>
-            <p><strong>ОТВЕТСТВЕННЫЕ:</strong> <span style="color: #00ff66;">Максим Игоревич // Наталья Викторовна</span></p>
+<div class="monolith-container">
+    <div class="header-block">
+        <h1>Сквозной Контур Miroha ПТО</h1>
+        <div class="status-badge">{{ system_status }}</div>
+    </div>
+
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <span>Лимит ПТО (Капитал)</span>
+            <strong>{{ total_budget_rub }}</strong>
+        </div>
+        <div class="kpi-card">
+            <span>Fact Себестоимость</span>
+            <strong style="color: var(--neon-pink);">{{ real_cost_rub }}</strong>
         </div>
     </div>
 
-    <!-- АВТОНОМНЫЙ ПУЛЬТ ЖУРНАЛА ВХД -->
-    <div class="vhd-panel">
-        <h3 style="color: #ffaa00; margin-top: 0; text-transform: uppercase; font-size: 15px; letter-spacing: 1px;">📋 ЦИФРОВОЙ ЖУРНАЛ ВХОДНОГО КОНТРОЛЯ И СКРЫТЫХ РАБОТ (ЖУРНАЛ ВХД)</h3>
-        <p style="color: #8b949e; font-size: 12px; margin-bottom: 20px;">Автоматизация АОСР и передачи товара по 4 точкам фотофиксации без бумажной рутины.</p>
+    <div class="chain-title">🔗 Цепочка Списания & Контроля материалов:</div>
+
+    {% for mat in materials_chain %}
+    <div class="material-card {{ mat.alert_class }}">
+        <div class="mat-name">📦 {{ mat.name }}</div>
         
-        <form id="vhd_form" onsubmit="submitVhdRecord(event)">
-            <div class="vhd-grid-inputs">
-                <div>
-                    <label style="color: #8b949e; display:block; margin-bottom:5px;">ФИО ПРОРАБА:</label>
-                    <input type="text" name="prorab_name" value="Максим Игоревич" required class="vhd-input">
-                </div>
-                <div>
-                    <label style="color: #8b949e; display:block; margin-bottom:5px;">ЭТАП / ВИД РАБОТ:</label>
-                    <input type="text" name="work_stage" value="Армирование плиты перекрытия осей А-Г" required class="vhd-input">
-                </div>
-            </div>
-
-            <!-- Сетка 4 ИТР Фотоотчётов -->
-            <label style="color: #ffaa00; display:block; margin-bottom:10px; font-weight:bold;">📸 ОБЯЗАТЕЛЬНАЯ ФОТОФИКСАЦИЯ СКРЫТЫХ РАБОТ (4 ФОТО):</label>
-            <div class="vhd-grid-photos">
-                <div class="vhd-photo-box"><span style="font-size:20px;">📍</span><br><span style="font-size:9px; color:#8b949e;">ФОТО 1<br>ОСИ</span></div>
-                <div class="vhd-photo-box"><span style="font-size:20px;">🧱</span><br><span style="font-size:9px; color:#8b949e;">ФОТО 2<br>АРМАТУРА</span></div>
-                <div class="vhd-photo-box"><span style="font-size:20px;">📐</span><br><span style="font-size:9px; color:#8b949e;">ФОТО 3<br>ОПАЛУБКА</span></div>
-                <div class="vhd-photo-box"><span style="font-size:20px;">✅</span><br><span style="font-size:9px; color:#8b949e;">ФОТО 4<br>ГОТОВО</span></div>
-            </div>
-
-            <!-- Датчики Нарушений и Дефектов -->
-            <div class="vhd-alert-box">
-                <label style="display:flex; align-items:center; color:#ff0055; margin-bottom:10px; cursor:pointer;">
-                    <input type="checkbox" name="delay" value="True" style="margin-right:10px;"> ⚠️ ЗАФИКСИРОВАНО НАРУШЕНИЕ СРОКОВ ДОСТАВКИ МАТЕРИАЛА ПАРТНЕРОМ
-                </label>
-                <label style="color: #8b949e; display:block; margin-bottom:5px;">ЗАМЕЧАНИЯ ПО ДЕФЕКТАМ ВИДИМЫХ РАБОТ (СНиП):</label>
-                <input type="text" name="defects_text" placeholder="Пример: Смещение ячейки каркаса осей №3..." style="width:95%; background:#070a0e; border:1px solid #30363d; color:#fff; padding:8px; border-radius:8px;">
-            </div>
-
-            <button type="submit" class="moba-btn-action" style="background: linear-gradient(90deg, #ffaa00 0%, #ff6600 100%); color:#000;">
-                ⚡ ЗАФИКСИРОВАТЬ В ЖУРНАЛ ВХД И СГЕНЕРИРОВАТЬ АКТЫ
-            </button>
-        </form>
-
-        <!-- Окно результатов действий Журнала ВХД -->
-        <div id="vhd_console" class="vhd-console-output"></div>
+        <div class="step-row">
+            <div class="step-label">📐 1. Сметчик / ПТО</div>
+            <div class="step-value" style="color: var(--neon-cyan);">Лимит ВОР: {{ mat.pto_limit }}</div>
+        </div>
+        
+        <div class="step-row">
+            <div class="step-label">🛒 2. Снабженец</div>
+            <div class="step-value">Закуплено: {{ mat.purchased }} ({{ mat.price_target }})</div>
+        </div>
+        
+        <div class="step-row">
+            <div class="step-label">🧱 3. Прораб</div>
+            <div class="step-value" style="color: var(--neon-green);">Склад М-19: {{ mat.warehouse_m19 }}</div>
+        </div>
+        
+        <div class="step-row">
+            <div class="step-label">💼 4. Финдиректор</div>
+            <div class="step-value" style="color: #fff; font-weight: bold;">{{ mat.finance_status }}</div>
+        </div>
     </div>
+    {% endfor %}
 
-    <button class="moba-btn-action" style="margin-top: 20px; background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2);" onclick="location.href='/'">返回 На главную</button>
+    <div class="footer-action">
+        <!-- Вызываем изолированную функцию из JS -->
+        <button class="btn-action" onclick="triggerPtoSync()">
+            ⚡ Синхронизировать смету и склад
+        </button>
+    </div>
 </div>
 
-<!-- Подключаем стерильный изолированный файл логики скриптов -->
-<script src="/static/moba_core.js"></script>
+<!-- ⚙️ JS ОТДЕЛЬНО -->
+<script src="{% static 'storage_control/js/pto_logic.js' %}"></script>
 </body>
 </html>
