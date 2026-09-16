@@ -6,58 +6,53 @@
     <title>MIROHA PLATFORM // LEGEND MONOLITH</title>
     <style>
         body { background: #0a0b10; color: #e2e8f0; font-family: monospace; padding: 15px; display: flex; justify-content: center; }
-        .container { width: 100%; max-width: 480px; background: #121420; border: 2px solid #1e2238; border-radius: 20px; padding: 20px; }
+        .container { width: 100%; max-width: 480px; background: #121420; border: 2px solid #1e2238; border-radius: 20px; padding: 20px; box-shadow: 0 0 30px rgba(0,240,255,0.05); }
         .moba-card { background: rgba(255,255,255,0.02); border: 1px solid #22263f; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
-        .moba-badge { background: #0077ff; color: #fff; padding: 4px 8px; font-size: 10px; display: inline-block; border-radius: 4px; margin-bottom: 10px; }
-        .stream-box { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; font-size: 11px; margin: 10px 0; max-height: 150px; overflow-y: auto; }
-        .btn-action { background: linear-gradient(135deg, #00f0ff, #0077ff); color: #000; border: none; padding: 10px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; }
-        textarea { width: 100%; background: #070a0e; border: 1px solid #30363d; color: #fff; padding: 8px; border-radius: 6px; height: 40px; resize: none; outline: none; margin-bottom: 8px; }
-        .grid-nav { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; text-align: center; margin-top: 10px; }
-        .nav-btn { background: #1c203a; padding: 8px 4px; border-radius: 6px; font-size: 9px; cursor: pointer; border: 1px solid #2d335b; color: #fff; text-decoration: none; }
+        .moba-badge { background: #0077ff; color: #fff; padding: 4px 8px; font-size: 10px; display: inline-block; border-radius: 4px; margin-bottom: 10px; font-weight: bold; }
+        .stream-box { background: rgba(0,0,0,0.4); padding: 12px; border-radius: 8px; font-size: 11px; margin: 10px 0; max-height: 180px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.02); line-height: 1.5; }
+        .btn-action { background: linear-gradient(135deg, #00f0ff, #0077ff); color: #000; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(0,240,255,0.2); }
+        textarea { width: 100%; background: #070a0e; border: 1px solid #30363d; color: #fff; padding: 8px; border-radius: 6px; height: 45px; resize: none; outline: none; margin-bottom: 10px; font-family: monospace; }
+        .grid-nav { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; margin-top: 15px; }
+        .nav-btn { background: #1c203a; padding: 10px 4px; border-radius: 8px; font-size: 10px; cursor: pointer; border: 1px solid #2d335b; color: #fff; text-decoration: none; font-weight: bold; display: block; }
+        .nav-btn:hover { border-color: #00f0ff; color: #00f0ff; }
     </style>
 </head>
 <body>
 
 <div class="container">
     
-    <!-- СЛОЙ КАПИТАЛА -->
-    <div class="moba-card">
-        <div class="moba-badge">🔒 RFI МОСТ АКТИВЕН</div>
-        <div style="font-size: 13px; color: #00f0ff; font-weight: bold;">КАПИТАЛ СИНДИКАТА: <span style="color:#00ff66;">{{ object_capital_rub }}</span></div>
-        <div style="font-size: 10px; color:#8a99ad; margin-top:5px;">{{ market_status }}</div>
+    <!-- СЛОЙ КАПИТАЛА ХОЛДИНГА -->
+    <div class="moba-card" style="border-left: 4px solid #00f0ff;">
+        <div class="moba-badge">🔒 RFI МОСТ ОПЕЧАТАН</div>
+        <div style="font-size: 14px; color: #00f0ff; font-weight: bold;">КАПИТАЛ СИНДИКАТА: <span style="color:#00ff66;">{{ object_capital_rub }}</span></div>
+        <div style="font-size: 10px; color:#8a99ad; margin-top:6px; font-weight: bold;">{{ market_status }}</div>
     </div>
 
-    <!-- ЖИВОЙ ЭФИР -->
-    <div class="moba-card">
-        <div class="moba-badge" style="background:#ff0055;">📡 СТЕРЕО ПОТОК ЭФИРА</div>
+    <!-- ЖИВОЙ ЭФИР МУЛЬТИМОДАЛЬНОГО КОНТРОЛЯ -->
+    <div class="moba-card" style="border-left: 4px solid #ff0055;">
+        <div class="moba-badge" style="background:#ff0055;">📡 ЖИВОЙ RFI ПОТОК ФАКТОВ</div>
         
-        <!-- ПРЯМОЙ ВЫВОД ФАКТОВ ИЗ БАЗЫ БЕЗ ЗАВИСАНИЙ -->
+        <!-- МОМЕНТАЛЬНЫЙ СЕРВЕРНЫЙ ВЫВОД ЛОГОВ -->
         <div class="stream-box" id="live_stream_box">
-            {% for msg in db_messages %}
-            <div style="margin-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.03);">
-                <span style="color:#00f0ff;">{{ msg.sender_name }}:</span> {{ msg.message_text }}<br>
-                <span style="color:#ff0055; font-size:9px;">🤖 Ёжик: {{ msg.ezhik_reply }}</span>
-            </div>
-            {% endfor %}
-            <div style="color:#8a99ad; font-size:10px; border-top: 1px dashed #22263f; padding-top:4px;">⚙️ Логи ядра системы:</div>
             {% for fact in backend_facts %}
-            <div style="color: #e2e8f0; margin-top:4px;">• {{ fact }}</div>
+            <div style="color: #e2e8f0; margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.02); padding-bottom: 4px;">
+                {{ fact }}
+            </div>
             {% endfor %}
         </div>
 
         <form id="stream_form">
-            <textarea id="stream_message_text" placeholder="Написать в живой эфир прорабам Тулы..."></textarea>
-            <button type="button" class="btn-action" style="background:linear-gradient(90deg, #ff0055, #990033); color:#fff;" onclick="sendEtherSignal()">
+            <textarea id="stream_message_text" placeholder="Написать директиву в живой эфир прорабам Тулы..."></textarea>
+            <button type="button" class="btn-action" style="background: linear-gradient(90deg, #ff0055, #990033); color:#fff;" onclick="sendEtherSignal()">
                 П ПЕРЕДАТЬ В ЭФИР
             </button>
         </form>
 
-        <!-- НАВИГАЦИЯ -->
+        <!-- ВЕКОВАЯ НАВИГАЦИЯ -->
         <div class="grid-nav">
             <a href="/capsule/" class="nav-btn">☀️<br>ВЕЧНОСТЬ</a>
             <a href="/radar/" class="nav-btn">🎬<br>РАДАР</a>
             <a href="/pto/1/" class="nav-btn">🏗️<br>СТРОЙКА</a>
-            <div class="nav-btn" onclick="alert('{{ action_notes }}')">🦔<br>СТАТУС</div>
         </div>
     </div>
 
@@ -66,7 +61,7 @@
 <script>
 function sendEtherSignal() {
     let input = document.getElementById("stream_message_text");
-    if (!input.value.trim()) { alert("Введите текст!"); return; }
+    if (!input.value.trim()) { alert("🚨 Введите текст рапорта!"); return; }
     
     let formData = new FormData();
     formData.append("text", input.value);
@@ -78,10 +73,11 @@ function sendEtherSignal() {
     .then(res => res.json())
     .then(data => {
         if (data.status === "success") {
-            location.reload(); // Жестко обновляем страницу для мгновенного рендеринга данных бэкендом
+            input.value = "";
+            alert("✅ [ИТР-ВСПЛЕСК]: Рапорт успешно отправлен в ОЗУ и выстрелил в Telegram Капитана!");
         }
     })
-    .catch(err => alert("Ошибка отправки контура"));
+    .catch(err => alert("Ошибка отправки сигнала в ОЗУ"));
 }
 </script>
 </body>
