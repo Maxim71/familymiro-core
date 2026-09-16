@@ -14,4 +14,5 @@ urlpatterns = [
     path('api/import-excel-pto/', views.import_excel_pto_api, name='import_excel_pto_api'),
     path('api/ezhik-voice-notepad/', views.ezhik_voice_notepad_api, name='ezhik_voice_notepad_api'),
     path('api/neuro-radar-voice/', views.neuro_radar_voice_api, name='neuro_radar_voice_api'),
+    path('api/computer-vision-m19/', views.computer_vision_m19_api, name='computer_vision_m19_api'),
 ]
