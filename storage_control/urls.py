@@ -1,16 +1,15 @@
 from django.urls import path
-from django.views.generic import TemplateView
-from storage_control import views
+from . import views
 
 urlpatterns = [
-    # Выводим твой оригинальный Монолит ИТР напрямую на главную страницу, обходя сломанную функцию
-    path('', TemplateView.as_view(template_name='storage_control/miro_monolith.html'), name='index_family'),
-    
-    # Сшиваем все твои оригинальные хай-тек HTML-страницы по их прямым адресам
-    path('matrix/', TemplateView.as_view(template_name='storage_control/portal.html'), name='portal'),
-    path('capsule/', TemplateView.as_view(template_name='storage_control/capsule.html'), name='capsule'),
-    path('neuro-radar/', TemplateView.as_view(template_name='storage_control/neuro_radar.html'), name='neuro_radar'),
-    path('voice-gateway/', TemplateView.as_view(template_name='storage_control/voice_gateway.html'), name='voice_gateway'),
-    path('father-panel/', TemplateView.as_view(template_name='storage_control/father_panel.html'), name='father_panel'),
-    path('blueprint/', TemplateView.as_view(template_name='storage_control/dxf_blueprint_scan.html'), name='blueprint'),
+    path('', views.index_vancouver, name='index_vancouver'),
+    path('pto/<int:act_id>/', views.pto_cabinet, name='pto_cabinet'),
+    path('pto/<int:act_id>/exit/', views.pto_cabinet, name='pto_cabinet_exit'),
+    path('capsule/', views.capsule_time_vault, name='capsule_time_vault'),
+    path('api/upload-video/', views.upload_video_to_vault_api, name='upload_video_to_vault_api'),
+    path('api/push-video-tg/<int:video_id>/', views.push_video_to_telegram_action_api, name='push_video_to_telegram_action_api'),
+    path('api/send-stream/', views.send_to_stream_api, name='send_to_stream_api'),
+    path('api/live-stream-data/', views.live_stream_dashboard_api, name='live_stream_dashboard_api'),
+    path('api/import-excel-pto/', views.import_excel_pto_api, name='import_excel_pto_api'),
+    path('api/ezhik-voice-notepad/', views.ezhik_voice_notepad_api, name='ezhik_voice_notepad_api'),
 ]

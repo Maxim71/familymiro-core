@@ -16,73 +16,50 @@
         <div class="status-badge">{{ system_status }}</div>
     </div>
 
-    <!-- Общие маркеры капитала -->
-    <div class="kpi-grid">
-        <div class="kpi-card">
-            <span>Лимит ПТО (Капитал)</span>
-            <strong>{{ total_budget_rub }}</strong>
-        </div>
-        <div class="kpi-card">
-            <span>Fact Себестоимость</span>
-            <strong style="color: var(--neon-pink);">{{ real_cost_rub }}</strong>
-        </div>
+    <!-- 📊 ШЛЮЗ 1: ИМПОРТ EXCEL ФАЙЛОВ СМЕТЫ ОТ ПТО -->
+    <div class="material-card" style="border-left-color: #ffaa00; background: rgba(255,170,0,0.02);">
+        <div class="mat-name" style="color: #ffaa00;">📊 ЗАГРУЗКА ВЕДОМОСТИ СМЕТЫ ПТО (.XLSX)</div>
+        <form id="excel_import_form" enctype="multipart/form-data">
+            <input type="file" id="excel_file_field" name="excel_file" accept=".xlsx,.xls,.csv" style="font-size:0.8rem; color:#fff; margin-bottom:10px; display:block;">
+            <button type="button" class="btn-action" style="background:linear-gradient(135deg, #ffaa00, #ff5500); padding:8px; font-size:0.8rem;" onclick="uploadPtoExcel()">
+                📥 Распарсить Смету в СУБД
+            </button>
+        </form>
     </div>
 
-    <!-- 🔥 НОВЫЙ БЛОК: РАДАР ЖУКА ПАРСЕРА (СЛОЙ_0) -->
-    <div class="chain-title" style="color: var(--neon-cyan); margin-top: 10px;">🛰️ ЖУК ПАРСЕР // СЛОЙ_0 (Ликвидный дефицит КНР):</div>
-    
+    <!-- 📝 ШЛЮЗ 2: ИИ-БЛОКНОТ СТЕРИЛИЗАТОР МЫСЛЕЙ (ГОЛОС/ТЕКСТ ЧЕРНОВИК) -->
+    <div class="material-card" style="border-left-color: var(--neon-pink); background: rgba(255,0,127,0.02);">
+        <div class="mat-name" style="color: var(--neon-pink);">📝 ИИ-БЛОКНОТ ПРОРАБА (ЧЕРНОВИК МЫСЛЕЙ)</div>
+        <div style="font-size:0.7rem; color:var(--text-muted); margin-bottom:8px;">Наговори текстом или голосом сырые факты со стройки. ИИ сформирует понятные задачи для всех ролей!</div>
+        <textarea id="raw_notes_field" placeholder="Пример: Коля привез арматуру 5 тонн, накладную М-15 потеряли, Лиугонг задымил..." style="width:100%; background:#070a0e; border:1px solid #22263f; color:#fff; border-radius:8px; padding:8px; font-size:0.8rem; height:60px; resize:none; outline:none; margin-bottom:10px;"></textarea>
+        <button type="button" class="btn-action" style="background:linear-gradient(135deg, var(--neon-pink), #aa0055); padding:8px; font-size:0.8rem;" onclick="processEzhikThoughts()">
+            🧠 Стерилизовать Мысли через ИИ
+        </button>
+        <div id="ii_output_box" style="margin-top:10px; font-size:0.75rem; color:#fff; font-family:monospace; line-height:1.4;"></div>
+    </div>
+
+    <!-- Радар дефицитных грузов -->
+    <div class="chain-title" style="color: var(--neon-cyan);">🛰️ ЖУК ПАРСЕР // СЛОЙ_0 (Ликвидный дефицит КНР):</div>
     {% for cargo in parser_cargo %}
     <div class="material-card {{ cargo.color }}" style="background: rgba(0, 240, 255, 0.02); border-style: dashed;">
         <div class="mat-name" style="color: #fff;">{{ cargo.brand }}</div>
-        <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px;">{{ cargo.batch }}</div>
-        
-        <div class="step-row">
-            <div class="step-label">🌐 Статус Порта</div>
-            <div class="step-value" style="color: var(--neon-cyan); font-weight: bold;">{{ cargo.port_status }}</div>
-        </div>
-        <div class="step-row" style="border: none;">
-            <div class="step-label">⏱️ Сроки Логистики</div>
-            <div class="step-value" style="color: var(--neon-green);">{{ cargo.days_left }}</div>
-        </div>
-        <div style="font-size: 0.75rem; color: var(--text-main); background: rgba(255,255,255,0.03); padding: 8px; border-radius: 6px; margin-top: 5px; line-height: 1.3;">
-            🎯 <b>Цепочка ИТР:</b> {{ cargo.logistic_action }}
-        </div>
+        <div class="step-row"><div class="step-label">🌐 Статус Порта</div><div class="step-value" style="color: var(--neon-cyan); font-weight: bold;">{{ cargo.port_status }}</div></div>
+        <div class="step-row" style="border: none;"><div class="step-label">⏱️ Сроки Логистики</div><div class="step-value" style="color: var(--neon-green);">{{ cargo.days_left }}</div></div>
     </div>
     {% endfor %}
 
-    <!-- Базовый контур контроля материалов -->
-    <div class="chain-title" style="margin-top: 20px;">🔗 Цепочка Списания & Контроля:</div>
-
+    <!-- Базовая цепочка материалов -->
+    <div class="chain-title">🔗 Цепочка Списания & Контроля:</div>
     {% for mat in materials_chain %}
     <div class="material-card {{ mat.alert_class }}">
         <div class="mat-name">📦 {{ mat.name }}</div>
-        
-        <div class="step-row">
-            <div class="step-label">📐 1. Сметчик / ПТО</div>
-            <div class="step-value" style="color: var(--neon-cyan);">Лимит ВОР: {{ mat.pto_limit }}</div>
-        </div>
-        
-        <div class="step-row">
-            <div class="step-label">🛒 2. Снабженец</div>
-            <div class="step-value">Закуплено: {{ mat.purchased }} ({{ mat.price_target }})</div>
-        </div>
-        
-        <div class="step-row">
-            <div class="step-label">🧱 3. Прораб</div>
-            <div class="step-value" style="color: var(--neon-green);">Склад М-19: {{ mat.warehouse_m19 }}</div>
-        </div>
-        
-        <div class="step-row">
-            <div class="step-label">💼 4. Финдиректор</div>
-            <div class="step-value" style="color: #fff; font-weight: bold;">{{ mat.finance_status }}</div>
-        </div>
+        <div class="step-row"><div class="step-label">📐 1. ПТО</div><div class="step-value" style="color: var(--neon-cyan);">Лимит ВОР: {{ mat.pto_limit }}</div></div>
+        <div class="step-row"><div class="step-label">🧱 3. Прораб</div><div class="step-value" style="color: var(--neon-green);">Склад М-19: {{ mat.warehouse_m19 }}</div></div>
     </div>
     {% endfor %}
 
     <div class="footer-action">
-        <button class="btn-action" onclick="triggerPtoSync()">
-            ⚡ Синхронизировать смету и склад
-        </button>
+        <button class="btn-action" onclick="triggerPtoSync()">⚡ Синхронизировать смету и склад</button>
     </div>
 </div>
 
