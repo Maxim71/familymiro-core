@@ -4,194 +4,85 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MIROHA PLATFORM // LEGEND MONOLITH</title>
-    <link rel="stylesheet" href="/static/moba_style.css">
     <style>
-        .grid-donat { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; }
-        .donat-card { background: rgba(6, 11, 25, 0.8); border: 1px solid #ffaa00; border-radius: 16px; padding: 12px; text-align: center; font-size: 11px; }
-        .server-monitor { font-size: 10px; color: #ffaa00; background: rgba(255,170,0,0.05); border: 1px dashed #ffaa00; padding: 10px; margin-top: 8px; border-radius: 12px; text-align: left; line-height: 1.5; }
-        .moba-footer-trends { background: rgba(5, 8, 12, 0.85); border-top: 1px dashed #ff0055; margin-top: 20px; padding-top: 15px; font-size: 11px; text-align: left; }
-        .trend-capsule-btn { background: rgba(12, 30, 54, 0.8); border: 1px solid #ffaa00; border-radius: 12px; padding: 8px; margin-bottom: 8px; cursor: pointer; }
-        .trend-capsule-btn:hover { border-color: #00ff66; color: #00ff66; }
-        .comment-box-gate { background: rgba(7, 10, 14, 0.95); border: 1px solid #00f0ff; border-radius: 10px; padding: 8px; margin-top: 8px; display: none; }
-        .comment-input-vhd { width: 88%; background: #070a0e; border: 1px solid #30363d; color: #fff; padding: 5px; font-size: 10px; font-family: monospace; border-radius: 6px; }
-        
-        /* Динамические ИИ-стили Шарма Робота-Ёжика */
-        .charm-text-style { color: {% if user_cabinet.moba_style_preference == 'pink' %}#ff0055{% elif user_cabinet.moba_style_preference == 'green' %}#00ff66{% elif user_cabinet.moba_style_preference == 'gold' %}#ffaa00{% else %}#00f0ff{% endif %}; }
-        .charm-border-style { border-color: {% if user_cabinet.moba_style_preference == 'pink' %}#ff0055{% elif user_cabinet.moba_style_preference == 'green' %}#00ff66{% elif user_cabinet.moba_style_preference == 'gold' %}#ffaa00{% else %}#00f0ff{% endif %}; }
+        body { background: #0a0b10; color: #e2e8f0; font-family: monospace; padding: 15px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 480px; background: #121420; border: 2px solid #1e2238; border-radius: 20px; padding: 20px; }
+        .moba-card { background: rgba(255,255,255,0.02); border: 1px solid #22263f; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
+        .moba-badge { background: #0077ff; color: #fff; padding: 4px 8px; font-size: 10px; display: inline-block; border-radius: 4px; margin-bottom: 10px; }
+        .stream-box { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; font-size: 11px; margin: 10px 0; max-height: 150px; overflow-y: auto; }
+        .btn-action { background: linear-gradient(135deg, #00f0ff, #0077ff); color: #000; border: none; padding: 10px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; }
+        textarea { width: 100%; background: #070a0e; border: 1px solid #30363d; color: #fff; padding: 8px; border-radius: 6px; height: 40px; resize: none; outline: none; margin-bottom: 8px; }
+        .grid-nav { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; text-align: center; margin-top: 10px; }
+        .nav-btn { background: #1c203a; padding: 8px 4px; border-radius: 6px; font-size: 9px; cursor: pointer; border: 1px solid #2d335b; color: #fff; text-decoration: none; }
     </style>
 </head>
 <body>
 
-<audio id="click_sound" src="https://mixkit.co" preload="auto"></audio>
-<audio id="success_sound" src="https://mixkit.co" preload="auto"></audio>
-
-<div class="parallax-bg" id="parallax"></div>
-
-<div class="container" style="max-width: 480px;">
+<div class="container">
     
-    <!-- КАПСУЛА 1: МАТРИЦА СНАБЖЕНИЯ РОССИЯ - КИТАЙ - КНДР -->
-    <div class="moba-card charm-border-style">
-        <div class="moba-badge" style="background: #0077ff; box-shadow: 0 0 10px #0077ff;">🔒 RFI МОСТ АКТИВЕН</div>
-        <div style="font-size: 11px; color: #8b949e; text-transform: uppercase;">Miroha Platform // {{ market_status }}</div>
-        <div style="font-size: 16px; color: #00f0ff; font-weight: bold; margin-top: 5px;">КАПИТАЛ СИНДИКАТА: <span style="color:#00ff66;">15 000 000.00 ₽</span></div>
+    <!-- СЛОЙ КАПИТАЛА -->
+    <div class="moba-card">
+        <div class="moba-badge">🔒 RFI МОСТ АКТИВЕН</div>
+        <div style="font-size: 13px; color: #00f0ff; font-weight: bold;">КАПИТАЛ СИНДИКАТА: <span style="color:#00ff66;">{{ object_capital_rub }}</span></div>
+        <div style="font-size: 10px; color:#8a99ad; margin-top:5px;">{{ market_status }}</div>
+    </div>
+
+    <!-- ЖИВОЙ ЭФИР -->
+    <div class="moba-card">
+        <div class="moba-badge" style="background:#ff0055;">📡 СТЕРЕО ПОТОК ЭФИРА</div>
         
-        <!-- Вывод ИИ-профиля, созданного Ёжиком -->
-        <div style="font-size: 10px; margin-top: 5px; font-family: monospace;">
-            👤 ВАШ ИИ-КАБИНЕТ: <span class="charm-text-style" style="font-weight:bold;">{{ user_cabinet.assigned_name }}</span>
-        </div>
-
-        <div class="server-monitor">
-            ⚡ <strong>РЕАЛЬНЫЙ БАЛАНС СЕРВЕРА (⚙️ КОМИССИЯ 2%):</strong><br>
-            🇷🇺 РФ: <span style="color:#00ff66; font-weight:bold;">{{ server_balance_rub }} ₽</span> | 🇨🇳 КНР: <span style="color:#ff0000; font-weight:bold;">{{ server_balance_cny }} ¥</span> | 🇰🇵 КНДР: <span style="color:#00f0ff; font-weight:bold;">{{ server_balance_kpw }} ₩</span>
-        </div>
-        <button class="moba-btn-action" style="margin-top: 10px; padding: 10px; font-size: 11px;" onclick="executeSbpCheckout()">🔒 АВТОРИЗОВАТЬ СБП INV-ALFA-288003</button>
-    </div>
-
-    <!-- КАРТОЧКА 2: ЦЕНТРАЛЬНЫЙ СТЕРЕО ЭФИР -->
-    <div class="moba-card pink">
-        <div class="moba-badge">📡 СТЕРЕО ПОТОК</div>
-        <div style="font-size: 14px; color: #fff; font-weight: bold;">Maxim // Снабжение ИТР</div>
-        <div id="live_stream_box" style="max-height: 200px; margin: 15px 0; padding: 10px; background: rgba(0,0,0,0.4); border-radius: 12px; font-size: 11px; border: 1px solid rgba(255,255,255,0.05);"></div>
-        <div style="background: rgba(6, 11, 25, 0.8); padding: 10px; border-radius: 14px; border: 1px dashed #ff0055;">
-            <textarea id="stream_message_text" placeholder="Написать в живой эфир прорабам..." style="width: 92%; background: #070a0e; border: 1px solid #30363d; color: #fff; padding: 6px; font-size: 11px; font-family: monospace; height: 35px; resize: none;"></textarea>
-            <button class="moba-btn-action" style="padding: 6px; font-size: 11px; margin-top: 5px; background: linear-gradient(90deg, #ff0055 0%, #990033 100%);" onclick="pushSignalToEzhikStream()">П ПЕРЕДАТЬ В ЭФИР</button>
-        </div>
-        <div class="moba-grid" style="margin-top: 15px;">
-            <div class="moba-icon-btn" onclick="location.href='/capsule/'">☀️<br><br>ВЕЧНОСТЬ</div>
-            <div class="moba-icon-btn" onclick="triggerEzhikRSS()">🎬<br><br>РАДАР</div>
-            <div class="moba-icon-btn" onclick="toggleHydroSubcards()">💧<br><br>ИЗОЛЯЦИЯ</div>
-            <div class="moba-icon-btn" onclick="location.href='/pto/1/'">🏗️<br><br>СТРОЙКА</div>
-        </div>
-
-        <div id="rss_media_subcard" style="display: none; background: rgba(12, 30, 54, 0.9); border: 1px dashed #ffaa00; padding: 15px; border-radius: 14px; margin: 15px 0; font-size: 12px;">
-            <div style="color: #ffaa00; font-weight: bold; margin-bottom: 8px; text-transform: uppercase;">📰 RFI ПОТОК ФАКТОВ:</div>
-            <div id="rss_facts_container" style="color: #e2e8f0; font-family: monospace; line-height: 1.4;">[Ожидание данных...]</div>
-        </div>
-        <div id="hydro_subcards" style="display: none; background: rgba(5, 8, 12, 0.9); border: 1px dashed #ff0055; padding: 15px; border-radius: 14px; margin: 15px 0; font-size: 12px;">
-            <div style="color: #00ff66; font-weight: bold; margin-bottom: 5px;">🌊 CONTOUR ОТВОДА ВОДЫ:</div>
-            <div style="font-size:11px; color:#fff;">Битумная Броня Слой 0 // 1,420 ботов заблокировано</div>
-        </div>
-
-        <!-- КОМПАКТНЫЙ ИЗЯЩНЫЙ ИТР-ФУТЕР -->
-        <div class="moba-footer-trends">
-            <div style="color: #ffaa00; font-weight: bold; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;">🎬 identity_block: Крохи Мировых Трендов</div>
-            <div class="trend-capsule-btn" onclick="openTrendCommentGate(1)">
-                <strong>КНР ➔ СНиП-стандарты ЕАЭС</strong>
-                <div id="comment_gate_1" class="comment-box-gate" onclick="event.stopPropagation()">
-                    <div id="list_trend_1" style="max-height:60px; overflow-y:auto; margin-bottom:5px; color:#8b949e;">
-                        <div><span style="color:#ff0055;">规格 👷 Наталья В.:</span> Это упростит RFI-приёмку.</div>
-                    </div>
-                    <form onsubmit="submitTrendComment(event, 1)">
-                        <input type="text" id="input_trend_1" placeholder="Ваш комментарий..." class="comment-input-vhd">
-                    </form>
-                </div>
+        <!-- ПРЯМОЙ ВЫВОД ФАКТОВ ИЗ БАЗЫ БЕЗ ЗАВИСАНИЙ -->
+        <div class="stream-box" id="live_stream_box">
+            {% for msg in db_messages %}
+            <div style="margin-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.03);">
+                <span style="color:#00f0ff;">{{ msg.sender_name }}:</span> {{ msg.message_text }}<br>
+                <span style="color:#ff0055; font-size:9px;">🤖 Ёжик: {{ msg.ezhik_reply }}</span>
             </div>
-            <div class="trend-capsule-btn" onclick="openTrendCommentGate(2)">
-                <strong>РФ ➔ Автоматизация электронных АОСР</strong>
-                <div id="comment_gate_2" class="comment-box-gate" onclick="event.stopPropagation()">
-                    <div id="list_trend_2" style="max-height:60px; overflow-y:auto; margin-bottom:5px; color:#8b949e;">
-                        <div><span style="color:#00ff66;">🤖 Робот-Ёжик:</span> Журнал ВХД по 4 photo активен!</div>
-                    </div>
-                    <form onsubmit="submitTrendComment(event, 2)">
-                        <input type="text" id="input_trend_2" placeholder="Написать..." class="comment-input-vhd">
-                    </form>
-                </div>
-            </div>
+            {% endfor %}
+            <div style="color:#8a99ad; font-size:10px; border-top: 1px dashed #22263f; padding-top:4px;">⚙️ Логи ядра системы:</div>
+            {% for fact in backend_facts %}
+            <div style="color: #e2e8f0; margin-top:4px;">• {{ fact }}</div>
+            {% endfor %}
         </div>
 
-        <!-- 🔮 Живое Окно Действий с Шармом Ёжика -->
-        <div id="action_console" class="charm-border-style" style="background: rgba(0,240,255,0.03); border: 1px solid; border-radius: 12px; padding: 10px; font-size: 11px; margin-top: 15px; font-family: monospace;">
-            {{ action_notes }}
-        </div>
-    </div>
+        <form id="stream_form">
+            <textarea id="stream_message_text" placeholder="Написать в живой эфир прорабам Тулы..."></textarea>
+            <button type="button" class="btn-action" style="background:linear-gradient(90deg, #ff0055, #990033); color:#fff;" onclick="sendEtherSignal()">
+                П ПЕРЕДАТЬ В ЭФИР
+            </button>
+        </form>
 
-    <!-- КАРТОЧКА 3: АЗИАТСКИЙ МАГАЗИН -->
-    <div class="moba-card green">
-        <div class="moba-badge" style="background: #00ff66; box-shadow: 0 0 10px #00ff66;">🇨🇳🇰🇵 ПОСТАВКИ ИЗ АЗИИ</div>
-        <div style="font-size: 12px; color: #fff; font-weight: bold; text-align: center;">Автоматическое формирование RFI-заявок закупа</div>
-        <div class="grid-donat">
-            <div class="donat-card">
-                🏢<br><strong style="color:#fff;">Профиль MONLID КНР</strong><br><span style="color:#00ff66;">500 ₽</span>
-                <button class="moba-btn-action" style="padding:4px; font-size:10px; margin-top:5px;" onclick="addDonatProduct(2)">Закупка</button>
-            </div>
-            <div class="donat-card">
-                📦<br><strong style="color:#fff;">ИТР Опалубка Фабричная</strong><br><span style="color:#00ff66;">500 ₽</span>
-                <button class="moba-btn-action" style="padding:4px; font-size:10px; margin-top:5px;" onclick="addDonatProduct(1)">Закупка</button>
-            </div>
+        <!-- НАВИГАЦИЯ -->
+        <div class="grid-nav">
+            <a href="/capsule/" class="nav-btn">☀️<br>ВЕЧНОСТЬ</a>
+            <a href="/radar/" class="nav-btn">🎬<br>РАДАР</a>
+            <a href="/pto/1/" class="nav-btn">🏗️<br>СТРОЙКА</a>
+            <div class="nav-btn" onclick="alert('{{ action_notes }}')">🦔<br>СТАТУС</div>
         </div>
     </div>
 
 </div>
 
-<script src="/static/moba_core.js"></script>
-</body>
-</html>
-
-<!-- 🦔 АСИНХРОННЫЙ ИИ-КОНТУР ГЛАВНОГО БЛОКНОТА ПРОРАБА -->
 <script>
-function triggerMainVoiceNotepad() {
-    let notesField = document.querySelector("textarea[placeholder*='Коля привез арматуру']");
-    // Если поле не найдено по плейсхолдеру, ищем любое текстовое поле в блоке блокнота
-    if (!notesField) { notesField = document.getElementById("raw_notes_field") || document.querySelector("textarea"); }
+function sendEtherSignal() {
+    let input = document.getElementById("stream_message_text");
+    if (!input.value.trim()) { alert("Введите текст!"); return; }
     
-    // Блок вывода результата ИИ
-    let outputBox = document.getElementById("main_ii_output");
-    if (!outputBox) {
-        outputBox = document.createElement("div");
-        outputBox.id = "main_ii_output";
-        outputBox.style.marginTop = "15px";
-        outputBox.style.fontSize = "0.8rem";
-        outputBox.style.fontFamily = "monospace";
-        outputBox.style.lineHeight = "1.4";
-        outputBox.style.color = "#00ff66";
-        if (notesField && notesField.parentNode) { notesField.parentNode.appendChild(outputBox); }
-    }
-
-    if (!notesField || !notesField.value.trim()) {
-        alert("🚨 Введите черновик мыслей прораба перед стерилизацией через ИИ!");
-        return;
-    }
-
-    outputBox.innerHTML = "⏳ <i>Робот-Ёжик запускает ИИ-Стек Антропик. Очистка мыслей от шума...</i>";
-
     let formData = new FormData();
-    formData.append("raw_notes", notesField.value);
-
-    fetch("/api/ezhik-voice-notepad/", {
+    formData.append("text", input.value);
+    
+    fetch("/api/send-stream/", {
         method: "POST",
         body: formData
     })
     .then(res => res.json())
     .then(data => {
         if (data.status === "success") {
-            outputBox.innerHTML = data.structured_text;
-            notesField.value = ""; // Очищаем черновик после победы
-        } else {
-            outputBox.innerHTML = "🚨 Ошибка ИИ-маршрутизации контура.";
+            location.reload(); // Жестко обновляем страницу для мгновенного рендеринга данных бэкендом
         }
     })
-    .catch(err => {
-        outputBox.innerHTML = "🚨 Ошибка сетевого контура шлюза.";
-    });
+    .catch(err => alert("Ошибка отправки контура"));
 }
-
-// Принудительно привязываем клик к кнопке "Стерилизовать Мысли через ИИ"
-document.addEventListener("DOMContentLoaded", function() {
-    let btn = document.querySelector("button[onclick*='Thoughts']");
-    if (!btn) {
-        // Ищем кнопку по тексту, если встроенный onclick имел другое имя
-        let buttons = document.querySelectorAll("button");
-        for (let b of buttons) {
-            if (b.textContent.includes("Стерилизовать Мысли")) {
-                btn = b;
-                break;
-            }
-        }
-    }
-    if (btn) {
-        btn.removeAttribute("onclick");
-        btn.addEventListener("click", triggerMainVoiceNotepad);
-        console.log("✅ [ЖУК-ПЕРЕХВАТЧИК]: Кнопка ИИ-Блокнота успешно перевязана на главной!");
-    }
-});
 </script>
+</body>
+</html>
