@@ -1,38 +1,27 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MIROHA PLATFORM // LEGEND MONOLITH</title>
-    <style>
-        body { background: #0a0b10; color: #e2e8f0; font-family: monospace; padding: 15px; display: flex; justify-content: center; }
-        .container { width: 100%; max-width: 480px; background: #121420; border: 2px solid #1e2238; border-radius: 20px; padding: 20px; box-shadow: 0 0 30px rgba(0,240,255,0.05); }
-        .moba-card { background: rgba(255,255,255,0.02); border: 1px solid #22263f; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
-        .moba-badge { background: #0077ff; color: #fff; padding: 4px 8px; font-size: 10px; display: inline-block; border-radius: 4px; margin-bottom: 10px; font-weight: bold; }
-        .stream-box { background: rgba(0,0,0,0.4); padding: 12px; border-radius: 8px; font-size: 11px; margin: 10px 0; max-height: 180px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.02); line-height: 1.5; }
-        .btn-action { background: linear-gradient(135deg, #00f0ff, #0077ff); color: #000; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(0,240,255,0.2); }
-        textarea { width: 100%; background: #070a0e; border: 1px solid #30363d; color: #fff; padding: 8px; border-radius: 6px; height: 45px; resize: none; outline: none; margin-bottom: 10px; font-family: monospace; }
-        .grid-nav { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; margin-top: 15px; }
-        .nav-btn { background: #1c203a; padding: 10px 4px; border-radius: 8px; font-size: 10px; cursor: pointer; border: 1px solid #2d335b; color: #fff; text-decoration: none; font-weight: bold; display: block; }
-        .nav-btn:hover { border-color: #00f0ff; color: #00f0ff; }
-    </style>
+    <!-- 🎨 CSS ОТДЕЛЬНО -->
+    <link rel="stylesheet" href="{% static 'storage_control/css/pto_style.css' %}">
 </head>
 <body>
 
 <div class="container">
     
-    <!-- СЛОЙ КАПИТАЛА ХОЛДИНГА -->
-    <div class="moba-card" style="border-left: 4px solid #00f0ff;">
+    <!-- СЛОЙ КАПИТАЛА -->
+    <div class="moba-card">
         <div class="moba-badge">🔒 RFI МОСТ ОПЕЧАТАН</div>
         <div style="font-size: 14px; color: #00f0ff; font-weight: bold;">КАПИТАЛ СИНДИКАТА: <span style="color:#00ff66;">{{ object_capital_rub }}</span></div>
         <div style="font-size: 10px; color:#8a99ad; margin-top:6px; font-weight: bold;">{{ market_status }}</div>
     </div>
 
-    <!-- ЖИВОЙ ЭФИР МУЛЬТИМОДАЛЬНОГО КОНТРОЛЯ -->
-    <div class="moba-card" style="border-left: 4px solid #ff0055;">
+    <!-- ЖИВОЙ ЭФИР И ЛОГИ СУДОВ -->
+    <div class="moba-card" style="border-left-color: #ff0055;">
         <div class="moba-badge" style="background:#ff0055;">📡 ЖИВОЙ RFI ПОТОК ФАКТОВ</div>
-        
-        <!-- МОМЕНТАЛЬНЫЙ СЕРВЕРНЫЙ ВЫВОД ЛОГОВ -->
         <div class="stream-box" id="live_stream_box">
             {% for fact in backend_facts %}
             <div style="color: #e2e8f0; margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.02); padding-bottom: 4px;">
@@ -40,45 +29,29 @@
             </div>
             {% endfor %}
         </div>
+    </div>
 
-        <form id="stream_form">
-            <textarea id="stream_message_text" placeholder="Написать директиву в живой эфир прорабам Тулы..."></textarea>
-            <button type="button" class="btn-action" style="background: linear-gradient(90deg, #ff0055, #990033); color:#fff;" onclick="sendEtherSignal()">
-                П ПЕРЕДАТЬ В ЭФИР
-            </button>
-        </form>
+    <!-- 📝 ИИ-БЛОКНОТ ПРОРАБА (ЧЕРНОВИК МЫСЛЕЙ ПО КООРДИНАТАМ И СНАБЖЕНИЮ) -->
+    <div class="moba-card" style="border-left-color: var(--neon-pink); background: rgba(255,0,127,0.01);">
+        <div class="moba-badge" style="background: var(--neon-pink);">📝 ИИ-БЛОКНОТ ПРОРАБА / ЧЕРНОВИК</div>
+        <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px;">Наговори текстом сырые факты со стройки. ИИ сформирует понятные задачи для всех ролей!</div>
+        <textarea id="raw_notes_field" placeholder="Пример: Коля привез арматуру 5 тонн, накладную М-15 потеряли..."></textarea>
+        <button type="button" class="btn-action" style="background:linear-gradient(135deg, var(--neon-pink), #aa0055); color:#fff;" onclick="processEzhikThoughts()">
+            🧠 Стерилизовать Мысли через ИИ
+        </button>
+        <div id="ii_output_box" style="margin-top:12px; font-size:0.75rem; color:#fff; line-height:1.4;"></div>
+    </div>
 
-        <!-- ВЕКОВАЯ НАВИГАЦИЯ -->
-        <div class="grid-nav">
-            <a href="/capsule/" class="nav-btn">☀️<br>ВЕЧНОСТЬ</a>
-            <a href="/radar/" class="nav-btn">🎬<br>РАДАР</a>
-            <a href="/pto/1/" class="nav-btn">🏗️<br>СТРОЙКА</a>
-        </div>
+    <!-- ВЕКОВАЯ НАВИГАЦИЯ -->
+    <div class="grid-nav">
+        <a href="/capsule/" class="nav-btn">☀️<br>ВЕЧНОСТЬ</a>
+        <a href="/radar/" class="nav-btn">🎬<br>РАДАР</a>
+        <a href="/pto/1/" class="nav-btn">🏗️<br>СТРОЙКА</a>
     </div>
 
 </div>
 
-<script>
-function sendEtherSignal() {
-    let input = document.getElementById("stream_message_text");
-    if (!input.value.trim()) { alert("🚨 Введите текст рапорта!"); return; }
-    
-    let formData = new FormData();
-    formData.append("text", input.value);
-    
-    fetch("/api/send-stream/", {
-        method: "POST",
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.status === "success") {
-            input.value = "";
-            alert("✅ [ИТР-ВСПЛЕСК]: Рапорт успешно отправлен в ОЗУ и выстрелил в Telegram Капитана!");
-        }
-    })
-    .catch(err => alert("Ошибка отправки сигнала в ОЗУ"));
-}
-</script>
+<!-- ⚙️ JS ОТДЕЛЬНО -->
+<script src="{% static 'storage_control/js/pto_logic.js' %}"></script>
 </body>
 </html>
