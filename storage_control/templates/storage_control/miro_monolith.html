@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MIROHA PLATFORM // LEGEND MONOLITH</title>
-    <!-- 🎨 CSS ОТДЕЛЬНО -->
     <link rel="stylesheet" href="{% static 'storage_control/css/pto_style.css' %}">
 </head>
 <body>
@@ -13,31 +12,34 @@
 <div class="container">
     
     <!-- СЛОЙ КАПИТАЛА -->
-    <div class="moba-card">
-        <div class="moba-badge">🔒 RFI МОСТ ОПЕЧАТАН</div>
+    <div class="moba-card" style="border-left: 4px solid #00f0ff;">
+        <div class="moba-badge">🔒 БРОНЕПОЕЗД АВТОМАТИЗАЦИИ ОПЕЧАТАН</div>
         <div style="font-size: 14px; color: #00f0ff; font-weight: bold;">КАПИТАЛ СИНДИКАТА: <span style="color:#00ff66;">{{ object_capital_rub }}</span></div>
         <div style="font-size: 10px; color:#8a99ad; margin-top:6px; font-weight: bold;">{{ market_status }}</div>
     </div>
 
-    <!-- ЖИВОЙ ЭФИР И ЛОГИ СУДОВ -->
-    <div class="moba-card" style="border-left-color: #ff0055;">
-        <div class="moba-badge" style="background:#ff0055;">📡 ЖИВОЙ RFI ПОТОК ФАКТОВ</div>
+    <!-- ЖИВОЙ ПУЛЬСИРУЮЩИЙ СТРИМ ИИ-ОТВЕТОВ НА НОВОСТИ -->
+    <div class="moba-card" style="border-left: 4px solid #ff0055;">
+        <div class="moba-badge" style="background:#ff0055;">📡 ЖИВОЙ RFI ПОТОК ИИ-ОТВЕТОВ СИНДИКАТА</div>
+        
         <div class="stream-box" id="live_stream_box">
-            {% for fact in backend_facts %}
-            <div style="color: #e2e8f0; margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.02); padding-bottom: 4px;">
-                {{ fact }}
+            {% for item in pulse_stream %}
+            <div style="margin-bottom: 12px; border-bottom: 1px dashed rgba(255,255,255,0.05); padding-bottom: 8px;">
+                <div style="color: #fff; font-weight: bold; font-size:11px;">{{ item.news }}</div>
+                <div style="color: #00ff66; font-size: 10px; margin-top: 4px; padding-left: 10px; line-height:1.4;">
+                    {{" "}} {{ item.reply }}
+                </div>
             </div>
             {% endfor %}
         </div>
     </div>
 
-    <!-- 📝 ИИ-БЛОКНОТ ПРОРАБА (ЧЕРНОВИК МЫСЛЕЙ ПО КООРДИНАТАМ И СНАБЖЕНИЮ) -->
+    <!-- ИИ-БЛОКНОТ СТЕРИЛИЗАЦИИ МЫСЛЕЙ -->
     <div class="moba-card" style="border-left-color: var(--neon-pink); background: rgba(255,0,127,0.01);">
         <div class="moba-badge" style="background: var(--neon-pink);">📝 ИИ-БЛОКНОТ ПРОРАБА / ЧЕРНОВИК</div>
-        <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px;">Наговори текстом сырые факты со стройки. ИИ сформирует понятные задачи для всех ролей!</div>
-        <textarea id="raw_notes_field" placeholder="Пример: Коля привез арматуру 5 тонн, накладную М-15 потеряли..."></textarea>
+        <textarea id="raw_notes_field" placeholder="Пример: Потеряли накладную М-15 на цемент..."></textarea>
         <button type="button" class="btn-action" style="background:linear-gradient(135deg, var(--neon-pink), #aa0055); color:#fff;" onclick="processEzhikThoughts()">
-            🧠 Стерилизовать Мысли через ИИ
+            🧠 Стерилизовать Мысли через ИИ Библиотеки
         </button>
         <div id="ii_output_box" style="margin-top:12px; font-size:0.75rem; color:#fff; line-height:1.4;"></div>
     </div>
@@ -51,7 +53,6 @@
 
 </div>
 
-<!-- ⚙️ JS ОТДЕЛЬНО -->
 <script src="{% static 'storage_control/js/pto_logic.js' %}"></script>
 </body>
 </html>
