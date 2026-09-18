@@ -4,66 +4,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Miroha ИТР // Автоматизация ПТО и Снабжения</title>
-    <!-- 🎨 CSS ОТДЕЛЬНО -->
+    <title>Miroha ИТР // Автоматизация ПТО, КС-2 и Снабжения</title>
     <link rel="stylesheet" href="{% static 'storage_control/css/pto_style.css' %}">
 </head>
 <body>
 
-<div class="monolith-container">
-    <div class="header-block">
-        <h1>Сквозной Контур Miroha ПТО</h1>
-        <div class="status-badge">{{ system_status }}</div>
+<div class="container">
+    <div class="radar-header">
+        <h1 style="color: var(--neon-cyan);">Сквозной Контур Miroha ПТО</h1>
+        <div class="moba-badge" style="background: var(--neon-pink); margin-top:5px;">{{ system_status }}</div>
     </div>
 
-    <!-- 📊 ШЛЮЗ 1: ИМПОРТ EXCEL ФАЙЛОВ СМЕТЫ ОТ ПТО -->
-    <div class="material-card" style="border-left-color: #ffaa00; background: rgba(255,170,0,0.02);">
-        <div class="mat-name" style="color: #ffaa00;">📊 ЗАГРУЗКА ВЕДОМОСТИ СМЕТЫ ПТО (.XLSX)</div>
-        <form id="excel_import_form" enctype="multipart/form-data">
-            <input type="file" id="excel_file_field" name="excel_file" accept=".xlsx,.xls,.csv" style="font-size:0.8rem; color:#fff; margin-bottom:10px; display:block;">
-            <button type="button" class="btn-action" style="background:linear-gradient(135deg, #ffaa00, #ff5500); padding:8px; font-size:0.8rem;" onclick="uploadPtoExcel()">
-                📥 Распарсить Смету в СУБД
+    <!-- 📸 ШЛЮЗ ПРОРАБА: ЗАГРУЗКА ФОТООТЧЕТОВ ПО ОСЯМ И ГОСПАСПОРТОВ -->
+    <div class="moba-card" style="border-left-color: var(--neon-pink); background: rgba(255,0,127,0.01);">
+        <div style="font-size: 0.95rem; font-weight: bold; color: var(--neon-pink); margin-bottom: 8px;">📸 ИИ-ЗРЕНИЕ: ЗАГРУЗКА ФОТООТЧЕТОВ И ГОСПАСПОРТОВ С ОСЕЙ</div>
+        <form id="cv_photo_form" enctype="multipart/form-data">
+            <div style="margin-bottom:10px;">
+                <label style="font-size:0.75rem; color:var(--text-muted);">Строительная ось (например, Ось А-Г/1-4):</label>
+                <input type="text" id="axis_info_field" name="axis_info" value="Ось А-Г // Пилон №3" style="width:100%; background:#070a0e; border:1px solid #22263f; color:#fff; border-radius:6px; padding:6px; font-size:0.8rem; margin-top:4px; outline:none;">
+            </div>
+            <div style="margin-bottom:10px;">
+                <label style="font-size:0.75rem; color:var(--text-muted);">Тип исполнительной документации:</label>
+                <select id="doc_type_field" name="doc_type" style="width:100%; background:#070a0e; border:1px solid #22263f; color:#fff; border-radius:6px; padding:6px; font-size:0.8rem; margin-top:4px; outline:none;">
+                    <option value="Акт скрытых работ (АОСР)">Акт скрытых работ (АОСР)</option>
+                    <option value="Паспорт качества завода (Госпаспорт)">Паспорт качества завода (Госпаспорт)</option>
+                    <option value="Фотофиксация армирования">Фотофиксация армирования перед заливкой</option>
+                </select>
+            </div>
+            <input type="file" id="construction_photo_field" name="construction_photo" accept="image/*" style="font-size:0.8rem; color:#fff; margin-bottom:12px; display:block;">
+            <button type="button" class="btn-action" style="background: linear-gradient(135deg, var(--neon-pink), #aa0055); color: #fff;" onclick="uploadAxisPhotoReport()">
+                👁️ Запустить Зрение Ёжика и внести в Журнал()
             </button>
         </form>
+        <div id="cv_status_box" style="margin-top:10px; font-size:0.75rem; color:#fff; font-family:monospace; line-height:1.4;"></div>
     </div>
 
-    <!-- 📝 ШЛЮЗ 2: ИИ-БЛОКНОТ СТЕРИЛИЗАТОР МЫСЛЕЙ (ГОЛОС/ТЕКСТ ЧЕРНОВИК) -->
-    <div class="material-card" style="border-left-color: var(--neon-pink); background: rgba(255,0,127,0.02);">
-        <div class="mat-name" style="color: var(--neon-pink);">📝 ИИ-БЛОКНОТ ПРОРАБА (ЧЕРНОВИК МЫСЛЕЙ)</div>
-        <div style="font-size:0.7rem; color:var(--text-muted); margin-bottom:8px;">Наговори текстом или голосом сырые факты со стройки. ИИ сформирует понятные задачи для всех ролей!</div>
-        <textarea id="raw_notes_field" placeholder="Пример: Коля привез арматуру 5 тонн, накладную М-15 потеряли, Лиугонг задымил..." style="width:100%; background:#070a0e; border:1px solid #22263f; color:#fff; border-radius:8px; padding:8px; font-size:0.8rem; height:60px; resize:none; outline:none; margin-bottom:10px;"></textarea>
-        <button type="button" class="btn-action" style="background:linear-gradient(135deg, var(--neon-pink), #aa0055); padding:8px; font-size:0.8rem;" onclick="processEzhikThoughts()">
-            🧠 Стерилизовать Мысли через ИИ
+    <!-- 📊 ТАБЛИЦА ЖУРНАЛА ИСПОЛНИТЕЛЬНОЙ ДОКУМЕНТАЦИИ (ДЛЯ ЗАЩИТЫ АКТОВ КС) -->
+    <div class="moba-card" style="border-left-color: var(--neon-cyan);">
+        <div style="font-size: 0.95rem; font-weight: bold; color: var(--neon-cyan); margin-bottom: 10px;">📋 ЖУРНАЛ УЧЕТА ИСПОЛНИТЕЛЬНОЙ ДОКУМЕНТАЦИИ ОРАКУЛА</div>
+        <div style="max-height: 200px; overflow-y: auto;">
+            <table style="width:100%; border-collapse:collapse; font-size:0.7rem; text-align:left; color:#fff;">
+                <thead>
+                    <tr style="border-bottom:1px solid var(--neon-cyan); color:var(--neon-cyan);">
+                        <th style="padding:4px;">Дата/Ось</th>
+                        <th style="padding:4px;">Документ</th>
+                        <th style="padding:4px;">Вердикт ИИ-Зрения</th>
+                    </tr>
+                </thead>
+                <tbody id="journal_table_body">
+                    <tr style="border-bottom:1px solid rgba(255,255,255,0.03);">
+                        <td style="padding:6px 4px;">18.09 // Ось А-Г</td>
+                        <td style="padding:6px 4px;">Госпаспорт металл КНР</td>
+                        <td style="padding:6px 4px; color:var(--neon-green);">✅ Совпадает с сертификатом XCMG</td>
+                    </tr>
+                    <tr style="border-bottom:1px solid rgba(255,255,255,0.03);">
+                        <td style="padding:6px 4px;">17.09 // Ось В-Д</td>
+                        <td style="padding:6px 4px;">АОСР Армирование плиты</td>
+                        <td style="padding:6px 4px; color:var(--neon-green);">✅ Объем подтвержден, дефектов нет</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Общие лимиты -->
+    <div class="moba-card" style="border-left-color: var(--neon-green); background: rgba(57,255,20,0.01);">
+        <div style="font-size: 0.95rem; font-weight: bold; color: var(--neon-green); margin-bottom: 8px;">📊 АВТОМАТИЧЕСКИЙ ПОДБЕТ СМЕТ И АКТОВ КС-2/КС-3</div>
+        <button type="button" class="btn-action" style="background: linear-gradient(135deg, var(--neon-green), #00aa00); color: #000;" onclick="triggerEzhikPdfAnalysis()">
+            ⚡ Выполнить Решение() и Отправить PDF-анализ
         </button>
-        <div id="ii_output_box" style="margin-top:10px; font-size:0.75rem; color:#fff; font-family:monospace; line-height:1.4;"></div>
+        <div id="pdf_status_box" style="margin-top:10px; font-size:0.75rem; color:#fff; line-height:1.4; font-family:monospace;"></div>
     </div>
 
-    <!-- Радар дефицитных грузов -->
-    <div class="chain-title" style="color: var(--neon-cyan);">🛰️ ЖУК ПАРСЕР // СЛОЙ_0 (Ликвидный дефицит КНР):</div>
-    {% for cargo in parser_cargo %}
-    <div class="material-card {{ cargo.color }}" style="background: rgba(0, 240, 255, 0.02); border-style: dashed;">
-        <div class="mat-name" style="color: #fff;">{{ cargo.brand }}</div>
-        <div class="step-row"><div class="step-label">🌐 Статус Порта</div><div class="step-value" style="color: var(--neon-cyan); font-weight: bold;">{{ cargo.port_status }}</div></div>
-        <div class="step-row" style="border: none;"><div class="step-label">⏱️ Сроки Логистики</div><div class="step-value" style="color: var(--neon-green);">{{ cargo.days_left }}</div></div>
-    </div>
-    {% endfor %}
-
-    <!-- Базовая цепочка материалов -->
-    <div class="chain-title">🔗 Цепочка Списания & Контроля:</div>
-    {% for mat in materials_chain %}
-    <div class="material-card {{ mat.alert_class }}">
-        <div class="mat-name">📦 {{ mat.name }}</div>
-        <div class="step-row"><div class="step-label">📐 1. ПТО</div><div class="step-value" style="color: var(--neon-cyan);">Лимит ВОР: {{ mat.pto_limit }}</div></div>
-        <div class="step-row"><div class="step-label">🧱 3. Прораб</div><div class="step-value" style="color: var(--neon-green);">Склад М-19: {{ mat.warehouse_m19 }}</div></div>
-    </div>
-    {% endfor %}
-
-    <div class="footer-action">
-        <button class="btn-action" onclick="triggerPtoSync()">⚡ Синхронизировать смету и склад</button>
-    </div>
+    <button class="btn-action" onclick="location.href='/'" style="background: rgba(255,255,255,0.05); color: #fff; border: 1px solid #1c203a; margin-top: 15px;">
+        ⬅️ На Главный Монолит
+    </button>
 </div>
 
-<!-- ⚙️ JS ОТДЕЛЬНО -->
-<script src="{% static 'storage_control/js/pto_logic.js' %}"></script>
+<script>
+// Асинхронная отправка фотоотчета прораба на ИИ-Зрение Питона
+function uploadAxisPhotoReport() {
+    let fileField = document.getElementById("construction_photo_field");
+    let axisField = document.getElementById("axis_info_field");
+    let docTypeField = document.getElementById("doc_type_field");
+    let statusBox = document.getElementById("cv_status_box");
+    let tableBody = document.getElementById("journal_table_body");
+    
+    if (!fileField.files.length) {
+        alert("🚨 Ошибка: Выберите файл фотографии или госпаспорта с осей!");
+        return;
+    }
+    
+    statusBox.innerHTML = "⏳ <i>Робот-Ёжик сканирует пиксельную матрицу фотоотчета... Разделение контуров арматуры...</i>";
+    
+    let formData = new FormData();
+    formData.append("construction_photo", fileField.files[0]);
+    formData.append("axis_info", axisField.value);
+    formData.append("doc_type", docTypeField.value);
+    
+    fetch("/api/computer-vision-m19/", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success" || data.status === "warning") {
+            statusBox.innerHTML = `<span style="color:var(--neon-cyan);">${data.message}</span><br><b style="color:#fff;">Вердикт CV:</b> ${data.cv_verdict}<br><b style="color:var(--neon-pink);">Статус склада:</b> ${data.m19_action}`;
+            
+            # Динамически вставляем новую ИИ-строку прямо в Журнал на экране!
+            let newRow = `<tr style="border-bottom:1px solid var(--neon-pink); background:rgba(255,0,127,0.03);">
+                <td style="padding:6px 4px;">${data.record.time.split(' ')[0]} // ${data.record.axis}</td>
+                <td style="padding:6px 4px;">${data.record.doc}</td>
+                <td style="padding:6px 4px; color:var(--neon-green);">${data.record.verdict}</td>
+            </tr>`;
+            tableBody.insertAdjacentHTML('afterbegin', newRow);
+            fileField.value = ""; // Сброс поля
+        } else {
+            statusBox.innerHTML = "🚨 Ошибка ИИ-анализа матрицы.";
+        }
+    })
+    .catch(err => {
+        statusBox.innerHTML = "🚨 Ошибка сетевого шлюза зрения.";
+    });
+}
+
+function triggerEzhikPdfAnalysis() {
+    let statusBox = document.getElementById("pdf_status_box");
+    statusBox.innerHTML = "⏳ <i>Робот-Ёжик подбивает накопительные акты КС-2/КС-3... Проектирование PDF...</i>";
+    fetch("/api/process-estimate-pdf-report/", { method: "POST" })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            statusBox.innerHTML = `<span style="color:var(--neon-green);">${data.message}</span><br>👉 <a href="${data.pdf_url}" target="_blank" style="color:var(--neon-cyan); text-decoration:underline;">Открыть физический PDF на сервере</a>`;
+        }
+    });
+}
+</script>
 </body>
 </html>
