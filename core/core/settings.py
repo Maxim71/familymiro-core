@@ -147,7 +147,7 @@ SESSION_SAVE_EVERY_REQUEST = True
 CELERY_BROKER_URL = 'redis://redis:6379/0'
 
 # Контур абсолютной безопасности: принудительный редирект на HTTPS
-SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = False
 
 SESSION_COOKIE_SECURE = True
 

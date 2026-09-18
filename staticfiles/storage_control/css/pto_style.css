@@ -1,0 +1,19 @@
+:root {
+    --bg-color: #0a0b10;
+    --card-bg: #121420;
+    --neon-cyan: #00f0ff;
+    --neon-pink: #ff007f;
+    --neon-green: #39ff14;
+    --text-main: #e2e8f0;
+    --text-muted: #8a99ad;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: monospace; }
+body { background-color: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; padding: 15px; }
+.container { width: 100%; max-width: 480px; background: linear-gradient(145deg, #131625, #0c0e1a); border: 2px solid #1e2238; border-radius: 20px; padding: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+.moba-card { background: var(--card-bg); border-radius: 12px; padding: 15px; margin-bottom: 15px; border-left: 4px solid var(--neon-cyan); }
+.moba-badge { background: #0077ff; color: #fff; padding: 4px 8px; font-size: 10px; display: inline-block; border-radius: 4px; margin-bottom: 10px; font-weight: bold; }
+.stream-box { background: rgba(0,0,0,0.4); padding: 12px; border-radius: 8px; font-size: 11px; margin: 10px 0; max-height: 180px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.02); line-height: 1.5; }
+.btn-action { background: linear-gradient(135deg, #00f0ff, #0077ff); color: #000; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; box-shadow: 0 4px 15px rgba(0,240,255,0.2); }
+textarea { width: 100%; background: #070a0e; border: 1px solid #30363d; color: #fff; padding: 8px; border-radius: 6px; height: 50px; resize: none; outline: none; margin-bottom: 10px; }
+.grid-nav { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center; margin-top: 15px; }
+.nav-btn { background: #1c203a; padding: 10px 4px; border-radius: 8px; font-size: 10px; cursor: pointer; border: 1px solid #2d335b; color: #fff; text-decoration: none; font-weight: bold; }
