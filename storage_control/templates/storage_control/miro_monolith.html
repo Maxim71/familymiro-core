@@ -56,3 +56,49 @@
 <script src="{% static 'storage_control/js/pto_logic.js' %}"></script>
 </body>
 </html>
+
+<!-- 💳 АСИНХРОННЫЙ БАНКОВСКИЙ ШЛЮЗ СБП АЛЬФА-БАНКА -->
+<script>
+function triggerEzhikSbpPayment() {
+    let confirmPay = confirm("💳 Запустить генерацию динамического СБП QR-кода НСПК для проводки капитала 15,000,000.00 ₽ через Альфа-Банк?");
+    if (!confirmPay) return;
+    
+    let marketStatusDiv = document.querySelector("div[style*='color:#8a99ad']");
+    if (marketStatusDiv) marketStatusDiv.innerHTML = "⏳ <i>Связь с сервером Альфа-Банка... Расчет 2% маржи...</i>";
+    
+    let formData = new FormData();
+    formData.append("amount", "15000000.00");
+    formData.append("order_type", "Проводка капитала синдиката по объекту Тула (Капсула Вечности)");
+    
+    fetch("/api/checkout-sbp-payment/", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            alert(`${data.message}\n\n🤖 Маржа Синдиката зафиксирована: ${data.commission}`);
+            if (marketStatusDiv) marketStatusDiv.innerHTML = `✅ QR СФОРМИРОВАН! <a href="${data.qr_url}" target="_blank" style="color:#00ff66; text-decoration:underline;">Открыть линк НСПК СБП</a>`;
+        } else {
+            alert("🚨 Ошибка банковского сокета.");
+        }
+    })
+    .catch(err => alert("Ошибка связи с финансовым API"));
+}
+
+// Привязываем функцию к кнопке АВТОРИЗОВАТЬ СБП на главной странице
+document.addEventListener("DOMContentLoaded", function() {
+    let sbpBtn = document.querySelector("button[onclick*='sbp']");
+    if (!sbpBtn) {
+        let buttons = document.querySelectorAll("button");
+        for (let b of buttons) {
+            if (b.textContent.includes("СБП") || b.textContent.includes("ОПЛАТИТЬ")) { sbpBtn = b; break; }
+        }
+    }
+    if (sbpBtn) {
+        sbpBtn.removeAttribute("onclick");
+        sbpBtn.addEventListener("click", triggerEzhikSbpPayment);
+        console.log("✅ [ФИН-ПЕРЕХВАТЧИК]: Кнопка СБП Альфа-Банка успешно увязана!");
+    }
+});
+</script>
