@@ -1,0 +1,86 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>IPROPAB CORE // АДМИН-ПАНЕЛЬ ПРОРАБА</title>
+    <link rel="stylesheet" href="{% static 'storage_control/css/pto_style.css' %}">
+</head>
+<body style="background: #05060c; color: #e2e8f0; font-family: monospace; padding: 15px; display: flex; justify-content: center;">
+<div style="width: 100%; max-width: 480px;">
+
+    <!-- ШАПКА ХАБА -->
+    <div class="moba-card" style="border-left-color: var(--neon-cyan);">
+        <div class="moba-badge" style="background: var(--neon-cyan); color:#000;">🛰️ АГЕНТ-ШЛЮЗ: IPROPAB CORE v26</div>
+        <div style="font-size:13px; font-weight:bold; margin-top:8px; color:#fff;">🏢 ОРГАНИЗАЦИЯ: {{ ctx.company }}</div>
+        <div style="font-size:11px; color:#8a99ad; margin-top:4px;">👷 Исполнитель: <b>{{ ctx.name }}</b> | Заявка в работе: <b>#{{ ctx.task_id }}</b></div>
+    </div>
+
+    <!-- УСЛОВИЯ И ОБЯЗАТЕЛЬСТВА -->
+    <div class="moba-card" style="border-left-color: var(--neon-green); background: rgba(57,255,20,0.01);">
+        <div class="moba-badge" style="background: var(--neon-green); color:#000;">📋 ПОЛНЫЙ КОНТРОЛЬ АДМИН ПАНЕЛИ</div>
+        <div style="font-size:0.75rem; line-height:1.4; margin-top:8px;">
+            <b>📍 Условия контракта:</b><br><span style="color:#fff;">{{ ctx.contract_conditions }}</span><br><br>
+            <b>🧱 Лимиты материалов ПТО:</b><br><span style="color:var(--neon-cyan); font-weight:bold;">{{ ctx.materials_limits }}</span><br><br>
+            <b>📊 Статус Журнала скрытых работ:</b><br><span id="journal_status_label" style="color:var(--neon-pink); font-weight:bold;">{{ ctx.journal_status }}</span>
+        </div>
+    </div>
+
+    <!-- КНОПКА ЗАГРУЗКИ ФОТО С ТАЙМЕРОМ НА 90 СЕКУНД -->
+    <div class="moba-card" style="border-left-color: var(--neon-pink); background: rgba(255,0,127,0.01);">
+        <div class="moba-badge" style="background: var(--neon-pink);">🎙️ ФОТООТЧЕТНОСТЬ ЗА СЕГОДНЯ</div>
+        <div style="font-size:0.72rem; color:#8a99ad; margin-top:6px; line-height:1.3;">
+            Нажмите кнопку ниже для активации камеры на текущем этапе работ. Каскадный таймер выделит ровно 90 секунд для отправки!
+        </div>
+        
+        <div id="timer_countdown" style="font-size:1.5rem; text-align:center; font-weight:bold; color:var(--neon-pink); margin: 10px 0; display:none;">90.00s</div>
+
+        <button type="button" class="btn-action" style="background: linear-gradient(135deg, var(--neon-pink), #aa0055); color:#fff; margin-top:8px;" onclick="startIpropab90SecCameraCascade()">
+            📸 Активировать Камеру Оси & Сдать Отчетность
+        </button>
+        <div id="ipro_status_box" style="margin-top:10px; font-size:0.72rem; line-height:1.3; font-family:monospace;"></div>
+    </div>
+
+</div>
+
+<script>
+function startIpropab90SecCameraCascade() {
+    let out = document.getElementById("ipro_status_box");
+    let tBox = document.getElementById("timer_countdown");
+    let jLab = document.getElementById("journal_status_label");
+    
+    // Всплывает ИТР-уведомление 90 секунд
+    alert("⚠️ ИИ-ДИРЕКТИВА: Вы переходите на камеру для закрытия смены и отчетности! У вас есть ровно 90 секунд, чтобы сделать фото на этапе работ и загрузить его за сегодня!");
+    
+    tBox.style.display = "block";
+    out.innerHTML = "⏳ <i>Робот-Ёжик включил мониторинг сетевой карты... Ожидание кадра с линии...</i>";
+    
+    let timeLeft = 90.00;
+    let interval = setInterval(() => {
+        timeLeft -= 0.1;
+        tBox.innerHTML = timeLeft.toFixed(1) + "s";
+        if(timeLeft <= 0) {
+            clearInterval(interval);
+            tBox.style.display = "none";
+            out.innerHTML = "🚨 ТАЙМАУТ! 90 секунд истекли. Наряд смены заблокирован ПТО.";
+        }
+    }, 100);
+
+    // Имитируем, что прораб пошел, сфотографировал и загрузил фотоотчет на 3-й секунде таймера
+    setTimeout(() => {
+        clearInterval(interval);
+        tBox.style.display = "none";
+        out.innerHTML = "📥 <i>Кадр получен. Робот-Ёжик выполняет семантический промониторинг матрицы пикселей OpenCV...</i>";
+        
+        fetch("submit/", { method: "POST" })
+        .then(res => res.json())
+        .then(data => {
+            out.innerHTML = `<span style="color:var(--neon-green); font-weight:bold;">${data.message}</span>`;
+            jLab.innerHTML = data.journal_update;
+            jLab.style.color = "var(--neon-green)";
+        });
+    }, 3000);
+}
+</script>
+</body>
+</html>
