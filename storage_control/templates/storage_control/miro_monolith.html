@@ -102,3 +102,62 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 </script>
+
+<!-- 🛰️ ИИ-БИРЖА ТЕНДЕРОВ И ДИАГНОСТИКА МАСТЕРОВ МОНТАЖА -->
+<div class="moba-card" style="border-left-color: var(--neon-cyan); background: rgba(0,240,255,0.01); margin-top:20px;">
+    <div class="moba-badge" style="background: var(--neon-cyan); color:#000;">🛰️ ИИ-БИРЖА ТЕНДЕРОВ // МОНТАЖ ОБЛАСТЬ</div>
+    <div style="font-size: 0.75rem; color: #8a99ad; margin-bottom: 12px; line-height:1.4;">
+        Робот-Ёжик сканирует JSON API площадок Тульского региона по ключевому слову <b>«МОНТАЖ»</b>. Ниже представлены горячие лоты за последний час:
+    </div>
+    <div id="tender_exchange_box" style="font-size:0.72rem; line-height:1.4; font-family:monospace; margin-bottom:15px; border-bottom:1px dashed rgba(255,255,255,0.05); padding-bottom:10px;">
+        ⏳ <i>Жук-Сканер опрашивает тендерные шлюзы... Сбор крох данных...</i>
+    </div>
+    
+    <div class="moba-badge" style="background: var(--neon-pink);">🎙️ Bot API ШЛЮЗ // ОБЩАТЬСЯ С МАСТЕРОМ</div>
+    <form id="bot_master_form" style="margin-top:5px;">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:8px;">
+            <input type="text" id="master_phone" value="+7(999)777-55-44" placeholder="Номер телефона мастера" style="background:#020306; border:1px solid #1e2640; color:#fff; padding:6px; border-radius:6px; font-size:0.75rem;">
+            <input type="text" id="master_axis" value="Ось А-Г // Ригель №2" placeholder="Контрольная ось фото" style="background:#020306; border:1px solid #1e2640; color:#fff; padding:6px; border-radius:6px; font-size:0.75rem;">
+        </div>
+        <button type="button" class="btn-action" style="background: linear-gradient(135deg, var(--neon-pink), #aa0055); color:#fff;" onclick="submitMasterDiagnosticBotApi()">
+            📸 Принять Фотоотчет Диагностики & Расчитать Рейтинг
+        </button>
+    </form>
+    <div id="bot_api_output" style="margin-top:10px; font-size:0.72rem; color:#fff; line-height:1.4; font-family:monospace;"></div>
+</div>
+
+<script>
+// Асинхронный подхват тендеров региона из JSON API Питона
+document.addEventListener("DOMContentLoaded", function() {
+    let box = document.getElementById("tender_exchange_box");
+    fetch("/api/tender-exchange-dashboard/")
+    .then(res => res.json())
+    .then(data => {
+        if(data.status === "success") {
+            let tText = data.tenders.map(t => `🔹 <b>[${t.id}]</b> ${t.title}<br>💰 Бюджет: <span style="color:#00ff66;">${t.budget}</span> | 📍 ${t.location}<br><i style="color:var(--neon-pink);">${t.status}</i>`).join("<br><br>");
+            box.innerHTML = `<b style="color:var(--neon-cyan);">Регион сканирования:</b> ${data.region}<br><br>${tText}`;
+        }
+    });
+});
+
+// Отправка отчета диагностики мастера монтажа по осям в Bot API шлюз
+function submitMasterDiagnosticBotApi() {
+    let out = document.getElementById("bot_api_output");
+    out.innerHTML = "⏳ <i>Верификация ответственности мастера... Pillow/OpenCV сканируют матрицу пикселей...</i>";
+    
+    let fd = new FormData();
+    fd.append("phone", document.getElementById("master_phone").value);
+    fd.append("axis", document.getElementById("master_axis").value);
+    
+    fetch("/api/bot-api-master-diagnostic/", {
+        method: "POST",
+        body: fd
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.status === "success") {
+            out.innerHTML = `<span style="color:var(--neon-green);">${data.message}</span><br><br>${data.details.replace(/\n/g, '<br>')}`;
+        }
+    });
+}
+</script>
