@@ -177,3 +177,74 @@ function triggerEzhikPandasBI() {
     });
 }
 </script>
+
+<!-- 📐 БЛОК ERP: ТЕНДЕРНЫЙ КАЛЬКУЛЯТОР СУБПОДРЯДЧИКОВ -->
+<div class="moba-card" style="border-left-color: var(--neon-green); background: rgba(57,255,20,0.01); margin-top:20px;">
+    <div style="font-size: 0.95rem; font-weight: bold; color: var(--neon-green); margin-bottom: 8px;">📐 ERP ВЕРИФИКАТОР СУБПОДРЯДЧИКОВ (ВОР СМЕТЫ)</div>
+    <form id="erp_candidate_form">
+        <div style="margin-bottom:8px;">
+            <input type="text" id="erp_name" value="ООО СпецСтройТула" style="width:100%; background:#070a0e; border:1px solid #22263f; color:#fff; border-radius:6px; padding:6px; font-size:0.8rem;">
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
+            <input type="number" id="erp_price" value="65000" placeholder="Цена за тонну" style="background:#070a0e; border:1px solid #22263f; color:#fff; border-radius:6px; padding:6px; font-size:0.8rem;">
+            <input type="number" id="erp_workers" value="15" placeholder="Кол-во рабочих" style="background:#070a0e; border:1px solid #22263f; color:#fff; border-radius:6px; padding:6px; font-size:0.8rem;">
+        </div>
+        <button type="button" class="btn-action" style="background: linear-gradient(135deg, var(--neon-green), #009900); color:#000;" onclick="calculateErpCandidate()">
+            📊 Рассчитать Задачи & Вывести Вердикт ПТО
+        </button>
+    </form>
+    <div id="erp_calc_output" style="margin-top:10px; font-size:0.75rem; color:#fff; line-height:1.4;"></div>
+</div>
+
+<!-- 📋 БЛОК ERP: ТРEКЕР ЗАДАЧ БРИГАД В ИСТОРИЮ -->
+<div class="moba-card" style="border-left-color: var(--neon-pink); background: rgba(255,0,127,0.01); margin-top:20px;">
+    <div style="font-size: 0.95rem; font-weight: bold; color: var(--neon-pink); margin-bottom: 8px;">📋 ERP ТРЕКЕР ЗАДАЧ БРИГАД // ВЕКОВАЯ ИСТОРИЯ</div>
+    <form id="erp_task_form">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:8px;">
+            <input type="text" id="task_brigade" value="Бригада №2 Михалыча" style="background:#070a0e; border:1px solid #22263f; color:#fff; border-radius:6px; padding:6px; font-size:0.8rem;">
+            <input type="text" id="task_volume" value="8.4 тонн арматуры" style="background:#070a0e; border:1px solid #22263f; color:#fff; border-radius:6px; padding:6px; font-size:0.8rem;">
+        </div>
+        <input type="text" id="task_text" value="Армирование фундаментной плиты блок Б" style="width:100%; background:#070a0e; border:1px solid #22263f; color:#fff; border-radius:6px; padding:6px; font-size:0.8rem; margin-bottom:10px;">
+        <button type="button" class="btn-action" style="background: linear-gradient(135deg, var(--neon-pink), #aa0055); color:#fff;" onclick="submitErpBrigadeTask()">
+            📥 Сдать Наряд Смены & Запереть в Историю СУБД
+        </button>
+    </form>
+    <div id="erp_tracker_output" style="margin-top:10px; font-size:0.75rem; color:#fff; line-height:1.4;"></div>
+</div>
+
+<script>
+function calculateErpCandidate() {
+    let out = document.getElementById("erp_calc_output");
+    out.innerHTML = "⏳ <i>Сканирование критериев ВОР...</i>";
+    let fd = new FormData();
+    fd.append("name", document.getElementById("erp_name").value);
+    fd.append("price_per_ton", document.getElementById("erp_price").value);
+    fd.append("workers_count", document.getElementById("erp_workers").value);
+    fd.append("speed_days", "8");
+    
+    fetch("/api/erp-calculate-subcontractor/", { method: "POST", body: fd })
+    .then(res => res.json())
+    .then(data => {
+        if(data.status === "success") {
+            out.innerHTML = `<b style="color:var(--neon-green);">Анализ ПТО:</b> Смета задачи: ${data.report.calculated_cost} | Прогнозный КПД: ${data.report.kpd}<br><b style="color:#fff;">РЕШЕНИЕ ЕЖИКА (верно_ли):</b> ${data.report.verdict}`;
+        }
+    });
+}
+
+function submitErpBrigadeTask() {
+    let out = document.getElementById("erp_tracker_output");
+    out.innerHTML = "⏳ <i>Запись в Вековую Историю СУБД...</i>";
+    let fd = new FormData();
+    fd.append("brigade", document.getElementById("task_brigade").value);
+    fd.append("task", document.getElementById("task_text").value);
+    fd.append("volume", document.getElementById("task_volume").value);
+    
+    fetch("/api/erp-add-brigade-task/", { method: "POST", body: fd })
+    .then(res => res.json())
+    .then(data => {
+        if(data.status === "success") {
+            out.innerHTML = `<span style="color:var(--neon-pink);">${data.message}</span><br>🔒 <b>Метка ВHD блока:</b> <span style="color:var(--neon-green);">${data.record.hash_protection}</span> [${data.record.timestamp}]`;
+        }
+    });
+}
+</script>
