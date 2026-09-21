@@ -21,4 +21,5 @@ urlpatterns = [
     path('api/trigger-creative-commercial/', views.trigger_creative_commercial_api, name='trigger_creative_commercial_api'),
     path('api/tsf-get-map-data/', views.tsf_get_map_data_api, name='tsf_get_map_data_api'),
     path('api/tsf-calculate-supplies/', views.tsf_calculate_supplies_api, name='tsf_calculate_supplies_api'),
+    path('api/trigger-cyber-mesh-probe/', views.trigger_cyber_mesh_probe_api, name='trigger_cyber_mesh_probe_api'),
 ]

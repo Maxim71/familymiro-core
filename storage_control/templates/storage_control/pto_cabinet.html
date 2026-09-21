@@ -306,3 +306,87 @@ function submitTsfSupplies() {
     });
 }
 </script>
+
+<!-- ⚡ БЛОК FAST API КОНТРАКТОВ: СБОРКА CSV И ВЕКТОРНОЙ SVG ГРАФИКИ -->
+<div class="moba-card" style="border-left-color: var(--neon-cyan); background: rgba(0,240,255,0.01); margin-top:20px;">
+    <div class="moba-badge" style="background: #fff; color:#000; font-weight:bold;">⚡ ASYNC FAST API CONTRACT GATEWAY // PORT 9000</div>
+    <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px; line-height:1.4;">
+        Прямой вызов тяжелых библиотек <b>pandas & numpy</b>. Генерация физического CSV-файла табеля и динамического векторного SVG-графика для передачи сторонним пользователям:
+    </div>
+
+    <!-- Место для динамической JavaScript вставки SVG-графика -->
+    <div id="js_svg_container" style="width:100%; border:1px solid #1c203a; border-radius:8px; padding:10px; background:#020306; display:none; margin-bottom:12px;"></div>
+
+    <button type="button" class="btn-action" style="background: #fff; color: #000; font-weight:bold;" onclick="triggerJavaScriptFastApiContract()">
+        🔌 Запустить Полный Цикл: Собрать CSV и SVG график()
+    </button>
+    <div id="fastapi_status_box" style="margin-top:10px; font-size:0.72rem; color:#fff; font-family:monospace; line-height:1.3;"></div>
+</div>
+
+<script>
+function triggerJavaScriptFastApiContract() {
+    let sBox = document.getElementById("fastapi_status_box");
+    let svgContainer = document.getElementById("js_svg_container");
+    sBox.innerHTML = "⏳ <i>JavaScript посылает контракт-запрос в Fast API... Инициализация pandas/numpy в ОЗУ...</i>";
+    
+    // Делаем прямой асинхронный вызов на Fast API шлюз через Nginx прокси
+    fetch("/fastapi/api/v1/generate-contract-bundle/", {
+        method: "POST"
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            sBox.innerHTML = `
+                <span style="color:var(--neon-green); font-weight:bold;">${data.message}</span><br><br>
+                📂 <b>Выгрузка завершена:</b><br>
+                👉 <a href="${data.csv_download_url}" target="_blank" style="color:var(--neon-cyan); text-decoration:underline; font-weight:bold;">📥 Скачать Физический CSV Файл Табеля</a>
+            `;
+            
+            // JavaScript динамически загружает и встраивает векторный график SVG в пространство страницы!
+            fetch(data.svg_inline_url)
+            .then(response => response.text())
+            .then(svgText => {
+                svgContainer.style.display = "block";
+                svgContainer.innerHTML = `<div style="font-size:9px; color:var(--neon-cyan); margin-bottom:6px; font-weight:bold;">📊 Осязаемый Векторный График (Физический .SVG сгенерирован):</div>` + svgText;
+            });
+        }
+    })
+    .catch(err => {
+        sBox.innerHTML = "🚨 Ошибка защищенного Fast API сокета контрактов.";
+    });
+}
+</script>
+
+<!-- 🕵️ БЛОК КИБЕР-СКАНИРОВАНИЯ: СТЕК БИБЛИОТЕК В МОНОЛИТНЫЙ {} СЛОВАРЬ -->
+<div class="moba-card" style="border-left-color: var(--neon-pink); background: rgba(255,0,127,0.01); margin-top:20px;">
+    <div class="moba-badge" style="background: var(--neon-pink); color:#fff;">🕵️ CYBER MESH SCANNER // РАЗВЕДКА ПОРТОВ</div>
+    <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px; line-height:1.4;">
+        Вызов асинхронного стека <b>requests, asyncio, aiohttp и python-nmap</b>. Сканирование прохода туннелей «От Я и обратно» и чужих сетей соседа со сбором логов строго в словарь {} [JSON]:
+    </div>
+    
+    <button type="button" class="btn-action" style="background: linear-gradient(135deg, var(--neon-pink), #aa0055); color:#fff;" onclick="triggerEzhikCyberProbe()">
+        🦔 Запустить Зонд Паутины & Вывести Словарь {}
+    </button>
+    <div id="cyber_dictionary_output" style="margin-top:12px; font-size:0.72rem; color:#fff; font-family:monospace; line-height:1.4; background:#020306; padding:10px; border-radius:8px; border:1px solid #1c203a; display:none; max-height:250px; overflow-y:auto;"></div>
+</div>
+
+<script>
+function triggerEzhikCyberProbe() {
+    let outBox = document.getElementById("cyber_dictionary_output");
+    outBox.style.display = "block";
+    outBox.innerHTML = "⏳ <i>Робот-Ёжик и Жук-Парсер вылетели в сеть... Опрос туннелей aiohttp... Асинхронный nmap-скан портов соседа...</i>";
+    
+    fetch("/api/trigger-cyber-mesh-probe/", {
+        method: "POST"
+    })
+    .then(res => res.json())
+    .then(dictionaryData => {
+        // Форматируем полученный ИТР-словарь {} в красивую читаемую JSON-строку на экране
+        let formattedJson = JSON.stringify(dictionaryData, null, 4);
+        outBox.innerHTML = `<b style="color:var(--neon-green);">ПОЛНЫЙ ОТВЕТ СТЕКА БИБЛИОТЕК ВЫВЕДЕН В СЛОВАРЬ {}:</b><br><pre style="color:#00f0ff; white-space: pre-wrap; word-wrap: break-word;">${formattedJson}</pre>`;
+    })
+    .catch(err => {
+        outBox.innerHTML = "🚨 Ошибка асинхронного кибер-шлюза сокетов.";
+    });
+}
+</script>
