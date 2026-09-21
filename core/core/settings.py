@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-933zj+@63@zz1to^xi$1^380+!n+5ulep9rw)3+)$(ob&xluut
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*', 'miroha.ru', 'www.miroha.ru', '89.111.155.234', '185.182.110.96']
 
 
 
@@ -169,4 +169,4 @@ CSRF_COOKIE_SECURE = False
 # ИТР-КОНФИГУРАЦИЯ УНИЧТОЖЕНИЯ ОШИБКИ 400 ТРАФИКА NGINX
 USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*', 'miroha.ru', 'www.miroha.ru', '89.111.155.234', '185.182.110.96']
