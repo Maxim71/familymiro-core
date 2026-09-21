@@ -4,44 +4,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MIROHA PLATFORM // LEGEND MONOLITH</title>
+    <title>MIROHA PLATFORM // COMMERCIAL MONOLITH</title>
     <link rel="stylesheet" href="{% static 'storage_control/css/pto_style.css' %}">
 </head>
 <body>
 
 <div class="container">
     
-    <!-- СЛОЙ КАПИТАЛА -->
-    <div class="moba-card" style="border-left: 4px solid #00f0ff;">
-        <div class="moba-badge">🔒 БРОНЕПОЕЗД АВТОМАТИЗАЦИИ ОПЕЧАТАН</div>
-        <div style="font-size: 14px; color: #00f0ff; font-weight: bold;">КАПИТАЛ СИНДИКАТА: <span style="color:#00ff66;">{{ object_capital_rub }}</span></div>
-        <div style="font-size: 10px; color:#8a99ad; margin-top:6px; font-weight: bold;">{{ market_status }}</div>
+    <!-- КАРТА КАПИТАЛА С КРАСИВЫМ ЖИВЫМ ФОТО ИЗ ПАУТИНЫ -->
+    <div class="moba-card" style="border-left: 4px solid var(--neon-cyan); position:relative; overflow:hidden;">
+        <div style="position:absolute; top:0; right:0; width:120px; height:100%; background: url('{{ featured_image_url }}') center/cover no-repeat; opacity:0.3; border-radius:0 12px 12px 0;"></div>
+        <div class="moba-badge">🔒 КЛАССТЕР ОПЕЧАТАН НА ПОРТУ 80</div>
+        <div style="font-size: 14px; color: var(--neon-cyan); font-weight: bold;">КАПИТАЛ СИНДИКАТА: <span style="color:#00ff66;">{{ object_capital_rub }}</span></div>
+        <div style="font-size: 9px; color:#8a99ad; margin-top:6px; font-weight: bold; width:70%; line-height:1.3;">{{ market_status }}<br><span style="color:var(--neon-pink);">\${{ action_notes }}</span></div>
     </div>
 
-    <!-- ЖИВОЙ ПУЛЬСИРУЮЩИЙ СТРИМ ИИ-ОТВЕТОВ НА НОВОСТИ -->
-    <div class="moba-card" style="border-left: 4px solid #ff0055;">
-        <div class="moba-badge" style="background:#ff0055;">📡 ЖИВОЙ RFI ПОТОК ИИ-ОТВЕТОВ СИНДИКАТА</div>
+    <!-- 🛒 ПРОЦЕСС КОММЕРЧЕСКИХ ПРОДУКТОВ СИНДИКАТА -->
+    <div class="moba-card" style="border-left-color: var(--neon-green); background: rgba(57,255,20,0.01);">
+        <div class="moba-badge" style="background: var(--neon-green); color:#000;">🛒 ИИ-КОММЕРЧЕСКИЙ ХАБ СМЕТ И ТЕНДЕРНЫХ ПРОДУКТОВ</div>
+        <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:12px; line-height:1.3;">Продукты для закупа мастеров монтажа, верифицированные Роботом-Ёжиком по лимитам ВОР:</div>
         
-        <div class="stream-box" id="live_stream_box">
-            {% for item in pulse_stream %}
-            <div style="margin-bottom: 12px; border-bottom: 1px dashed rgba(255,255,255,0.05); padding-bottom: 8px;">
-                <div style="color: #fff; font-weight: bold; font-size:11px;">{{ item.news }}</div>
-                <div style="color: #00ff66; font-size: 10px; margin-top: 4px; padding-left: 10px; line-height:1.4;">
-                    {{" "}} {{ item.reply }}
+        <div id="commercial_catalog_container">
+            {% for prod in commercial_catalog %}
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px; background:rgba(0,0,0,0.3); padding:8px; border-radius:8px; border:1px solid #1c203a;">
+                <img src="{{ prod.photo }}" style="width:45px; height:45px; object-fit:cover; border-radius:6px; border:1px solid var(--neon-cyan);">
+                <div style="font-size:0.7rem; line-height:1.3; color:#fff;">
+                    <b>{{ prod.name }}</b><br>
+                    Цена: <span style="color:#00ff66; font-weight:bold;">{{ prod.price }}</span> | <span style="color:#8a99ad;">{{ prod.stock }}</span><br>
+                    <span style="font-size:8px; color:var(--neon-pink);">🎵 Музыкальный фон: {{ prod.track_bg }}</span>
                 </div>
             </div>
             {% endfor %}
         </div>
-    </div>
 
-    <!-- ИИ-БЛОКНОТ СТЕРИЛИЗАЦИИ МЫСЛЕЙ -->
-    <div class="moba-card" style="border-left-color: var(--neon-pink); background: rgba(255,0,127,0.01);">
-        <div class="moba-badge" style="background: var(--neon-pink);">📝 ИИ-БЛОКНОТ ПРОРАБА / ЧЕРНОВИК</div>
-        <textarea id="raw_notes_field" placeholder="Пример: Потеряли накладную М-15 на цемент..."></textarea>
-        <button type="button" class="btn-action" style="background:linear-gradient(135deg, var(--neon-pink), #aa0055); color:#fff;" onclick="processEzhikThoughts()">
-            🧠 Стерилизовать Мысли через ИИ Библиотеки
+        <button type="button" class="btn-action" style="background: linear-gradient(135deg, var(--neon-green), #00aa00); color:#000; margin-top:5px;" onclick="triggerEzhikCreativeCommerce()">
+            🦔 Логическое Творчество Ёжика(): Скачать Новые Треки & Фото
         </button>
-        <div id="ii_output_box" style="margin-top:12px; font-size:0.75rem; color:#fff; line-height:1.4;"></div>
+        <div id="creative_status_box" style="margin-top:10px; font-size:0.72rem; color:#fff; font-family:monospace; line-height:1.3;"></div>
     </div>
 
     <!-- ВЕКОВАЯ НАВИГАЦИЯ -->
@@ -53,111 +52,20 @@
 
 </div>
 
-<script src="{% static 'storage_control/js/pto_logic.js' %}"></script>
+<script>
+function triggerEzhikCreativeCommerce() {
+    let box = document.getElementById("creative_status_box");
+    box.innerHTML = "⏳ <i>Робот-Ёжик скачивает новые красивые фотоотчеты... Подгрузка неоновых треков в ОЗУ...</i>";
+    
+    fetch("/api/trigger-creative-commercial/", { method: "POST" })
+    .then(res => res.json())
+    .then(data => {
+        if(data.status === "success") {
+            box.innerHTML = `<span style="color:var(--neon-green);">${data.message}</span><br>🎵 <b>Текущий трек:</b> ${data.current_track.name}<br>📸 <b>ИИ-Картинка стока обновлена!</b>`;
+            setTimeout(() => { location.reload(); }, 1500); # Перезагружаем страницу для отображения нового фото контента
+        }
+    });
+}
+</script>
 </body>
 </html>
-
-<!-- 💳 АСИНХРОННЫЙ БАНКОВСКИЙ ШЛЮЗ СБП АЛЬФА-БАНКА -->
-<script>
-function triggerEzhikSbpPayment() {
-    let confirmPay = confirm("💳 Запустить генерацию динамического СБП QR-кода НСПК для проводки капитала 15,000,000.00 ₽ через Альфа-Банк?");
-    if (!confirmPay) return;
-    
-    let marketStatusDiv = document.querySelector("div[style*='color:#8a99ad']");
-    if (marketStatusDiv) marketStatusDiv.innerHTML = "⏳ <i>Связь с сервером Альфа-Банка... Расчет 2% маржи...</i>";
-    
-    let formData = new FormData();
-    formData.append("amount", "15000000.00");
-    formData.append("order_type", "Проводка капитала синдиката по объекту Тула (Капсула Вечности)");
-    
-    fetch("/api/checkout-sbp-payment/", {
-        method: "POST",
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.status === "success") {
-            alert(`${data.message}\n\n🤖 Маржа Синдиката зафиксирована: ${data.commission}`);
-            if (marketStatusDiv) marketStatusDiv.innerHTML = `✅ QR СФОРМИРОВАН! <a href="${data.qr_url}" target="_blank" style="color:#00ff66; text-decoration:underline;">Открыть линк НСПК СБП</a>`;
-        } else {
-            alert("🚨 Ошибка банковского сокета.");
-        }
-    })
-    .catch(err => alert("Ошибка связи с финансовым API"));
-}
-
-// Привязываем функцию к кнопке АВТОРИЗОВАТЬ СБП на главной странице
-document.addEventListener("DOMContentLoaded", function() {
-    let sbpBtn = document.querySelector("button[onclick*='sbp']");
-    if (!sbpBtn) {
-        let buttons = document.querySelectorAll("button");
-        for (let b of buttons) {
-            if (b.textContent.includes("СБП") || b.textContent.includes("ОПЛАТИТЬ")) { sbpBtn = b; break; }
-        }
-    }
-    if (sbpBtn) {
-        sbpBtn.removeAttribute("onclick");
-        sbpBtn.addEventListener("click", triggerEzhikSbpPayment);
-        console.log("✅ [ФИН-ПЕРЕХВАТЧИК]: Кнопка СБП Альфа-Банка успешно увязана!");
-    }
-});
-</script>
-
-<!-- 🛰️ ИИ-БИРЖА ТЕНДЕРОВ И ДИАГНОСТИКА МАСТЕРОВ МОНТАЖА -->
-<div class="moba-card" style="border-left-color: var(--neon-cyan); background: rgba(0,240,255,0.01); margin-top:20px;">
-    <div class="moba-badge" style="background: var(--neon-cyan); color:#000;">🛰️ ИИ-БИРЖА ТЕНДЕРОВ // МОНТАЖ ОБЛАСТЬ</div>
-    <div style="font-size: 0.75rem; color: #8a99ad; margin-bottom: 12px; line-height:1.4;">
-        Робот-Ёжик сканирует JSON API площадок Тульского региона по ключевому слову <b>«МОНТАЖ»</b>. Ниже представлены горячие лоты за последний час:
-    </div>
-    <div id="tender_exchange_box" style="font-size:0.72rem; line-height:1.4; font-family:monospace; margin-bottom:15px; border-bottom:1px dashed rgba(255,255,255,0.05); padding-bottom:10px;">
-        ⏳ <i>Жук-Сканер опрашивает тендерные шлюзы... Сбор крох данных...</i>
-    </div>
-    
-    <div class="moba-badge" style="background: var(--neon-pink);">🎙️ Bot API ШЛЮЗ // ОБЩАТЬСЯ С МАСТЕРОМ</div>
-    <form id="bot_master_form" style="margin-top:5px;">
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:8px;">
-            <input type="text" id="master_phone" value="+7(999)777-55-44" placeholder="Номер телефона мастера" style="background:#020306; border:1px solid #1e2640; color:#fff; padding:6px; border-radius:6px; font-size:0.75rem;">
-            <input type="text" id="master_axis" value="Ось А-Г // Ригель №2" placeholder="Контрольная ось фото" style="background:#020306; border:1px solid #1e2640; color:#fff; padding:6px; border-radius:6px; font-size:0.75rem;">
-        </div>
-        <button type="button" class="btn-action" style="background: linear-gradient(135deg, var(--neon-pink), #aa0055); color:#fff;" onclick="submitMasterDiagnosticBotApi()">
-            📸 Принять Фотоотчет Диагностики & Расчитать Рейтинг
-        </button>
-    </form>
-    <div id="bot_api_output" style="margin-top:10px; font-size:0.72rem; color:#fff; line-height:1.4; font-family:monospace;"></div>
-</div>
-
-<script>
-// Асинхронный подхват тендеров региона из JSON API Питона
-document.addEventListener("DOMContentLoaded", function() {
-    let box = document.getElementById("tender_exchange_box");
-    fetch("/api/tender-exchange-dashboard/")
-    .then(res => res.json())
-    .then(data => {
-        if(data.status === "success") {
-            let tText = data.tenders.map(t => `🔹 <b>[${t.id}]</b> ${t.title}<br>💰 Бюджет: <span style="color:#00ff66;">${t.budget}</span> | 📍 ${t.location}<br><i style="color:var(--neon-pink);">${t.status}</i>`).join("<br><br>");
-            box.innerHTML = `<b style="color:var(--neon-cyan);">Регион сканирования:</b> ${data.region}<br><br>${tText}`;
-        }
-    });
-});
-
-// Отправка отчета диагностики мастера монтажа по осям в Bot API шлюз
-function submitMasterDiagnosticBotApi() {
-    let out = document.getElementById("bot_api_output");
-    out.innerHTML = "⏳ <i>Верификация ответственности мастера... Pillow/OpenCV сканируют матрицу пикселей...</i>";
-    
-    let fd = new FormData();
-    fd.append("phone", document.getElementById("master_phone").value);
-    fd.append("axis", document.getElementById("master_axis").value);
-    
-    fetch("/api/bot-api-master-diagnostic/", {
-        method: "POST",
-        body: fd
-    })
-    .then(res => res.json())
-    .then(data => {
-        if(data.status === "success") {
-            out.innerHTML = `<span style="color:var(--neon-green);">${data.message}</span><br><br>${data.details.replace(/\n/g, '<br>')}`;
-        }
-    });
-}
-</script>
