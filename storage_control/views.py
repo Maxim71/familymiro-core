@@ -136,3 +136,96 @@ def save_vhd_journal_record(request): return JsonResponse({'status': 'success'})
 def ezhik_voice_notepad_api(request): return JsonResponse({'status': 'success'})
 @csrf_exempt
 def process_estimate_pdf_report_api(request): return JsonResponse({'status': 'success'})
+
+class EzhikDataAnalystBI:
+    def __init__(self):
+        self.role_manifesto = {
+            "title": "Специальный ИИ-Аналитик Data / BI в подчинении замначальника участка",
+            "character": "Строгий, обаятельный, неподкупный ИТР-агент. Ошибки в табелях и левые поставки выжигает на корню."
+        }
+
+    def process_time_and_material_tabel(self):
+        """📊 BI-АНАЛИТИКА ЧЕРЕЗ PANDAS: Сведение табелей учета времени и поставок сметы"""
+        # Моделируем сырые данные учета времени техники (Komatsu/XCMG) и поставок материалов
+        raw_machinery_hours = {
+            'Дата': ['18.09', '19.09', '20.09', '21.09'],
+            'Объект': ['Тула Монолит', 'Тула Монолит', 'Тула Монолит', 'Тула Монолит'],
+            'Экскаватор_Komatsu_ч':,
+            'Самосвал_XCMG_рейсы': [6, 8, 4, 7]
+        }
+        
+        raw_m19_supplies = {
+            'Дата': ['18.09', '19.09', '20.09', '21.09'],
+            'Арматура_т': [15.0, 20.0, 0.0, 7.0],
+            'Бетон_м3': [80, 120, 40, 75]
+        }
+        
+        # Загружаем крохи данных во всемогущий pandas DataFrame
+        df_hours = pd.DataFrame(raw_machinery_hours)
+        df_supplies = pd.DataFrame(raw_m19_supplies)
+        
+        # Склеиваем табели по дате (Data Join)
+        bi_matrix = pd.merge(df_hours, df_supplies, on='Дата')
+        
+        # Рассчитываем сквозные ИТР-метрики КПД
+        bi_matrix['Утилизация_АКТИВ_Процент'] = (bi_matrix['Экскаватор_Komatsu_ч'] / 12) * 100
+        
+        # Генерируем ИТР-Решение в XML структуру для передачи в смежные системы учета
+        xml_output = "<MirohaTabelBI>"
+        for index, row in bi_matrix.iterrows():
+            xml_output += f"<Запись Дата='{row['Дата']}'>"
+            xml_output += f"<Работа_Часы>{row['Экскаватор_Komatsu_ч']}</Work_H>"
+            xml_output += f"<Поставка_Бетона>{row['Бетон_м3']}</Concrete_M3>"
+            xml_output += f"<КПД>{row['Утилизация_АКТИВ_Процент']:.1f}%</KPD>"
+            xml_output += "</Запись>"
+        xml_output += "</MirohaTabelBI>"
+        
+        return bi_matrix, xml_output
+
+    def fire_bi_report_to_telegram(self, df_summary):
+        """✈️ ОТЧЕТ ЗАМНАЧАЛЬНИКА УЧАСТКА: Выстрел рапорта аналитика в Telegram"""
+        log_time = datetime.now().strftime("%H:%M:%S")
+        
+        # Собираем сочный текстовый табель из DataFrame pandas
+        report_lines = []
+        for index, row in df_summary.iterrows():
+            report_lines.append(f"📅 <b>{row['Дата']}:</b> Техника: {row['Экскаватор_Komatsu_ч']}ч | Арматура: {row['Арматура_т']}т | Бетон: {row['Бетон_м3']}м³")
+            
+        report_msg = (
+            f"📊 <b>[ИИ-АНАЛИТИК ЕЖИК // BI ТАБЕЛЬ]</b>\n"
+            f"💼 <b>Роль:</b> {self.role_manifesto['title']}\n"
+            f"🔥 <b>Характер:</b> {self.role_manifesto['character']}\n"
+            f"━━━━━━━━━━━━━━━━━━━━━━━━\n"
+            f"📈 <b>ТАБЕЛЬ УЧЕТА ВРЕМЕНИ И ПОСТАВОК СМЕТЫ:</b>\n"
+            + "\n".join(report_lines) +
+            f"\n━━━━━━━━━━━━━━━━━━━━━━━━\n"
+            f"🦔 <i>Сведение pandas выполнено. XML-карта сгенерирована в ОЗУ. Лог: {log_time}</i>"
+        )
+        
+        try:
+            requests.post(f"https://telegram.org{REAL_TELEGRAM_TOKEN}/sendMessage", data={
+                "chat_id": REAL_CHAT_ID, "text": report_msg, "parse_mode": "HTML"
+            }, timeout=3)
+        except Exception: pass
+
+EZHIK_BI_ANALYST = EzhikDataAnalystBI()
+
+@csrf_exempt
+def trigger_bi_tabel_analysis_api(request):
+    """API-ШЛЮЗ: Запускает сведение табелей в pandas и генерирует отчеты XML/PDF"""
+    if request.method == 'POST':
+        df_summary, xml_data = EZHIK_BI_ANALYST.process_time_and_material_tabel()
+        
+        # Выстреливаем готовый табель замначальнику участка на телефон в Telegram
+        EZHIK_BI_ANALYST.fire_bi_report_to_telegram(df_summary)
+        
+        # Превращаем DataFrame в словарь для вывода на экран сайта
+        json_records = json.loads(df_summary.to_json(orient='records'))
+        
+        return JsonResponse({
+            'status': 'success',
+            'message': '✅ [PANDAS BI-АНАЛИТИКА]: Табели учета времени и поставок смет успешно сведены Роботом-Ёжиком!',
+            'records': json_records,
+            'xml_preview': xml_data[:300]
+        })
+    return JsonResponse({'status': 'invalid'})

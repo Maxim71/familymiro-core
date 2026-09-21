@@ -13,4 +13,5 @@ urlpatterns = [
     path('api/neuro-radar-voice/', views.neuro_radar_voice_api, name='neuro_radar_voice_api'),
     path('api/computer-vision-m19/', views.computer_vision_m19_api, name='computer_vision_m19_api'),
     path('api/checkout-sbp-payment/', views.checkout_sbp_payment_api, name='checkout_sbp_payment_api'),
+    path('api/trigger-bi-tabel-analysis/', views.trigger_bi_tabel_analysis_api, name='trigger_bi_tabel_analysis_api'),
 ]

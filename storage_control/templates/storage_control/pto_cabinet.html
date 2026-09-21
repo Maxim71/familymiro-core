@@ -142,3 +142,38 @@ function triggerEzhikPdfAnalysis() {
 </script>
 </body>
 </html>
+
+<!-- 📊 ИИ-МОДУЛЬ DATA ANALYST / BI ТАБЕЛЯ -->
+<div class="moba-card" style="border-left-color: var(--neon-cyan); background: rgba(0,240,255,0.01); margin-top:20px;">
+    <div style="font-size: 0.95rem; font-weight: bold; color: var(--neon-cyan); margin-bottom: 8px;">📊 РОЛЬ: DATA ANALYST / BI-АНАЛИТИК СИНДИКАТА</div>
+    <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px; line-height:1.4;">
+        Ёжик подхватит библиотеки <b>pandas</b>, сведет табели учета времени работы техники и поставок материалов М-19, сформирует XML-структуру и вышлет полный BI-рапорт замначальника участка на телефон!
+    </div>
+    <button type="button" class="btn-action" style="background: linear-gradient(135deg, var(--neon-cyan), #00aaaa); color: #000;" onclick="triggerEzhikPandasBI()">
+        🦔 Свести Табели через Pandas & Выслать Рапорт
+    </button>
+    <div id="bi_status_box" style="margin-top:10px; font-size:0.72rem; color:#fff; font-family:monospace; line-height:1.4;"></div>
+</div>
+
+<script>
+function triggerEzhikPandasBI() {
+    let statusBox = document.getElementById("bi_status_box");
+    statusBox.innerHTML = "⏳ <i>Робот-Ёжик инициализирует DataFrames... Merging таблиц учета времени Komatsu/XCMG и М-19...</i>";
+    
+    fetch("/api/trigger-bi-tabel-analysis/", {
+        method: "POST"
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            let recordsText = data.records.map(r => `• ${r.Дата}: Техника ${r.Экскаватор_Komatsu_ч}ч, Бетон ${r.Бетон_м3}м³ (КПД: ${r.Утилизация_АКТИВ_Процент.toFixed(1)}%)`).join("<br>");
+            statusBox.innerHTML = `<span style="color:var(--neon-green);">${data.message}</span><br><br><b style="color:var(--neon-cyan);">Сводные данные Pandas DataFrame:</b><br>${recordsText}<br><br><b style="color:var(--neon-pink);">Генерация XML-карты:</b><br><code>${data.xml_preview.replace(/</g, '&lt;').replace(/>/g, '&gt;')}...</code>`;
+        } else {
+            statusBox.innerHTML = "🚨 Сбой обработки данных в pandas.";
+        }
+    })
+    .catch(err => {
+        statusBox.innerHTML = "🚨 Ошибка финансово-аналитического сокета.";
+    });
+}
+</script>
