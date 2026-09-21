@@ -390,3 +390,80 @@ function triggerEzhikCyberProbe() {
     });
 }
 </script>
+
+<!-- 🖥️ БЛОК: ИИ-ПЛАТФОРМА AGRIPS CORE ДЛЯ МЕНЕДЖЕРА ПРОЕКТА -->
+<div class="moba-card" style="border-left-color: var(--neon-cyan); background: rgba(0,240,255,0.01); margin-top:20px;">
+    <div class="moba-badge" style="background: var(--neon-cyan); color:#000;">🛰️ МЕНЕДЖЕР ПРОЕКТА // ПЛАТФОРМА AGRIPS CORE</div>
+    <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px; line-height:1.4;">
+        Асинхронный CRUD-мониторинг портов и подключений (Web / Mobile / CLI) под контролем модуля <b>«Зрение Сокола»</b> на базе библиотек <b>asyncio & await</b>:
+    </div>
+
+    <!-- 📊 ТАБЛИЦА СЛЕДА IPS УСТРОЙСТВ СИНДИКАТА -->
+    <div style="margin-bottom:15px; border-radius:8px; overflow:hidden; border:1px solid #22263f; background:#020306; padding:10px;">
+        <div style="font-size:9px; color:var(--neon-cyan); font-weight:bold; margin-bottom:6px;">👁️ ЗРЕНИЕ СОКОЛА: РЕЕСТР АКТИВНЫХ СОКЕДОВ IPS:</div>
+        <div id="agrips_registry_box" style="font-size:0.7rem; font-family:monospace; line-height:1.4; color:#fff;">
+            ⏳ <i>Аналитический табель AGRIPS опрашивает Fast API порты...</i>
+        </div>
+    </div>
+
+    <!-- ФОРМА ДОБАВЛЕНИЯ НОВОГО УЗЛА (CREATE CRUD) -->
+    <form id="agrips_crud_form">
+        <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap:10px; margin-bottom:8px;">
+            <input type="text" id="agrips_ip" value="192.168.0.216" placeholder="Входящий IP устройства" style="background:#020306; border:1px solid #1e2640; color:#fff; padding:6px; border-radius:6px; font-size:0.75rem;">
+            <input type="text" id="agrips_owner" value="Замначальника участка" placeholder="Ответственное лицо" style="background:#020306; border:1px solid #1e2640; color:#fff; padding:6px; border-radius:6px; font-size:0.75rem;">
+        </div>
+        <button type="button" class="btn-action" style="background: linear-gradient(135deg, var(--neon-cyan), #00aaaa); color:#000;" onclick="submitNewAgripsNodeCrud()">
+            🔌 Авторизовать Новое Устройство в Пространстве AGRIPS()
+        </button>
+    </form>
+</div>
+
+<script>
+// Автоматический READ (CRUD) вызов данных из Fast API шлюза при загрузке
+document.addEventListener("DOMContentLoaded", function() {
+    refreshAgripsDashboard();
+});
+
+function refreshAgripsDashboard() {
+    let regBox = document.getElementById("agrips_registry_box");
+    fetch("/fastapi/api/v2/agrips-dashboard/")
+    .then(res => res.json())
+    .then(data => {
+        if(data.status === "success") {
+            let regText = Object.keys(data.connected_registry_crud).map(ip => {
+                let node = data.connected_registry_crud[ip];
+                return `🌐 <b>IP: ${ip}</b> ➔ ${node.device} | Лицо: <b>${node.owner}</b> | КПД: <span style="color:#00ff66;">${node.kpd}</span> | Статус: <i style="color:var(--neon-pink);">${node.status}</i>`;
+            }).join("<br>");
+            
+            regBox.innerHTML = `
+                <b>Текущее решение:</b> <span style="color:var(--neon-green);">${data.current_session_audit.platform}</span><br>
+                <b>УГРП Статус:</b> ${data.current_session_audit.security_check}<br>
+                ━━━━━━━━━━━━━━━━━━━━━━━━<br>
+                ${regText}
+            `;
+        }
+    });
+}
+
+function submitNewAgripsNodeCrud() {
+    let regBox = document.getElementById("agrips_registry_box");
+    regBox.innerHTML = "⏳ <i>Внесение записи в СУБД ОЗУ... Проброс Fast API сокета...</i>";
+    
+    let fd = new FormData();
+    fd.append("node_ip", document.getElementById("agrips_ip").value);
+    fd.append("owner", document.getElementById("agrips_owner").value);
+    fd.append("device_type", "📱 MOBILE РЕШЕНИЕ (Инкогнито)");
+    
+    fetch("/fastapi/api/v2/agrips-crud-create/", {
+        method: "POST",
+        body: fd
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.status === "success") {
+            alert(data.message);
+            refreshAgripsDashboard(); # Мгновенно обновляем аналитический табель на экране!
+        }
+    });
+}
+</script>
