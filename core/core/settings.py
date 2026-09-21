@@ -157,3 +157,11 @@ CSRF_COOKIE_SECURE = True
 
 # Передает Django информацию о том, что запрос был через HTTPS (если перед ним стоит прокси)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# ИТР-ОТКЛЮЧЕНИЕ СЕТЕВЫХ ПЕТЕЛЬ ДЛЯ МАКСИМА
+SECURE_SSL_REDIRECT = False
+SECURE_HSTS_SECONDS = 0
+SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+SECURE_HSTS_PRELOAD = False
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
