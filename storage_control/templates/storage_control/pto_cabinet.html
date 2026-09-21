@@ -15,65 +15,35 @@
         <div class="moba-badge" style="background: var(--neon-pink); margin-top:5px;">{{ system_status }}</div>
     </div>
 
-    <!-- 📸 ШЛЮЗ ПРОРАБА: ЗАГРУЗКА ФОТООТЧЕТОВ ПО ОСЯМ И ГОСПАСПОРТОВ -->
-    <div class="moba-card" style="border-left-color: var(--neon-pink); background: rgba(255,0,127,0.01);">
-        <div style="font-size: 0.95rem; font-weight: bold; color: var(--neon-pink); margin-bottom: 8px;">📸 ИИ-ЗРЕНИЕ: ЗАГРУЗКА ФОТООТЧЕТОВ И ГОСПАСПОРТОВ С ОСЕЙ</div>
-        <form id="cv_photo_form" enctype="multipart/form-data">
-            <div style="margin-bottom:10px;">
-                <label style="font-size:0.75rem; color:var(--text-muted);">Строительная ось (например, Ось А-Г/1-4):</label>
-                <input type="text" id="axis_info_field" name="axis_info" value="Ось А-Г // Пилон №3" style="width:100%; background:#070a0e; border:1px solid #22263f; color:#fff; border-radius:6px; padding:6px; font-size:0.8rem; margin-top:4px; outline:none;">
+    <!-- 📸 БЛОК OPENCV КАСКАДНОГО АНАЛИЗА И RICH STATUS JOURNAL -->
+    <div class="moba-card" style="border-left-color: var(--neon-green); background: rgba(57,255,20,0.01);">
+        <div class="moba-badge" style="background: var(--neon-green); color:#000;">📸 КАСКАДНОЕ ИИ-ЗРЕНИЕ OPENCV & NumPy МАТРИЦА</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 10px; line-height:1.4;">
+            Автоматическое разложение фотоотчетов с осей в двоичный код пикселей. Расчет плотности армирования перед заливкой бетона:
+        </div>
+        <div id="opencv_cascade_box" style="padding:10px; background:#020306; border-radius:6px; font-size:0.7rem; font-family:monospace; line-height:1.4; color:#fff; border:1px solid #1c203a; margin-bottom:12px;"></div>
+
+        <div class="moba-badge" style="background: var(--neon-cyan); color:#000;">🔌 RICH STATUS JOURNAL // БИНАРНЫЕ СОКЕДЫ КОННЕКТА</div>
+        <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 10px; line-height:1.4;">
+            Каскадный поинтервальный мониторинг линков портов кластера (`_connection` состояние ОЗУ):
+        </div>
+        <div id="rich_journal_box" style="padding:8px; background:#020306; border-radius:6px; font-size:0.68rem; font-family:monospace; line-height:1.4; color:#00f0ff;"></div>
+    </div>
+
+    <!-- МЕНЕДЖЕР ПРОЕКТА AGRIPS CORE -->
+    <div class="moba-card" style="border-left-color: var(--neon-cyan); background: rgba(0,240,255,0.01); margin-top:20px;">
+        <div class="moba-badge" style="background: var(--neon-cyan); color:#000;">🛰️ МЕНЕДЖЕР ПРОЕКТА // ПЛАТФОРМА AGRIPS CORE</div>
+        <div id="agrips_registry_box" style="font-size:0.7rem; font-family:monospace; line-height:1.4; color:#fff; margin-bottom:12px;"></div>
+        
+        <form id="agrips_crud_form">
+            <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap:10px; margin-bottom:8px;">
+                <input type="text" id="agrips_ip" value="192.168.0.216" style="background:#020306; border:1px solid #1e2640; color:#fff; padding:6px; border-radius:6px; font-size:0.75rem;">
+                <input type="text" id="agrips_owner" value="Замначальника участка" style="background:#020306; border:1px solid #1e2640; color:#fff; padding:6px; border-radius:6px; font-size:0.75rem;">
             </div>
-            <div style="margin-bottom:10px;">
-                <label style="font-size:0.75rem; color:var(--text-muted);">Тип исполнительной документации:</label>
-                <select id="doc_type_field" name="doc_type" style="width:100%; background:#070a0e; border:1px solid #22263f; color:#fff; border-radius:6px; padding:6px; font-size:0.8rem; margin-top:4px; outline:none;">
-                    <option value="Акт скрытых работ (АОСР)">Акт скрытых работ (АОСР)</option>
-                    <option value="Паспорт качества завода (Госпаспорт)">Паспорт качества завода (Госпаспорт)</option>
-                    <option value="Фотофиксация армирования">Фотофиксация армирования перед заливкой</option>
-                </select>
-            </div>
-            <input type="file" id="construction_photo_field" name="construction_photo" accept="image/*" style="font-size:0.8rem; color:#fff; margin-bottom:12px; display:block;">
-            <button type="button" class="btn-action" style="background: linear-gradient(135deg, var(--neon-pink), #aa0055); color: #fff;" onclick="uploadAxisPhotoReport()">
-                👁️ Запустить Зрение Ёжика и внести в Журнал()
+            <button type="button" class="btn-action" style="background: linear-gradient(135deg, var(--neon-cyan), #00aaaa); color:#000;" onclick="submitNewAgripsNodeCrud()">
+                🔌 Авторизовать Новое Устройство в Пространстве AGRIPS()
             </button>
         </form>
-        <div id="cv_status_box" style="margin-top:10px; font-size:0.75rem; color:#fff; font-family:monospace; line-height:1.4;"></div>
-    </div>
-
-    <!-- 📊 ТАБЛИЦА ЖУРНАЛА ИСПОЛНИТЕЛЬНОЙ ДОКУМЕНТАЦИИ (ДЛЯ ЗАЩИТЫ АКТОВ КС) -->
-    <div class="moba-card" style="border-left-color: var(--neon-cyan);">
-        <div style="font-size: 0.95rem; font-weight: bold; color: var(--neon-cyan); margin-bottom: 10px;">📋 ЖУРНАЛ УЧЕТА ИСПОЛНИТЕЛЬНОЙ ДОКУМЕНТАЦИИ ОРАКУЛА</div>
-        <div style="max-height: 200px; overflow-y: auto;">
-            <table style="width:100%; border-collapse:collapse; font-size:0.7rem; text-align:left; color:#fff;">
-                <thead>
-                    <tr style="border-bottom:1px solid var(--neon-cyan); color:var(--neon-cyan);">
-                        <th style="padding:4px;">Дата/Ось</th>
-                        <th style="padding:4px;">Документ</th>
-                        <th style="padding:4px;">Вердикт ИИ-Зрения</th>
-                    </tr>
-                </thead>
-                <tbody id="journal_table_body">
-                    <tr style="border-bottom:1px solid rgba(255,255,255,0.03);">
-                        <td style="padding:6px 4px;">18.09 // Ось А-Г</td>
-                        <td style="padding:6px 4px;">Госпаспорт металл КНР</td>
-                        <td style="padding:6px 4px; color:var(--neon-green);">✅ Совпадает с сертификатом XCMG</td>
-                    </tr>
-                    <tr style="border-bottom:1px solid rgba(255,255,255,0.03);">
-                        <td style="padding:6px 4px;">17.09 // Ось В-Д</td>
-                        <td style="padding:6px 4px;">АОСР Армирование плиты</td>
-                        <td style="padding:6px 4px; color:var(--neon-green);">✅ Объем подтвержден, дефектов нет</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- Общие лимиты -->
-    <div class="moba-card" style="border-left-color: var(--neon-green); background: rgba(57,255,20,0.01);">
-        <div style="font-size: 0.95rem; font-weight: bold; color: var(--neon-green); margin-bottom: 8px;">📊 АВТОМАТИЧЕСКИЙ ПОДБЕТ СМЕТ И АКТОВ КС-2/КС-3</div>
-        <button type="button" class="btn-action" style="background: linear-gradient(135deg, var(--neon-green), #00aa00); color: #000;" onclick="triggerEzhikPdfAnalysis()">
-            ⚡ Выполнить Решение() и Отправить PDF-анализ
-        </button>
-        <div id="pdf_status_box" style="margin-top:10px; font-size:0.75rem; color:#fff; line-height:1.4; font-family:monospace;"></div>
     </div>
 
     <button class="btn-action" onclick="location.href='/'" style="background: rgba(255,255,255,0.05); color: #fff; border: 1px solid #1c203a; margin-top: 15px;">
@@ -82,388 +52,50 @@
 </div>
 
 <script>
-// Асинхронная отправка фотоотчета прораба на ИИ-Зрение Питона
-function uploadAxisPhotoReport() {
-    let fileField = document.getElementById("construction_photo_field");
-    let axisField = document.getElementById("axis_info_field");
-    let docTypeField = document.getElementById("doc_type_field");
-    let statusBox = document.getElementById("cv_status_box");
-    let tableBody = document.getElementById("journal_table_body");
-    
-    if (!fileField.files.length) {
-        alert("🚨 Ошибка: Выберите файл фотографии или госпаспорта с осей!");
-        return;
-    }
-    
-    statusBox.innerHTML = "⏳ <i>Робот-Ёжик сканирует пиксельную матрицу фотоотчета... Разделение контуров арматуры...</i>";
-    
-    let formData = new FormData();
-    formData.append("construction_photo", fileField.files[0]);
-    formData.append("axis_info", axisField.value);
-    formData.append("doc_type", docTypeField.value);
-    
-    fetch("/api/computer-vision-m19/", {
-        method: "POST",
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.status === "success" || data.status === "warning") {
-            statusBox.innerHTML = `<span style="color:var(--neon-cyan);">${data.message}</span><br><b style="color:#fff;">Вердикт CV:</b> ${data.cv_verdict}<br><b style="color:var(--neon-pink);">Статус склада:</b> ${data.m19_action}`;
-            
-            # Динамически вставляем новую ИИ-строку прямо в Журнал на экране!
-            let newRow = `<tr style="border-bottom:1px solid var(--neon-pink); background:rgba(255,0,127,0.03);">
-                <td style="padding:6px 4px;">${data.record.time.split(' ')[0]} // ${data.record.axis}</td>
-                <td style="padding:6px 4px;">${data.record.doc}</td>
-                <td style="padding:6px 4px; color:var(--neon-green);">${data.record.verdict}</td>
-            </tr>`;
-            tableBody.insertAdjacentHTML('afterbegin', newRow);
-            fileField.value = ""; // Сброс поля
-        } else {
-            statusBox.innerHTML = "🚨 Ошибка ИИ-анализа матрицы.";
-        }
-    })
-    .catch(err => {
-        statusBox.innerHTML = "🚨 Ошибка сетевого шлюза зрения.";
-    });
-}
-
-function triggerEzhikPdfAnalysis() {
-    let statusBox = document.getElementById("pdf_status_box");
-    statusBox.innerHTML = "⏳ <i>Робот-Ёжик подбивает накопительные акты КС-2/КС-3... Проектирование PDF...</i>";
-    fetch("/api/process-estimate-pdf-report/", { method: "POST" })
-    .then(res => res.json())
-    .then(data => {
-        if (data.status === "success") {
-            statusBox.innerHTML = `<span style="color:var(--neon-green);">${data.message}</span><br>👉 <a href="${data.pdf_url}" target="_blank" style="color:var(--neon-cyan); text-decoration:underline;">Открыть физический PDF на сервере</a>`;
-        }
-    });
-}
-</script>
-</body>
-</html>
-
-<!-- 📊 ИИ-МОДУЛЬ DATA ANALYST / BI ТАБЕЛЯ -->
-<div class="moba-card" style="border-left-color: var(--neon-cyan); background: rgba(0,240,255,0.01); margin-top:20px;">
-    <div style="font-size: 0.95rem; font-weight: bold; color: var(--neon-cyan); margin-bottom: 8px;">📊 РОЛЬ: DATA ANALYST / BI-АНАЛИТИК СИНДИКАТА</div>
-    <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px; line-height:1.4;">
-        Ёжик подхватит библиотеки <b>pandas</b>, сведет табели учета времени работы техники и поставок материалов М-19, сформирует XML-структуру и вышлет полный BI-рапорт замначальника участка на телефон!
-    </div>
-    <button type="button" class="btn-action" style="background: linear-gradient(135deg, var(--neon-cyan), #00aaaa); color: #000;" onclick="triggerEzhikPandasBI()">
-        🦔 Свести Табели через Pandas & Выслать Рапорт
-    </button>
-    <div id="bi_status_box" style="margin-top:10px; font-size:0.72rem; color:#fff; font-family:monospace; line-height:1.4;"></div>
-</div>
-
-<script>
-function triggerEzhikPandasBI() {
-    let statusBox = document.getElementById("bi_status_box");
-    statusBox.innerHTML = "⏳ <i>Робот-Ёжик инициализирует DataFrames... Merging таблиц учета времени Komatsu/XCMG и М-19...</i>";
-    
-    fetch("/api/trigger-bi-tabel-analysis/", {
-        method: "POST"
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.status === "success") {
-            let recordsText = data.records.map(r => `• ${r.Дата}: Техника ${r.Экскаватор_Komatsu_ч}ч, Бетон ${r.Бетон_м3}м³ (КПД: ${r.Утилизация_АКТИВ_Процент.toFixed(1)}%)`).join("<br>");
-            statusBox.innerHTML = `<span style="color:var(--neon-green);">${data.message}</span><br><br><b style="color:var(--neon-cyan);">Сводные данные Pandas DataFrame:</b><br>${recordsText}<br><br><b style="color:var(--neon-pink);">Генерация XML-карты:</b><br><code>${data.xml_preview.replace(/</g, '&lt;').replace(/>/g, '&gt;')}...</code>`;
-        } else {
-            statusBox.innerHTML = "🚨 Сбой обработки данных в pandas.";
-        }
-    })
-    .catch(err => {
-        statusBox.innerHTML = "🚨 Ошибка финансово-аналитического сокета.";
-    });
-}
-</script>
-
-<!-- 📐 БЛОК ERP: ТЕНДЕРНЫЙ КАЛЬКУЛЯТОР СУБПОДРЯДЧИКОВ -->
-<div class="moba-card" style="border-left-color: var(--neon-green); background: rgba(57,255,20,0.01); margin-top:20px;">
-    <div style="font-size: 0.95rem; font-weight: bold; color: var(--neon-green); margin-bottom: 8px;">📐 ERP ВЕРИФИКАТОР СУБПОДРЯДЧИКОВ (ВОР СМЕТЫ)</div>
-    <form id="erp_candidate_form">
-        <div style="margin-bottom:8px;">
-            <input type="text" id="erp_name" value="ООО СпецСтройТула" style="width:100%; background:#070a0e; border:1px solid #22263f; color:#fff; border-radius:6px; padding:6px; font-size:0.8rem;">
-        </div>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
-            <input type="number" id="erp_price" value="65000" placeholder="Цена за тонну" style="background:#070a0e; border:1px solid #22263f; color:#fff; border-radius:6px; padding:6px; font-size:0.8rem;">
-            <input type="number" id="erp_workers" value="15" placeholder="Кол-во рабочих" style="background:#070a0e; border:1px solid #22263f; color:#fff; border-radius:6px; padding:6px; font-size:0.8rem;">
-        </div>
-        <button type="button" class="btn-action" style="background: linear-gradient(135deg, var(--neon-green), #009900); color:#000;" onclick="calculateErpCandidate()">
-            📊 Рассчитать Задачи & Вывести Вердикт ПТО
-        </button>
-    </form>
-    <div id="erp_calc_output" style="margin-top:10px; font-size:0.75rem; color:#fff; line-height:1.4;"></div>
-</div>
-
-<!-- 📋 БЛОК ERP: ТРEКЕР ЗАДАЧ БРИГАД В ИСТОРИЮ -->
-<div class="moba-card" style="border-left-color: var(--neon-pink); background: rgba(255,0,127,0.01); margin-top:20px;">
-    <div style="font-size: 0.95rem; font-weight: bold; color: var(--neon-pink); margin-bottom: 8px;">📋 ERP ТРЕКЕР ЗАДАЧ БРИГАД // ВЕКОВАЯ ИСТОРИЯ</div>
-    <form id="erp_task_form">
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:8px;">
-            <input type="text" id="task_brigade" value="Бригада №2 Михалыча" style="background:#070a0e; border:1px solid #22263f; color:#fff; border-radius:6px; padding:6px; font-size:0.8rem;">
-            <input type="text" id="task_volume" value="8.4 тонн арматуры" style="background:#070a0e; border:1px solid #22263f; color:#fff; border-radius:6px; padding:6px; font-size:0.8rem;">
-        </div>
-        <input type="text" id="task_text" value="Армирование фундаментной плиты блок Б" style="width:100%; background:#070a0e; border:1px solid #22263f; color:#fff; border-radius:6px; padding:6px; font-size:0.8rem; margin-bottom:10px;">
-        <button type="button" class="btn-action" style="background: linear-gradient(135deg, var(--neon-pink), #aa0055); color:#fff;" onclick="submitErpBrigadeTask()">
-            📥 Сдать Наряд Смены & Запереть в Историю СУБД
-        </button>
-    </form>
-    <div id="erp_tracker_output" style="margin-top:10px; font-size:0.75rem; color:#fff; line-height:1.4;"></div>
-</div>
-
-<script>
-function calculateErpCandidate() {
-    let out = document.getElementById("erp_calc_output");
-    out.innerHTML = "⏳ <i>Сканирование критериев ВОР...</i>";
-    let fd = new FormData();
-    fd.append("name", document.getElementById("erp_name").value);
-    fd.append("price_per_ton", document.getElementById("erp_price").value);
-    fd.append("workers_count", document.getElementById("erp_workers").value);
-    fd.append("speed_days", "8");
-    
-    fetch("/api/erp-calculate-subcontractor/", { method: "POST", body: fd })
-    .then(res => res.json())
-    .then(data => {
-        if(data.status === "success") {
-            out.innerHTML = `<b style="color:var(--neon-green);">Анализ ПТО:</b> Смета задачи: ${data.report.calculated_cost} | Прогнозный КПД: ${data.report.kpd}<br><b style="color:#fff;">РЕШЕНИЕ ЕЖИКА (верно_ли):</b> ${data.report.verdict}`;
-        }
-    });
-}
-
-function submitErpBrigadeTask() {
-    let out = document.getElementById("erp_tracker_output");
-    out.innerHTML = "⏳ <i>Запись в Вековую Историю СУБД...</i>";
-    let fd = new FormData();
-    fd.append("brigade", document.getElementById("task_brigade").value);
-    fd.append("task", document.getElementById("task_text").value);
-    fd.append("volume", document.getElementById("task_volume").value);
-    
-    fetch("/api/erp-add-brigade-task/", { method: "POST", body: fd })
-    .then(res => res.json())
-    .then(data => {
-        if(data.status === "success") {
-            out.innerHTML = `<span style="color:var(--neon-pink);">${data.message}</span><br>🔒 <b>Метка ВHD блока:</b> <span style="color:var(--neon-green);">${data.record.hash_protection}</span> [${data.record.timestamp}]`;
-        }
-    });
-}
-</script>
-
-<!-- 🤝 БЛОК: ВОЛОНТЕРСТВО И ИНТЕРАКТИВНЫЕ КАРТЫ ТОМ СОЙЕР ФЕСТА -->
-<div class="moba-card" style="border-left-color: var(--neon-cyan); background: rgba(0,240,255,0.01); margin-top:20px;">
-    <div class="moba-badge" style="background: var(--neon-cyan); color:#000;">🤝 ТОМ СОЙЕР ФЕСТ // КАРТА И БЛАГОТВОРИТЕЛЬНОСТЬ</div>
-    <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px; line-height:1.4;">
-        Координация волонтерских бригад по восстановлению деревянного зодчества. Расчет нарядов на кисти и краски в своем темпе с благой целью:
-    </div>
-
-    <!-- 📌 ИНТЕРАКТИВНАЯ КАРТА ОРАКУЛА ДЛЯ ТОМ СОЙЕР ФЕСТА В ТУЛЕ -->
-    <div style="margin-bottom:15px; border-radius:8px; overflow:hidden; border:1px solid #22263f;">
-        <div style="font-size:10px; padding:6px; background:#121420; color:var(--neon-cyan); font-weight:bold;">📍 КАРТА ПЕРИМЕТРА ВОССТАНОВЛЕНИЯ ОБЪЕКТОВ</div>
-        <div id="tsf_map_list" style="padding:10px; background:#020306; font-size:0.7rem; font-family:monospace; line-height:1.4;">
-            ⏳ <i>Гео-шлюз считывает координаты исторических усадеб...</i>
-        </div>
-    </div>
-
-    <form id="tsf_supplies_form">
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:10px;">
-            <input type="number" id="tsf_brushes" value="35" placeholder="Кисти (шт)" style="background:#020306; border:1px solid #1e2640; color:#fff; padding:6px; border-radius:6px; font-size:0.75rem;">
-            <input type="number" id="tsf_paint" value="80" placeholder="Краска (литры)" style="background:#020306; border:1px solid #1e2640; color:#fff; padding:6px; border-radius:6px; font-size:0.75rem;">
-        </div>
-        <button type="button" class="btn-action" style="background: linear-gradient(135deg, var(--neon-cyan), #00aaaa); color:#000;" onclick="submitTsfSupplies()">
-            💚 Утвердить Снабжение Наследия & Выслать Рапорт
-        </button>
-    </form>
-    <div id="tsf_report_output" style="margin-top:10px; font-size:0.72rem; color:#fff; line-height:1.3; font-family:monospace;"></div>
-</div>
-
-<script>
-// Автоматическая подгрузка гео-координат объектов исторической среды на карту
 document.addEventListener("DOMContentLoaded", function() {
-    let mapList = document.getElementById("tsf_map_list");
-    fetch("/api/tsf-get-map-data/")
-    .then(res => res.json())
-    .then(data => {
-        if(data.status === "success") {
-            let lText = data.locations.map(loc => `📍 <b>[${loc.id}] ${loc.address}</b><br><span style="color:#8a99ad;">Тип: ${loc.type}</span><br><b style="color:var(--neon-pink);">${loc.status}</b><br><i style="color:var(--neon-cyan); font-size:8px;">Координаты: ${loc.lat}, ${loc.lon}</i>`).join("<br><br>");
-            mapList.innerHTML = `<span style="color:#00ff66; font-weight:bold;">${data.manifesto}</span><br><br>${lText}`;
-        }
-    });
+    refreshAgripsAndOpenCvDashboard();
 });
 
-function submitTsfSupplies() {
-    let out = document.getElementById("tsf_report_output");
-    out.innerHTML = "⏳ <i>Робот-Ёжик рассчитывает благотворительный транш...</i>";
-    let fd = new FormData();
-    fd.append("brushes", document.getElementById("tsf_brushes").value);
-    fd.append("paint", document.getElementById("tsf_paint").value);
-    
-    fetch("/api/tsf-calculate-supplies/", { method: "POST", body: fd })
-    .then(res => res.json())
-    .then(data => {
-        if(data.status === "success") {
-            out.innerHTML = `<b style="color:var(--neon-green);">${data.report.status}</b><br>Затрачено на материалы: ${data.report.spent}<br>Остаток благотворительного фонда: ${data.report.remaining}`;
-        }
-    });
-}
-</script>
-
-<!-- ⚡ БЛОК FAST API КОНТРАКТОВ: СБОРКА CSV И ВЕКТОРНОЙ SVG ГРАФИКИ -->
-<div class="moba-card" style="border-left-color: var(--neon-cyan); background: rgba(0,240,255,0.01); margin-top:20px;">
-    <div class="moba-badge" style="background: #fff; color:#000; font-weight:bold;">⚡ ASYNC FAST API CONTRACT GATEWAY // PORT 9000</div>
-    <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px; line-height:1.4;">
-        Прямой вызов тяжелых библиотек <b>pandas & numpy</b>. Генерация физического CSV-файла табеля и динамического векторного SVG-графика для передачи сторонним пользователям:
-    </div>
-
-    <!-- Место для динамической JavaScript вставки SVG-графика -->
-    <div id="js_svg_container" style="width:100%; border:1px solid #1c203a; border-radius:8px; padding:10px; background:#020306; display:none; margin-bottom:12px;"></div>
-
-    <button type="button" class="btn-action" style="background: #fff; color: #000; font-weight:bold;" onclick="triggerJavaScriptFastApiContract()">
-        🔌 Запустить Полный Цикл: Собрать CSV и SVG график()
-    </button>
-    <div id="fastapi_status_box" style="margin-top:10px; font-size:0.72rem; color:#fff; font-family:monospace; line-height:1.3;"></div>
-</div>
-
-<script>
-function triggerJavaScriptFastApiContract() {
-    let sBox = document.getElementById("fastapi_status_box");
-    let svgContainer = document.getElementById("js_svg_container");
-    sBox.innerHTML = "⏳ <i>JavaScript посылает контракт-запрос в Fast API... Инициализация pandas/numpy в ОЗУ...</i>";
-    
-    // Делаем прямой асинхронный вызов на Fast API шлюз через Nginx прокси
-    fetch("/fastapi/api/v1/generate-contract-bundle/", {
-        method: "POST"
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.status === "success") {
-            sBox.innerHTML = `
-                <span style="color:var(--neon-green); font-weight:bold;">${data.message}</span><br><br>
-                📂 <b>Выгрузка завершена:</b><br>
-                👉 <a href="${data.csv_download_url}" target="_blank" style="color:var(--neon-cyan); text-decoration:underline; font-weight:bold;">📥 Скачать Физический CSV Файл Табеля</a>
-            `;
-            
-            // JavaScript динамически загружает и встраивает векторный график SVG в пространство страницы!
-            fetch(data.svg_inline_url)
-            .then(response => response.text())
-            .then(svgText => {
-                svgContainer.style.display = "block";
-                svgContainer.innerHTML = `<div style="font-size:9px; color:var(--neon-cyan); margin-bottom:6px; font-weight:bold;">📊 Осязаемый Векторный График (Физический .SVG сгенерирован):</div>` + svgText;
-            });
-        }
-    })
-    .catch(err => {
-        sBox.innerHTML = "🚨 Ошибка защищенного Fast API сокета контрактов.";
-    });
-}
-</script>
-
-<!-- 🕵️ БЛОК КИБЕР-СКАНИРОВАНИЯ: СТЕК БИБЛИОТЕК В МОНОЛИТНЫЙ {} СЛОВАРЬ -->
-<div class="moba-card" style="border-left-color: var(--neon-pink); background: rgba(255,0,127,0.01); margin-top:20px;">
-    <div class="moba-badge" style="background: var(--neon-pink); color:#fff;">🕵️ CYBER MESH SCANNER // РАЗВЕДКА ПОРТОВ</div>
-    <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px; line-height:1.4;">
-        Вызов асинхронного стека <b>requests, asyncio, aiohttp и python-nmap</b>. Сканирование прохода туннелей «От Я и обратно» и чужих сетей соседа со сбором логов строго в словарь {} [JSON]:
-    </div>
-    
-    <button type="button" class="btn-action" style="background: linear-gradient(135deg, var(--neon-pink), #aa0055); color:#fff;" onclick="triggerEzhikCyberProbe()">
-        🦔 Запустить Зонд Паутины & Вывести Словарь {}
-    </button>
-    <div id="cyber_dictionary_output" style="margin-top:12px; font-size:0.72rem; color:#fff; font-family:monospace; line-height:1.4; background:#020306; padding:10px; border-radius:8px; border:1px solid #1c203a; display:none; max-height:250px; overflow-y:auto;"></div>
-</div>
-
-<script>
-function triggerEzhikCyberProbe() {
-    let outBox = document.getElementById("cyber_dictionary_output");
-    outBox.style.display = "block";
-    outBox.innerHTML = "⏳ <i>Робот-Ёжик и Жук-Парсер вылетели в сеть... Опрос туннелей aiohttp... Асинхронный nmap-скан портов соседа...</i>";
-    
-    fetch("/api/trigger-cyber-mesh-probe/", {
-        method: "POST"
-    })
-    .then(res => res.json())
-    .then(dictionaryData => {
-        // Форматируем полученный ИТР-словарь {} в красивую читаемую JSON-строку на экране
-        let formattedJson = JSON.stringify(dictionaryData, null, 4);
-        outBox.innerHTML = `<b style="color:var(--neon-green);">ПОЛНЫЙ ОТВЕТ СТЕКА БИБЛИОТЕК ВЫВЕДЕН В СЛОВАРЬ {}:</b><br><pre style="color:#00f0ff; white-space: pre-wrap; word-wrap: break-word;">${formattedJson}</pre>`;
-    })
-    .catch(err => {
-        outBox.innerHTML = "🚨 Ошибка асинхронного кибер-шлюза сокетов.";
-    });
-}
-</script>
-
-<!-- 🖥️ БЛОК: ИИ-ПЛАТФОРМА AGRIPS CORE ДЛЯ МЕНЕДЖЕРА ПРОЕКТА -->
-<div class="moba-card" style="border-left-color: var(--neon-cyan); background: rgba(0,240,255,0.01); margin-top:20px;">
-    <div class="moba-badge" style="background: var(--neon-cyan); color:#000;">🛰️ МЕНЕДЖЕР ПРОЕКТА // ПЛАТФОРМА AGRIPS CORE</div>
-    <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px; line-height:1.4;">
-        Асинхронный CRUD-мониторинг портов и подключений (Web / Mobile / CLI) под контролем модуля <b>«Зрение Сокола»</b> на базе библиотек <b>asyncio & await</b>:
-    </div>
-
-    <!-- 📊 ТАБЛИЦА СЛЕДА IPS УСТРОЙСТВ СИНДИКАТА -->
-    <div style="margin-bottom:15px; border-radius:8px; overflow:hidden; border:1px solid #22263f; background:#020306; padding:10px;">
-        <div style="font-size:9px; color:var(--neon-cyan); font-weight:bold; margin-bottom:6px;">👁️ ЗРЕНИЕ СОКОЛА: РЕЕСТР АКТИВНЫХ СОКЕДОВ IPS:</div>
-        <div id="agrips_registry_box" style="font-size:0.7rem; font-family:monospace; line-height:1.4; color:#fff;">
-            ⏳ <i>Аналитический табель AGRIPS опрашивает Fast API порты...</i>
-        </div>
-    </div>
-
-    <!-- ФОРМА ДОБАВЛЕНИЯ НОВОГО УЗЛА (CREATE CRUD) -->
-    <form id="agrips_crud_form">
-        <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap:10px; margin-bottom:8px;">
-            <input type="text" id="agrips_ip" value="192.168.0.216" placeholder="Входящий IP устройства" style="background:#020306; border:1px solid #1e2640; color:#fff; padding:6px; border-radius:6px; font-size:0.75rem;">
-            <input type="text" id="agrips_owner" value="Замначальника участка" placeholder="Ответственное лицо" style="background:#020306; border:1px solid #1e2640; color:#fff; padding:6px; border-radius:6px; font-size:0.75rem;">
-        </div>
-        <button type="button" class="btn-action" style="background: linear-gradient(135deg, var(--neon-cyan), #00aaaa); color:#000;" onclick="submitNewAgripsNodeCrud()">
-            🔌 Авторизовать Новое Устройство в Пространстве AGRIPS()
-        </button>
-    </form>
-</div>
-
-<script>
-// Автоматический READ (CRUD) вызов данных из Fast API шлюза при загрузке
-document.addEventListener("DOMContentLoaded", function() {
-    refreshAgripsDashboard();
-});
-
-function refreshAgripsDashboard() {
+function refreshAgripsAndOpenCvDashboard() {
     let regBox = document.getElementById("agrips_registry_box");
+    let cvBox = document.getElementById("opencv_cascade_box");
+    let richBox = document.getElementById("rich_journal_box");
+    
     fetch("/fastapi/api/v2/agrips-dashboard/")
     .then(res => res.json())
     .then(data => {
         if(data.status === "success") {
+            // 1. Вывод AGRIPS CRUD
             let regText = Object.keys(data.connected_registry_crud).map(ip => {
                 let node = data.connected_registry_crud[ip];
-                return `🌐 <b>IP: ${ip}</b> ➔ ${node.device} | Лицо: <b>${node.owner}</b> | КПД: <span style="color:#00ff66;">${node.kpd}</span> | Статус: <i style="color:var(--neon-pink);">${node.status}</i>`;
+                return `🌐 <b>IP: ${ip}</b> ➔ ${node.device} | Лицо: <b>${node.owner}</b> | Статус: <i style="color:var(--neon-pink);">${node.status}</i>`;
             }).join("<br>");
             
-            regBox.innerHTML = `
-                <b>Текущее решение:</b> <span style="color:var(--neon-green);">${data.current_session_audit.platform}</span><br>
-                <b>УГРП Статус:</b> ${data.current_session_audit.security_check}<br>
-                ━━━━━━━━━━━━━━━━━━━━━━━━<br>
-                ${regText}
-            `;
+            regBox.innerHTML = `<b>Текущее решение:</b> <span style="color:var(--neon-green);">${data.current_session_audit.platform}</span><br>${regText}`;
+            
+            // 2. Вывод OpenCV бинарного каскада
+            let cv = data.opencv_cascade_analysis;
+            cvBox.innerHTML = `📐 <b>Размер матрицы NumPy:</b> ${cv.matrix_size}<br>📊 <b>Плотность металла:</b> ${cv.density_kpd}<br>🛡️ <b>ИИ-Вердикт OpenCV:</b> <span style="color:var(--neon-green);">${cv.verdict}</span>`;
+            
+            // 3. Вывод Rich Status Journal сокетов
+            let richText = data.rich_status_journal_sockets.map(s => `[${s.checked_at}] Порт: <b>${s.port}</b> ➔ Код: <span style="color:#00ff66;">${s.binary_state}</span> | Статус: <i>${s.status}</i>`).join("<br>");
+            richBox.innerHTML = richText;
         }
     });
 }
 
 function submitNewAgripsNodeCrud() {
-    let regBox = document.getElementById("agrips_registry_box");
-    regBox.innerHTML = "⏳ <i>Внесение записи в СУБД ОЗУ... Проброс Fast API сокета...</i>";
-    
     let fd = new FormData();
     fd.append("node_ip", document.getElementById("agrips_ip").value);
     fd.append("owner", document.getElementById("agrips_owner").value);
-    fd.append("device_type", "📱 MOBILE РЕШЕНИЕ (Инкогнито)");
     
-    fetch("/fastapi/api/v2/agrips-crud-create/", {
-        method: "POST",
-        body: fd
-    })
+    fetch("/fastapi/api/v2/agrips-crud-create/", { method: "POST", body: fd })
     .then(res => res.json())
     .then(data => {
-        if(data.status === "success") {
-            alert(data.message);
-            refreshAgripsDashboard(); # Мгновенно обновляем аналитический табель на экране!
-        }
+        alert("✅ Узел добавлен в каскад!");
+        refreshAgripsAndOpenCvDashboard();
     });
 }
 </script>
+</body>
+</html>
