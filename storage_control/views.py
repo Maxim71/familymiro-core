@@ -133,3 +133,66 @@ def save_vhd_journal_record(request): return JsonResponse({'status': 'success'})
 def computer_vision_m19_api(request): return JsonResponse({'status': 'success'})
 @csrf_exempt
 def process_estimate_pdf_report_api(request): return JsonResponse({'status': 'success'})
+
+class EzhikTomSawyerFestCore:
+    def __init__(self):
+        self.project_manifesto = "Благотворительный контур Miroha // Волонтерское движение Том Сойер Фест в Тульской области. Восстановление исторической среды силами ИИ и неравнодушных людей."
+        self.objects_registry = [
+            {"id": "TSF-01", "address": "г. Тула, ул. Благовещенская, д. 8", "type": "Деревянный жилой дом XIX в.", "status": "🎨 ОЧИСТКА ФАСАДА // НУЖНА КРАСКА", "lat": 54.1952, "lon": 37.6145},
+            {"id": "TSF-02", "address": "г. Тула, ул. Смирнова, д. 24", "type": "Дом с резными наличниками", "status": "🔨 ВОССТАНОВЛЕНИЕ КРОВЛИ", "lat": 54.1884, "lon": 37.6210}
+        ]
+
+    def process_volunteer_supplies(self, brushes_count, paint_liters):
+        """📐 БЛАГО-КАЛЬКУЛЯТОР: Расчет ресурсов для волонтеров без коммерческой маржи"""
+        limit_budget = 500000.00  # Выделенный благотворительный фонд из нашего капитала
+        cost_brushes = brushes_count * 250
+        cost_paint = paint_liters * 1200
+        total_spent = cost_brushes + cost_paint
+        
+        remaining_fond = limit_budget - total_spent
+        
+        report = {
+            "spent": f"{total_spent:,.2f} ₽",
+            "remaining": f"{remaining_fond:,.2f} ₽",
+            "status": "💚 БЛАГОТВОРИТЕЛЬНЫЙ ОРДЕР УТВЕРЖДЕН // В СВОЕМ ТЕМПЕ"
+        }
+        
+        # Выстрел рапорта о поддержке Том Сойер Феста в Telegram Капитана Максима на телефон
+        msg = (
+            f"🤝 <b>[ТОМ СОЙЕР ФЕСТ // ВОЛОНТЕРСКИЙ КОНТУР]</b>\n"
+            f"━━━━━━━━━━━━━━━━━━━━━━━━\n"
+            f"🏡 <b>Миссия:</b> Поддержка восстановления исторического Наследия\n"
+            f"🎨 <b>Выделено снабжения:</b> Кисти: {brushes_count} шт | Краска: {paint_liters} л\n"
+            f"💰 <b>Сумма благо-финансирования:</b> {report['spent']}\n"
+            f"📈 <b>Остаток фонда Вечности:</b> {report['remaining']}\n"
+            f"━━━━━━━━━━━━━━━━━━━━━━━━\n"
+            f"🦔 <i>Робот-Ёжик опечатал наряд. Проводка ушла без комиссии. Созидаем историю вместе.</i>"
+        )
+        try:
+            requests.post(f"https://telegram.org{REAL_TELEGRAM_TOKEN}/sendMessage", data={
+                "chat_id": REAL_CHAT_ID, "text": msg, "parse_mode": "HTML"
+            }, timeout=2)
+        except Exception: pass
+        
+        return report
+
+EZHIK_TSF_CORE = EzhikTomSawyerFestCore()
+
+@csrf_exempt
+def tsf_get_map_data_api(request):
+    """API ШЛЮЗ: Отдает координаты исторических объектов для карты волонтеров"""
+    return JsonResponse({
+        'status': 'success',
+        'manifesto': EZHIK_TSF_CORE.project_manifesto,
+        'locations': EZHIK_TSF_CORE.objects_registry
+    })
+
+@csrf_exempt
+def tsf_calculate_supplies_api(request):
+    """API ШЛЮЗ: Рассчитывает благотворительный наряд сметы снабжения волонтеров"""
+    if request.method == 'POST':
+        brushes = int(request.POST.get('brushes', 20))
+        paint = int(request.POST.get('paint', 50))
+        res = EZHIK_TSF_CORE.process_volunteer_supplies(brushes, paint)
+        return JsonResponse({'status': 'success', 'report': res})
+    return JsonResponse({'status': 'invalid'})
