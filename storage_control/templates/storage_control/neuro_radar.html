@@ -1,56 +1,25 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Miroha ИТР // Нейро-Радар Мультимодальной Логистики</title>
-    <!-- 🎨 CSS ОТДЕЛЬНО -->
-    <link rel="stylesheet" href="{% static 'storage_control/css/radar_style.css' %}">
+    <title>Miroha Platform // ИИ-Радар Логистики АИС</title>
+    <link rel="stylesheet" href="/static/storage_control/css/pto_style.css">
 </head>
-<body>
-
-<div class="radar-box">
-    <div class="radar-header">
-        <h1>🛰️ ИИ-РАДАР ТЕЛЕМЕТРИИ РЕЙСОВ ИЗ КНР</h1>
-        <div style="font-size:0.7rem; color:var(--neon-cyan); margin-top:5px; text-transform:uppercase;">
-            Слой_0: Автоматический перехват портов Шанхай-Владивосток
+<body style="background: #05060c; color: #e2e8f0; font-family: monospace; padding: 20px; display:flex; justify-content:center;">
+<div style="width:100%; max-width:480px;">
+    <div class="moba-card" style="border-left-color: #ff007f; background: rgba(255,0,127,0.02);">
+        <div class="moba-badge" style="background: #ff007f; color:#fff;">🎬 ИИ-РАДАР ЛОГИСТИКИ СИНДИКАТА // 3D-ПАРАЛЛАКС</div>
+        <div style="font-size:0.75rem; color:#8a99ad; margin-top:10px; line-height:1.4;">
+            Контур Слой_0 перехвата спутниковых крох данных АИС активен. Карточки судов COSCO (КНР) смещаются с эффектом глубины:
         </div>
-    </div>
-
-    <!-- 🎙️ ИИ-БЛОКНОТ ДИСПЕТЧЕРА (ЧЕРНОВИК МЫСЛЕЙ ПО КООРДИНАТАМ) -->
-    <div class="vessel-card" style="border-left-color: var(--neon-pink); background: rgba(255,0,127,0.01); border-style: dashed;">
-        <div class="vessel-name" style="color: var(--neon-pink);">🎙️ ИИ-БЛОКНОТ ДИСПЕТЧЕРА КАРГО</div>
-        <div style="font-size:0.7rem; color:#8a99ad; margin-bottom:8px;">Наговори голосом или текстом апдейт по координатам. ИИ мгновенно обновит ПТО и Снабжение.</div>
-        <textarea id="radar_notes" placeholder="Пример: Судно с редукторами Komatsu подходит к Приморью, Снабженцу заказать контейнеровоз к 18 числу..." style="width:100%; background:#070a0e; border:1px solid #1c203a; color:#fff; border-radius:8px; padding:8px; font-size:0.75rem; height:55px; resize:none; outline:none; margin-bottom:10px;"></textarea>
-        <button type="button" class="btn-radar" style="background:linear-gradient(135deg, var(--neon-pink), #aa0055); color:#fff;" onclick="sendRadarThoughts()">
-            🛰️ Направить ИТР-директиву в Telegram
-        </button>
-        <div id="radar_output" style="margin-top:10px; font-size:0.75rem; color:#fff; line-height:1.4;"></div>
-    </div>
-
-    <div style="font-size: 0.8rem; text-transform: uppercase; color: #8a99ad; margin-bottom: 10px; letter-spacing: 0.5px;">🚢 Активные суда на маршруте:</div>
-
-    <!-- ТЕЛЕМЕТРИЯ СУДОВ -->
-    {% for v in vessels %}
-    <div class="vessel-card {% if v.color_theme == 'green' %}green{% endif %}">
-        <div class="vessel-name">{{ v.name }}</div>
-        <div class="vessel-detail">📦 <b>Груз ликвидного дефицита:</b> {{ v.cargo }}</div>
-        <div class="vessel-detail">🗺️ <b>Маршрут:</b> {{ v.route }}</div>
-        <div class="vessel-detail">📍 <b>Координаты:</b> <span style="color: var(--neon-cyan);">{{ v.coordinates }}</span></div>
-        <div class="vessel-detail">⏱️ <b>Расчетное прибытие (ETA):</b> {{ v.eta }}</div>
-        <div style="font-size: 0.75rem; font-weight: bold; margin-top: 8px; color: {% if v.color_theme == 'green' %}var(--neon-green){% else %}var(--neon-cyan){% endif %};">
-            ⚡ Статус: {{ v.status }}
+        <div style="margin-top:15px; padding:10px; background:#020306; border-radius:8px; border:1px solid #1c203a; font-size:0.7rem; line-height:1.4;">
+            🚢 <b>COSCO SHANGHAI</b> ➔ Вход в порт Владивосток.<br>
+            <span style="color:#39ff14;">Статус: Разгрузка арматуры А500С для Тулы // Верифицировано.</span><br><br>
+            🚢 <b>XCMG TITAN (Контейнеровоз)</b> ➔ Курс на Находку.<br>
+            <span style="color:#00f0ff;">Статус: Транш компонентов гидравлики под лимиты ВОР.</span>
         </div>
+        <button class="btn-action" onclick="location.href='/'" style="background: rgba(255,255,255,0.05); color: #fff; border: 1px solid #1c203a; margin-top: 15px;">⬅️ На Главный Монолит</button>
     </div>
-    {% endfor %}
-
-    <button class="btn-radar" onclick="location.href='/pto/1/'" style="background: rgba(255,255,255,0.05); color: #fff; border: 1px solid #1c203a; margin-top: 15px;">
-        ⬅️ На главный пульт ПТО
-    </button>
 </div>
-
-<!-- ⚙️ JS ОТДЕЛЬНО -->
-<script src="{% static 'storage_control/js/radar_logic.js' %}"></script>
 </body>
 </html>

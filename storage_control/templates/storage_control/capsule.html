@@ -2,137 +2,21 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow">
-    <title>MIROHA CORE // MULTIMEDIA VAULT</title>
-    <link rel="stylesheet" href="/static/moba_style.css">
-    <style>
-        .auth-gate-box { background: rgba(6, 11, 25, 0.95); border: 2px solid #00f0ff; padding: 25px; border-radius: 20px; box-shadow: 0 0 25px rgba(0, 240, 255, 0.3); text-align: center; margin: 15px 0; }
-        .totp-input { width: 85%; background: #070a0e; border: 2px solid #30363d; color: #00ff66; text-align: center; font-size: 24px; letter-spacing: 6px; padding: 10px; font-family: monospace; border-radius: 14px; outline: none; }
-        .video-stream-box { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); margin-top: 15px; text-align: left; }
-        .moba-video-player { width: 100%; border-radius: 12px; border: 1px solid #ffaa00; box-shadow: 0 0 10px rgba(255,170,0,0.2); margin-top: 8px; }
-        .chronicle-box { background: rgba(255, 170, 0, 0.03); border: 1px dashed #ffaa00; padding: 12px; border-radius: 12px; margin-top: 15px; font-family: monospace; font-size: 11px; text-align: left; }
-        .moba-geo-badge { background: rgba(0, 240, 255, 0.08); border: 1px solid #00f0ff; color: #00f0ff; font-size: 9px; padding: 4px 8px; border-radius: 6px; font-family: monospace; font-weight: bold; display: block; margin-bottom: 6px; text-transform: uppercase; }
-    </style>
+    <title>Miroha Platform // Капсула Времени Вечности</title>
+    <link rel="stylesheet" href="/static/storage_control/css/pto_style.css">
 </head>
-<body style="background: #030712;">
-
-<audio id="bg_ambient" src="https://mixkit.co" loop preload="auto"></audio>
-
-<div class="parallax-bg" id="parallax"></div>
-
-<div class="container" style="max-width: 480px;">
-<div class="vault-box">
-    <div class="vault-inner">
-        
-        {% if is_captain %}
-        <div style="text-align: center; color: #00ff66; font-size: 10px; font-weight: bold; text-transform: uppercase;">✅ ВИЗА КАПИТАНА КРИПТОГРАФИЧЕСКИ ПОДТВЕРЖДЕНА</div>
-        <h2 style="color: #fff; font-size: 15px; text-align: center; margin-top: 15px; text-transform: uppercase; font-family: monospace;">🦔 ЗАКРЫТЫЙ ВЕКОВОЙ СЕЙФ ОПЕКИ ДОЧЕРИ</h2>
-        
-        <div class="moba-legend-timer">
-            <div class="time-capsule-slot"><div class="digital-hero-num" id="capsule_years">00</div><div class="slot-legend-label">Лет</div></div>
-            <div class="time-capsule-slot"><div class="digital-hero-num" id="capsule_days">00</div><div class="slot-legend-label">Дней</div></div>
-            <div class="time-capsule-slot"><div class="digital-hero-num" id="capsule_hours">00</div><div class="slot-legend-label">Часов</div></div>
-            <div class="time-capsule-slot pulse-sec"><div class="digital-hero-num pink-pulse" id="capsule_seconds">00</div><div class="slot-legend-label" style="color:#ff0055;">Сек</div></div>
+<body style="background: #05060c; color: #e2e8f0; font-family: monospace; padding: 20px; display:flex; justify-content:center;">
+<div style="width:100%; max-width:480px;">
+    <div class="moba-card" style="border-left-color: #39ff14; background: rgba(57,255,20,0.02);">
+        <div class="moba-badge" style="background: #39ff14; color:#000;">☀️ КАПСУЛА ВРЕМЕНИ ВЕЧНОСТИ</div>
+        <div style="font-size:0.75rem; color:#8a99ad; margin-top:10px; line-height:1.4;">
+            Хранилище неизменяемых цифровых нарядов смен и вековых ИТР-директив ПТО заблокировано в СУБД SQLite синдиката холдинга.
         </div>
-        
-        <div class="sbp-badge-capsule">
-            🔐 <strong>ИНВОЙС СБП:</strong> INV-ALFA-288003<br>
-            📄 <strong>СТАТУС:</strong> Сейф заблокирован до <strong>24 мая 2059 года</strong>. Контур защищен.
+        <div style="margin-top:15px; padding:10px; background:#020306; border-radius:8px; border:1px solid #1c203a; font-size:0.7rem; line-height:1.4; color:#39ff14;">
+            🔐 Все блоки VHD-журнала скрытых работ опечатаны хэш-защитой. Корректировка актов КС-2 прошлых периодов невозможна. Наследие защищено.
         </div>
-
-        {% else %}
-        <div style="text-align: center; color: #ff0055; font-size: 10px; font-weight: bold; text-transform: uppercase;">Document: Layer_0 // Защита Наследия</div>
-        
-        {% if error_msg %}
-            <div style="color: #ff0055; font-size: 11px; margin: 10px 0; font-family: monospace; text-align: center;">{{ error_msg }}</div>
-        {% endif %}
-
-        <!-- Центральный Вход Google TOTP -->
-        <div class="auth-gate-box">
-            <div style="font-size: 11px; color: #00f0ff; margin-bottom: 12px; text-transform: uppercase; font-weight: bold;">🔑 КОНТРОЛЬ ДОСТУПА (GOOGLE TOTP)</div>
-            <form method="POST" action="/capsule/">
-                {% csrf_token %}
-                <input type="text" name="totp_code" placeholder="000000" maxlength="6" class="totp-input" required autocomplete="off">
-                <button type="submit" class="moba-btn-action" style="margin-top: 15px; padding: 12px; font-size: 12px;">🔒 Проверить Крипто-Ключ</button>
-            </form>
-        </div>
-
-        <!-- Поток добрых событий мира -->
-        <div class="chronicle-box" style="border-color: #00ff66; background: rgba(0,255,102,0.01);">
-            <div style="color: #00ff66; font-weight: bold; margin-bottom: 8px; text-transform: uppercase;">📰 ПОТОК ДОБРЫХ СОБЫТИЙ СОВРЕМЕННОСТИ:</div>
-            {% for event in good_events %}
-            <div style="margin-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 4px;">
-                <span style="color: #8b949e;">[{{ event.date }}]:</span> <span style="color: #fff;">{{ event.title }}</span>
-            </div>
-            {% endfor %}
-        </div>
-
-        <!-- Летописи Учёных (Аналитика Buildbot и OpenStack) -->
-        <div class="chronicle-box">
-            <div style="color: #ffaa00; font-weight: bold; margin-bottom: 8px; text-transform: uppercase;">📜 ЛЕТОПИСИ И ИИ-АНАЛИТИКА СОВРЕМЕННОСТИ:</div>
-            {% for c in chronicles %}
-            <div style="line-height: 1.4; color: #e2e8f0; font-family: monospace;">
-                <strong>Шлюз: {{ c.author }}</strong><br>
-                <span style="color: #00ff66;">{{ c.text }}</span>
-            </div>
-            {% endfor %}
-        </div>
-
-        <!-- Сито загрузки видео с мобильного телефона -->
-        <div class="auth-gate-box" style="border-color: #00ff66; background: rgba(0, 255, 102, 0.02); margin-top: 20px;">
-            <div style="font-size: 11px; color: #00ff66; font-weight: bold; text-transform: uppercase; margin-bottom: 8px;">🎬 Скинуть Видео в Вечность (Сито Памяти):</div>
-            <form id="moba_video_form" onsubmit="uploadEzhikVideo(event)">
-                {% csrf_token %}
-                <input type="text" name="title" placeholder="Описание (Пример: Дочка смеется / Первый шаг)" style="width:92%; background:#070a0e; border:1px solid #30363d; color:#fff; padding:7px; font-size:11px; border-radius:8px; margin-bottom:8px;" required>
-                <button type="submit" class="moba-btn-action" style="background: linear-gradient(90deg, #00ff66 0%, #009933 100%); color:#fff; font-size:11px; padding:10px;">汇 Залить Видео Памятства</button>
-            </form>
-        </div>
-
-        <!-- _LAZY ЛЕНТА ПЛЕЕРОВ ПАМЯТСТВА (СТРОГО 2-3 РОЛИКА ИЗ БАЗЫ РЕЗУЛЬТАТОВ) -->
-        <div style="color: #ffaa00; font-size: 11px; text-transform: uppercase; font-weight: bold; text-align: left; margin-top: 25px;">🎬 Лента Памятства: _lazy РОТАЦИЯ 2-3 ВИДЕО ИЗ СУБД</div>
-        {% for video in videos %}
-        <div class="video-stream-box">
-            <span class="moba-geo-badge">{{ video.country_origin }}</span>
-            <div style="display:flex; justify-content:space-between; font-size:9px; color:#8b949e; margin-top:4px;">
-                <span>👁️ ИИ-СИТО: СТЕК АНТРОПИК / TRANSFORMERS</span>
-                <span>ПОЛУЧЕНИЕ ЛАЙКА: ОЖИДАНИЕ</span>
-            </div>
-            <div style="color:#fff; font-size:11px; margin-top:6px; font-family:monospace; font-weight:bold;">{{ video.video_title }}</div>
-            <video class="moba-video-player" controls preload="metadata">
-                <source src="{{ video.video_file_url }}" type="video/mp4">
-            </video>
-            
-            <!-- Победительная Кнопка Лайка для ротации Питона -->
-            <button class="moba-btn-action" style="margin-top: 8px; padding: 6px; font-size: 9px; background: rgba(0, 255, 102, 0.1); border: 1px solid #00ff66; color:#00ff66;" onclick="location.reload();">👍 Поставить Лайк // Ротация Следующего Видео</button>
-        </div>
-        {% endfor %}
-
-        {% endif %}
-
-        <button class="moba-btn-action" style="margin-top: 20px; background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1);" onclick="location.href='/'">返回 На главный пульт</button>
+        <button class="btn-action" onclick="location.href='/'" style="background: rgba(255,255,255,0.05); color: #fff; border: 1px solid #1c203a; margin-top: 15px;">⬅️ На Главный Монолит</button>
     </div>
 </div>
-</div>
-
-<script src="/static/moba_core.js"></script>
-<script>
-function uploadEzhikVideo(e) {
-    e.preventDefault();
-    let formData = new FormData(document.getElementById('moba_video_form'));
-    fetch('/api/upload-video/', { method: 'POST', body: formData })
-        .then(res => res.json())
-        .then(data => {
-            let successSound = document.getElementById('success_sound');
-            if (successSound) successSound.play();
-            alert(data.message);
-            location.reload();
-        });
-}
-document.addEventListener('click', function() {
-    let amb = document.getElementById('bg_ambient');
-    if(amb) amb.play().catch(()=>{});
-}, {once: true});
-</script>
 </body>
 </html>
