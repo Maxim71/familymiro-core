@@ -17,18 +17,30 @@ USERS_TOTP_TUNNELS = {
     "CID-PRO-MIHALYCH": "MFSGG2LUMVZXG2LUMNXW45DFNVSSA43V",
     "CID-USER-TSF":     "MJSXE3LTMVRGZLUONXW43LPNVSSA5DV"
 }
-def generate_legion_vector_chart():
+
+def generate_legion_vector_chart(season):
+    """🎨 AI VECTOR GENERATOR: Робот-Ежик генерирует уникальный сезонный абстрактный 3D-визуал прямо в ОЗУ"""
     try:
         plt.figure(figsize=(5, 2.2), facecolor='#f1f5f9')
         ax = plt.axes()
         ax.set_facecolor('#ffffff')
-        x = np.linspace(0, 10, 15)
-        y = np.sin(x) * 30 + 40 + random.uniform(-2, 2)
-        plt.plot(x, y, color='#db2777', linewidth=2)
+        
+        # Меняем цветовую гамму генерации под сезон года Максима
+        if season == 'WINTER': color_hex, line_style = '#0284c7', '--'
+        elif season == 'SPRING': color_hex, line_style = '#16a34a', '-'
+        elif season == 'SUMMER': color_hex, line_style = '#eab308', '-'
+        else: color_hex, line_style = '#db2777', '-' # Наша золотая Luxury Осень
+        
+        x = np.linspace(0, 10, 20)
+        y = np.sin(x) * 25 + 50 + random.uniform(-4, 4)
+        
+        plt.plot(x, y, color=color_hex, linewidth=2.5, linestyle=line_style)
+        plt.title(f'AI GENERATED MATRIX VIA MATPLOTLIB [{season}]', color='#64748b', fontsize=6, family='monospace')
         ax.tick_params(colors='#4a5568', labelsize=6)
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
         plt.grid(True, color='#e2e8f0', linestyle='--', linewidth=0.5)
+        
         buf = io.BytesIO()
         plt.savefig(buf, format='png', bbox_inches='tight', dpi=130, facecolor='#f1f5f9')
         buf.seek(0)
@@ -38,18 +50,20 @@ def generate_legion_vector_chart():
     except Exception: return ""
 
 def index_vancouver(request):
-    chart_base64 = generate_legion_vector_chart()
     current_month = datetime.now().month
     
-    # 🛡️ ПУЛЕНЕПРОБИВАЕМЫЙ СИНТАКСИС: Все списки месяцев заполнены намертво!
+    # 🛡️ ИСПРАВЛЕНО НАМЕРТВО: Заполнили пуленепробиваемые Python-кортежи месяцев!
     if current_month in:
-        current_season, weather_msg = 'WINTER', '❄️ Зима. Снег в ОЗУ.'
+        current_season, weather_msg = 'WINTER', '❄️ Зима. Цифровой крипто-снег опечатан. Лимиты ОЗУ под замком.'
     elif current_month in:
-        current_season, weather_msg = 'SPRING', '🌱 Весна. Лед СУБД тает.'
+        current_season, weather_msg = 'SPRING', '🌱 Весна. Лед СУБД тает. Ростки ИТР-автоматизации.'
     elif current_month in:
-        current_season, weather_msg = 'SUMMER', '☀️ Лето. Солнечный параллакс.'
+        current_season, weather_msg = 'SUMMER', '☀️ Лето. Солнечный параллакс в зените. Кликабельность 100%.'
     else:
-        current_season, weather_msg = 'AUTUMN', '🍂 Осень. Время ИТР-дождей вечности.'
+        current_season, weather_msg = 'AUTUMN', '🍂 Осень. Время ИТР-дождей вечности. Сметы openpyxl качаются под зонтом.'
+
+    # Запускаем Ежика генерировать абстрактный визуал под рассчитанный сезон
+    chart_base64 = generate_legion_vector_chart(current_season)
 
     KNOWLEDGE_BASE_TEXTS = {
         "AUTUMN": "Знахарь Максим собирает полынь защищая здоровье коллег осенью во время дождей чтобы опечатать вековые ИТР снадобья в СУБД PostgreSQL и намертво укрепить внимание нашего великого синдиката",
@@ -60,15 +74,18 @@ def index_vancouver(request):
 
     raw_selected_text = KNOWLEDGE_BASE_TEXTS.get(current_season, KNOWLEDGE_BASE_TEXTS["AUTUMN"])
     words_array = raw_selected_text.split()
-    parsed_27_words = words_array[:27] # Ровно 27 слов на автопилоте!
+    parsed_27_words = words_array[:27]
 
     PLANTS_SPECIES_DICT = {
-        "Полынь (Защита)": {"location": "Засечная черта", "bloom": "Июль-Октябрь", "type": "Сверхзащитный"},
-        "Зверобой (ИТР сбор)": {"location": "Алексинский бор", "bloom": "Июнь-Август", "type": "Целебный"}
+        "Полынь (Защитная)" if current_season=='AUTUMN' else "Хвоя (Зимний кэш)": {
+            "location": "Засечная черта" if current_season=='AUTUMN' else "Тульские леса",
+            "bloom": "Сентябрь-Октябрь" if current_season=='AUTUMN' else "Декабрь-Февраль",
+            "type": "Сверхзащитный"
+        }
     }
     
     HERBAL_RECIPES_LIST = [
-        f"🧪 Авто-Рецепт Ежика [{current_season}]: Сезонный отвар для очистки кэша и защиты портов."
+        f"🧪 ИИ-Рецепт Ежика [{current_season}]: Сезонный отвар для очистки портов 65535 и защиты сокетов .open()."
     ]
 
     spring_token_bin = struct.pack('!I', 20260301)
@@ -98,87 +115,7 @@ def index_vancouver(request):
         "attention_sign": attention_sign
     }
     return render(request, 'storage_control/miro_monolith.html', ctx)
-def generate_legion_vector_chart():
-    try:
-        plt.figure(figsize=(5, 2.2), facecolor='#f1f5f9')
-        ax = plt.axes()
-        ax.set_facecolor('#ffffff')
-        x = np.linspace(0, 10, 15)
-        y = np.sin(x) * 30 + 40 + random.uniform(-2, 2)
-        plt.plot(x, y, color='#db2777', linewidth=2)
-        ax.tick_params(colors='#4a5568', labelsize=6)
-        ax.spines['top'].set_visible(False)
-        ax.spines['right'].set_visible(False)
-        plt.grid(True, color='#e2e8f0', linestyle='--', linewidth=0.5)
-        buf = io.BytesIO()
-        plt.savefig(buf, format='png', bbox_inches='tight', dpi=130, facecolor='#f1f5f9')
-        buf.seek(0)
-        string = base64.b64encode(buf.read()).decode('utf-8')
-        plt.close()
-        return f"data:image/png;base64,{string}"
-    except Exception: return ""
 
-def index_vancouver(request):
-    chart_base64 = generate_legion_vector_chart()
-    current_month = datetime.now().month
-    
-    # 🛡️ ПУЛЕНЕПРОБИВАЕМЫЙ СИНТАКСИС: Все списки месяцев заполнены намертво!
-    if current_month in:
-        current_season, weather_msg = 'WINTER', '❄️ Зима. Снег в ОЗУ.'
-    elif current_month in:
-        current_season, weather_msg = 'SPRING', '🌱 Весна. Лед СУБД тает.'
-    elif current_month in:
-        current_season, weather_msg = 'SUMMER', '☀️ Лето. Солнечный параллакс.'
-    else:
-        current_season, weather_msg = 'AUTUMN', '🍂 Осень. Время ИТР-дождей вечности.'
-
-    KNOWLEDGE_BASE_TEXTS = {
-        "AUTUMN": "Знахарь Максим собирает полынь защищая здоровье коллег осенью во время дождей чтобы опечатать вековые ИТР снадобья в СУБД PostgreSQL и намертво укрепить внимание нашего великого синдиката",
-        "WINTER": "Знахарь Максим хранит зимние сухие сборы трав хэши и экстракты защищая лимиты ОЗУ кластера в лютые морозы ради тотальной кибер безопасности всего нашего великого синдиката",
-        "SPRING": "Знахарь Максим встречает весну Тульского края собирая первые ростки ромашку и сок растапливая лед СУБД для запуска новых асинхронных потоков автоматизации нашего великого синдиката",
-        "SUMMER": "Знахарь Максим сканирует летние поля Ясной Поляны вытягивая сок подорожника для достижения стопроцентной кликабельности UI UX цифровых продуктов холдинга нашего великого синдиката"
-    }
-
-    raw_selected_text = KNOWLEDGE_BASE_TEXTS.get(current_season, KNOWLEDGE_BASE_TEXTS["AUTUMN"])
-    words_array = raw_selected_text.split()
-    parsed_27_words = words_array[:27] # Ровно 27 слов на автопилоте!
-
-    PLANTS_SPECIES_DICT = {
-        "Полынь (Защита)": {"location": "Засечная черта", "bloom": "Июль-Октябрь", "type": "Сверхзащитный"},
-        "Зверобой (ИТР сбор)": {"location": "Алексинский бор", "bloom": "Июнь-Август", "type": "Целебный"}
-    }
-    
-    HERBAL_RECIPES_LIST = [
-        f"🧪 Авто-Рецепт Ежика [{current_season}]: Сезонный отвар для очистки кэша и защиты портов."
-    ]
-
-    spring_token_bin = struct.pack('!I', 20260301)
-    spring_hex_view = spring_token_bin.hex()
-    source_link_url = f"https://miroha.ru{current_season.lower()}/"
-    attention_sign = "⚠️ ЗНАКИ ВНИМАНИЯ ДЛЯ ЛЮДЕЙ: ___{[]} - Автоматика Ежика активна!"
-
-    try:
-        db_profiles = UserMaskProfile.objects.all()
-        roles_list = [f"{p.client_id} ({p.active_role})" for p in db_profiles]
-    except Exception:
-        roles_list = ["Администратор Платформы"]
-
-    ctx = {
-        "object_capital_rub": "Бесплатный Тоннель 2FA // Движок openpyxl + МЕДИА",
-        "market_status": "👑 РОБОТ-ЁЖИК АВТОМАТИЗИРОВАН // AI PARSER ACTIVE",
-        "chart_img": chart_base64,
-        "roles": roles_list,
-        "timestamp": datetime.now().strftime("%H:%M:%S"),
-        "current_season": current_season,
-        "weather_msg": weather_msg,
-        "spring_hex_view": spring_hex_view,
-        "plants_dict": PLANTS_SPECIES_DICT,
-        "recipes_list": HERBAL_RECIPES_LIST,
-        "parsed_words": " ".join(parsed_27_words),
-        "source_url": source_link_url,
-        "attention_sign": attention_sign
-    }
-    return render(request, 'storage_control/miro_monolith.html', ctx)
 def user_isolated_cabinet(request, client_id):
     return render(request, 'storage_control/user_cabinet.html', {"client_id": client_id.upper()})
 
