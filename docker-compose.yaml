@@ -14,5 +14,5 @@ services:
       - "9000:9000"  # FastAPI (CAC, SMTP, sitemap)
       - "1541:1541"  # Резерв под 1С:Предприятие Data Mesh
     environment:
-      - DATABASE_URL=postgresql://maxim_admin:MirohaCryptoPostgres2026@127.0.0.1:5432/miroha_db
+      - DATABASE_URL=postgresql://maxim_admin:MirohaCryptoPostgres2026@192.168.0.231:5432/miroha_db
     command: /root/app/hello/bin/uvicorn fastapi_service.fast_contract_api:app --host 0.0.0.0 --port 9000
