@@ -1,31 +1,34 @@
-let currentSlide = 0;
-function moveCarousel(direction) {
-    const track = document.getElementById('carousel_track');
-    if(!track) return;
-    currentSlide = (currentSlide + direction + 3) % 3;
-    track.style.transform = `translateX(-${currentSlide * 100}%)`;
-}
-function toggleElement(id) {
-    let el = document.getElementById(id);
-    if(!el) return;
-    if (el.style.display === 'none' || el.style.display === '') {
-        el.style.display = (id === 'market_box') ? 'grid' : 'block';
-    } else { el.style.display = 'none'; }
-}
-function executeLlmAuth() {
-    let cid = document.getElementById('client_id_input').value;
-    if(!cid) { alert("Введите Валидный Client ID!"); return; }
+/* 🧠 СКВОЗНОЙ ИТР-ДВИЖОК ИНТЕРАКТИВНОГО ФРОНТЕНДА MIROHA MONOLITH */
+document.addEventListener('DOMContentLoaded', () => {
+    const card = document.getElementById('ezhik_parallax_card');
+    if (card) {
+        document.addEventListener('mousemove', (e) => {
+            let xAxis = (window.innerWidth / 2 - e.pageX) / 15;
+            let yAxis = (window.innerHeight / 2 - e.pageY) / 15;
+            card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg) translateZ(10px)`;
+            card.style.boxShadow = `${-xAxis}px ${yAxis}px 25px rgba(219,39,119,0.15)`;
+        });
+        document.addEventListener('mouseleave', () => {
+            card.style.transform = `rotateY(0deg) rotateX(0deg) translateZ(0px)`;
+            card.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.05)';
+        });
+    }
+});
+
+function requestEzhikWorld() {
+    let cid = document.getElementById('ezhik_cid').value.trim().toUpperCase();
+    if(!cid) { alert("Укажите Ваш Client ID для Ежика!"); return; }
+    
     let fd = new FormData();
-    fd.append("developer", cid);
-    fetch('/api/users-groups/', { method: 'POST', body: fd })
+    fd.append("client_id", cid);
+    
+    fetch('/api/ezhik-auth/', { method: 'POST', body: fd })
     .then(res => res.json())
     .then(data => {
-        alert(`✅ POSTGRESQL КЛАССTЕР ОТВЕТИЛ:\nПрофиль ${cid} успешно верифицирован в ОЗУ!`);
-        toggleElement('auth_vault');
+        if(data.status === 'success') {
+            location.href = data.redirect_url;
+        } else {
+            alert(`❌ ОТКАЗ PostgreSQL СУБД:\n${data.message}\n\nДоступные тестовые ID:\n- CID-PRO-MIHALYCH\n- CID-INV-ALFA\n- CID-USER-TSF`);
+        }
     });
-}
-function triggerAddToCart(pid) {
-    fetch(`/api/add-to-cart/${pid}/`)
-    .then(res => res.json())
-    .then(data => alert(`🛒 МЕДИА-МАГАЗИН: Товар ID-${pid} заперт в памяти корзины!`));
 }

@@ -3,59 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Miroha Monolith // Holding Luxury Portal</title>
+    <title>Miroha Monolith // Isolated Light Portal</title>
+    <!-- ПОДКЛЮЧАЕМ ИЗОЛИРОВАННЫЙ СЛОЙ CSS -->
     <link rel="stylesheet" href="/static/storage_control/css/legion_material3.css">
-    <style>
-        body { background-color: #05060c; color: #f1f5f9; font-family: -apple-system, sans-serif; display: flex; justify-content: center; padding: 15px; }
-        .main-container { width: 100%; max-width: 480px; }
-    </style>
 </head>
 <body>
 <div class="main-container">
 
     <!-- ГЛАВНАЯ КАРТОЧКА СЕЙФА КАПИТАЛА -->
-    <div class="moba-card" style="border-left-color: #00f0ff; background: rgba(0,240,255,0.01); padding: 20px;">
-        <div style="font-size: 9px; background: #00f0ff; color:#000; padding: 2px 6px; border-radius: 4px; display: inline-block; font-weight: bold; letter-spacing: 0.5px;">🛰️ MIROHA MONOLITH // LUXURY GATEWAY</div>
-        <div style="font-size: 1.8rem; font-weight: bold; color:#fff; margin-top: 15px; letter-spacing: -0.5px;">{{ object_capital_rub }}</div>
-        <div style="font-size: 9px; color: #39ff14; margin-top: 5px; font-weight: bold;">{{ market_status }} // {{ timestamp }}</div>
+    <div class="moba-card" id="capital_card" style="border-left-color: var(--google-accent);">
+        <div class="moba-badge" style="background: #e0f2fe; color: var(--google-accent);">🛰️ MIROHA MONOLITH // LUXURY V3</div>
+        <div style="font-size: 1.9rem; font-weight: bold; color: var(--google-text); letter-spacing: -0.5px;">{{ object_capital_rub }}</div>
+        <div style="font-size: 9px; color: var(--google-green); margin-top: 4px; font-weight: bold;">{{ market_status }} // {{ timestamp }}</div>
     </div>
 
-    <!-- ФОРМА ЗАПРОСА ЕЖИКА: Окно входа в изолированные ИТР-миры -->
-    <div class="moba-card" style="border-left-color: #ff007f; background: rgba(255,0,127,0.005); padding: 15px;">
-        <div style="font-size: 10px; color: #ff007f; font-weight: bold; margin-bottom: 10px;">🔒 ИИ-ДEШБОРД РОБОТА-ЕЖИКА // ВХОД В ЛИЧНЫЙ МИР УЧЕТА:</div>
-        <div style="font-size: 9px; color: #8a99ad; margin-bottom: 12px; line-height: 1.4;">Введите Ваш персональный ИТР-код Client ID. По запросу Ежик откроет Вашу зашифрованную СУБД-страницу и индивидуальный дизайн:</div>
+    <!-- 🦔 ИНТЕРАКТИВНАЯ КАРТОЧКА ВХОДА С СУПЕР 3D-ПАРАЛЛАКСОМ -->
+    <div class="moba-card" id="ezhik_parallax_card" style="border-left-color: var(--google-pink);">
+        <div class="moba-badge" style="background: #fce7f3; color: var(--google-pink);">🔒 ИИ-ДЕШБОРД РОБОТА-ЕЖИКА // ВХОД В ЛИЧНЫЙ МИР:</div>
+        <div style="font-size: 10px; color: #64748b; margin-bottom: 12px; line-height: 1.4;">Введите Ваш персональный ИТР-код Client ID. По запросу Ежик откроет Вашу зашифрованную СУБД-страницу и индивидуальный дизайн:</div>
         
-        <input type="text" id="ezhik_cid" placeholder="Напр: CID-PRO-MIHALYCH или CID-INV-ALFA" class="input-google" style="text-transform: uppercase;">
-        <button class="btn-action" style="border-color: #ff007f; color: #ff007f; padding: 10px;" onclick="requestEzhikWorld()">
+        <input type="text" id="ezhik_cid" placeholder="Напр: CID-PRO-MIHALYCH или CID-INV-ALFA" class="input-google">
+        <button class="btn-action" style="background: var(--google-pink);" onclick="requestEzhikWorld()">
             🦔 Отправить запрос Роботу-Ёжику() ➔
         </button>
     </div>
 
-    <div class="footer-hidden" style="color: #20263a; text-align: center; margin-top: 50px;">
-        Miroha Monolith Cluster © 2026. Сертифицировано Google Material Design 3. Лицензия СРО №ОС-2026-M19. Данные изолированы в PostgreSQL.
+    <div class="footer-hidden">
+        Miroha Monolith Cluster © 2026. Сертифицировано Google Material Design 3 Light. Лицензия СРО №ОС-2026-M19. Все наряды и чеки изолированы в PostgreSQL.
     </div>
 
 </div>
 
-<script>
-    function requestEzhikWorld() {
-        let cid = document.getElementById('ezhik_cid').value.trim().toUpperCase();
-        if(!cid) { alert("Укажите Ваш Client ID для Ежика!"); return; }
-        
-        let fd = new FormData();
-        fd.append("client_id", cid);
-        
-        fetch('/api/ezhik-auth/', { method: 'POST', body: fd })
-        .then(res => res.json())
-        .then(data => {
-            if(data.status === 'success') {
-                // Ежик перенаправляет в персональный, скрытый от толпы мир!
-                location.href = data.redirect_url;
-            } else {
-                alert(`❌ ОТКАЗ PostgreSQL СУБД:\n${data.message}\n\nДоступные тестовые ID:\n- CID-PRO-MIHALYCH\n- CID-INV-ALFA\n- CID-USER-TSF`);
-            }
-        });
-    }
-</script>
+<!-- ПОДКЛЮЧАЕМ ИЗОЛИРОВАННЫЙ СЛОЙ JS -->
+<script src="/static/storage_control/js/legion_core.js"></script>
 </body>
 </html>
