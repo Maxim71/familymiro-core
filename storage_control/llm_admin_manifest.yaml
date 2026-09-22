@@ -1,0 +1,20 @@
+---
+miroha_database_matrix:
+  engine: "PostgreSQL Cluster Enterprise // Active"
+  connection_uri: "postgresql://maxim_admin:MirohaCryptoPostgres2026@192.168.0.231:5432/miroha_db"
+  
+  data_layers_distribution:
+    layer_vechnost_binary:
+      storage: "BYTEA / BLOB fields in PostgreSQL"
+      status: "🔒 ЗАБЛОКИРОВАН ОЗУ-ТАЙМЕРОМ БЕЗ ПРАВА КОРРЕКТИРОВКИ"
+    
+    layer_pto_and_media:
+      storage: "Relational tables (storage_control_supplyrequest)"
+      status: "🔄 СИНХРОНИЗИРОВАНО С ДИCПЕТЧЕРОМ URL"
+      
+    layer_metatable_registry:
+      status: "📊 АКТИВЕН ДЛЯ АВТОМАТИЗИРОВАННЫХ ГРАФИКОВ METABASE X-RAY"
+
+  ezhik_agent_status:
+    mode: "ASYNC POOL MULTITHREADING"
+    pointer: "Active index search for croho-bytes and instant ID matching"
