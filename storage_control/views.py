@@ -132,3 +132,20 @@ def cac_metric_numpy_api(request): return JsonResponse({'status': 'success'})
 def seo_sitemap_xml_api(request): return JsonResponse({'status': 'success'})
 @csrf_exempt
 def smtp_propropab_notifier_api(request): return JsonResponse({'status': 'success'})
+
+def generate_free_google_qr_view(request):
+    """📸 QR-CODE ENGINE: Генерация ИИ-матрицы для мгновенного сканирования Google Authenticator"""
+    import qrcode
+    # Формируем эталонную ссылку туннеля, которую понимает официальное приложение Google
+    secret_key = USERS_TOTP_TUNNELS["MAX-ADMIN"]
+    otpauth_url = f"otpauth://totp/FAMILYMIRA?secret={secret_key}&issuer=MirohaMonolith"
+    
+    # Рендерим QR-код в буфер оперативной памяти сервера без мусора на диске
+    qr = qrcode.QRCode(version=1, box_size=10, border=4)
+    qr.add_data(otpauth_url)
+    qr.make(fit=True)
+    img = qr.make_image(fill_color="black", back_color="white")
+    
+    response = HttpResponse(content_type="image/png")
+    img.save(response, "PNG")
+    return response
