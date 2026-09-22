@@ -2,57 +2,65 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>MIROHA CORE // B2B AMAZON</title>
-    <!-- Подключаем стерильный изолированный файл стилей -->
-    <link rel="stylesheet" href="/static/moba_style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B2B Снабжение // Enterprise Контур Холдинга</title>
+    <link rel="stylesheet" href="https://miroha.ru">
 </head>
 <body>
 
-<!-- Встроенный аудио-эфир («эфир звучит, шлюз поет») -->
-<audio id="click_sound" src="https://mixkit.co" preload="auto"></audio>
-<audio id="success_sound" src="https://mixkit.co" preload="auto"></audio>
+<div class="b2b-container">
 
-<div class="container">
-    
-    <!-- КОРЗИНА WILDBERRIES -->
-    <div class="moba-card" style="border-color: #00f0ff;">
-        <div class="moba-badge" style="background: #00f0ff; box-shadow: 0 0 10px #00f0ff;">🛒 КОРЗИНА СНАБЖЕНИЯ</div>
-        <div style="font-size: 14px; color: #fff; font-weight: bold; margin-top: 5px; display: flex; justify-content: space-between;">
-            <span>МАТЕРИАЛОВ: <span id="cart_counter" style="color: #00f0ff;">{{ cart_count }}</span></span>
-            <span style="color: #00ff66;">СУММА: <span id="total_price_display">{{ total_price }}</span> ₽</span>
+    <!-- 🧱 ЛЕВАЯ КОЛОНКА: УПРАВЛЕНИЕ СКЛАДОМ М19 И СЕРТИФИКАЦИЯ -->
+    <div class="b2b-panel">
+        <div class="b2b-title" style="color:var(--b2b-purple);">🛠️ КОНТУР СКЛАДСКИХ АКТОВ (М15 / КС2)</div>
+        <input type="text" id="act_sku" class="b2b-input" placeholder="Введите SKU товара (напр. MAT-001)">
+        <input type="number" id="act_amount" class="b2b-input" placeholder="Объем / Масса операции">
+        
+        <!-- Направление 2 и 3: Ветки Прихода -->
+        <button class="b2b-btn" style="background:var(--b2b-green); color:#fff;" onclick="executeWarehouseAct('INCOMING')">📥 ОПЕЧАТАТЬ АКТ ПРИХОДА (М-15)</button>
+        
+        <!-- Направление 4 и 6: Ветки Списания и маржи -->
+        <button class="b2b-btn" style="background:var(--b2b-pink); color:#fff;" onclick="executeWarehouseAct('OUTGOING')">📤 СУД С ПИСАНИЯ ПО ЛИМИТАМ ПТО</button>
+
+        <div class="b2b-title" style="color:var(--b2b-pink); margin-top:20px;">🦔 НАПРАВЛЕНИЕ 1 & 9: ИИ-ВЕРИФИКАТОР СЕРТИФИКАТОВ</div>
+        <textarea id="cert_desc" class="b2b-textarea" placeholder="Текстовая опись ГОСТ / А500С / М350..."></textarea>
+        <input type="text" id="cert_num" class="b2b-input" placeholder="Номер сертификата завода">
+        <button class="b2b-btn" style="background:var(--b2b-accent); color:#fff;" onclick="runEzhikVerification()">🪐 СВЕРИТЬ СОВПАДЕНИЕ В ОЗУ</button>
+        <div id="verification_result"></div>
+    </div>
+
+    <!-- 🧱 ЦЕНТРАЛЬНАЯ КОЛОНКА: УЧЕТ ОБОРОТА И ВЫДАЧА НОМЕНКЛАТУРЫ -->
+    <div class="b2b-panel">
+        <div class="b2b-title" style="color:var(--b2b-accent); display:flex; justify-content:space-between;">
+            <span>📊 НАПРАВЛЕНИЕ 5: РЕЕСТР ОБОРОТА СКЛАДА М19 (POSTGRESQL)</span>
+            <span style="color:var(--b2b-green);">ОЗУ LIVE</span>
+        </div>
+        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px; margin-bottom:15px; font-size:11px;">
+            💰 <b>НАПРАВЛЕНИЕ 6 (ЭКОНОМИЯ):</b> Автоматическое удержание 2% маржи синдиката холдинга включено. Выписка чеков самозанятого опечатана.
+        </div>
+        
+        <!-- Сюда ИИ-скрипт выведет живые строки из PostgreSQL -->
+        <div id="catalog_grid" style="flex-grow:1; overflow-y:auto; max-height:420px;"></div>
+        
+        <button class="b2b-btn" style="background:#1e293b; color:#fff; margin-top:15px;" onclick="location.href='/'">⬅️ ВЕРНУТЬСЯ НА ГЛАВНУЮ ВИТРИНУ ЛОББИ</button>
+    </div>
+
+    <!-- 🧱 ПРАВАЯ КОЛОНКА: ЛОГИСТИКА ДОСТАВКИ И ПОИСК ПАРТНЕРОВ -->
+    <div class="b2b-panel">
+        <div class="b2b-title" style="color:var(--b2b-green);">🚚 НАПРАВЛЕНИЕ 7: ПУЛЬТ ЛОГИСТИКИ ДОСТАВКИ</div>
+        <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:6px; padding:8px; font-size:9px; color:#166534; margin-bottom:15px; line-height:1.3;">
+            ● Асинхронный трекинг транс­пор­та активен.<br>
+            ● Авто-расчет стоимости тонно-километра сведен.
+        </div>
+        
+        <div class="b2b-title" style="color:var(--b2b-accent);">🌐 НАПРАВЛЕНИЕ 8: ПОИСК ПАРТНЕРОВ И ЦЕН РЫНКА</div>
+        <div style="font-size:10px; color:#475569; line-height:1.4; background:#f8fafc; padding:8px; border-radius:6px; border:1px solid #e2e8f0;">
+            ИИ-модули Робота-Ёжика сканируют открытые ИТР-биржи снабжения в фоновом режиме для перехвата лучших предложений по бетону и металлу.
         </div>
     </div>
-
-    <!-- ВИТРИНА С ЖИВЫМИ КАРТИНКАМИ И СЧЕТЧИКАМИ -->
-    <div class="grid-marketplace">
-        {% for prod in products %}
-        <div class="moba-prod-card">
-            <div class="sales-counter">🔥 КУПЛЕНО: {{ prod.sales_count }} раз</div>
-            <img class="prod-img" src="{{ prod.image_url }}" alt="{{ prod.title }}">
-            
-            <div style="font-size: 13px; color: #fff; font-weight: bold; margin-top: 10px; font-family: monospace; height: 35px;">{{ prod.title }}</div>
-            <div style="font-size: 10px; color: #8b949e; margin-top: 2px;">Партнер: {{ prod.partner_name }}</div>
-            
-            <div style="font-size: 18px; color: #00ff66; font-weight: bold; margin-top: 10px; font-family: monospace;">
-                {{ prod.price }} ₽ <span style="font-size: 10px; color: #8b949e;">/ {{ prod.unit }}</span>
-            </div>
-            <button class="moba-btn-action" style="padding: 10px; font-size: 11px; margin-top: 10px;" onclick="addToMirohaCart({{ prod.id }})">В КОРЗИНУ</button>
-        </div>
-        {% endfor %}
-    </div>
-
-    <!-- ПЛАТЕЖНЫЙ СБП-ШЛЮЗ -->
-    <div class="sbp-payment-box">
-        <h4 style="color: #ff0055; margin: 0 0 10px 0; text-transform: uppercase;">💎 КОРНЕВОЙ СБП ШЛЮЗ // ИНВОЙС {{ sbp_invoice_code }}</h4>
-        <p style="font-size: 12px; color: #8b949e; margin: 0 0 15px 0;">Авторизация инвойса, автоматическое списание остатков склада и мгновенное звуковое оповещение.</p>
-        <button class="moba-btn-action moba-btn-green" onclick="executeSbpCheckout()">🔒 АВТОРИЗОВАТЬ И ОПЛАТИТЬ ПО СБП</button>
-    </div>
-
-    <button class="moba-btn-action" style="margin-top: 20px; background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2);" onclick="location.href='/'">返回 На главный пульт монолита</button>
 
 </div>
 
-<!-- Подключаем стерильный изолированный файл логики скриптов -->
-<script src="/static/moba_core.js"></script>
+<script src="https://miroha.ru"></script>
 </body>
 </html>

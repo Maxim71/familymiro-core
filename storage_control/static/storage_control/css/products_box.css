@@ -1,0 +1,22 @@
+/* 🎨 PREMIUM ENTERPRISE SUPPLY INTERFACE STYLES */
+:root {
+    --b2b-bg: #0f172a;
+    --b2b-card: #ffffff;
+    --b2b-border: #e2e8f0;
+    --b2b-accent: #0284c7;
+    --b2b-pink: #db2777;
+    --b2b-purple: #7c3aed;
+    --b2b-green: #10b981;
+    --b2b-text: #1e293b;
+}
+body { background: var(--b2b-bg); font-family: monospace; color: var(--b2b-text); margin: 0; padding: 20px; }
+.b2b-container { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 320px 1fr 320px; gap: 20px; }
+@media (max-width: 1024px) { .b2b-container { grid-template-columns: 1fr; } }
+.b2b-panel { background: var(--b2b-card); border: 1px solid var(--b2b-border); border-radius: 12px; padding: 15px; display: flex; flex-direction: column; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+.b2b-title { font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid var(--b2b-border); }
+.b2b-btn { width: 100%; padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-family: monospace; margin-bottom: 10px; transition: opacity 0.2s; }
+.b2b-btn:hover { opacity: 0.9; }
+.b2b-input, .b2b-select, .b2b-textarea { width: 100%; padding: 8px; border: 1px solid var(--b2b-border); border-radius: 6px; font-family: monospace; margin-bottom: 10px; box-sizing: border-box; }
+.product-row { border-bottom: 1px solid var(--b2b-border); padding: 10px 0; display: flex; justify-content: space-between; align-items: center; }
+.product-row:last-child { border-bottom: none; }
+.badge { padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: bold; color: #fff; }
