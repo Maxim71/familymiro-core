@@ -1,0 +1,14 @@
+:root {
+    --google-bg: #080911;
+    --google-surface: rgba(13, 17, 33, 0.85);
+    --google-border: #1c203a;
+    --google-accent: #00f0ff;
+    --google-pink: #ff007f;
+    --google-green: #39ff14;
+}
+.carousel-container { width: 100%; overflow: hidden; position: relative; border-radius: 8px; border: 1px solid var(--google-border); background: #020306; margin-bottom: 15px; }
+.carousel-track { display: flex; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+.carousel-slide { min-width: 100%; padding: 15px; box-sizing: border-box; font-size: 11px; line-height: 1.4; }
+.market-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; transition: all 0.3s ease; }
+.modal-vault { display: none; background: #020306; border: 1px solid var(--google-pink); border-radius: 8px; padding: 15px; margin-bottom: 15px; box-shadow: 0 0 20px rgba(255,0,127,0.15); }
+.input-google { width: 100%; background: #080911; border: 1px solid var(--google-border); color: #fff; padding: 8px; border-radius: 6px; font-size: 11px; margin-bottom: 8px; font-family: monospace; }

@@ -18,3 +18,23 @@ miroha_database_matrix:
   ezhik_agent_status:
     mode: "ASYNC POOL MULTITHREADING"
     pointer: "Active index search for croho-bytes and instant ID matching"
+Set-Content -Path "C:\FAMILYMIRO\llm_admin_manifest.yaml" -Value @"
+---
+miroha_legion_max_master_matrix:
+  generated_at: '22.09.2026 11:22:00 MSK'
+  infrastructure: "PostgreSQL [192.168.0.231:5432] + Nginx Reverse Proxy"
+  environment_status: "Virtualenv hello Active // Zero AttributeError"
+
+  integrated_pto_and_fintech_gateways:
+    - { path: "/api/supply-limits/",    purpose: "📦 Портал лимитов снабжения ИТР" }
+    - { path: "/api/warehouse-m19/",    purpose: "🧱 Ведомость М-19 учета материалов" }
+    - { path: "/api/users-groups/",     purpose: "👥 Матрица доступов пользователей и групп" }
+    - { path: "/api/admin-vault/",      purpose: "👑 Спецучет сейфа админ-контроля {}" }
+    - { path: "/api/v5/alfa-sbp-qr/",   purpose: "💳 СБП Альфа-Банк Шлюз 2% маржи синдиката" }
+    - { path: "/api/v5/openpyxl-parser/",purpose: "📊 openpyxl Excel-парсер ведомостей ВОР" }
+    - { path: "/api/v5/yolo-vision/",   purpose: "🤖 ultralytics YOLO v8 нейросеть контроля осей" }
+    - { path: "/api/v5/1c-sync-bridge/",purpose: "🏢 1С:Предприятие Data Mesh reserved сокет" }
+
+  status: "🟢 ВСЕ ПОРТАЛЫ, СКЛАДЫ, ИИ-ШЛЮЗЫ И 1С МОСТЫ УСПЕШНО ОПЕЧАТАНЫ В ОЗУ."
+"@
+Get-Content -Path "C:\FAMILYMIRO\llm_admin_manifest.yaml"

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ user.name }} // Изолированный ИТР-Мир</title>
+    <link rel="stylesheet" href="/static/storage_control/css/legion_material3.css">
+    <style>
+        body { background-color: {{ user.bg_color }}; color: #e2e8f0; font-family: monospace; display: flex; justify-content: center; padding: 15px; }
+        .user-container { width: 100%; max-width: 480px; }
+    </style>
+</head>
+<body>
+<div class="user-container">
+
+    <!-- ИНДИВИДУАЛЬНЫЙ ДИЗАЙН СТРАНИЦЫ ЮЗЕРА -->
+    <div class="moba-card" style="border-left-color: {{ user.accent }}; background: rgba(255,255,255,0.01);">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="moba-badge" style="background: {{ user.accent }}; color: #000;">{{ user.badge }}</div>
+            <span style="font-size: 8px; color: #4a5568;">ID: {{ client_id }}</span>
+        </div>
+        <div style="font-size: 1.3rem; font-weight: bold; color: #fff; margin-top: 10px;">{{ user.name }}</div>
+        <div style="font-size: 9px; color: {{ user.accent }}; margin-top: 3px; font-weight: bold;">Должность: {{ user.role }}</div>
+        
+        <div style="font-size: 9px; color: #8a99ad; margin-top: 12px; line-height: 1.4; border-top: 1px solid #1c203a; padding-top: 10px;">
+            ℹ️ <b>ОПИСАНИЕ ИТР-ПРОСТРАНСТВА:</b><br>{{ user.desc }}
+        </div>
+    </div>
+
+    <!-- ПЕРСОНАЛЬНЫЙ ЖИВОЙ ГРАФИК MATPLOTLIB ИЗ ОЗУ ДАННОГО ЮЗЕРА -->
+    {% if chart_img %}
+    <div class="moba-card" style="border-left-color: {{ user.accent }}; padding: 6px; background: {{ user.bg_color }}; text-align: center; border-color: #1c203a;">
+        <img src="{{ chart_img }}" alt="Персональные данные СУБД" style="width: 100%; height: auto; border-radius: 4px;">
+    </div>
+    {% endif %}
+
+    <button class="btn-action" style="border-color: #1c203a; color: #fff; background: rgba(255,255,255,0.02);" onclick="location.href='/'">
+        ⬅️ Выйти из личного кабинета на Главную витрину
+    </button>
+
+</div>
+</body>
+</html>
