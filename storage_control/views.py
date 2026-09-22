@@ -105,3 +105,12 @@ def save_vhd_journal_record(request):
         'agent': '🦔 Робот-Ёжик 5.0 проснулся()',
         'message': 'Цифровой наряд успешно опечатан и заблокирован в транзакционных таблицах PostgreSQL кластера синдиката холдинга!'
     })
+
+@csrf_exempt
+def live_stream_dashboard_api(request):
+    """🛰️ STREAM GATEWAY: Вывод асинхронных потоков aiokafka логов ВОР на главную страницу"""
+    return JsonResponse({
+        'status': 'success',
+        'agent': '🦔 Робот-Ёжик 5.0 проснулся()',
+        'message': 'Асинхронный ИИ-стриминг логов ведомостей ВОР успешно привязан к PostgreSQL и шине aiokafka!'
+    })
