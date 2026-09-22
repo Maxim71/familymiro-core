@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Miroha Monolith // Binary Calendar Core</title>
+    <title>Miroha Monolith // Heritage AI Signs</title>
     <link rel="stylesheet" href="{% static 'storage_control/css/legion_material3.css' %}?v=65_final">
 </head>
 <body data-season="{{ current_season }}">
@@ -12,26 +12,23 @@
 
 <div class="lobby-frame">
     <div class="left-main-zone">
-        <!-- ТОП-БАР ЛОББИ: СЮДА ЕЖИК ТРАНСЛИРУЕТ ЖИВОЙ ПРОГНОЗ ПОГОДЫ СИНДИКАТА -->
         <div style="background:#fff; border:1px solid var(--lobby-border); border-radius:12px; padding:15px; display:flex; justify-content:space-between; align-items:center;">
             <div>
                 <div style="font-size:9px; font-weight:bold; color:var(--lobby-accent);">🛰️ МАТЕРИНСКИЙ КАПИТАЛ СИНДИКАТА</div>
-                <div style="font-size:1.5rem; font-weight:bold; letter-spacing:-0.5px; margin-top:2px;">{{ object_capital_rub }}</div>
+                <div style="font-size:1.6rem; font-weight:bold; letter-spacing:-0.5px; margin-top:2px;">{{ object_capital_rub }}</div>
             </div>
             <div style="text-align:right; font-family:monospace; font-size:10px; color:var(--lobby-pink); font-weight:bold;">
                 {{ weather_msg }}<br><span style="color:#64748b; font-size:9px;">Время ОЗУ: {{ timestamp }} // {{ market_status }}</span>
             </div>
         </div>
 
-        <!-- 🃏 ПЯТЬ ЦЕНТРАЛЬНЫХ СЛОТОВ ПРАВ И ПЕРЕМЕЩЕНИЙ КЛИЕНТОВ -->
         <div class="slots-grid">
             <div class="slot-card active" style="font-size:10px; text-align:center; padding:5px;">
                 <span style="font-size:20px;">👑</span><br><b style="color:var(--lobby-text);">MAX-ADMIN</b><br><span style="color:var(--lobby-green);">ONLINE</span>
             </div>
             
-            <!-- ⚡ АКТИВИРОВАН ВТОРОЙ СЛОТ: ЖИВОЙ БИНАРНЫЙ КАЛЕНДАРЬ МАКСИМА -->
             <div class="slot-card active" style="font-size:9px; text-align:center; padding:4px; border-color:var(--google-green);">
-                <span style="font-size:18px;">📅</span><br><b style="color:var(--google-green);">КАЛЕНДАРЬ</b><br>
+                <span style="font-size:18px;">🌱</span><br><b style="color:var(--google-green);">АТЛАС ТРАВ</b><br>
                 <span style="color:#64748b; font-size:7px;">Хэш Весны:<br><code>{{ spring_hex_view }}</code></span>
             </div>
             
@@ -52,26 +49,39 @@
         </div>
     </div>
 
-    <!-- 👥 ПРАВАЯ ВЕРТИКАЛЬНАЯ ПАНЕЛЬ: USERS И ЖИВАЯ НАПОМИНАЛКА ЕЖИКА -->
-    <div class="right-sidebar">
-        <!-- ВСПЛЫВАЮЩИЙ ИИ-ЛОГ НАПОМИНАЛОК ИЗ БИНАРНОГО КАНАЛА -->
-        <div style="background:#f0fdf4; border:1px solid #bbf7d0; padding:8px; border-radius:6px; font-size:9px; color:var(--google-green); font-family:monospace; margin-bottom:10px; line-height:1.3;">
-            ⚠️ <b>ИТР-НАПОМИНАЛКА:</b><br>{{ birthday_alert_msg }}
+    <!-- 👥 ПРАВАЯ ПАНЕЛЬ: ЖИВОЙ ИИ-ИНТЕРФЕЙС АТЛАСА И СНAДОБИЙ ЗНАХАРЯ -->
+    <div class="right-sidebar" style="overflow-y:auto; max-height:550px;">
+        
+        <!-- ЖЕСТКИЙ ЗНАК ВНИМАНИЯ КЛИЕНТАМ -->
+        <div style="background:#fef2f2; border:1px solid #fca5a5; padding:8px; border-radius:6px; font-size:8px; color:var(--google-pink); font-family:monospace; margin-bottom:10px; font-weight:bold;">
+            {{ attention_sign }}
         </div>
 
-        <div style="font-size:10px; font-weight:bold; color:#64748b; margin-bottom:10px; letter-spacing:0.5px; border-bottom:1px solid var(--lobby-border); padding-bottom:5px;">👥 USERS ONLINE (PostgreSQL):</div>
-        <div style="flex-grow:1; overflow-y:auto;">
-            {% for role in roles %}
-            <div class="user-row">
-                <div class="user-avatar" style="background: radial-gradient(circle, var(--lobby-accent) 0%, transparent 100%); opacity:0.7;"></div>
-                <div>
-                    <b style="color:var(--lobby-text);">{{ role }}</b><br>
-                    <span style="color:var(--lobby-green); font-size:8px; font-weight:bold;">● ПОДКЛЮЧЕН К СУБД</span>
-                </div>
-            </div>
+        <!-- СТАТЬЯ ПАРСЕРА ЕЖИКА (РОВНО 27 СЛОВ) -->
+        <div style="background:#ffffec; border:1px solid #fef08a; padding:10px; border-radius:6px; font-size:9px; color:#854d0e; font-family:monospace; margin-bottom:12px; line-height:1.3;">
+            📖 <b>ПАРСЕР СТАТЕЙ ЕЖИКА (Ровно 27 слов):</b><br>
+            <i>«{{ parsed_words }}»</i><br>
+            🌐 <a href="{{ source_url }}" target="_blank" style="color:var(--lobby-accent); font-weight:bold; text-decoration:none;">[ИСТОЧНИК СТАТЬИ СИНДИКАТА]</a>
+        </div>
+
+        <!-- ВЫВОД СЛОВАРЯ ВИДОВ И ТРАВ ИЗ POSTGRESQL -->
+        <div style="font-size:9px; font-family:monospace; margin-bottom:12px;">
+            <b>🌱 КАРТА РАСТЕНИЙ И ПОХОДОВ:</b>
+            <ul style="padding-left:12px; margin-top:4px; color:#334155;">
+                {% for name, info in plants_dict.items %}
+                <li style="margin-bottom:4px;"><b>{{ name }}</b> ({{ info.type }})<br>📍 Где: {{ info.location }}<br>⏳ Сбор: {{ info.bloom }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- ВЫВОД СПИСКА РЕЦЕПТОВ СНАДОБИЙ -->
+        <div style="font-size:9px; font-family:monospace; border-top:1px solid var(--lobby-border); padding-top:8px;">
+            <b>🧪 ИТР-РЕЦЕПТЫ СНАДОБИЙ:</b>
+            {% for recipe in recipes_list %}
+            <div style="margin-top:4px; color:#475569; font-size:8px; line-height:1.2;">• {{ recipe }}</div>
             {% endfor %}
         </div>
-        <div style="font-size:8px; color:#94a3b8; text-align:center; margin-top:10px; font-family:monospace;">Miroha Monolith SaaS Matrix © 2026</div>
+
     </div>
 </div>
 
