@@ -155,7 +155,7 @@ CELERY_BROKER_URL = 'redis://redis:6379/0'
 # Передает Django информацию о том, что запрос был через HTTPS (если перед ним стоит прокси)
 
 # 🪐 ЖЕСТКИЙ СКВОЗНОЙ ИТР-КОНТУР HTTPS ШИФРОВАНИЯ GOOGLE STANDARDS
-SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = False
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

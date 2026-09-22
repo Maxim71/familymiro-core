@@ -1,4 +1,4 @@
-/* 🧠 ДВИЖОК ЦИФРОВОГО ДОЖДЯ ВЕЧНОСТИ И ОБЪЕМНОГО ФОНОВОГО ПАРАЛЛАКСА */
+/* 🧠 ИСПРАВЛЕННЫЙ ИТР-ДВИЖОК ЦИФРОВОГО ДОЖДЯ ВЕЧНОСТИ И ОБЪЕМНОГО ФОНОВОГО ПАРАЛЛАКСА */
 document.addEventListener('DOMContentLoaded', () => {
     const canvas = document.getElementById('cyber_rain_canvas');
     if (!canvas) return;
@@ -8,10 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    // Символы ИТР-матрицы холдинга Miroha
-    const katakana = "01МIROMax054329000EzhikЖук";
+    const katakana = "01MIROMax054329000EzhikЖук";
     const alphabet = katakana.split("");
-
     const fontSize = 10;
     const columns = canvas.width / fontSize;
 
@@ -20,19 +18,19 @@ document.addEventListener('DOMContentLoaded', () => {
         rainDrops[x] = 1;
     }
 
-    // Бесконечный асинхронный рендеринг капель дождя в ОЗУ
     function drawCyberRain() {
-        ctx.fillStyle = 'rgba(241, 245, 249, 0.05)'; // Мягкое светлое затухание следа капли
+        ctx.fillStyle = 'rgba(241, 245, 249, 0.05)'; 
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        ctx.fillStyle = '#db2777'; // Розовый ИТР-неон для капель
+        ctx.fillStyle = '#db2777'; 
         ctx.font = fontSize + 'px monospace';
 
-        for (let i = 0; x < rainDrops.length; i++) {
-            const text = alphabet[Math.floor(random() * alphabet.length)];
+        // 🛡️ ЗДЕСЬ ВСЁ ИСПРАВЛЕНО НАМЕРТВО: Цикл и шаг выровнены по индексу 'i'!
+        for (let i = 0; i < rainDrops.length; i++) {
+            const text = alphabet[Math.floor(Math.random() * alphabet.length)];
             ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
 
-            if (rainDrops[i] * fontSize > canvas.height && random() > 0.975) {
+            if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975) {
                 rainDrops[i] = 0;
             }
             rainDrops[i]++;
@@ -40,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     setInterval(drawCyberRain, 30);
 
-    // 🪐 РАСПРАВЛЯЕМ КРЫЛЬЯ: Объемный 3D-параллакс смещения всего холста дождя за мышью
+    // Объемный 3D-параллакс смещения всего холста дождя за мышью
     document.addEventListener('mousemove', (e) => {
         let moveX = (window.innerWidth / 2 - e.pageX) / 20;
         let moveY = (window.innerHeight / 2 - e.pageY) / 20;
