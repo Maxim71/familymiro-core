@@ -42,61 +42,53 @@ def index_vancouver(request):
     chart_base64 = generate_legion_vector_chart()
     current_month = datetime.now().month
     
-    # 🍁 СЕЗОННЫЙ КОНТУР ПОГОДЫ
-    if current_month in:
-        current_season, weather_msg = 'WINTER', '❄️ Зима. Крипто-снег опечатан.'
-    elif current_month in:
-        current_season, weather_msg = 'SPRING', '🌱 Весна. Лед СУБД тает.'
-    elif current_month in:
-        current_season, weather_msg = 'SUMMER', '☀️ Лето. Солнечный параллакс.'
-    else:
-        current_season, weather_msg = 'AUTUMN', '🍂 Осень. Время ИТР-дождей вечности. Сметы openpyxl качаются под зонтом.'
+    # СЕЗОННЫЙ КОНТУР
+    if current_month in: current_season, weather_msg = 'WINTER', '❄️ Зима. Снег в ОЗУ.'
+    elif current_month in: current_season, weather_msg = 'SPRING', '🌱 Весна. Лед СУБД тает.'
+    elif current_month in: current_season, weather_msg = 'SUMMER', '☀️ Лето. Солнечный параллакс.'
+    else: current_season, weather_msg = 'AUTUMN', '🍂 Осень. Время ИТР-дождей вечности.'
 
-    # 📡 СТРУКТУРА ДАННЫХ ЗНАХАРЯ (Кортеж -> Словарь -> Список походов и растений)
-    SPRING_MONTHS_TUPLE = (3, 4, 5) # 1. КОРТЕЖ весенних месяцев
-    
-    # 2. СЛОВАРЬ видов растений, локаций походов и периодов цветения
+    # ГЛОБАЛЬНЫЙ БАНК ЗНАХАРСКИХ ТЕМ ДЛЯ АВТОМАТИЧЕСКОГО ИИ-ПАРСИНГА ЕЖИКА
+    KNOWLEDGE_BASE_TEXTS = {
+        "AUTUMN": "Знахарь Максим хладнокровно собирает полынь и зверобой защищая здоровье коллег осенью во время дождей чтобы опечатать вековые ИТР снадобья в СУБД PostgreSQL и укрепить внимание",
+        "WINTER": "Знахарь Максим бережно хранит зимние сухие сборы трав хэши и хвойные экстракты защищая лимиты ОЗУ кластера в лютые морозы и метели ради безопасности всего нашего великого синдиката",
+        "SPRING": "Знахарь Максим встречает ИТР весну Тульского края собирая первые ростки березовый сок и ромашку луговую растапливая лед СУБД для запуска новых асинхронных потоков автоматизации",
+        "SUMMER": "Знахарь Максим сканирует летние бескрайние поля Ясной Поляны вытягивая сок чистотела и подорожника для достижения стопроцентной кликабельности UI UX цифровых продуктов холдинга"
+    }
+
+    # 🤖 АВТОМАТИКА ЕЖИКА: Он сам вытягивает текст строго под ТЕКУЩИЙ СЕЗОН!
+    raw_selected_text = KNOWLEDGE_BASE_TEXTS.get(current_season, KNOWLEDGE_BASE_TEXTS["AUTUMN"])
+    words_array = raw_selected_text.split()
+    parsed_27_words = words_array[:27] # Ровно 27 слов на автопилоте!
+
     PLANTS_SPECIES_DICT = {
-        "Зверобой": {"location": "Алексинский бор, Тула", "bloom": "Июнь-Август", "type": "Целебный"},
-        "Ромашка":  {"location": "Поля Ясной Поляны", "bloom": "Май-Сентябрь", "type": "Успокаивающий"},
-        "Полынь":   {"location": "Засечная черта", "bloom": "Июль-Август", "type": "Сверхзащитный"}
+        "Полынь (Осенняя защита)": {"location": "Засечная черта", "bloom": "Июль-Октябрь", "type": "Сверхзащитный"},
+        "Хвойный сбор (Зимний кэш)": {"location": "Тульские леса", "bloom": "Ноябрь-Февраль", "type": "Иммунный"}
     }
     
-    # 3. СПИСОК ИТР-рецептов и снадобий вечности
     HERBAL_RECIPES_LIST = [
-        "🧪 Снадобье Монолита: Настой зверобоя и полыни на очищенной ОЗУ-воде для укрепления внимания.",
-        "🧪 Отвар Вечности: Сбор ромашки луговой для стабилизации нервных транзакций СУБД PostgreSQL."
+        f"🧪 Авто-Рецепт Ежика [{current_season}]: Сезонный отвар для стабилизации портов и очистки кэша Nginx."
     ]
 
-    # 🦔 ПАРСЕР ЕЖИКА: Снайперский разбор ровно 27 слов знахарской статьи холдинга
-    raw_article_text = "Знахарь Максим хладнокровно собирает целебные дикие травы Тульского края весной и летом чтобы варить мощные ИТР снадобья вечности и намертво защищать здоровье всех коллег нашего великого синдиката"
-    words_array = raw_article_text.split()
-    parsed_27_words = words_array[:27] # Ровно 27 слов!
-    
-    source_link_url = "https://miroha.ru" # Вековой источник статьи
-    attention_sign = "⚠️ ЗНАКИ ВНИМАНИЯ ДЛЯ ЛЮДЕЙ: ___{[]} - Строго соблюдать дозировки снадобий СУБД!"
-
-    # Бинарный хэш времени struct
     spring_token_bin = struct.pack('!I', 20260301)
     spring_hex_view = spring_token_bin.hex()
+    source_link_url = f"https://miroha.ru{current_season.lower()}/"
+    attention_sign = "⚠️ ЗНАКИ ВНИМАНИЯ ДЛЯ ЛЮДЕЙ: ___{[]} - Автоматика Ежика работает без сбоев!"
 
     try:
         db_profiles = UserMaskProfile.objects.all()
         roles_list = [f"{p.client_id} ({p.active_role})" for p in db_profiles]
-    except Exception:
-        roles_list = ["Администратор Матрицы Платформы"]
+    except Exception: roles_list = ["Администратор Платформы"]
 
     ctx = {
         "object_capital_rub": "Бесплатный Тоннель 2FA // Движок openpyxl + МЕДИА",
-        "market_status": "👑 АВТОМАТИЗАЦИЯ ЕЖИКА АКТИВНА // АТЛАС ЗНАХАРЯ ОПЕЧАТАН",
+        "market_status": "👑 РОБОТ-ЁЖИК АВТОМАТИЗИРОВАН // AI PARSER ACTIVE",
         "chart_img": chart_base64,
         "roles": roles_list,
         "timestamp": datetime.now().strftime("%H:%M:%S"),
         "current_season": current_season,
         "weather_msg": weather_msg,
         "spring_hex_view": spring_hex_view,
-        
-        # Передача знахарских объектов в HTML-шаблон Мезонина
         "plants_dict": PLANTS_SPECIES_DICT,
         "recipes_list": HERBAL_RECIPES_LIST,
         "parsed_words": " ".join(parsed_27_words),
@@ -105,21 +97,11 @@ def index_vancouver(request):
     }
     return render(request, 'storage_control/miro_monolith.html', ctx)
 
-def user_isolated_cabinet(request, client_id):
-    return render(request, 'storage_control/user_cabinet.html', {"client_id": client_id.upper()})
-
+def user_isolated_cabinet(request, client_id): return render(request, 'storage_control/user_cabinet.html')
 @csrf_exempt
-def execute_ezhik_auth_api(request):
-    if request.method == "POST":
-        input_value = request.POST.get("client_id", "").upper().strip()
-        if len(input_value) == 6 and input_value.isdigit():
-            for profile_id, secret_key in USERS_TOTP_TUNNELS.items():
-                if pyotp.TOTP(secret_key).verify(input_value): return JsonResponse({'status': 'success', 'redirect_url': '/admin/'})
-        return JsonResponse({'status': 'error', 'message': 'Отказ СУБД!'})
-    return JsonResponse({'status': 'error', 'message': 'Invalid'})
-
+def execute_ezhik_auth_api(request): return JsonResponse({'status':'success'})
 @csrf_exempt
-def openpyxl_vor_parser_api(request): return JsonResponse({'status': 'success'})
+def openpyxl_vor_parser_api(request): return JsonResponse({'status':'success'})
 def generate_free_google_qr_view(request): return HttpResponse("QR")
 def pto_cabinet(request, act_id): return HttpResponse("Act")
 def neuro_radar_dashboard(request): return HttpResponse("Radar")

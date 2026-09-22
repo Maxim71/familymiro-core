@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Miroha Monolith // Heritage AI Signs</title>
+    <title>Miroha Monolith // AI Autonomous Core</title>
     <link rel="stylesheet" href="{% static 'storage_control/css/legion_material3.css' %}?v=65_final">
 </head>
 <body data-season="{{ current_season }}">
@@ -26,12 +26,10 @@
             <div class="slot-card active" style="font-size:10px; text-align:center; padding:5px;">
                 <span style="font-size:20px;">👑</span><br><b style="color:var(--lobby-text);">MAX-ADMIN</b><br><span style="color:var(--lobby-green);">ONLINE</span>
             </div>
-            
             <div class="slot-card active" style="font-size:9px; text-align:center; padding:4px; border-color:var(--google-green);">
-                <span style="font-size:18px;">🌱</span><br><b style="color:var(--google-green);">АТЛАС ТРАВ</b><br>
+                <span style="font-size:18px;">🌱</span><br><b style="color:var(--google-green);">AI АТЛАС</b><br>
                 <span style="color:#64748b; font-size:7px;">Хэш Весны:<br><code>{{ spring_hex_view }}</code></span>
             </div>
-            
             <div class="slot-card">?</div>
             <div class="slot-card">?</div>
             <div class="slot-card">?</div>
@@ -44,44 +42,37 @@
                 <div class="circle-btn" onclick="location.href='/admin/'" title="Открыть Django Admin">👑</div>
                 <div class="circle-btn" onclick="location.href='/api/v5/openpyxl-parser/'" title="Открыть openpyxl парсер">📊</div>
                 <div class="circle-btn" onclick="location.href='/get-free-2fa-qr/'" target="_blank" title="Сканировать QR">📸</div>
-                <div class="circle-btn" onclick="alert('Лав-система Капсулы вечности опечатана в PostgreSQL!')" title="Лав-система">💞</div>
+                <div class="circle-btn" onclick="alert('Лав-система опечатана!')" title="Лав-система">💞</div>
             </div>
         </div>
     </div>
 
-    <!-- 👥 ПРАВАЯ ПАНЕЛЬ: ЖИВОЙ ИИ-ИНТЕРФЕЙС АТЛАСА И СНAДОБИЙ ЗНАХАРЯ -->
     <div class="right-sidebar" style="overflow-y:auto; max-height:550px;">
-        
-        <!-- ЖЕСТКИЙ ЗНАК ВНИМАНИЯ КЛИЕНТАМ -->
         <div style="background:#fef2f2; border:1px solid #fca5a5; padding:8px; border-radius:6px; font-size:8px; color:var(--google-pink); font-family:monospace; margin-bottom:10px; font-weight:bold;">
             {{ attention_sign }}
         </div>
 
-        <!-- СТАТЬЯ ПАРСЕРА ЕЖИКА (РОВНО 27 СЛОВ) -->
         <div style="background:#ffffec; border:1px solid #fef08a; padding:10px; border-radius:6px; font-size:9px; color:#854d0e; font-family:monospace; margin-bottom:12px; line-height:1.3;">
-            📖 <b>ПАРСЕР СТАТЕЙ ЕЖИКА (Ровно 27 слов):</b><br>
+            🤖 <b>АВТОНОМНЫЙ ИИ-ПАРСЕР ЕЖИКА (Ровно 27 слов под сезон):</b><br>
             <i>«{{ parsed_words }}»</i><br>
-            🌐 <a href="{{ source_url }}" target="_blank" style="color:var(--lobby-accent); font-weight:bold; text-decoration:none;">[ИСТОЧНИК СТАТЬИ СИНДИКАТА]</a>
+            🌐 <a href="{{ source_url }}" target="_blank" style="color:var(--lobby-accent); font-weight:bold; text-decoration:none;">[ДИНАМИЧЕСКИЙ ИСТОЧНИК СУБД]</a>
         </div>
 
-        <!-- ВЫВОД СЛОВАРЯ ВИДОВ И ТРАВ ИЗ POSTGRESQL -->
         <div style="font-size:9px; font-family:monospace; margin-bottom:12px;">
-            <b>🌱 КАРТА РАСТЕНИЙ И ПОХОДОВ:</b>
+            <b>🌱 СЕЗОННАЯ КАРТА КЛАССА МЕЗОНИН:</b>
             <ul style="padding-left:12px; margin-top:4px; color:#334155;">
                 {% for name, info in plants_dict.items %}
-                <li style="margin-bottom:4px;"><b>{{ name }}</b> ({{ info.type }})<br>📍 Где: {{ info.location }}<br>⏳ Сбор: {{ info.bloom }}</li>
+                <li style="margin-bottom:4px;"><b>{{ name }}</b><br>📍 Локация похода: {{ info.location }}<br>⏳ Период: {{ info.bloom }}</li>
                 {% endfor %}
             </ul>
         </div>
 
-        <!-- ВЫВОД СПИСКА РЕЦЕПТОВ СНАДОБИЙ -->
         <div style="font-size:9px; font-family:monospace; border-top:1px solid var(--lobby-border); padding-top:8px;">
-            <b>🧪 ИТР-РЕЦЕПТЫ СНАДОБИЙ:</b>
+            <b>🧪 СЕЗОННЫЕ ИИ-РЕЦЕПТЫ СНАДОБИЙ:</b>
             {% for recipe in recipes_list %}
             <div style="margin-top:4px; color:#475569; font-size:8px; line-height:1.2;">• {{ recipe }}</div>
             {% endfor %}
         </div>
-
     </div>
 </div>
 
