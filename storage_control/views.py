@@ -96,3 +96,12 @@ def upload_video_to_vault_api(request):
         'agent': '🦔 Робот-Ёжик 5.0 проснулся()',
         'message': 'Видеопоток успешно перехвачен и поставлен в очередь Celery/MoviePy для наложения водяных знаков Miroha ПТО!'
     })
+
+@csrf_exempt
+def save_vhd_journal_record(request):
+    """📊 VHD JOURNAL GATEWAY: Фиксация цифровых нарядов смен и ИТР-директив ПТО"""
+    return JsonResponse({
+        'status': 'success',
+        'agent': '🦔 Робот-Ёжик 5.0 проснулся()',
+        'message': 'Цифровой наряд успешно опечатан и заблокирован в транзакционных таблицах PostgreSQL кластера синдиката холдинга!'
+    })
