@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Miroha Monolith // Heritage AI Vector</title>
+    <title>Miroha Monolith // Multi-Region Geo-IP</title>
     <link rel="stylesheet" href="{% static 'storage_control/css/legion_material3.css' %}?v=65_final">
 </head>
 <body data-season="{{ current_season }}">
@@ -16,12 +16,12 @@
     <div class="left-ips-stream">
         <div style="font-size:10px; font-weight:bold; color:var(--lobby-purple); margin-bottom:8px; letter-spacing:0.5px; border-bottom:1px solid var(--lobby-border); padding-bottom:5px;">🛰️ LAZARUS IPS/API STREAM:</div>
         <div style="flex-grow:1; overflow-y:auto;">
-            <div class="ips-row" style="color:var(--lobby-purple); font-weight:bold;">⚡ [SYS_INIT] Асинхронный контур 65535 готов.</div>
-            <div class="ips-row">🟢 [API_GATE] Сокеты .open() активны под async/await.</div>
-            <div class="ips-row">🔒 [SEC_2FA] Сессия FAMILYMIRA заперта в бинарку.</div>
-            <div class="ips-row" style="color:var(--lobby-green);">🌱 [CALENDAR] ИИ-Ежик сгенерировал визуал {{ current_season }}.</div>
+            <div class="ips-row" style="color:var(--lobby-purple); font-weight:bold;">⚡ [SYS_INIT] Глобальный Гео-IP шлюз запущен в ОЗУ.</div>
+            <div class="ips-row">🟢 [GEO_DATA] Автоматическая мутация контента включена.</div>
+            <div class="ips-row">🔒 [SEC_2FA] Лимиты сокетов 65535 под асинхронным async/await.</div>
+            <div class="ips-row" style="color:var(--lobby-green);">🌱 [MUTATOR] Робот-Ежик перестроил Атлас под регион зашедшего юзера.</div>
         </div>
-        <div style="font-size:7px; color:#94a3b8; text-align:center; font-family:monospace; margin-top:5px;">Lazarus Security Shield v1.0</div>
+        <div style="font-size:7px; color:#94a3b8; text-align:center; font-family:monospace; margin-top:5px;">Lazarus Geo Shield v1.1</div>
     </div>
     
     <!-- ПО ЦЕНТРУ: ГЛАВНАЯ ИТР ЗОНА (КАПИТАЛ, ЖИВАЯ КАРТИНКА ЕЖИКА, СЛОТЫ) -->
@@ -36,7 +36,6 @@
             </div>
         </div>
 
-        <!-- 📸 НАШ ЖИВОЙ ИИ-ВЕКТОРНЫЙ РИСУНОК, КОТОРЫЙ ЕЖИК СОЗДАЕТ НА ЛЕТУ -->
         {% if chart_img %}
         <div style="text-align:center; background:#fff; border:1px solid var(--lobby-border); border-radius:12px; padding:8px; margin-top:10px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.01);">
             <img src="{{ chart_img }}" alt="AI Generated Map" style="width:100%; border-radius:6px; max-height:160px; object-fit:cover;">
@@ -48,7 +47,7 @@
                 <span style="font-size:18px;">👑</span><br><b style="color:var(--lobby-text);">MAX-ADMIN</b><br><span style="color:var(--lobby-green);">ONLINE</span>
             </div>
             <div class="slot-card active" style="font-size:9px; text-align:center; padding:4px; border-color:var(--lobby-green);">
-                <span style="font-size:16px;">🌱</span><br><b style="color:var(--lobby-green);">AI АТЛАС</b><br>
+                <span style="font-size:16px;">🌱</span><br><b style="color:var(--lobby-green);">GEO АТЛАС</b><br>
                 <span style="color:#64748b; font-size:7px;">Хэш Весны:<br><code>{{ spring_hex_view }}</code></span>
             </div>
             <div class="slot-card">?</div>
@@ -75,22 +74,22 @@
         </div>
 
         <div style="background:#ffffec; border:1px solid #fef08a; padding:8px; border-radius:6px; font-size:9px; color:#854d0e; font-family:monospace; margin-bottom:10px; line-height:1.3;">
-            🤖 <b>ИИ-ПАРСЕР ЕЖИКА (27 слов под сезон):</b><br>
+            🤖 <b>ГЕО-РАСПРЕДЕЛЕННЫЙ ПАРСЕР (Ровно 27 слов под регион):</b><br>
             <i>«{{ parsed_words }}»</i><br>
-            🌐 <a href="{{ source_url }}" target="_blank" style="color:var(--lobby-accent); font-weight:bold; text-decoration:none; font-size:8px;">[ИСТОЧНИК СУБД]</a>
+            🌐 <a href="{{ source_url }}" target="_blank" style="color:var(--lobby-accent); font-weight:bold; text-decoration:none; font-size:8px;">[ДИНАМИЧЕСКИЙ ИСТОЧНИК СУБД]</a>
         </div>
 
         <div style="font-size:9px; font-family:monospace; margin-bottom:10px;">
-            <b>🌱 СЕЗОННАЯ КАРТА КЛАССА МЕЗОНИН:</b>
+            <b>🌱 ГЕО-КАРТА РАСТЕНИЙ И ПОХОДОВ КЛИЕНТА:</b>
             <ul style="padding-left:10px; margin-top:2px; color:#334155; font-size:8px;">
                 {% for name, info in plants_dict.items %}
-                <li style="margin-bottom:4px;"><b>{{ name }}</b><br>📍 Поход: {{ info.location }}<br>⏳ Период: {{ info.bloom }}</li>
+                <li style="margin-bottom:4px;"><b>{{ name }}</b><br>📍 Региональный поход: {{ info.location }}<br>⏳ Период сбора: {{ info.bloom }}</li>
                 {% endfor %}
             </ul>
         </div>
 
         <div style="font-size:9px; font-family:monospace; border-top:1px solid var(--lobby-border); padding-top:6px;">
-            <b>🧪 ИИ-РЕЦЕПТЫ ЗНАХАРЯ:</b>
+            <b>🧪 РЕГИОНАЛЬНЫЕ ИИ-РЕЦЕПТЫ ЗНАХАРЯ:</b>
             {% for recipe in recipes_list %}
             <div style="margin-top:2px; color:#475569; font-size:8px; line-height:1.2;">• {{ recipe }}</div>
             {% endfor %}
