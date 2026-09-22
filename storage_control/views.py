@@ -208,8 +208,17 @@ def index_vancouver(request):
         roles_list = [f"{p.client_id} ({p.active_role})" for p in db_profiles]
     except Exception:
         roles_list = ["Администратор Матрицы Платформы", "Digital-Менеджер"]
+    # 🛰️ ИИ-МОДУЛЬ ПОГОДЫ РОБОТА-ЕЖИКА
+    current_month = datetime.now().month
+    if current_month in: current_season = 'WINTER'; weather_msg = '❄️ Зима. Цифровой крипто-снег опечатан. Скользко, Ежик рекомендует беречь лимиты.'
+    elif current_month in: current_season = 'SPRING'; weather_msg = '🌱 Весна. Лед СУБД тает. Открываются новые ИТР-маршруты.'
+    elif current_month in: current_season = 'SUMMER'; weather_msg = '☀️ Лето. Солнечный параллакс в зените. 100% кликабельность.'
+    else: current_season = 'AUTUMN'; weather_msg = '🍂 Осень. Время ИТР-дождей вечности. Сметы openpyxl качаются под зонтом.'
+    
     ctx = {
         "object_capital_rub": "Бесплатный Тоннель 2FA // Движок openpyxl + МЕДИА",
+        "current_season": current_season,
+        "weather_msg": weather_msg,
         "market_status": "🟢 КРИПТОГРАФИЯ БЕЗ ЗАТРАТ НА СМС // ПОД КОНТРОЛЕМ БРОНЕПОЕЗДА",
         "chart_img": chart_base64,
         "roles": roles_list,

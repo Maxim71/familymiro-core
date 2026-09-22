@@ -4,23 +4,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Miroha Monolith // Monolith Core Live</title>
-    <!-- ПУЛЕНЕПРОБИВАЕМЫЙ ИТР-МАРШРУТ СТАТИКИ К СТИЛЯМ CSS -->
+    <title>Miroha Monolith // Heritage AI Weather</title>
     <link rel="stylesheet" href="{% static 'storage_control/css/legion_material3.css' %}?v=65_final">
 </head>
-<body>
-<!-- 🌌 ХОЛСТ НЕОНОВОГО ДОЖДЯ ВЕЧНОСТИ НА ЗАДНЕМ ПЛАНЕ -->
+<body data-season="{{ current_season }}">
+<!-- 🌌 ХОЛСТ СЕЗОННОЙ ИИ-ПОГОДЫ РОБОТА-ЕЖИКА -->
 <canvas id="cyber_rain_canvas"></canvas>
 
 <div class="lobby-frame">
     <div class="left-main-zone">
+        <!-- ТОП-БАР ЛОББИ: СЮДА ЕЖИК ТРАНСЛИРУЕТ ЖИВОЙ ПРОГНОЗ ПОГОДЫ СИНДИКАТА -->
         <div style="background:#fff; border:1px solid var(--lobby-border); border-radius:12px; padding:15px; display:flex; justify-content:space-between; align-items:center;">
             <div>
                 <div style="font-size:9px; font-weight:bold; color:var(--lobby-accent);">🛰️ МАТЕРИНСКИЙ КАПИТАЛ СИНДИКАТА</div>
-                <div style="font-size:1.6rem; font-weight:bold; letter-spacing:-0.5px; margin-top:2px;">{{ object_capital_rub }}</div>
+                <div style="font-size:1.5rem; font-weight:bold; letter-spacing:-0.5px; margin-top:2px;">{{ object_capital_rub }}</div>
             </div>
-            <div style="text-align:right; font-family:monospace; font-size:10px; color:var(--lobby-green); font-weight:bold;">
-                {{ market_status }}<br><span style="color:#64748b;">Время ОЗУ: {{ timestamp }}</span>
+            <div style="text-align:right; font-family:monospace; font-size:10px; color:var(--lobby-pink); font-weight:bold;">
+                {{ weather_msg }}<br><span style="color:#64748b; font-size:9px;">Время ОЗУ: {{ timestamp }} // {{ market_status }}</span>
             </div>
         </div>
 
@@ -63,7 +63,6 @@
     </div>
 </div>
 
-<!-- ПУЛЕНЕПРОБИВАЕМЫЙ ИТР-МАРШРУТ СТАТИКИ К СКРИПТАМ JS -->
 <script src="{% static 'storage_control/js/legion_core.js' %}?v=65_final"></script>
 </body>
 </html>
