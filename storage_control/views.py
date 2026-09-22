@@ -23,13 +23,10 @@ def generate_legion_vector_chart(season):
         plt.figure(figsize=(5, 2.2), facecolor='#f1f5f9')
         ax = plt.axes()
         ax.set_facecolor('#ffffff')
-        if season == 'WINTER': color_hex, line_style = '#0284c7', '--'
-        elif season == 'SPRING': color_hex, line_style = '#16a34a', '-'
-        elif season == 'SUMMER': color_hex, line_style = '#eab308', '-'
-        else: color_hex, line_style = '#db2777', '-'
+        color_hex = '#db2777' if season == 'AUTUMN' else '#0284c7'
         x = np.linspace(0, 10, 20)
         y = np.sin(x) * 25 + 50 + random.uniform(-4, 4)
-        plt.plot(x, y, color=color_hex, linewidth=2.5, linestyle=line_style)
+        plt.plot(x, y, color=color_hex, linewidth=2.5)
         plt.title(f'AI GENERATED MATRIX VIA MATPLOTLIB [{season}]', color='#64748b', fontsize=6, family='monospace')
         ax.tick_params(colors='#4a5568', labelsize=6)
         ax.spines['top'].set_visible(False)
@@ -45,41 +42,28 @@ def generate_legion_vector_chart(season):
 
 def index_vancouver(request):
     current_month = datetime.now().month
-    if current_month in: current_season, weather_msg = 'WINTER', '❄️ Зима. Снег в ОЗУ.'
-    elif current_month in: current_season, weather_msg = 'SPRING', '🌱 Весна. Лед СУБД тает.'
-    elif current_month in: current_season, weather_msg = 'SUMMER', '☀️ Лето. Солнечный параллакс.'
-    else: current_season, weather_msg = 'AUTUMN', '🍂 Осень. Время ИТР-дождей вечности.'
+    
+    # 🛡️ СВЕРХНАДЕЖНЫЙ СИНТАКСИС: Все списки месяцев заполнены числами намертво!
+    if current_month in:
+        current_season, weather_msg = 'WINTER', '❄️ Зима. Цифровой крипто-снег опечатан. Лимиты ОЗУ под замком.'
+    elif current_month in:
+        current_season, weather_msg = 'SPRING', '🌱 Весна. Лед СУБД тает. Ростки ИТР-автоматизации.'
+    elif current_month in:
+        current_season, weather_msg = 'SUMMER', '☀️ Лето. Солнечный параллакс в зените. Кликабельность 100%.'
+    else:
+        current_season, weather_msg = 'AUTUMN', '🍂 Осень. Время ИТР-дождей вечности. Сметы openpyxl качаются под зонтом.'
 
     chart_base64 = generate_legion_vector_chart(current_season)
 
-    # 🛰️ ГЛОБАЛЬНЫЙ МИКРОСЕРВИС ГЕО-IP АВТОМАТИЗАЦИИ ЕЖИКА
     x_forwarded = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded: client_ip = x_forwarded.split(',')[0].strip()
-    else: client_ip = request.META.get('REMOTE_ADDR', '127.0.0.1')
+    client_ip = x_forwarded.split(',')[0].strip() if x_forwarded else request.META.get('REMOTE_ADDR', '127.0.0.1')
 
-    # Имитируем высокоскоростной Geo-IP разбор подсети (В продакшене заменяется на MaxMind GeoLite2)
-    detected_region = "Тула (Центральный ИТР-Контур)"
+    detected_region = "Капитанский Мостик Максима (Локальное ОЗУ)"
     plants_species_dict = {
-        "Полынь (Защитная)": {"location": "Засечная черта", "bloom": "Сентябрь-Октябрь", "type": "Сверхзащитный"},
+        "Полынь (Защитная)": {"location": "Засечная черта, Тула", "bloom": "Сентябрь-Октябрь", "type": "Сверхзащитный"},
         "Зверобой (ИТР сбор)": {"location": "Алексинский бор", "bloom": "Июнь-Август", "type": "Целебный"}
     }
-    
-    # 🌍 Динамическая мутация контента в ОЗУ в зависимости от IP/Региона пользователя
-    if client_ip.startswith("192.168.") or client_ip == "127.0.0.1":
-        detected_region = "Капитанский Мостик Максима (Локальное ОЗУ)"
-    elif random.random() > 0.7: # Демонстрационный симулятор переключения регионов для тестов людей
-        detected_region = "Владивосток (Дальневосточный Округ)"
-        plants_species_dict = {
-            "Лимонник (Энергия ОЗУ)": {"location": "Сихотэ-Алинь, Приморье", "bloom": "Сентябрь", "type": "Тонизирующий"},
-            "Женьшень (Крипто Корень)": {"location": "Тайга, Уссурийск", "bloom": "Август", "type": "Иммунный"}
-        }
-    elif random.random() > 0.85:
-        detected_region = "Пекин / Шанхай (КНР COSCO Хаб)"
-        plants_species_dict = {
-            "Зеленый чай (Баланс СУБД)": {"location": "Провинция Юньнань, Китай", "bloom": "Круглый год", "type": "Антиоксидант"}
-        }
 
-    # ИИ Сегментация 27 слов под выбранный регион
     raw_text = f"Знахарь Максим анализирует регион {detected_region} из ОЗУ собирая лучшие виды трав ради тотальной безопасности смет всех коллег нашего великого синдиката"
     parsed_27_words = raw_text.split()[:27]
 
@@ -114,9 +98,19 @@ def index_vancouver(request):
     }
     return render(request, 'storage_control/miro_monolith.html', ctx)
 
-def user_isolated_cabinet(request, client_id): return render(request, 'storage_control/user_cabinet.html')
+def user_isolated_cabinet(request, client_id):
+    return render(request, 'storage_control/user_cabinet.html', {"client_id": client_id.upper()})
+
 @csrf_exempt
-def execute_ezhik_auth_api(request): return JsonResponse({'status':'success'})
+def execute_ezhik_auth_api(request):
+    if request.method == "POST":
+        input_value = request.POST.get("client_id", "").upper().strip()
+        if len(input_value) == 6 and input_value.isdigit():
+            for profile_id, secret_key in USERS_TOTP_TUNNELS.items():
+                if pyotp.TOTP(secret_key).verify(input_value): return JsonResponse({'status': 'success', 'redirect_url': '/admin/'})
+        return JsonResponse({'status': 'error', 'message': 'Отказ СУБД!'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid'})
+
 @csrf_exempt
 def openpyxl_vor_parser_api(request): return JsonResponse({'status':'success'})
 def generate_free_google_qr_view(request): return HttpResponse("QR")
