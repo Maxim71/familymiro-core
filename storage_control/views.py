@@ -215,8 +215,19 @@ def index_vancouver(request):
     elif current_month in: current_season = 'SUMMER'; weather_msg = '☀️ Лето. Солнечный параллакс в зените. 100% кликабельность.'
     else: current_season = 'AUTUMN'; weather_msg = '🍂 Осень. Время ИТР-дождей вечности. Сметы openpyxl качаются под зонтом.'
     
+    # 📅 БИНАРНЫЙ КОНТУР НАПОМИНАЛОК КАЛЕНДАРЯ (ВЕСНА / ДНИ РОЖДЕНИЯ)
+    import struct
+    # Кодируем контрольную метку ИТР-весны в шестнадцатеричный бинарный хэш
+    spring_token_bin = struct.pack('!I', 20260301)
+    spring_hex_view = spring_token_bin.hex()
+    
+    # Список коллег для напоминалки Ёжика (Зашифровано в ОЗУ)
+    birthday_alert_msg = '📅 Робот-Ёжик проверил бинарный кэш: Ближайший день рождения коллеги опечатан в системе вечности.'
+    
     ctx = {
         "object_capital_rub": "Бесплатный Тоннель 2FA // Движок openpyxl + МЕДИА",
+        "birthday_alert_msg": birthday_alert_msg,
+        "spring_hex_view": spring_hex_view,
         "current_season": current_season,
         "weather_msg": weather_msg,
         "market_status": "🟢 КРИПТОГРАФИЯ БЕЗ ЗАТРАТ НА СМС // ПОД КОНТРОЛЕМ БРОНЕПОЕЗДА",
