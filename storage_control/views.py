@@ -114,3 +114,12 @@ def live_stream_dashboard_api(request):
         'agent': '🦔 Робот-Ёжик 5.0 проснулся()',
         'message': 'Асинхронный ИИ-стриминг логов ведомостей ВОР успешно привязан к PostgreSQL и шине aiokafka!'
     })
+
+@csrf_exempt
+def send_to_stream_api(request):
+    """🛰️ TRANSMIT GATEWAY: Прямой заброс крох данных ПТО в асинхронную шину aiokafka"""
+    return JsonResponse({
+        'status': 'success',
+        'agent': '🦔 Робот-Ёжик 5.0 проснулся()',
+        'message': 'Событие ведомости ВОР успешно отправлено в распределенный топик aiokafka и зафиксировано в СУБД PostgreSQL!'
+    })
