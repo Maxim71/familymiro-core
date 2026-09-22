@@ -1,59 +1,72 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Miroha Mezanin Builder // Google V3 Light</title>
-    <link rel="stylesheet" href="/static/storage_control/css/legion_material3.css">
-    <style>
-        .main-container { width: 100%; max-width: 480px; }
-        .roles-box { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 10px; }
-        .role-badge { font-size: 8px; font-family: monospace; background: #e2e8f0; color: #475569; padding: 2px 5px; border-radius: 4px; border: 1px solid #cbd5e1; }
-    </style>
+    <title>Miroha Monolith // Cyber Lobby Portal</title>
+    <link rel="stylesheet" href="{% static 'storage_control/css/legion_material3.css' %}">
 </head>
 <body>
-<div class="main-container">
+<div id="parallax_bg_layer"></div>
 
-    <!-- КАРТОЧКА АДМИНИСТРАТОРА МАКСИМА -->
-    <div class="moba-card" id="capital_card" style="border-left-color: var(--google-accent);">
-        <div class="moba-badge" style="background: #e0f2fe; color: var(--google-accent);">🛰️ МИРОХА МЕЗОНИН // КОНСТРУКТОР САЙТОВ</div>
-        <div style="font-size: 1.4rem; font-weight: bold; color: var(--google-text); margin-top: 5px;">{{ object_capital_rub }}</div>
-        <div style="font-size: 9px; color: var(--google-green); margin-top: 4px; font-weight: bold;">{{ market_status }} // {{ timestamp }}</div>
-    </div>
-
-    <!-- ФОРМА GOOGLE AUTHENTICATOR С 3D-ПАРАЛЛАКСОМ -->
-    <div class="moba-card" id="ezhik_parallax_card" style="border-left-color: var(--google-pink);">
-        <div class="moba-badge" style="background: #fce7f3; color: var(--google-pink);">🔒 ШЛЮЗ GOOGLE AUTHENTICATOR // ВХОД В DJANGO ADMIN:</div>
-        <div style="font-size: 10px; color: #64748b; margin-bottom: 12px; line-height: 1.4;">
-            Введите текущие <b>6 цифр</b> из приложения Google Authenticator на Вашем телефоне или логин маски (напр. <code>MAX-ADMIN</code>) для прямого пробития шлюза админ-панели:
-        </div>
+<div class="lobby-frame">
+    
+    <!-- 🎮 ЛЕВАЯ ГЛАВНАЯ ЗОНА (КАПИТАЛ, СЛОТЫ ПЕРЕМЕЩЕНИЙ, КНОПКА ПУСКА) -->
+    <div class="left-main-zone">
         
-        <input type="text" id="ezhik_cid" placeholder="****** или Логин Маски" class="input-google" style="text-align: center; letter-spacing: 2px; font-weight: bold;">
-        <button class="btn-action" style="background: var(--google-pink);" onclick="requestEzhikWorld()">
-            🔐 Пробить шлюз Django Admin Miroha Max ➔
-        </button>
+        <!-- ТОП-БАР: СЕЙФ МУЛЬТИВАЛЮТНОГО КАПИТАЛА -->
+        <div style="background:#fff; border:1px solid var(--lobby-border); border-radius:12px; padding:15px; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+                <div style="font-size:9px; font-weight:bold; color:var(--lobby-accent);">🛰️ МАТЕРИНСКИЙ КАПИТАЛ СИНДИКАТА</div>
+                <div style="font-size:1.6rem; font-weight:bold; letter-spacing:-0.5px; margin-top:2px;">{{ object_capital_rub }}</div>
+            </div>
+            <div style="text-align:right; font-family:monospace; font-size:10px; color:var(--lobby-green); font-weight:bold;">
+                {{ market_status }}<br><span style="color:#64748b;">Время ОЗУ: {{ timestamp }}</span>
+            </div>
+        </div>
+
+        <!-- 🃏 ПЯТЬ ЦЕНТРАЛЬНЫХ СЛОТОВ ПРАВ И ПЕРЕМЕЩЕНИЙ КЛИЕНТОВ -->
+        <div class="slots-grid">
+            <div class="slot-card active" style="font-size:10px; text-align:center; padding:5px;">
+                <span style="font-size:20px;">👑</span><br><b style="color:var(--lobby-text);">MAX-ADMIN</b><br><span style="color:var(--lobby-green);">ONLINE</span>
+            </div>
+            <div class="slot-card">?</div>
+            <div class="slot-card">?</div>
+            <div class="slot-card">?</div>
+            <div class="slot-card">?</div>
+        </div>
+
+        <!-- НИЖНИЙ ПУЛЬТ: КНОПКА ТУННЕЛЯ И КРУГЛЫЕ РУБИЛЬНИКИ -->
+        <div style="text-align:center; padding: 0 40px;">
+            <input type="text" id="ezhik_cid" placeholder="ВВЕДИТЕ 6 ЦИФР ИЗ GOOGLE AUTHENTICATOR" class="input-google" style="margin-bottom:12px;">
+            <button class="btn-action-lobby" onclick="requestEzhikWorld()">⚔️ АКТИВИРОВАТЬ ТУННЕЛЬ ПОРТАЛА ⚔></button>
+            
+            <div class="circle-btn-container">
+                <div class="circle-btn" onclick="location.href='/admin/'" title="Открыть Django Admin">👑</div>
+                <div class="circle-btn" onclick="location.href='/api/v5/openpyxl-parser/'" title="Открыть openpyxl парсер">📊</div>
+                <div class="circle-btn" onclick="location.href='/get-free-2fa-qr/'" target="_blank" title="Сканировать QR">📸</div>
+                <div class="circle-btn" onclick="alert('Лав-система Капсулы вечности опечатана в PostgreSQL!')" title="Лав-система">💞</div>
+            </div>
+        </div>
+
     </div>
 
-    <!-- РЕЕСТР МАСОК СИСТЕМЫ (ПРАВИЛА ЗАСТОЛБЛЕНЫ) -->
-    <div class="moba-card" style="border-left-color: var(--google-green);">
-        <div class="moba-badge" style="background: #dcfce7; color: var(--google-green);">👥 МАТРИЦА МАСОК МАКСИМА (Multi-Role Matrix)</div>
-        <div style="font-size: 10px; color: #64748b; line-height: 1.4;">Ёжик привязал твой профиль к 24 базовым ролям и 4 высшим директивам Django. Ты можешь переходить и тестировать платформу как:</div>
-        <div class="roles-box">
+    <!-- 👥 ПРАВАЯ ВЕРТИКАЛЬНАЯ ПАНЕЛЬ: ТВОИ ДИНАМИЧЕСКИЕ USERS И ЧАТ ОБЩЕНИЯ -->
+    <div class="right-sidebar">
+        <div style="font-size:10px; font-weight:bold; color:#64748b; margin-bottom:10px; letter-spacing:0.5px; border-bottom:1px solid var(--lobby-border); padding-bottom:5px;">👥 USERS ONLINE (PostgreSQL):</div>
+        <div style="flex-grow:1; overflow-y:auto;">
             {% for role in roles %}
-            <span class="role-badge">{{ role }}</span>
+            <div class="user-row">
+                <div class="user-avatar" style="background: radial-gradient(circle, var(--lobby-accent) 0%, transparent 100%); opacity:0.7;"></div>
+                <div>
+                    <b style="color:var(--lobby-text);">{{ role }}</b><br>
+                    <span style="color:var(--lobby-green); font-size:8px; font-weight:bold;">● ПОДКЛЮЧЕН К СУБД</span>
+                </div>
+            </div>
             {% endfor %}
         </div>
-    </div>
-
-    <!-- ИТР ГРАФИК MATPLOTLIB -->
-    {% if chart_img %}
-    <div class="moba-card" style="border-left-color: var(--google-accent); padding: 6px; background: #f1f5f9; text-align: center;">
-        <img src="{{ chart_img }}" alt="ИТР Тренды matplotlib" style="width:100%; height:auto; border-radius: 8px;">
-    </div>
-    {% endif %}
-
-    <div class="footer-hidden">
-        Miroha Max Admin Panel Heritage © 2026. Конструктор сайтов-визиток, мезонинов и чат-ботов опечатан в PostgreSQL 5432. Без пафоса. Самозанятый ИТР-контур.
+        <div style="font-size:8px; color:#94a3b8; text-align:center; margin-top:10px; font-family:monospace;">Miroha Monolith SaaS Matrix © 2026</div>
     </div>
 
 </div>

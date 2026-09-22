@@ -1,15 +1,11 @@
+/* 🧠 ИГРОВОЙ ФОНОВЫЙ 3D-ПАРАЛЛАКС ДЛЯ МАКСИМА // БЕЗ ДЕРГАНИЯ КОНТЕНТА */
 document.addEventListener('DOMContentLoaded', () => {
-    const card = document.getElementById('ezhik_parallax_card');
-    if (card) {
+    const bgLayer = document.getElementById('parallax_bg_layer');
+    if (bgLayer) {
         document.addEventListener('mousemove', (e) => {
-            let xAxis = (window.innerWidth / 2 - e.pageX) / 15;
-            let yAxis = (window.innerHeight / 2 - e.pageY) / 15;
-            card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg) translateZ(10px)`;
-            card.style.boxShadow = `${-xAxis}px ${yAxis}px 25px rgba(219,39,119,0.15)`;
-        });
-        document.addEventListener('mouseleave', () => {
-            card.style.transform = `rotateY(0deg) rotateX(0deg) translateZ(0px)`;
-            card.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.05)';
+            let moveX = (window.innerWidth / 2 - e.pageX) / 30;
+            let moveY = (window.innerHeight / 2 - e.pageY) / 30;
+            bgLayer.style.transform = `translateX(${moveX}px) translateY(${moveY}px) scale(1.03)`;
         });
     }
 });
