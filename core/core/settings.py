@@ -5,7 +5,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-miroha-monolith-heritage-key-2026'
 DEBUG = True
 
-ALLOWED_HOSTS = ['*', 'miroha.ru', 'www.miroha.ru', '89.111.155.234', '185.182.110.96', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -15,7 +15,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'storage_control',
-    'django_timezone_field',
 ]
 
 MIDDLEWARE = [
@@ -47,7 +46,6 @@ TEMPLATES = [
     },
 ]
 
-# ГЛОБАЛЬНЫЙ СКВОЗНОЙ ШЛЮЗ ENTERPRISE СУБД POSTGRESQL
 DATABASES = {
     'default': {
         'BACKEND': 'django.db.backends.postgresql',
@@ -62,11 +60,6 @@ DATABASES = {
 USE_X_FORWARDED_HOST = True
 USE_X_FORWARDED_PORT = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
-SECURE_SSL_REDIRECT = False
-SECURE_HSTS_SECONDS = 0
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
 
 LANGUAGE_CODE = 'ru-ru'
 TIME_ZONE = 'UTC'
