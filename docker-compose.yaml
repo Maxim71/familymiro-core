@@ -8,11 +8,12 @@ services:
     volumes:
       - .:/root/app
       - /var/www/miroha_static:/var/www/miroha_static
-      # Синхронизируем наш ИТР-манифест внутрь контейнера
       - ./storage_control/llm_admin_manifest.yaml:/root/app/llm_admin_manifest.yaml
     ports:
-      - "9000:9000"  # FastAPI (CAC, SMTP, sitemap)
+      - "9000:9000"  # FastAPI (CAC, SMTP, sitemap, aiokafka)
       - "1541:1541"  # Резерв под 1С:Предприятие Data Mesh
+      - "8001:8001"  # НОВОЕ ОКНО: gRPC Шлюз Triton Inference Server для клиентов
+      - "8002:8002"  # НОВОЕ ОКНО: Метрики производительности Triton ИИ
     environment:
       - DATABASE_URL=postgresql://maxim_admin:MirohaCryptoPostgres2026@192.168.0.231:5432/miroha_db
     command: /root/app/hello/bin/uvicorn fastapi_service.fast_contract_api:app --host 0.0.0.0 --port 9000
