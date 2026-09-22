@@ -1,13 +1,51 @@
-/* 🧠 ИГРОВОЙ ФОНОВЫЙ 3D-ПАРАЛЛАКС ДЛЯ МАКСИМА // БЕЗ ДЕРГАНИЯ КОНТЕНТА */
+/* 🧠 ДВИЖОК ЦИФРОВОГО ДОЖДЯ ВЕЧНОСТИ И ОБЪЕМНОГО ФОНОВОГО ПАРАЛЛАКСА */
 document.addEventListener('DOMContentLoaded', () => {
-    const bgLayer = document.getElementById('parallax_bg_layer');
-    if (bgLayer) {
-        document.addEventListener('mousemove', (e) => {
-            let moveX = (window.innerWidth / 2 - e.pageX) / 30;
-            let moveY = (window.innerHeight / 2 - e.pageY) / 30;
-            bgLayer.style.transform = `translateX(${moveX}px) translateY(${moveY}px) scale(1.03)`;
-        });
+    const canvas = document.getElementById('cyber_rain_canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    // Настраиваем разрешение холста под размер экрана
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // Символы ИТР-матрицы холдинга Miroha
+    const katakana = "01МIROMax054329000EzhikЖук";
+    const alphabet = katakana.split("");
+
+    const fontSize = 10;
+    const columns = canvas.width / fontSize;
+
+    const rainDrops = [];
+    for (let x = 0; x < columns; x++) {
+        rainDrops[x] = 1;
     }
+
+    // Бесконечный асинхронный рендеринг капель дождя в ОЗУ
+    function drawCyberRain() {
+        ctx.fillStyle = 'rgba(241, 245, 249, 0.05)'; // Мягкое светлое затухание следа капли
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = '#db2777'; // Розовый ИТР-неон для капель
+        ctx.font = fontSize + 'px monospace';
+
+        for (let i = 0; x < rainDrops.length; i++) {
+            const text = alphabet[Math.floor(random() * alphabet.length)];
+            ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+
+            if (rainDrops[i] * fontSize > canvas.height && random() > 0.975) {
+                rainDrops[i] = 0;
+            }
+            rainDrops[i]++;
+        }
+    }
+    setInterval(drawCyberRain, 30);
+
+    // 🪐 РАСПРАВЛЯЕМ КРЫЛЬЯ: Объемный 3D-параллакс смещения всего холста дождя за мышью
+    document.addEventListener('mousemove', (e) => {
+        let moveX = (window.innerWidth / 2 - e.pageX) / 20;
+        let moveY = (window.innerHeight / 2 - e.pageY) / 20;
+        canvas.style.transform = `translateX(${moveX}px) translateY(${moveY}px) scale(1.04)`;
+    });
 });
 
 function requestEzhikWorld() {

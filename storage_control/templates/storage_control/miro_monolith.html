@@ -4,18 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Miroha Monolith // Cyber Lobby Portal</title>
+    <title>Miroha Monolith // Cyber Rain Portal</title>
     <link rel="stylesheet" href="{% static 'storage_control/css/legion_material3.css' %}">
 </head>
 <body>
-<div id="parallax_bg_layer"></div>
+<!-- 🌌 ХОЛСТ НЕОНОВОГО ДОЖДЯ ВЕЧНОСТИ НА ЗАДНЕМ ПЛАНЕ -->
+<canvas id="cyber_rain_canvas"></canvas>
 
 <div class="lobby-frame">
-    
-    <!-- 🎮 ЛЕВАЯ ГЛАВНАЯ ЗОНА (КАПИТАЛ, СЛОТЫ ПЕРЕМЕЩЕНИЙ, КНОПКА ПУСКА) -->
     <div class="left-main-zone">
-        
-        <!-- ТОП-БАР: СЕЙФ МУЛЬТИВАЛЮТНОГО КАПИТАЛА -->
         <div style="background:#fff; border:1px solid var(--lobby-border); border-radius:12px; padding:15px; display:flex; justify-content:space-between; align-items:center;">
             <div>
                 <div style="font-size:9px; font-weight:bold; color:var(--lobby-accent);">🛰️ МАТЕРИНСКИЙ КАПИТАЛ СИНДИКАТА</div>
@@ -26,7 +23,6 @@
             </div>
         </div>
 
-        <!-- 🃏 ПЯТЬ ЦЕНТРАЛЬНЫХ СЛОТОВ ПРАВ И ПЕРЕМЕЩЕНИЙ КЛИЕНТОВ -->
         <div class="slots-grid">
             <div class="slot-card active" style="font-size:10px; text-align:center; padding:5px;">
                 <span style="font-size:20px;">👑</span><br><b style="color:var(--lobby-text);">MAX-ADMIN</b><br><span style="color:var(--lobby-green);">ONLINE</span>
@@ -37,11 +33,9 @@
             <div class="slot-card">?</div>
         </div>
 
-        <!-- НИЖНИЙ ПУЛЬТ: КНОПКА ТУННЕЛЯ И КРУГЛЫЕ РУБИЛЬНИКИ -->
         <div style="text-align:center; padding: 0 40px;">
             <input type="text" id="ezhik_cid" placeholder="ВВЕДИТЕ 6 ЦИФР ИЗ GOOGLE AUTHENTICATOR" class="input-google" style="margin-bottom:12px;">
-            <button class="btn-action-lobby" onclick="requestEzhikWorld()">⚔️ АКТИВИРОВАТЬ ТУННЕЛЬ ПОРТАЛА ⚔></button>
-            
+            <button class="btn-action-lobby" onclick="requestEzhikWorld()">⚔️ АКТИВИРОВАТЬ ТУННЕЛЬ ПОРТАЛА ⚔️</button>
             <div class="circle-btn-container">
                 <div class="circle-btn" onclick="location.href='/admin/'" title="Открыть Django Admin">👑</div>
                 <div class="circle-btn" onclick="location.href='/api/v5/openpyxl-parser/'" title="Открыть openpyxl парсер">📊</div>
@@ -49,10 +43,8 @@
                 <div class="circle-btn" onclick="alert('Лав-система Капсулы вечности опечатана в PostgreSQL!')" title="Лав-система">💞</div>
             </div>
         </div>
-
     </div>
 
-    <!-- 👥 ПРАВАЯ ВЕРТИКАЛЬНАЯ ПАНЕЛЬ: ТВОИ ДИНАМИЧЕСКИЕ USERS И ЧАТ ОБЩЕНИЯ -->
     <div class="right-sidebar">
         <div style="font-size:10px; font-weight:bold; color:#64748b; margin-bottom:10px; letter-spacing:0.5px; border-bottom:1px solid var(--lobby-border); padding-bottom:5px;">👥 USERS ONLINE (PostgreSQL):</div>
         <div style="flex-grow:1; overflow-y:auto;">
@@ -68,9 +60,8 @@
         </div>
         <div style="font-size:8px; color:#94a3b8; text-align:center; margin-top:10px; font-family:monospace;">Miroha Monolith SaaS Matrix © 2026</div>
     </div>
-
 </div>
 
-<script src="/static/storage_control/js/legion_core.js"></script>
+<script src="{% static 'storage_control/js/legion_core.js' %}"></script>
 </body>
 </html>
