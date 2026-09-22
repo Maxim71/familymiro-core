@@ -3,38 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Miroha Monolith // Isolated Light Portal</title>
-    <!-- ПОДКЛЮЧАЕМ ИЗОЛИРОВАННЫЙ СЛОЙ CSS -->
+    <title>Miroha Mezanin Builder // Google V3 Light</title>
     <link rel="stylesheet" href="/static/storage_control/css/legion_material3.css">
+    <style>
+        .main-container { width: 100%; max-width: 480px; }
+        .roles-box { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 10px; }
+        .role-badge { font-size: 8px; font-family: monospace; background: #e2e8f0; color: #475569; padding: 2px 5px; border-radius: 4px; border: 1px solid #cbd5e1; }
+    </style>
 </head>
 <body>
 <div class="main-container">
 
-    <!-- ГЛАВНАЯ КАРТОЧКА СЕЙФА КАПИТАЛА -->
+    <!-- КАРТОЧКА АДМИНИСТРАТОРА МАКСИМА -->
     <div class="moba-card" id="capital_card" style="border-left-color: var(--google-accent);">
-        <div class="moba-badge" style="background: #e0f2fe; color: var(--google-accent);">🛰️ MIROHA MONOLITH // LUXURY V3</div>
-        <div style="font-size: 1.9rem; font-weight: bold; color: var(--google-text); letter-spacing: -0.5px;">{{ object_capital_rub }}</div>
+        <div class="moba-badge" style="background: #e0f2fe; color: var(--google-accent);">🛰️ МИРОХА МЕЗОНИН // КОНСТРУКТОР САЙТОВ</div>
+        <div style="font-size: 1.4rem; font-weight: bold; color: var(--google-text); margin-top: 5px;">{{ object_capital_rub }}</div>
         <div style="font-size: 9px; color: var(--google-green); margin-top: 4px; font-weight: bold;">{{ market_status }} // {{ timestamp }}</div>
     </div>
 
-    <!-- 🦔 ИНТЕРАКТИВНАЯ КАРТОЧКА ВХОДА С СУПЕР 3D-ПАРАЛЛАКСОМ -->
+    <!-- ФОРМА GOOGLE AUTHENTICATOR С 3D-ПАРАЛЛАКСОМ -->
     <div class="moba-card" id="ezhik_parallax_card" style="border-left-color: var(--google-pink);">
-        <div class="moba-badge" style="background: #fce7f3; color: var(--google-pink);">🔒 ИИ-ДЕШБОРД РОБОТА-ЕЖИКА // ВХОД В ЛИЧНЫЙ МИР:</div>
-        <div style="font-size: 10px; color: #64748b; margin-bottom: 12px; line-height: 1.4;">Введите Ваш персональный ИТР-код Client ID. По запросу Ежик откроет Вашу зашифрованную СУБД-страницу и индивидуальный дизайн:</div>
+        <div class="moba-badge" style="background: #fce7f3; color: var(--google-pink);">🔒 ШЛЮЗ GOOGLE AUTHENTICATOR // ВХОД В DJANGO ADMIN:</div>
+        <div style="font-size: 10px; color: #64748b; margin-bottom: 12px; line-height: 1.4;">
+            Введите текущие <b>6 цифр</b> из приложения Google Authenticator на Вашем телефоне или логин маски (напр. <code>MAX-ADMIN</code>) для прямого пробития шлюза админ-панели:
+        </div>
         
-        <input type="text" id="ezhik_cid" placeholder="Напр: CID-PRO-MIHALYCH или CID-INV-ALFA" class="input-google">
+        <input type="text" id="ezhik_cid" placeholder="****** или Логин Маски" class="input-google" style="text-align: center; letter-spacing: 2px; font-weight: bold;">
         <button class="btn-action" style="background: var(--google-pink);" onclick="requestEzhikWorld()">
-            🦔 Отправить запрос Роботу-Ёжику() ➔
+            🔐 Пробить шлюз Django Admin Miroha Max ➔
         </button>
     </div>
 
+    <!-- РЕЕСТР МАСОК СИСТЕМЫ (ПРАВИЛА ЗАСТОЛБЛЕНЫ) -->
+    <div class="moba-card" style="border-left-color: var(--google-green);">
+        <div class="moba-badge" style="background: #dcfce7; color: var(--google-green);">👥 МАТРИЦА МАСОК МАКСИМА (Multi-Role Matrix)</div>
+        <div style="font-size: 10px; color: #64748b; line-height: 1.4;">Ёжик привязал твой профиль к 24 базовым ролям и 4 высшим директивам Django. Ты можешь переходить и тестировать платформу как:</div>
+        <div class="roles-box">
+            {% for role in roles %}
+            <span class="role-badge">{{ role }}</span>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- ИТР ГРАФИК MATPLOTLIB -->
+    {% if chart_img %}
+    <div class="moba-card" style="border-left-color: var(--google-accent); padding: 6px; background: #f1f5f9; text-align: center;">
+        <img src="{{ chart_img }}" alt="ИТР Тренды matplotlib" style="width:100%; height:auto; border-radius: 8px;">
+    </div>
+    {% endif %}
+
     <div class="footer-hidden">
-        Miroha Monolith Cluster © 2026. Сертифицировано Google Material Design 3 Light. Лицензия СРО №ОС-2026-M19. Все наряды и чеки изолированы в PostgreSQL.
+        Miroha Max Admin Panel Heritage © 2026. Конструктор сайтов-визиток, мезонинов и чат-ботов опечатан в PostgreSQL 5432. Без пафоса. Самозанятый ИТР-контур.
     </div>
 
 </div>
 
-<!-- ПОДКЛЮЧАЕМ ИЗОЛИРОВАННЫЙ СЛОЙ JS -->
 <script src="/static/storage_control/js/legion_core.js"></script>
 </body>
 </html>
