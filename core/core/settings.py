@@ -3,8 +3,6 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-miroha-monolith-heritage-key-2026'
-
-# Включаем DEBUG = True для безопасной отладки и вывода дизайна без 400 ошибок
 DEBUG = True
 
 ALLOWED_HOSTS = ['*', 'miroha.ru', 'www.miroha.ru', '89.111.155.234', '185.182.110.96', '127.0.0.1', 'localhost']
@@ -17,6 +15,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'storage_control',
+    'django_timezone_field',
 ]
 
 MIDDLEWARE = [
@@ -48,7 +47,7 @@ TEMPLATES = [
     },
 ]
 
-# 🌐 ВОЗВРАЩАЕМ ПРОМЫШЛЕННЫЙ ENTERPRISE POSTGRESQL НА СКВОЗНОМ ПРИВАТНОМ IP
+# ГЛОБАЛЬНЫЙ СКВОЗНОЙ ШЛЮЗ ENTERPRISE СУБД POSTGRESQL
 DATABASES = {
     'default': {
         'BACKEND': 'django.db.backends.postgresql',
@@ -60,12 +59,10 @@ DATABASES = {
     }
 }
 
-# КРИТИЧЕСКИЙ DevOps-МОСТ СИНХРОНИЗАЦИИ С NGINX БЕЗ ОШИБОК 400
 USE_X_FORWARDED_HOST = True
 USE_X_FORWARDED_PORT = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-# Полное отключение редиректов и петель безопасности (Открытый HTTP эфир)
 SECURE_SSL_REDIRECT = False
 SECURE_HSTS_SECONDS = 0
 SESSION_COOKIE_SECURE = False
