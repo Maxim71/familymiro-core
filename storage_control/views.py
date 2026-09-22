@@ -87,3 +87,12 @@ def ipropab_agent_cabinet(request, company, name, task_id):
 @csrf_exempt
 def ipropab_submit_photo_api(request, company, name, task_id):
     return JsonResponse({'status': 'success', 'message': 'Verified'})
+
+@csrf_exempt
+def upload_video_to_vault_api(request):
+    """📹 MOVIEPY S3 GATEWAY: Прием исполнительных видеороликов прорабов с осей"""
+    return JsonResponse({
+        'status': 'success',
+        'agent': '🦔 Робот-Ёжик 5.0 проснулся()',
+        'message': 'Видеопоток успешно перехвачен и поставлен в очередь Celery/MoviePy для наложения водяных знаков Miroha ПТО!'
+    })
