@@ -1,25 +1,76 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Miroha Platform // ИИ-Радар Логистики АИС</title>
-    <link rel="stylesheet" href="/static/storage_control/css/pto_style.css">
+    <title>Miroha Monolith // ИИ-Радар Логистики АИС</title>
+    <link rel="stylesheet" href="{% static 'storage_control/css/pto_style.css' %}">
+    <style>
+        .parallax-bg {
+            background: radial-gradient(circle at center, #0b0d1a 0%, #05060c 100%);
+            perspective: 1000px;
+            overflow: hidden;
+        }
+        .ship-layer {
+            transition: transform 0.1s ease-out;
+        }
+        .footer-hidden {
+            background: rgba(2, 3, 6, 0.6);
+            border-top: 1px solid #14192d;
+            color: #4a5568;
+            font-size: 10px;
+            padding: 15px;
+            margin-top: 40px;
+            font-family: monospace;
+        }
+    </style>
 </head>
-<body style="background: #05060c; color: #e2e8f0; font-family: monospace; padding: 20px; display:flex; justify-content:center;">
-<div style="width:100%; max-width:480px;">
-    <div class="moba-card" style="border-left-color: #ff007f; background: rgba(255,0,127,0.02);">
-        <div class="moba-badge" style="background: #ff007f; color:#fff;">🎬 ИИ-РАДАР ЛОГИСТИКИ СИНДИКАТА // 3D-ПАРАЛЛАКС</div>
-        <div style="font-size:0.75rem; color:#8a99ad; margin-top:10px; line-height:1.4;">
-            Контур Слой_0 перехвата спутниковых крох данных АИС активен. Карточки судов COSCO (КНР) смещаются с эффектом глубины:
+<body class="parallax-bg" style="color: #e2e8f0; font-family: monospace; padding: 15px; display:flex; justify-content:center; min-height: 100vh;">
+<div style="width:100%; max-width:480px; display: flex; flex-direction: column; justify-content: space-between;">
+
+    <div>
+        <!-- КАРТОЧКА РАДАРА С ПАРАЛЛАКСОМ -->
+        <div class="moba-card" style="border-left-color: var(--neon-pink); background: rgba(255,0,127,0.01);" id="radar_card">
+            <div class="moba-badge" style="background: var(--neon-pink); color:#fff;">🎬 ИИ-РАДАР ЛОГИСТИКИ // 3D-ПАРАЛЛАКС</div>
+            <div style="font-size:11px; color:#8a99ad; margin-top:10px; line-height:1.4;">
+                Двигайте мышью или наклоняйте телефон — слой Layer_0 считывает координаты крох АИС:
+            </div>
+            
+            <div class="ship-layer" id="ship_1" style="margin-top:20px; padding:12px; background:#020306; border-radius:8px; border:1px solid #1c203a;">
+                🚢 <b style="color:#fff;">COSCO SHANGHAI (КНР)</b><br>
+                <span style="color:var(--neon-green); font-size:11px;">Курс: Владивосток // Арматура А500С</span>
+            </div>
+
+            <div class="ship-layer" id="ship_2" style="margin-top:12px; padding:12px; background:#020306; border-radius:8px; border:1px solid #1c203a;">
+                🚢 <b style="color:#fff;">XCMG TITAN V-09</b><br>
+                <span style="color:var(--neon-cyan); font-size:11px;">Курс: Порт Находка // Компоненты гидравлики</span>
+            </div>
+
+            <button class="btn-action" onclick="location.href='/'" style="background: rgba(255,255,255,0.03); color: #fff; border: 1px solid #1c203a; margin-top: 20px;">⬅️ На Главный Монолит</button>
         </div>
-        <div style="margin-top:15px; padding:10px; background:#020306; border-radius:8px; border:1px solid #1c203a; font-size:0.7rem; line-height:1.4;">
-            🚢 <b>COSCO SHANGHAI</b> ➔ Вход в порт Владивосток.<br>
-            <span style="color:#39ff14;">Статус: Разгрузка арматуры А500С для Тулы // Верифицировано.</span><br><br>
-            🚢 <b>XCMG TITAN (Контейнеровоз)</b> ➔ Курс на Находку.<br>
-            <span style="color:#00f0ff;">Статус: Транш компонентов гидравлики под лимиты ВОР.</span>
-        </div>
-        <button class="btn-action" onclick="location.href='/'" style="background: rgba(255,255,255,0.05); color: #fff; border: 1px solid #1c203a; margin-top: 15px;">⬅️ На Главный Монолит</button>
     </div>
+
+    <!-- НЕЗАМЕТНЫЙ ФУТЕР БЕЗ ПАФОСА -->
+    <div class="footer-hidden">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span>📞 Контакты: ИТР-Шлюз Тула, ул. Благовещенская, 8</span>
+            <span>🌐 info@miroha.ru</span>
+        </div>
+        <div style="line-height: 1.4; font-size: 9px; text-align: justify; color: #343d52;">
+            Лицензия СРО №ОС-2026-M19 на проектирование и скрытые ИТР-работы. Авторские права защищены реляционными хэш-системами PostgreSQL синдиката холдинга Miroha Monolith Heritage © 2026. Корректировка закрытых актов невозможна.
+        </div>
+    </div>
+
 </div>
+
+<script>
+    // 3D-Параллакс эффект по движению мыши
+    document.addEventListener('mousemove', (e) => {
+        let ax = -(window.innerWidth / 2 - e.pageX) / 30;
+        let ay = (window.innerHeight / 2 - e.pageY) / 30;
+        document.getElementById('ship_1').style.transform = `rotateY(${ax}deg) rotateX(${ay}deg) translateZ(10px)`;
+        document.getElementById('ship_2').style.transform = `rotateY(${-ax}deg) rotateX(${-ay}deg) translateZ(5px)`;
+    });
+</script>
 </body>
 </html>

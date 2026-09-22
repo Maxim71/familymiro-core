@@ -3,69 +3,64 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MIROHA PLATFORM // COMMERCIAL MONOLITH</title>
+    <title>Miroha Monolith // Главный Пульт Синдиката</title>
     <link rel="stylesheet" href="{% static 'storage_control/css/pto_style.css' %}">
+    <style>
+        .footer-hidden {
+            background: rgba(2, 3, 6, 0.6);
+            border-top: 1px solid #14192d;
+            color: #4a5568;
+            font-size: 10px;
+            padding: 15px;
+            margin-top: 40px;
+            font-family: monospace;
+        }
+    </style>
 </head>
-<body>
+<body style="background: #05060c; color: #e2e8f0; font-family: monospace; padding: 15px; display: flex; justify-content: center; min-height: 100vh;">
+<div style="width: 100%; max-width: 480px; display: flex; flex-direction: column; justify-content: space-between;">
 
-<div class="container">
-    
-    <!-- КАРТА КАПИТАЛА С КРАСИВЫМ ЖИВЫМ ФОТО ИЗ ПАУТИНЫ -->
-    <div class="moba-card" style="border-left: 4px solid var(--neon-cyan); position:relative; overflow:hidden;">
-        <div style="position:absolute; top:0; right:0; width:120px; height:100%; background: url('{{ featured_image_url }}') center/cover no-repeat; opacity:0.3; border-radius:0 12px 12px 0;"></div>
-        <div class="moba-badge">🔒 КЛАССТЕР ОПЕЧАТАН НА ПОРТУ 80</div>
-        <div style="font-size: 14px; color: var(--neon-cyan); font-weight: bold;">КАПИТАЛ СИНДИКАТА: <span style="color:#00ff66;">{{ object_capital_rub }}</span></div>
-        <div style="font-size: 9px; color:#8a99ad; margin-top:6px; font-weight: bold; width:70%; line-height:1.3;">{{ market_status }}<br><span style="color:var(--neon-pink);">\${{ action_notes }}</span></div>
-    </div>
-
-    <!-- 🛒 ПРОЦЕСС КОММЕРЧЕСКИХ ПРОДУКТОВ СИНДИКАТА -->
-    <div class="moba-card" style="border-left-color: var(--neon-green); background: rgba(57,255,20,0.01);">
-        <div class="moba-badge" style="background: var(--neon-green); color:#000;">🛒 ИИ-КОММЕРЧЕСКИЙ ХАБ СМЕТ И ТЕНДЕРНЫХ ПРОДУКТОВ</div>
-        <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:12px; line-height:1.3;">Продукты для закупа мастеров монтажа, верифицированные Роботом-Ёжиком по лимитам ВОР:</div>
-        
-        <div id="commercial_catalog_container">
-            {% for prod in commercial_catalog %}
-            <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px; background:rgba(0,0,0,0.3); padding:8px; border-radius:8px; border:1px solid #1c203a;">
-                <img src="{{ prod.photo }}" style="width:45px; height:45px; object-fit:cover; border-radius:6px; border:1px solid var(--neon-cyan);">
-                <div style="font-size:0.7rem; line-height:1.3; color:#fff;">
-                    <b>{{ prod.name }}</b><br>
-                    Цена: <span style="color:#00ff66; font-weight:bold;">{{ prod.price }}</span> | <span style="color:#8a99ad;">{{ prod.stock }}</span><br>
-                    <span style="font-size:8px; color:var(--neon-pink);">🎵 Музыкальный фон: {{ prod.track_bg }}</span>
-                </div>
-            </div>
-            {% endfor %}
+    <div>
+        <!-- ШАПКА КАПИТАЛА -->
+        <div class="moba-card" style="border-left-color: var(--neon-cyan);">
+            <div class="moba-badge" style="background: var(--neon-cyan); color:#000;">🛰️ МИРОХА МОНОЛИТ // ОПЕЧАТАНО ПОРТ 80</div>
+            <div style="font-size: 1.5rem; font-weight: bold; margin-top: 10px; color:#fff;">{{ object_capital_rub }}</div>
+            <div style="font-size: 10px; color: var(--neon-green); margin-top: 5px;">{{ market_status }}</div>
         </div>
 
-        <button type="button" class="btn-action" style="background: linear-gradient(135deg, var(--neon-green), #00aa00); color:#000; margin-top:5px;" onclick="triggerEzhikCreativeCommerce()">
-            🦔 Логическое Творчество Ёжика(): Скачать Новые Треки & Фото
+        <!-- КНОПКА ПЕРЕХОДА НА ИИ-РАДАР (УБИВАЕМ 404!) -->
+        <button class="btn-action" style="margin-bottom:15px; background: linear-gradient(135deg, var(--neon-pink), #aa0055); color:#fff;" onclick="location.href='/radar/'">
+            🎬 Открыть ИИ-Радар Логистики (3D-Параллакс)
         </button>
-        <div id="creative_status_box" style="margin-top:10px; font-size:0.72rem; color:#fff; font-family:monospace; line-height:1.3;"></div>
+
+        <!-- 🗺️ ИНТЕРАКТИВНАЯ КАРТА ТОМ СОЙЕР ФЕСТА -->
+        <div class="moba-card" style="border-left-color: var(--neon-green); background: rgba(57,255,20,0.01);">
+            <div class="moba-badge" style="background: var(--neon-green); color:#000;">📍 ГЕО-КАРТА НАCЛЕДИЯ // ТОМ СОЙЕР ФЕСТ</div>
+            <div style="font-size:11px; color:#8a99ad; margin-top:8px; margin-bottom:12px;">Интерактивные маркеры восстановления исторической Тулы:</div>
+            
+            <div style="padding:10px; background:#020306; border-radius:6px; border:1px solid #1c203a; font-size:0.7rem; line-height:1.4; margin-bottom:8px;">
+                🔴 <b>📍 ТСФ-01: ул. Благовещенская, д. 8</b><br>
+                <span style="color:var(--neon-pink);">Статус: Очистка фасада // Интенсивность нагрева СУБД 95%</span>
+            </div>
+
+            <div style="padding:10px; background:#020306; border-radius:6px; border:1px solid #1c203a; font-size:0.7rem; line-height:1.4;">
+                🟡 <b>📍 ТСФ-02: ул. Смирнова, д. 24</b><br>
+                <span style="color:#ffaa00;">Статус: Ремонт кровли // Интенсивность нагрева СУБД 45%</span>
+            </div>
+        </div>
     </div>
 
-    <!-- ВЕКОВАЯ НАВИГАЦИЯ -->
-    <div class="grid-nav">
-        <a href="/capsule/" class="nav-btn">☀️<br>ВЕЧНОСТЬ</a>
-        <a href="/radar/" class="nav-btn">🎬<br>РАДАР</a>
-        <a href="/pto/1/" class="nav-btn">🏗️<br>СТРОЙКА</a>
+    <!-- НЕЗАМЕТНЫЙ ФУТЕР БЕЗ ПАФОСА -->
+    <div class="footer-hidden">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span>📞 ИТР-Шлюз: г. Тула, усадьба ТСФ</span>
+            <span>🌐 СУБД: PostgreSQL 5432</span>
+        </div>
+        <div style="line-height: 1.4; font-size: 9px; text-align: justify; color: #343d52;">
+            Строительная лицензия СРО №ОС-2026-M19. Авторское право защищено сквозными алгоритмами шифрования. Все права на медиа-контур и сметные лимиты опечатаны в ОЗУ ноды кластера Miroha Monolith Heritage © 2026. Без пафоса.
+        </div>
     </div>
 
 </div>
-
-<script>
-function triggerEzhikCreativeCommerce() {
-    let box = document.getElementById("creative_status_box");
-    box.innerHTML = "⏳ <i>Робот-Ёжик скачивает новые красивые фотоотчеты... Подгрузка неоновых треков в ОЗУ...</i>";
-    
-    fetch("/api/trigger-creative-commercial/", { method: "POST" })
-    .then(res => res.json())
-    .then(data => {
-        if(data.status === "success") {
-            box.innerHTML = `<span style="color:var(--neon-green);">${data.message}</span><br>🎵 <b>Текущий трек:</b> ${data.current_track.name}<br>📸 <b>ИИ-Картинка стока обновлена!</b>`;
-            setTimeout(() => { location.reload(); }, 1500); # Перезагружаем страницу для отображения нового фото контента
-        }
-    });
-}
-</script>
 </body>
 </html>
