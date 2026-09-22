@@ -6,3 +6,17 @@ nohup: ignoring input
  * Running on http://127.0.0.1:5000
  * Running on http://192.168.0.231:5000
 [33mPress CTRL+C to quit[0m
+127.0.0.1 - - [22/Sep/2026 12:28:22] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [22/Sep/2026 12:28:24] "GET / HTTP/1.1" 200 -
+220.167.232.220 - - [22/Sep/2026 12:29:49] code 400, message Bad request version ('À\x13À')
+220.167.232.220 - - [22/Sep/2026 12:29:49] "[35m[1m\x16\x03\x01\x05¬\x01\x00\x05¨\x03\x03Æ\x84]\x1dKG\x97.dØbyÉ:ô5,Õ\x82ÂeÕ\x81þººWòç\x86\x11\x92 L*\x8eL7{ËÝ\x06\x9fË\x04Z!¶LX\x02) Ý«& \x0b\x9ayô\x0fÚ2ý\x00\x1aÀ+À/À,À0Ì©Ì¨À\x09À\x13À[0m" HTTPStatus.BAD_REQUEST -
+221.13.86.227 - - [22/Sep/2026 12:30:00] "GET / HTTP/1.1" 200 -
+144.123.76.197 - - [22/Sep/2026 12:30:06] code 400, message Bad request syntax ('{\x01\x00\x1613911111112À¨\x01\x01\x13\x90{')
+144.123.76.197 - - [22/Sep/2026 12:30:06] "[35m[1m{\x01\x00\x1613911111112À¨\x01\x01\x13\x90{[0m" HTTPStatus.BAD_REQUEST -
+123.145.22.87 - - [22/Sep/2026 12:30:06] "GET / HTTP/1.0" 200 -
+171.8.138.59 - - [22/Sep/2026 12:30:11] code 400, message Bad request version ('À\x13À')
+171.8.138.59 - - [22/Sep/2026 12:30:11] "[35m[1m\x16\x03\x01\x05¬\x01\x00\x05¨\x03\x03+î·»u\x86gÇ\x1bÿ%+ÌÞ\x0cõ&\x92D,\x97Ü9ÌK\x8e\x96Ú\x8esË^ ¢ûú½w¡\x07\x87\x9có\x80Ù|¤a4b\x94Ke{+3\x18\x99.#\x8f\x0c\x85=#\x00\x1aÀ+À/À,À0Ì©Ì¨À\x09À\x13À[0m" HTTPStatus.BAD_REQUEST -
+125.84.251.167 - - [22/Sep/2026 12:30:15] code 400, message Bad request syntax ('~\x00\x02\x00\x00\x02\x00\x00\x00\x00\x15\x00\x032~')
+125.84.251.167 - - [22/Sep/2026 12:30:15] "[35m[1m~\x00\x02\x00\x00\x02\x00\x00\x00\x00\x15\x00\x032~[0m" HTTPStatus.BAD_REQUEST -
+121.29.149.47 - - [22/Sep/2026 12:30:23] code 400, message Bad request syntax ('\x1f\x0e\x00\x00\x00\x05\x00+\x0e\x01\x00')
+121.29.149.47 - - [22/Sep/2026 12:30:23] "[35m[1m\x1f\x0e\x00\x00\x00\x05\x00+\x0e\x01\x00[0m" HTTPStatus.BAD_REQUEST -
