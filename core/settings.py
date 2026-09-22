@@ -147,13 +147,15 @@ SESSION_SAVE_EVERY_REQUEST = True
 CELERY_BROKER_URL = 'redis://redis:6379/0'
 
 # Контур абсолютной безопасности: принудительный редирект на HTTPS
-SECURE_SSL_REDIRECT = True
 
-SESSION_COOKIE_SECURE = True
 
-CSRF_COOKIE_SECURE = True
 
 # Включает редирект с http на https
 
 # Передает Django информацию о том, что запрос был через HTTPS (если перед ним стоит прокси)
+
+# 🪐 ЖЕСТКИЙ СКВОЗНОЙ ИТР-КОНТУР HTTPS ШИФРОВАНИЯ GOOGLE STANDARDS
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
