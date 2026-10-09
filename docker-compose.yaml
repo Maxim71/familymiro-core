@@ -1,19 +1,53 @@
 version: '3.8'
 
 services:
-  miroha_llm_admin:
+  # 🚀 Новая промо-ракета Flask (Привлечение блогеров, промо-страницы и маркетинг)
+  flask_marketing_service:
     image: python:3.10-slim
-    container_name: miroha_llm_fastapi_container
+    container_name: miro_marketing_flask
     restart: always
     volumes:
-      - .:/root/app
-      - /var/www/miroha_static:/var/www/miroha_static
-      - ./storage_control/llm_admin_manifest.yaml:/root/app/llm_admin_manifest.yaml
+      - .:/app
+    working_dir: /app
     ports:
-      - "9000:9000"  # FastAPI (CAC, SMTP, sitemap, aiokafka)
-      - "1541:1541"  # Резерв под 1С:Предприятие Data Mesh
-      - "8001:8001"  # НОВОЕ ОКНО: gRPC Шлюз Triton Inference Server для клиентов
-      - "8002:8002"  # НОВОЕ ОКНО: Метрики производительности Triton ИИ
+      - "5000:5000"  # Парадный порт Flask для промо-страниц привлечения
+    networks:
+      familymiro_default:
+        aliases:
+          - flask
+          - promo_engine
     environment:
-      - DATABASE_URL=postgresql://maxim_admin:MirohaCryptoPostgres2026@192.168.0.231:5432/miroha_db
-    command: /root/app/hello/bin/uvicorn fastapi_service.fast_contract_api:app --host 0.0.0.0 --port 9000
+      - DATABASE_URL=postgresql://postgres:MirohaCryptoPostgres2026@db:5432/miroha_db
+      - LAVA_API_TOKEN=LAVA_SECRET_API_TOKEN_2026_PERFECT
+    deploy:
+      resources:
+        limits:
+          memory: 100M  # Ультра-легкий Flask
+    command: python flask_service/main.py
+
+  # 🌪️ Асинхронное веб-ядро Tornado (Чат, Короткие видео и Стримы блогеров)
+  tornado_gateway:
+    image: python:3.10-slim
+    container_name: miro_tornado_core
+    restart: always
+    volumes:
+      - .:/app
+    working_dir: /app
+    ports:
+      - "8888:8888"  # Websocket-шлюз
+    networks:
+      familymiro_default:
+        aliases:
+          - tornado
+          - chat_core
+    environment:
+      - DATABASE_URL=postgresql://postgres:MirohaCryptoPostgres2026@db:5432/miroha_db
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+    command: python gateway.py
+
+networks:
+  familymiro_default:
+    name: familymiro_default

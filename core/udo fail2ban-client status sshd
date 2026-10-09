@@ -1,0 +1,13 @@
+[0;1;32m●[0m fail2ban.service - Fail2Ban Service
+     Loaded: loaded (/lib/systemd/system/fail2ban.service; enabled; vendor preset: enabled)
+     Active: [0;1;32mactive (running)[0m since Wed 2026-09-23 14:57:33 MSK; 19h ago
+       Docs: man:fail2ban(1)
+   Main PID: 604 (fail2ban-server)
+      Tasks: 5 (limit: 2325)
+     Memory: 18.0M
+        CPU: 35.532s
+     CGroup: /system.slice/fail2ban.service
+             └─604 /usr/bin/python3 /usr/bin/fail2ban-server -xf start
+
+Sep 23 14:57:33 cv7887685.novalocal systemd[1]: Started Fail2Ban Service.
+Sep 23 14:57:34 cv7887685.novalocal fail2ban-server[604]: Server ready

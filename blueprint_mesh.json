@@ -1,0 +1,24 @@
+{
+  "contours": [
+    {
+      "id": 1,
+      "name": "Contour_1_Mars_Axis_3-6",
+      "material": "Бетон Б25 / Арматурный каркас ростверка",
+      "volume_m2": 480.20,
+      "snip_hours": 160,
+      "fact_hours": 142,
+      "cost_rub": "4,850,000.00",
+      "status_1c": "СИНХРОННО"
+    },
+    {
+      "id": 2,
+      "name": "Contour_2_Neptune_Axis_1-2",
+      "material": "Сухие смеси Limonapro / Отделка С-2",
+      "volume_m2": 1240.50,
+      "snip_hours": 240,
+      "fact_hours": 195,
+      "cost_rub": "2,120,000.00",
+      "status_1c": "ДОСТАВКА ХАБ"
+    }
+  ]
+}

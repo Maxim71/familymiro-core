@@ -1,0 +1,56 @@
+nohup: ignoring input
+2026-09-29 14:11:15.940 "development.showErrorDetails" is not a valid config option. If you previously had this config option set, it may have been removed.
+2026-09-29 14:11:15.941 "development.showErrorDetails" is not a valid config option. If you previously had this config option set, it may have been removed.
+
+Collecting usage statistics. To deactivate, set browser.gatherUsageStats to false.
+
+2026-09-29 14:11:16.460 Uvicorn server started on 0.0.0.0:3500
+
+  You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:3500
+  Network URL: http://192.168.0.216:3500
+  External URL: http://185.182.110.96:3500
+
+[31m──[0m[31m────────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────────[0m[31m──[0m
+[31m [0m [2m/root/app/hello/lib/python3.10/site-packages/streamlit/runtime/scriptrunner/[0m[1mexec_cod[0m [31m [0m
+[31m [0m [1me.py[0m:136 in exec_func_with_error_handling                                            [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/root/app/hello/lib/python3.10/site-packages/streamlit/runtime/scriptrunner/[0m[1mscript_r[0m [31m [0m
+[31m [0m [1munner.py[0m:909 in code_to_exec                                                         [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/root/app/[0m[1mweb_portal.py[0m:92 in <module>                                               [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m   [2m 89 [0m[2m# 🏠 ЦЕНТРАЛЬНОЕ ОКНО: ЖИВОЙ ВЫВОД КАРТИНКИ ИЗ ОЗУ, СГЕНЕРИРОВАННОЙ PILLOW[0m     [31m [0m
+[31m [0m   [2m 90 [0mst.markdown([33mf[0m[33m"[0m[33m### 🏠 Квантовая Матрица Черепахи: Пошаговый ИИ-рендер цвета по [0m [31m [0m
+[31m [0m   [2m 91 [0mgenerated_image = render_pillow_axis(search_axis)                              [31m [0m
+[31m [0m [31m❱ [0m 92 st.image(generated_image, use_column_width=[94mTrue[0m)                               [31m [0m
+[31m [0m   [2m 93 [0m                                                                               [31m [0m
+[31m [0m   [2m 94 [0mst.markdown([33m"[0m[33m---[0m[33m"[0m)                                                             [31m [0m
+[31m [0m   [2m 95 [0m                                                                               [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/root/app/hello/lib/python3.10/site-packages/streamlit/runtime/[0m[1mmetrics_util.py[0m:725   [31m [0m
+[31m [0m in wrapped_func                                                                      [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mTypeError: [0m[1;35mImageMixin.image[0m[1m([0m[1m)[0m got an unexpected keyword argument [32m'use_column_width'[0m
+[31m──[0m[31m────────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────────[0m[31m──[0m
+[31m [0m [2m/root/app/hello/lib/python3.10/site-packages/streamlit/runtime/scriptrunner/[0m[1mexec_cod[0m [31m [0m
+[31m [0m [1me.py[0m:136 in exec_func_with_error_handling                                            [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/root/app/hello/lib/python3.10/site-packages/streamlit/runtime/scriptrunner/[0m[1mscript_r[0m [31m [0m
+[31m [0m [1munner.py[0m:909 in code_to_exec                                                         [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/root/app/[0m[1mweb_portal.py[0m:92 in <module>                                               [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m   [2m 89 [0m[2m# 🏠 ЦЕНТРАЛЬНОЕ ОКНО: ЖИВОЙ ВЫВОД КАРТИНКИ ИЗ ОЗУ, СГЕНЕРИРОВАННОЙ PILLOW[0m     [31m [0m
+[31m [0m   [2m 90 [0mst.markdown([33mf[0m[33m"[0m[33m### 🏠 Квантовая Матрица Черепахи: Пошаговый ИИ-рендер цвета по [0m [31m [0m
+[31m [0m   [2m 91 [0mgenerated_image = render_pillow_axis(search_axis)                              [31m [0m
+[31m [0m [31m❱ [0m 92 st.image(generated_image, use_column_width=[94mTrue[0m)                               [31m [0m
+[31m [0m   [2m 93 [0m                                                                               [31m [0m
+[31m [0m   [2m 94 [0mst.markdown([33m"[0m[33m---[0m[33m"[0m)                                                             [31m [0m
+[31m [0m   [2m 95 [0m                                                                               [31m [0m
+[31m [0m                                                                                      [31m [0m
+[31m [0m [2m/root/app/hello/lib/python3.10/site-packages/streamlit/runtime/[0m[1mmetrics_util.py[0m:725   [31m [0m
+[31m [0m in wrapped_func                                                                      [31m [0m
+[31m────────────────────────────────────────────────────────────────────────────────────────[0m
+[1;91mTypeError: [0m[1;35mImageMixin.image[0m[1m([0m[1m)[0m got an unexpected keyword argument [32m'use_column_width'[0m

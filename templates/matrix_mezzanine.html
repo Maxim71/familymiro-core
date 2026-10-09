@@ -1,0 +1,39 @@
+<!-- 🌐 ИЗОЛИРОВАННЫЙ HTML-ШАБЛОН КВАНТОВОГО МЕЗОНИНА БРОНЕПОЕЗДА -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Miroha Квантовый Мезонин v79.0</title>
+    <link href="https://jsdelivr.net" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="nasa-banner">
+        <h2 style="color: #00f2fe; margin: 0; font-family: sans-serif; font-weight: bold;">🏬 КВАНТОВЫЙ МЕЗОНИН: B2B МАГАЗИН ИЗ 100 СУВЕРЕННЫХ ПИНОВ</h2>
+        <span style="color:#a855f7; font-weight:bold; font-size:11px;">🔒 БИНАРНЫЙ ЗАМОК АКТИВЕН // СВЕРКА ЛИМИТОВ 1С // КОНТУР АНТИ-НОС ДО 2059 ГОДА</span>
+    </div>
+
+    <!-- АВТОНОМНЫЙ ПОИСКОВИК ТОВАРОВ ОТДЕЛЬНО -->
+    <div class="mb-3">
+        <input type="text" id="b2b-search" class="search-input" placeholder="🔍 Введите наименование, ось чертежа, категорию или ТК для мгновенного поиска по 100 товарам Мезонина...">
+    </div>
+
+    <!-- ЖИВАЯ СЕТКА PINTEREST СТРОГО 200x330 PX -->
+    <div class="pinterest-grid">
+        <!-- PYTHON ДИНАМИЧЕСКИ ВШИВАЕТ СБОРКУ ИЗ 100 ТОВАРОВ СЮДА -->
+        {% for pin in pin_array %}
+        <div class="pin-b2b-card">
+            <p class="pin-title">{{ pin.host }}</p>
+            <hr class="my-1 border-secondary">
+            <p class="m-0" style="font-size: 10px; color: #cbd5e1;">📦 {{ pin.name }}</p>
+            <p class="pin-price">💵 {{ pin.price }}</p>
+            <p class="m-0 text-muted" style="font-size: 9px;">🚛 {{ pin.logistics }}</p>
+            <button class="btn-action" onclick="alert('Заказ за чашку кофе передан в МойСклад!')">Заказать за кофе</button>
+            <span class="pin-badge" style="background: {{ pin.badge_color }};">{{ pin.badge_text }}</span>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script src="/static/search_mesh.js"></script>
+</body>
+</html>

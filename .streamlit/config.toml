@@ -1,0 +1,5 @@
+[client]
+toolbarMode = "minimal"
+
+[development]
+showErrorDetails = false

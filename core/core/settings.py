@@ -48,14 +48,15 @@ TEMPLATES = [
 
 DATABASES = {
     'default': {
-        'BACKEND': 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'miroha_db',
-        'USER': 'maxim_admin',
+        'USER': 'postgres',
         'PASSWORD': 'MirohaCryptoPostgres2026',
-        'HOST': '192.168.0.231',
+        'HOST': '127.0.0.1',
         'PORT': '5432',
     }
 }
+
 
 USE_X_FORWARDED_HOST = True
 USE_X_FORWARDED_PORT = True
