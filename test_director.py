@@ -2,14 +2,14 @@ import asyncio
 import httpx
 
 async def test_director_orchestration():
-    print('=== ЗАПУСК ПРЯМЫХ ТЕСТОВЫХ СЦЕНАРИЕВ РЕЖИССЕРА ===')
+    print('=== [РЕЖИССЕР] ЗАПУСК СВЯЗАННЫХ ИТР-СЦЕНАРИЕВ ===')
     async with httpx.AsyncClient() as client:
-        print('Тестирование ИИ-озвучки по губам (Голос: Геральт)...')
-        response_voice = await client.post(
-            'http://127.0.0',
-            json={'video_name': 'utrennik_2026.mp4', 'voice_type': 'male'}
-        )
-        print(f'Ответ Режиссера: {response_voice.json()}\n')
+        # Полный и точный адрес асинхронного FastAPI шлюза Ёжика
+        url = 'http://127.0.0'
+        data = {'video_name': 'utrennik_2026.mp4', 'voice_type': 'male'}
+        
+        response_voice = await client.post(url, json=data)
+        print(f"Ответ Режиссера: {response_voice.json()}")
 
         print('Эмуляция стрима Блогера и доната в Капитал Ёжика...')
         mock_donate_api = {
