@@ -1,65 +1,45 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-class BloggerProfile(models.Model):
-    """Профиль Блогера в ИТР-платформе (Учет реального заработка)"""
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='blogger_profile')
-    channel_name = models.CharField(max_length=255, verbose_name="Название канала/блога")
-    total_earned_rub = models.DecimalField(max_digits=12, decimal_places=2, default=0.00, verbose_name="Всего заработано (RUB)")
-    balance_payout_ready = models.DecimalField(max_digits=12, decimal_places=2, default=0.00, verbose_name="Доступно к выводу")
-
-    def __str__(self):
-        return f"Блогер: {self.channel_name} ({self.user.username})"
-
-class PartnerPin(models.Model):
-    """Магазин Пинов (Скидки от партнеров + привязка к блогерам)"""
-    PIN_TYPES = [
-        ('LOGISTICS', 'Скидка на логистику и доставку'),
-        ('MATERIAL', 'Скидка на расходные материалы'),
-        ('LABOR', 'Бонусные человеко-часы ИТР'),
+class ITRMember(models.Model):
+    """Полная инженерно-техническая структура строительной площадки"""
+    ROLES = [
+        # Линейное руководство и управление участками
+        ("CHIEF_ENG", "Главный инженер проекта / Нач. объекта"),
+        ("SITE_CHIEF", "Начальник строительного участка"),
+        ("FOREMAN", "Производитель работ (Прораб)"),
+        ("MASTER", "Мастер строительно-монтажных работ"),
+        
+        # Инженерно-технические службы (ПТО и Сметы)
+        ("PTO_CHIEF", "Начальник производственно-технического отдела"),
+        ("PTO_ENG", "Инженер ПТО (Ведение ИД, Чертежи)"),
+        ("ESTIMATOR", "Инженер-сметчик (Учет стоимости, КС-2/КС-3)"),
+        
+        # Специализированный ИТР-состав площадки
+        ("GEODESIST", "Инженер-геодезист (Оси, Разбивочные работы)"),
+        ("ENERGY_ENG", "Главный энергетик (Силовые сети, ЭОМ)"),
+        ("MECH_ENG", "Главный механик (Строительные машины, КМ)"),
+        ("QA_ENG", "Инженер контроля качества (Строительный контроль)"),
+        ("BIM_COORD", "Специалист информационного моделирования (BIM/IFC)"),
+        ("HSE_ENG", "Специалист по охране труда и промбезопасности"),
     ]
-    code = models.CharField(max_length=50, unique=True, verbose_name="Промокод / Пин")
-    blogger = models.ForeignKey(BloggerProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name='pins')
-    pin_type = models.CharField(max_length=20, choices=PIN_TYPES, default='MATERIAL')
-    discount_value = models.DecimalField(max_digits=4, decimal_places=2, help_text="Например, 0.15 для 15%")
-    blogger_commission_rub = models.DecimalField(max_digits=10, decimal_places=2, default=1000.00, help_text="Сколько получает блогер за активацию")
-    is_active = models.BooleanField(default=True)
+    
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="itr_profile")
+    role = models.CharField(max_length=20, choices=ROLES, verbose_name="ИТР Должность")
+    telegram_id = models.CharField(max_length=50, blank=True, null=True, verbose_name="ID связи (Telegram)")
+    is_active_on_site = models.BooleanField(default=True, verbose_name="Находится на площадке")
 
     def __str__(self):
-        return f"Пин {self.code} (-{self.discount_value * 100}%)"
+        return f"{self.user.get_full_name() or self.user.username} [{self.get_role_display()}]"
 
-class WarehouseMaterial(models.Model):
-    """Склад учета расходных материалов для СТРОЙКИ"""
-    MATERIAL_STATUS = [
-        ('OK', 'В достатке на складе'),
-        ('LOW', 'Заканчивается / Нужно заказать'),
-        ('ORDERED', 'Заказано / Едет на объект'),
-    ]
-    name = models.CharField(max_length=255, verbose_name="Наименование материала")
-    cipher = models.CharField(max_length=50, verbose_name="Шифр ИТР (АР/КЖ/ЭОМ)")
-    image_url = models.URLField(blank=True, null=True, verbose_name="Изображение материала (Pinterest-стиль)")
-    quantity_available = models.FloatField(default=0.00, verbose_name="Доступно на складе (Кладовщик принял)")
-    quantity_required_by_spec = models.FloatField(default=0.00, verbose_name="Необходимо по спецификации чертежа")
-    status = models.CharField(max_length=15, choices=MATERIAL_STATUS, default='OK')
+class DXFBlueprintLayer(models.Model):
+    """Векторные слои CAD/BIM для совместной работы всего ИТР-состава"""
+    blueprint_name = models.CharField(max_length=255, verbose_name="Имя файла чертежа")
+    layer_name = models.CharField(max_length=100, verbose_name="Имя CAD-слоя (Шифр)")
+    detected_materials = models.JSONField(verbose_name="Физические объемы (ИИ-Парсинг)")
+    verified_by = models.ForeignKey(ITRMember, on_delete=models.SET_NULL, null=True, blank=True, related_name="verified_layers")
+    status_notes = models.TextField(blank=True, null=True, verbose_name="Замечания технадзора / ПТО")
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.name} [{self.cipher}] — {self.quantity_available} шт."
-
-class PinActivationLog(models.Model):
-    """Хронология объединений ИД: Фиксация активации пина прорабом"""
-    pin = models.ForeignKey(PartnerPin, on_delete=models.CASCADE)
-    foreman = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Прораб / Инженер")
-    project_cipher = models.CharField(max_length=100, verbose_name="Шифр ИД объекта")
-    activated_at = models.DateTimeField(auto_now_add=True)
-    money_allocated_to_blogger = models.BooleanField(default=False)
-
-    def save(self, *args, **kwargs):
-        """Режиссер автоматизации: при сохранении акта начисляет деньги блогеру в базу"""
-        if not self.pk and self.pin.blogger:
-            blogger_prof = self.pin.blogger
-            commission = self.pin.blogger_commission_rub
-            blogger_prof.total_earned_rub += commission
-            blogger_prof.balance_payout_ready += commission
-            blogger_prof.save()
-            self.money_allocated_to_blogger = True
-        super().save(*args, **kwargs)
+        return f"{self.blueprint_name} -> {self.layer_name}"

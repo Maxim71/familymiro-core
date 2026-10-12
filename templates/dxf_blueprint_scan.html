@@ -5,18 +5,40 @@
     <title>Дашборд Чертежей DXF</title>
     <style>
         body { background: #040508; color: #a855f7; font-family: 'Courier New', monospace; padding: 40px; }
-        .cad-box { border: 2px solid #a855f7; padding: 30px; background: #090d16; max-width: 700px; margin: 0 auto; box-shadow: 0 0 30px rgba(168, 85, 247, 0.2); }
-        .layer { color: #00ffcc; font-size: 14px; padding: 4px 0; border-bottom: 1px solid #1e293b; }
+        .cad-box { border: 2px solid #a855f7; padding: 30px; background: #090d16; max-width: 800px; margin: 0 auto; box-shadow: 0 0 30px rgba(168, 85, 247,0.2); }
+        .layer { color: #00ffcc; font-size: 14px; padding: 8px 0; border-bottom: 1px solid #1e293b; display: flex; justify-content: space-between; }
+        .itr-badge { background: #a855f7; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+        .system-info { color: #64748b; font-size: 12px; margin-top: 15px; }
     </style>
 </head>
 <body>
     <div class="cad-box">
-        <h2 style="color: #fff; text-shadow: 0 0 10px #a855f7;">📐 СКАНЕР СЛОЕВ DXF (СИ / АСЕМБЛЕР)</h2>
-        <p style="color: #64748b;">Векторная сетка осей эталона здания развернута:</p>
-        <div class="layer">⚡ Слой 01: Несущие железобетонные колонны (Ось А-105) — OK</div>
-        <div class="layer">⚡ Слой 02: Инженерные магистрали ОВиК — OK</div>
-        <div class="layer">⚡ Слой 03: Точки разметки капсул 2059 — OK</div>
-        <p style="margin-top: 25px; color: #ffd700;">🦊 Энергетический баланс Ёжика: {{ ezhik.total_revenue }}</p>
+        <h2 style="color: #fff; text-shadow: 0 0 10px #a855f7;">📐 СКАНЕР СЛОЕВ DXF (ПЛАТФОРМА FAMILYMIRA)</h2>
+        <p style="color: #64748b;">Векторная сетка осей здания развернута для всего ИТР-состава площадки:</p>
+        
+        <!-- Вывод расширенных слоев -->
+        <div class="layer">
+            <span>⚡ Слой 01: Несущие ЖБ колонны (Ось А-105) — Бетон М400</span>
+            <span class="itr-badge">Утвердил: Главный инженер</span>
+        </div>
+        <div class="layer">
+            <span>⚡ Слой 02: Инженерные магистрали вентиляции (ОВ.ЦОД)</span>
+            <span class="itr-badge">Проверил: BIM-Координатор</span>
+        </div>
+        <div class="layer">
+            <span>⚡ Слой 03: Точки разбивки опорных геодезических реперов</span>
+            <span class="itr-badge">Разметил: Инженер-Геодезист</span>
+        </div>
+        <div class="layer">
+            <span>⚡ Слой 04: Силовые кабельные трассы (ЭОМ.ЦОД) — Лотки 400мм</span>
+            <span class="itr-badge">Согласовал: Главный энергетик</span>
+        </div>
+        
+        <p style="margin-top: 25px; color: #ffd700;">🦊 Энергетический баланс Ёжика: Активен (Капитал под юридической защитой)</p>
+        <div class="system-info">
+            * Интеллект Марка Аврелия обеспечивает лаконичность ИД актов скрытых работ.<br>
+            * Интеллект Пифагора автоматически контролирует геометрию и прямоугольность осей.
+        </div>
     </div>
 </body>
 </html>
