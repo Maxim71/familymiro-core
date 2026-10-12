@@ -1,2 +1,24 @@
-djangorestframework
-django-cors-headers
+# 👑 БОЕВОЕ ДЖАНГО-ЯДРО И ANDROID WEB LINK (КОНТУР ГОСТЕЙ)
+django==5.0.3
+djangorestframework==3.15.1
+django-cors-headers==4.3.1
+channels==4.0.0
+
+# 🏬 КВАНТОВЫЙ МЕЗОНИН, FLASK И АСИНХРОННЫЙ ВЕБ-ЭФИР TORNADO
+fastapi==0.110.0
+uvicorn[standard]==0.28.0
+flask==3.0.2
+tornado==6.4.0
+
+# 🧠 КОМПЬЮТЕРНОЕ ЗРЕНИЕ, ЧЕРЕПАХА ДЛЯ РИСОВАНИЯ ЛИНИЙ И ПАРСИНГ
+tritonclient[all]==2.43.0
+pillow==10.2.0
+bleach==6.1.0
+matplotlib==3.8.3
+pandas==2.2.0
+openpyxl==3.1.2
+
+# 🚂 СИГНАЛИЗАЦИЯ ПОТОКОВ И ОЧЕРЕДИ ДАННЫХ
+kafka-python-ng==2.2.2
+redis==5.0.3
+packaging==26.3
