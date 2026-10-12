@@ -1,68 +1,65 @@
 from django.db import models
+from django.contrib.auth.models import User
 
-class UserMaskProfile(models.Model):
-    """👥 МАТРИЦА МАСОК МАКСИМА (Multi-Role Management Core)"""
-    client_id = models.CharField("ИТР Код Client ID", max_length=50, unique=True, help_text="Напр: CID-PRO-MIHALYCH")
-    active_role = models.CharField("Активная Маска / Роль", max_length=100, help_text="Администратор, ПТО, Разнорабочий, Отец для вечности и т.д.")
-    phone_number = models.CharField("Номер телефона для связи", max_length=30, blank=True, null=True)
-    google_totp_secret = models.CharField("Криптографический КЛЮЧ-ТОННЕЛЬ (Base32)", max_length=64, blank=True, null=True)
-    created_at = models.DateTimeField("Дата фиксации в вечности", auto_now_add=True)
-
-    class Meta:
-        verbose_name = "Маска Максима / Профиль Пользователя"
-        verbose_name_plural = "👥 1. Матрица Масок и Профилей"
+class BloggerProfile(models.Model):
+    """Профиль Блогера в ИТР-платформе (Учет реального заработка)"""
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='blogger_profile')
+    channel_name = models.CharField(max_length=255, verbose_name="Название канала/блога")
+    total_earned_rub = models.DecimalField(max_digits=12, decimal_places=2, default=0.00, verbose_name="Всего заработано (RUB)")
+    balance_payout_ready = models.DecimalField(max_digits=12, decimal_places=2, default=0.00, verbose_name="Доступно к выводу")
 
     def __str__(self):
-        return f"{self.client_id} — [{self.active_role}]"
+        return f"Блогер: {self.channel_name} ({self.user.username})"
 
-
-class SoftwareLicense(models.Model):
-    """📜 СУБД-КОНТУР ЛИЦЕНЗИРОВАНИЯ ПО (Защита от нелегального клика)"""
-    STATUS_CHOICES = [('ACTIVE', 'АКТИВНА // Secured'), ('EXPIRED', 'ИСТЕКЛА // Blocked')]
-    
-    profile = models.ForeignKey(UserMaskProfile, on_delete=models.CASCADE, verbose_name="Привязка к Профилю")
-    license_key = models.CharField("Ключ Лицензии ПО", max_length=100, unique=True, help_text="Напр: MIRO-MASTER-BOSS-2026")
-    license_type = models.CharField("Пакет / Тип Лицензии", max_length=100, help_text="Линейная ИТР, Полный Мезонин, Благотворительная")
-    status = models.CharField("Статус Лицензии в Postgres", max_length=20, choices=STATUS_CHOICES, default='ACTIVE')
-    expires_at = models.DateField("Срок действия Лицензии")
-
-    class Meta:
-        verbose_name = "Коммерческая Лицензия ПО"
-        verbose_name_plural = "📜 2. Контур Лицензирования ПО"
-
-    def __str__(self):
-        return f"{self.license_key} ({self.status})"
-
-
-class MezaninWebsiteBuilder(models.Model):
-    """🛒 КОНСТРУКТОР САЙТОВ-МЕЗОНИНОВ (Сайты-визитки, Чат-боты, Блоги Многие-ко-Многим)"""
-    SITE_TYPES = [('BLOG', 'Блог ИТР-Монологов'), ('VCARD', 'Сайт-Визитка СРО'), ('CHATBOT', 'Интерфейс Чат-Бота')]
-    
-    owner = models.ForeignKey(UserMaskProfile, on_delete=models.CASCADE, verbose_name="Создатель / Администратор")
-    site_title = models.CharField("Название Сайта / Проекта", max_length=200)
-    site_domain = models.CharField("Технический Домен / Туннель", max_length=100, help_text="Напр: blog.miroha.ru")
-    architecture_type = models.CharField("Тип Конструктора Мезонина", max_length=20, choices=SITE_TYPES, default='BLOG')
-    is_active = models.BooleanField("Запустить в полный ОЗУ-эфир Nginx?", default=True)
-
-    class Meta:
-        verbose_name = "Сайт Конструктора Мезонина"
-        verbose_name_plural = "💻 3. Конструктор Сайтов и Блогов"
+class PartnerPin(models.Model):
+    """Магазин Пинов (Скидки от партнеров + привязка к блогерам)"""
+    PIN_TYPES = [
+        ('LOGISTICS', 'Скидка на логистику и доставку'),
+        ('MATERIAL', 'Скидка на расходные материалы'),
+        ('LABOR', 'Бонусные человеко-часы ИТР'),
+    ]
+    code = models.CharField(max_length=50, unique=True, verbose_name="Промокод / Пин")
+    blogger = models.ForeignKey(BloggerProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name='pins')
+    pin_type = models.CharField(max_length=20, choices=PIN_TYPES, default='MATERIAL')
+    discount_value = models.DecimalField(max_digits=4, decimal_places=2, help_text="Например, 0.15 для 15%")
+    blogger_commission_rub = models.DecimalField(max_digits=10, decimal_places=2, default=1000.00, help_text="Сколько получает блогер за активацию")
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
-        return f"{self.site_title} ({self.site_domain})"
+        return f"Пин {self.code} (-{self.discount_value * 100}%)"
 
-
-class ArchivalDirective(models.Model):
-    """💾 ДИРЕКТИВЫ АРХИВА ВЕЧНОСТИ (_proglog / decorator / frozenlist)"""
-    associated_site = models.ForeignKey(MezaninWebsiteBuilder, on_delete=models.CASCADE, verbose_name="Связанный Проект")
-    log_title = models.CharField("Заголовок Статьи / Монолога / Лога", max_length=200)
-    log_content = models.TextField("Тело Монолога / Содержимое Директивы")
-    media_file_path = models.CharField("Путь к загруженному Медиа (Фото/Видео/Аватарка)", max_length=255, blank=True, null=True, help_text="Обработка через imageio/moviepy/pillow")
-    captured_timestamp = models.DateTimeField("Временная метка Вечности", auto_now_add=True)
-
-    class Meta:
-        verbose_name = "Директива Архива / Монолог"
-        verbose_name_plural = "💾 4. Директивы Архива и Монологи"
+class WarehouseMaterial(models.Model):
+    """Склад учета расходных материалов для СТРОЙКИ"""
+    MATERIAL_STATUS = [
+        ('OK', 'В достатке на складе'),
+        ('LOW', 'Заканчивается / Нужно заказать'),
+        ('ORDERED', 'Заказано / Едет на объект'),
+    ]
+    name = models.CharField(max_length=255, verbose_name="Наименование материала")
+    cipher = models.CharField(max_length=50, verbose_name="Шифр ИТР (АР/КЖ/ЭОМ)")
+    image_url = models.URLField(blank=True, null=True, verbose_name="Изображение материала (Pinterest-стиль)")
+    quantity_available = models.FloatField(default=0.00, verbose_name="Доступно на складе (Кладовщик принял)")
+    quantity_required_by_spec = models.FloatField(default=0.00, verbose_name="Необходимо по спецификации чертежа")
+    status = models.CharField(max_length=15, choices=MATERIAL_STATUS, default='OK')
 
     def __str__(self):
-        return f"[{self.captured_timestamp.strftime('%d.%m %H:%M')}] {self.log_title}"
+        return f"{self.name} [{self.cipher}] — {self.quantity_available} шт."
+
+class PinActivationLog(models.Model):
+    """Хронология объединений ИД: Фиксация активации пина прорабом"""
+    pin = models.ForeignKey(PartnerPin, on_delete=models.CASCADE)
+    foreman = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Прораб / Инженер")
+    project_cipher = models.CharField(max_length=100, verbose_name="Шифр ИД объекта")
+    activated_at = models.DateTimeField(auto_now_add=True)
+    money_allocated_to_blogger = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        """Режиссер автоматизации: при сохранении акта начисляет деньги блогеру в базу"""
+        if not self.pk and self.pin.blogger:
+            blogger_prof = self.pin.blogger
+            commission = self.pin.blogger_commission_rub
+            blogger_prof.total_earned_rub += commission
+            blogger_prof.balance_payout_ready += commission
+            blogger_prof.save()
+            self.money_allocated_to_blogger = True
+        super().save(*args, **kwargs)

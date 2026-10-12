@@ -69,3 +69,32 @@ def ezhik_parse_filename(filename, activated_pin=None):
             "партнерский_эффект": discount_info
         }
     }
+
+def ezhik_warehouse_audit(section_cipher):
+    """
+    Интеллект Ёжика: сканирует базу склада, находит дефицит по спецификации,
+    выдает алерты и рекомендует активацию партнерских пинов.
+    """
+    # Имитация запроса к PostgreSQL таблице WarehouseMaterial
+    # В реальности Django ORM сделает prefetch_related, как мы читали в документации DRF
+    mock_db_materials = [
+        {"name": "Кабель силовой 3х2.5", "cipher": "ЭОМ.ЦОД", "available": 200, "required": 850, "status": "LOW"},
+        {"name": "Кабель-канал 40х25", "cipher": "ЭОМ.ЦОД", "available": 10, "required": 45, "status": "LOW"},
+        {"name": "Лотки металлические", "cipher": "ЭОМ.ЦОД", "available": 0, "required": 30, "status": "LOW"},
+        {"name": "Фальшпол антистатический", "cipher": "ФП.ЦОД", "available": 5, "required": 120, "status": "LOW"},
+    ]
+    
+    low_stock_items = [m for m in mock_db_materials if m["cipher"] == section_cipher and m["available"] < m["required"]]
+    count_low = len(low_stock_items)
+    
+    if count_low > 0:
+        return {
+            "warehouse_alert": "ВНИМАНИЕ! Обнаружен дефицит ресурсов по спецификации.",
+            "metrics": {
+                "пинов_заканчивается_или_нет": count_low,
+                "статус_материалов": "Нужно заказывать / Едут в производство",
+                "требуется_активировать_пинов_партнеров": max(0, 7 - count_low) # Расчет: ваши 3 необходимых пина
+            },
+            "items_to_order": [item["name"] for item in low_stock_items]
+        }
+    return {"warehouse_alert": "Кладовщик принял. Склад заполнен на 100%, дефицита нет."}
