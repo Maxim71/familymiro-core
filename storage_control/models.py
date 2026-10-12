@@ -92,3 +92,37 @@ class TimeCapsuleInvestment(models.Model):
 
     def __str__(self):
         return f"Капсула на {self.lock_term_years} лет — {self.allocated_funds} RUB"
+
+
+class MaterialCertificate(models.Model):
+    """Сертификаты и паспорта качества на расходные материалы площадки"""
+    material_name = models.CharField(max_length=255, verbose_name="Материал")
+    certificate_number = models.CharField(max_length=100, unique=True, verbose_name="Номер сертификата")
+    passport_file_url = models.URLField(blank=True, null=True, verbose_name="Ссылка на Паспорт качества")
+    verified_by_qa = models.BooleanField(default=False, verbose_name="Проверено Инженером СКК")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Сертификат: {self.material_name} (№ {self.certificate_number})"
+
+class FlexibleTimeCapsule(models.Model):
+    """Гибкая капсула времени: Срок выбирает сам Пользователь (Медиа: Фото/Видео/Голос)"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Отправитель")
+    delivery_date = models.DateField(verbose_name="Точная дата вскрытия капсулы")
+    wishes_text = models.TextField(blank=True, null=True, verbose_name="Текстовое пожелание")
+    attached_media_url = models.URLField(blank=True, null=True, verbose_name="Медиавложение (Изображение/Видео/Голос)")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Капсула {self.user.username} до {self.delivery_date}"
+
+class TIMCascadeAnalysis(models.Model):
+    """BIM / TIM и формат IFC: Каскадный анализ динамики расчета выгоды"""
+    project_cipher = models.CharField(max_length=100, verbose_name="Шифр ТИМ-проекта")
+    ifc_file_path = models.CharField(max_length=255, verbose_name="Путь к файлу IFC/DWG")
+    cascade_profit_rub = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Рассчитанная выгода каскада")
+    ezhik_proposal = models.TextField(verbose_name="Предложение и аналитический ответ Ёжика")
+    export_excel_url = models.URLField(verbose_name="Выгрузка графиков в Excel/DWG")
+
+    def __str__(self):
+        return f"ТИМ-Анализ {self.project_cipher} — Выгода: {self.cascade_profit_rub} RUB"
