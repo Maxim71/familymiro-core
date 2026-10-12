@@ -53,3 +53,15 @@ class ITRVisionRequest(BaseModel):
 def get_itr_vision(request: ITRVisionRequest):
     from parser_intelligence import ezhik_advanced_itr_vision
     return ezhik_advanced_itr_vision(request.check_collisions, request.ram_usage)
+
+
+class ExportRequest(BaseModel):
+    file_name: str
+    target_destination: str # "yandex_disk" или "local_pc"
+
+@app.post("/api/v1/export-cascade-data")
+def export_cascade_data(request: ExportRequest):
+    from ezhik_storage import EzhikStorageWheel
+    if request.target_destination == "yandex_disk":
+        return EzhikStorageWheel.upload_to_yandex_disk(request.file_name)
+    return EzhikStorageWheel.download_to_local_pc(request.file_name)
