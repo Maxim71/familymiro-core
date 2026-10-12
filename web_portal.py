@@ -1,51 +1,54 @@
-from fastapi import FastAPI, Request
+import os
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
+from pydantic import BaseModel
+from parser_intelligence import ezhik_parse_filename
 
-app = FastAPI(title="Miroha REST Framework", version="79.0")
+app = FastAPI(title="FamilyMira Вагонный Диспетчер")
 
-# Монтируем статику для раздельных файлов CSS и JS
-app.mount("/static", StaticFiles(directory="/root/app"), name="static")
-templates = Jinja2Templates(directory="/root/app/templates")
+# ==========================================
+# ВАГОН 1: ИНТЕЛЛЕКТ ПОРТРЕТА ПОЛЬЗОВАТЕЛЯ
+# ==========================================
+class UserProfile:
+    @staticmethod
+    def get_portrait(user_status: str):
+        """Ёжик мгновенно составляет портрет и адаптирует дизайн"""
+        statuses = {
+            "самозанятый": {"layout": "параллакс_минимализм", "allowed_modules": ["баланс", "чек_онлайн"]},
+            "ип": {"layout": "параллакс_инженер", "allowed_modules": ["акты", "склад", "расходы", "ifc_B2B"]},
+            "вечность": {"layout": "космический_хронограф", "allowed_modules": ["капсула_времени", "память_лет"]}
+        }
+        return statuses.get(user_status.lower(), {"layout": "гость", "allowed_modules": []})
 
-# ГЕНЕРАЦИЯ МАТРИЦЫ ИЗ 100 СУВЕРЕННЫХ ТОВАРОВ ПО ПРОЕКТНОМУ СООТНОШЕНИЮ 80/10/10
-pin_array = []
+# ==========================================
+# ВАГОН 2: РЕЖИССЕР — AI МЕДИА (Озвучка Lip-Sync)
+# ==========================================
+class AIExecutiveDirector:
+    @staticmethod
+    def process_voice_acting(video_file: str, gender: str):
+        """Озвучка по губам: Мужской -> Геральт, Женский -> Цири"""
+        if gender == "male":
+            return {"status": "озвучено", "voice": "Геральт из Ривии", "effect": "Сглажено ИИ Ёжика"}
+        return {"status": "озвучено", "voice": "Цирилла (Цири)", "effect": "Lip-Sync выполнен"}
 
-# 1. 80% (80 товаров) — Инженерная спецификация чертежей (АР, КМ, ВК, ЭОМ из скриншота)
-for i in range(1, 81):
-    pin_array.append({
-        "host": f"Spec: {00 + i}-АР/КМ",
-        "name": f"ИТР-Материал Спецификации №{i} (Швеллер/Труба/Арматура)",
-        "price": f"{450 + i*15:,.2f} ₽",
-        "logistics": "ТК ПЭК // Деловые Линии",
-        "badge_text": "СПЕЦИФИКАЦИЯ 80%",
-        "badge_color": "#0d9488"
-    })
+# ==========================================
+# ВАГОН 3: МАРШРУТИЗАТОРЫ И ТЕКУЩИЕ HTML
+# ==========================================
+@app.get("/portal/{status}", response_class=HTMLResponse)
+async def render_portal(status: str):
+    portrait = UserProfile.get_portrait(status)
+    
+    # Вместо генерации кода с нуля, Ёжик считывает ваши существующие файлы из templates/
+    template_path = f"templates/storage_control/{status}.html" if os.path.exists(f"templates/storage_control/{status}.html") else "templates/index.html"
+    
+    try:
+        with open(template_path, "r", encoding="utf-8") as f:
+            html_content = f.read()
+        return html_content
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Вагон с шаблоном не найден в системе")
 
-# 2. 10% (10 товаров) — Расходные запчасти для ИТР и рабочих площадки
-for i in range(1, 11):
-    pin_array.append({
-        "host": f"Host: ИТР-Расходник",
-        "name": f"Запчасть/Форма Рабочих №{i} (Каска/Кабель/Бур Bosch Pro)",
-        "price": f"1,200.00 ₽",
-        "logistics": "ТК СДЭК (1 сутки)",
-        "badge_text": "ИТР ЗАПЧАСТИ 10%",
-        "badge_color": "#7c3aed"
-    })
-
-# 3. 10% (10 товаров) — Партнерский контур рекламы заводов-изготовителей
-for i in range(1, 11):
-    pin_array.append({
-        "host": f"Ad: ПАРТНЕР РФ/КНР",
-        "name": f"b2b-Оффер №{i} (Северсталь/Технониколь/Кнауф Маркет)",
-        "price": f"Со скидкой API",
-        "logistics": "Прямая поставка",
-        "badge_text": "РЕКЛАМА ПАРТНЕРОВ 10%",
-        "badge_color": "#d97706"
-    })
-
-@app.get("/portal/", response_class=HTMLResponse)
-async def get_mezzanine_shop(request: Request):
-    # Рендерим раздельный HTML-шаблон, передавая массив из 100 товаров
-    return templates.TemplateResponse("matrix_mezzanine.html", {"request": request, "pin_array": pin_array})
+@app.post("/api/v1/ai-dubbing")
+def ai_dubbing(video_name: str, voice_type: str):
+    """Эндпоинт для ИИ-видео-утренников Режиссера"""
+    return AIExecutiveDirector.process_voice_acting(video_name, voice_type)

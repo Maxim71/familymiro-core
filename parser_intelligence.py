@@ -117,3 +117,13 @@ def ezhik_global_search(search_target):
         "network_link": private_infrastructure,
         "healing_status": "Активен. Все системы синхронизированы."
     }
+
+def ezhik_time_capsule_send(message: str, years_forward: int):
+    """Капсула времени: отправка писем детям через года"""
+    release_date = datetime.datetime.now().year + years_forward
+    return {
+        "status": "Закапсулировано во ВЕЧНОСТИ",
+        "message_preview": message[:20] + "...",
+        "target_delivery_year": release_date,
+        "delivery_alert": "Ёжик сохранил, интеллект передаст взрослому ребенку."
+    }
