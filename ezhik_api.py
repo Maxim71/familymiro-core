@@ -43,3 +43,13 @@ class FinanceRequest(BaseModel):
 def get_radar_finance(request: FinanceRequest):
     from parser_intelligence import ezhik_neuro_radar_financials
     return ezhik_neuro_radar_financials(request.authenticated, request.status, request.balance)
+
+
+class ITRVisionRequest(BaseModel):
+    check_collisions: bool
+    ram_usage: float
+
+@app.post("/api/v1/itr-vision-radar")
+def get_itr_vision(request: ITRVisionRequest):
+    from parser_intelligence import ezhik_advanced_itr_vision
+    return ezhik_advanced_itr_vision(request.check_collisions, request.ram_usage)

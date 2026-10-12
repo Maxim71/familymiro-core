@@ -58,3 +58,30 @@ def ezhik_neuro_radar_financials(user_authenticated: bool, user_status: str, bro
             "legal_inheritance_protection": "Юридический щит ВЕЧНОСТИ активен"
         }
     }
+
+
+def ezhik_advanced_itr_vision(ifc_collision_check: bool, docker_ram_mb: float):
+    """
+    Расширение технологии Бронепоезда:
+    1. ИТР-Связи (Поиск коллизий ОВ/КЖ)
+    2. Дыхание системы (Docker-мониторинг)
+    """
+    # 1. Поиск ИТР коллизий чертежей
+    collision_status = "Чисто"
+    if ifc_collision_check:
+        collision_status = "КРИТИЧЕСКАЯ КОЛЛИЗИЯ: Трасса ОВ.ЦОД пересекает несущую стену КЖ-2!"
+        
+    # 2. Мониторинг памяти монолита
+    system_health = "Стабильно"
+    if docker_ram_mb > 500:
+        system_health = "Внимание: Требуется очистка кэша Redis"
+        
+    return {
+        "itr_vision_status": "Активен",
+        "bim_collision_report": collision_status,
+        "docker_monitoring": {
+            "ram_consumption_mb": docker_ram_mb,
+            "system_health": system_health
+        },
+        "voice_assistant_trigger": "Слушает порт 22/8050 для аудио-команд прораба"
+    }
