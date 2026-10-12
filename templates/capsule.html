@@ -2,50 +2,39 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>☀️ СЕЙФ ЗОЛОТОЙ ПАМЯТИ | MIRO 1.6</title>
+    <title>Вагон ВЕЧНОСТЬ — Капсула Времени</title>
     <style>
-        body { background-color: #050b14; color: #e2e8f0; font-family: 'Segoe UI', Roboto, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
-        .glacier-card { background: rgba(10, 25, 47, 0.7); border: 1px solid #00f2fe; border-radius: 16px; padding: 40px; width: 100%; max-width: 450px; text-align: center; backdrop-filter: blur(10px); box-shadow: 0 0 30px rgba(0, 242, 254, 0.15); position: relative; }
-        .glacier-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #00f2fe, #4facfe); border-radius: 16px 16px 0 0; }
-        h1 { color: #00f2fe; font-size: 22px; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 10px; font-weight: 600; text-shadow: 0 0 10px rgba(0, 242, 254, 0.5); }
-        p { color: #64748b; font-size: 14px; margin-bottom: 30px; line-height: 1.5; }
-        .input-group { position: relative; margin-bottom: 25px; }
-        .input-field { width: 100%; padding: 14px; background: #071324; border: 1px solid #1e293b; border-radius: 8px; color: #fff; font-size: 15px; font-family: monospace; box-sizing: border-box; transition: all 0.3s ease; }
-        .input-field:focus { border-color: #00f2fe; outline: none; box-shadow: 0 0 10px rgba(0, 242, 254, 0.2); }
-        .btn-aurora { width: 100%; padding: 14px; background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%); border: none; border-radius: 8px; color: #050b14; font-size: 15px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3); }
-        .btn-aurora:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 242, 254, 0.5); }
-        .message-box { margin-top: 25px; padding: 15px; background: rgba(0, 242, 254, 0.05); border: 1px dashed #00f2fe; border-radius: 8px; font-size: 14px; line-height: 1.6; color: #e2e8f0; display: none; }
+        body { font-family: monospace; background: #0b132b; color: #6fffe9; padding: 30px; }
+        .capsule-box { border: 2px solid #5bc0be; padding: 20px; border-radius: 12px; background: #1c2541; }
+        .input-glow { background: #0b132b; border: 1px solid #5bc0be; color: #6fffe9; padding: 10px; width: 100%; margin-top: 10px; }
+        .btn-send { background: #e60023; color: white; border: none; padding: 12px 24px; border-radius: 20px; cursor: pointer; font-weight: bold; margin-top: 15px; }
+        .badge { background: #5bc0be; color: #0b132b; padding: 3px 8px; border-radius: 4px; font-size: 12px; }
     </style>
 </head>
 <body>
-    <div class="glacier-card">
-        <h1>☀️ ХРАМ ВЕЧНОСТИ</h1>
-        <p>Контур «Спящий Страх». Замок активен до 24 мая 2059 года. Введите суверенное отцовское слово или пройдите ID-Scan.</p>
+    <div class="capsule-box">
+        <h2>⏳ Капсула Времени: Интеллект Марка Аврелия <span class="badge">ВЕЧНОСТЬ</span></h2>
+        <p>Здесь вы можете оставить послание, записать голос, прикрепить фото или отправить акцию с брокерского счета своим детям сквозь десятилетия.</p>
         
-        <form id="vault-form" onsubmit="unlockCapsule(event)">
-            <div class="input-group">
-                <input type="password" id="room_key" class="input-field" placeholder="ПРОТОКОЛ ПРАВО КРОВИ..." required>
-            </div>
-            <button type="submit" class="btn-aurora">Открыть одним желанием</button>
-        </form>
+        <!-- Календарь доставки -->
+        <label>Выберите дату доставки сообщения из капсулы:</label>
+        <input type="date" class="input-glow" id="delivery-date" value="2046-09-08">
 
-        <div id="secret-message" class="message-box"></div>
+        <!-- Пульт отправителя голоса и фото -->
+        <input type="text" class="input-glow" placeholder="Введите текстовое послание взрослому ребенку...">
+        <div style="margin-top: 15px;">
+            <button class="btn-send" onclick="alert('Ёжик записал ваш голос и пожелание. Капитал под защитой.')">🎙️ Записать голос и пожелание</button>
+            <button class="btn-send" style="background:#5bc0be; color:#0b132b;">📷 Загрузить фото для Ёжика</button>
+        </div>
+
+        <div style="margin-top: 20px; border-top: 1px dashed #5bc0be; padding-top: 15px;">
+            <h4>💰 Защита Капитала и Брокерский счет:</h4>
+            <ul>
+                <li>Услуга полной анонимности: <span style="color:#fff;">Включена</span></li>
+                <li>Начисление процентов на накопительный счет: <span style="color:#fff;">+16% годовых</span></li>
+                <li>Статус защиты: <span style="color:#fff;">Юридический щит ИТР активен</span></li>
+            </ul>
+        </div>
     </div>
-
-    <script>
-        function unlockCapsule(event) {
-            event.preventDefault();
-            const key = document.getElementById('room_key').value;
-            // Имитация мгновенного крипто-сравнения хэша в Гренландском стиле
-            if (key === "Какие мы большие! — Да.") {
-                const msgBox = document.getElementById('secret-message');
-                msgBox.style.display = 'block';
-                msgBox.innerHTML = "✨ <b>Послание Отца запечатано навечно:</b><br><i>«Привет! Ты такая большая, футболка и улыбка... Ты не одна. Одиноких людей не бывает».</i>";
-            } else {
-                alert("🔒 ИИ-ЩИТ: Доступ отклонен. Паттерн не совпал.");
-            }
-        }
-    </script>
 </body>
 </html>
