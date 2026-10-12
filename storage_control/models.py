@@ -57,3 +57,38 @@ class GuestMediaLog(models.Model):
 
     def __str__(self):
         return f"Гость {self.session_key[:8]} -> {self.watched_trend}"
+
+
+class BloggerStreamLog(models.Model):
+    """Трансляции Блогеров, мобильный плеер и учет анонимных донатов"""
+    streamer_name = models.CharField(max_length=255, verbose_name="Имя стримера/Блогера")
+    trending_tag = models.CharField(max_length=100, verbose_name="Трендовый тег (#BIM_Stroyka)")
+    donation_amount = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Сумма доната (RUB)")
+    is_anonymous = models.BooleanField(default=True, verbose_name="Услуга анонимности")
+    received_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Стрим {self.streamer_name} — Донат {self.donation_amount} RUB"
+
+class BIMModelCollision(models.Model):
+    """Зрение Сокола: Фиксация инженерных коллизий чертежей (ПТО/BIM/Геодезия)"""
+    blueprint_layer = models.CharField(max_length=255, verbose_name="Контур/Слой чертежа")
+    collision_description = models.TextField(verbose_name="Описание пересечения осей")
+    detected_by = models.ForeignKey(ITRMember, on_delete=models.SET_NULL, null=True, related_name="detected_collisions")
+    is_resolved = models.BooleanField(default=False, verbose_name="Исправлено прорабом")
+    detected_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Коллизия {self.blueprint_layer} — Статус: {self.is_resolved}"
+
+class TimeCapsuleInvestment(models.Model):
+    """Финансовый сейф ВЕЧНОСТИ: Вклады и брокерские счета детям сквозь года"""
+    parent_user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Отправитель (Папа)")
+    allocated_funds = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Завещаемый капитал (RUB)")
+    lock_term_years = models.IntegerField(choices=[(3, "3 года"), (5, "5 лет"), (30, "30 лет")], verbose_name="Срок капсулы")
+    yield_rate_p_a = models.DecimalField(max_digits=5, decimal_places=2, default=23.50, verbose_name="Динамический процент ЦБ")
+    legal_protection_active = models.BooleanField(default=True, verbose_name="Юридический щит активен")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Капсула на {self.lock_term_years} лет — {self.allocated_funds} RUB"
