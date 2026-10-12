@@ -1,33 +1,24 @@
 from django.contrib import admin
-from .models import UserMaskProfile, SoftwareLicense, MezaninWebsiteBuilder, ArchivalDirective
+from .models import ITRMember, PartnerPin, StoreOrder, GuestMediaLog
 
-# Настройка глобальных ИТР-заголовков панели управления Максима
-admin.site.site_header = "👑 MIROHA>ADMIN_PANEL_MAX"
-admin.site.site_title = "Miroha Max Admin Panel"
-admin.site.index_title = "Управление Монолитом Мезонина // Самозанятый ИТР-Контур"
+@admin.register(ITRMember)
+class ITRMemberAdmin(admin.ModelAdmin):
+    list_display = ("user", "role", "balance_rub", "telegram_id")
+    list_filter = ("role",)
+    search_fields = ("user__username", "telegram_id")
 
-@admin.register(UserMaskProfile)
-class UserMaskProfileAdmin(admin.ModelAdmin):
-    list_display = ('client_id', 'active_role', 'phone_number', 'created_at')
-    search_fields = ('client_id', 'active_role')
-    list_filter = ('active_role', 'created_at')
+@admin.register(PartnerPin)
+class PartnerPinAdmin(admin.ModelAdmin):
+    list_display = ("title", "code", "price_rub", "discount_value")
+    search_fields = ("title", "code")
 
-@admin.register(SoftwareLicense)
-class SoftwareLicenseAdmin(admin.ModelAdmin):
-    list_display = ('license_key', 'profile', 'license_type', 'status', 'expires_at')
-    list_filter = ('status', 'license_type', 'expires_at')
-    search_fields = ('license_key', 'license_type')
-    list_editable = ('status',)
+@admin.register(StoreOrder)
+class StoreOrderAdmin(admin.ModelAdmin):
+    list_display = ("id", "buyer", "pin_item", "ordered_at", "is_paid")
+    list_filter = ("is_paid", "ordered_at")
+    search_fields = ("buyer__user__username", "pin_item__code")
 
-@admin.register(MezaninWebsiteBuilder)
-class MezaninWebsiteBuilderAdmin(admin.ModelAdmin):
-    list_display = ('site_title', 'owner', 'site_domain', 'architecture_type', 'is_active')
-    list_filter = ('architecture_type', 'is_active')
-    search_fields = ('site_title', 'site_domain')
-    list_editable = ('is_active',)
-
-@admin.register(ArchivalDirective)
-class ArchivalDirectiveAdmin(admin.ModelAdmin):
-    list_display = ('log_title', 'associated_site', 'media_file_path', 'captured_timestamp')
-    search_fields = ('log_title', 'log_content')
-    list_filter = ('captured_timestamp',)
+@admin.register(GuestMediaLog)
+class GuestMediaLogAdmin(admin.ModelAdmin):
+    list_display = ("session_key", "watched_trend", "seo_source", "entered_at")
+    list_filter = ("seo_source", "entered_at")
