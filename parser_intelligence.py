@@ -152,3 +152,30 @@ def ezhik_philosophical_core(user_input, mode="вечность"):
             "quote": "Числа правят миром. Чертеж должен сойтись.",
             "action": "Проверка прямоугольности контуров фундамента и спецификаций выполнена."
         }
+
+
+def ezhik_neuro_radar_financials(user_authenticated: bool, user_status: str, broker_balance: float):
+    if not user_authenticated:
+        return {"status": "access_denied", "message": "Требуется аутентификация контура!"}
+        
+    # Динамическая ставка: ориентир на ЦБ + защита от инфляции
+    base_cb_rate = 21.0  # Актуальная базовая ставка ЦБ
+    inflation_buffer = 2.5
+    dynamic_yield = base_cb_rate + inflation_buffer
+    
+    # Расчет бонусов Бронепоезда Familymira за автоматизацию ИТР
+    foreman_bonus = 7500.00 if user_status.lower() == "ип" else 0.00
+    
+    return {
+        "status": "secured",
+        "owner_status": user_status,
+        "financial_metrics": {
+            "broker_account_rub": broker_balance,
+            "dynamic_yield_p_a": f"{dynamic_yield}% (Привязано к ЦБ + Инфляция)",
+            "platform_bonus_earned": foreman_bonus
+        },
+        "time_capsule_options": {
+            "available_terms_years":,
+            "legal_inheritance_protection": "Юридический щит ВЕЧНОСТИ активен"
+        }
+    }

@@ -32,3 +32,14 @@ def ai_dubbing(request: DubbingRequest):
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8050)
+
+
+class FinanceRequest(BaseModel):
+    authenticated: bool
+    status: str
+    balance: float
+
+@app.post("/api/v1/neuro-radar-finance")
+def get_radar_finance(request: FinanceRequest):
+    from parser_intelligence import ezhik_neuro_radar_financials
+    return ezhik_neuro_radar_financials(request.authenticated, request.status, request.balance)
