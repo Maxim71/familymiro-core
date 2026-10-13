@@ -4,7 +4,7 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 
-app = FastAPI(title="FamilyMira Живой ИИ-Онбординг // Тритон-Контур v2.0")
+app = FastAPI(title="FamilyMira Живой ИИ-Онбординг // Тритон-Контур v2.2")
 
 class GuestOnboardingRequest(BaseModel):
     guest_name_or_id: str          
@@ -13,54 +13,51 @@ class GuestOnboardingRequest(BaseModel):
 
 @app.post("/api/v1/portal/onboarding")
 def ezhik_onboarding_gate(request: GuestOnboardingRequest):
-    """Живой привратник Ёжика с интеграцией Пинов Быстрых Решений и Смарт-Заданий"""
+    """Живой привратник Ёжика: интеграция ПТО, Журналов ресурсов и Бизнес-Анализа Директора"""
     skill = request.chosen_skill.upper()
     
-    # 🪐 ГЕНЕРАЦИЯ МЕТАДАННЫХ РАСШИРЕННОГО ИТР-АВАТАРА ВЕЧНОСТИ
     avatar_metadata = {
         "avatar_type": f"ИТР-Кибер_Мастер_{skill}",
-        "visual_style": "Параллакс-Неон-Purple-CAD",
+        "visual_style": "Parallax-Neon-Cyberpunk",
         "access_shield": "Юридическая защита ВЕЧНОСТИ активна",
         "database_sync": "PostgreSQL (5432) Connected"
     }
     
     if "ПТО" in skill:
-        # Симулируем выборку из твоих новых таблиц моделей прямо в каскад онбординга
-        simulated_pins = [
-            {"issue_cipher": "КР-01-КОЛЛИЗИЯ-АРМАТУРЫ", "resolution": "Замена диаметра 12мм на 14мм по согласованию с ГИП", "is_applied": True},
-            {"issue_cipher": "ФК-09-ЗАМЕЧАНИЕ-ТЕХНАДЗОРА", "resolution": "Паспорт прочности бетона М350 В25 прикреплен к акту АОСР", "is_applied": False}
-        ]
-        
-        simulated_smart_task = {
-            "object_name": "Блок Б. ЦОД ЭОМ // Оси А-Г",
-            "initial_volume_ifc": 120.00,
-            "corrected_by_ezhik": 118.45,
-            "discrepancy_saving_rub": "105,400.00 ₽"
-        }
-
         return {
             "status": "authenticated",
-            "welcome_message": f"Приветствуем в системе, {request.guest_name_or_id}! Ёжик распознал твой Скилл ПТО.",
+            "welcome_message": f"Приветствуем в системе, {request.guest_name_or_id}! Ёжик зафиксировал твой Скилл ПТО.",
             "avatar": avatar_metadata,
             "redirect_endpoint": "/portal/render/pto_cabinet",
             "layout_config": {
                 "layout": "parallax_industrial_engineer",
                 "theme": "neon_purple_cad",
-                "allowed_modules": ["dxf_blueprint_scan", "procurement_flow", "bim_collision_radar"],
-                "fast_resolution_pins": simulated_pins,
-                "ezhik_smart_tasks": simulated_smart_task
+                "allowed_modules": ["dxf_blueprint_scan", "procurement_flow", "bim_collision_radar"]
             }
         }
-    elif "ПРОРАБ" in skill or "МАСТЕР" in skill:
+    elif "ДИРЕКТОР" in skill or "МЕНЕДЖЕР" in skill or "АНАЛИТИК" in skill:
+        # 🪐 СВЕРХТОЧНАЯ ИНТЕГРАЦИЯ ТВОИХ НОВЫХ ЖУРНАЛОВ И ИИ-АНАЛИЗА ДОХОДОВ ДЛЯ РУКОВОДСТВА
+        simulated_resource_journal = {
+            "project_name": "Суверенный Макет Монолита MIROHA",
+            "active_zone": "Склады М19 // Оси Б-Е // Сектор 3",
+            "machinery_hours": {"ИТР-Длинномеры": "48 м/ч", "Бетоносмесители": "120 м/ч"},
+            "cascade_status": "🟢 ВСЕ ПАСПОРТА КАЧЕСТВА ПРИВЯЗАНЫ-ЯКОРЯМИ К СУБД"
+        }
+        
+        simulated_executive_analytics = {
+            "viewer_role": f"Уважаемый Руководитель {request.guest_name_or_id}",
+            "income_optimization": "🚀 АНАЛИЗ ЁЖИКА: Оптимизация плеча закупки у ТК 'Деловые Линии' принесла синдикату +8% чистой прибыли на осях перекрытий ЦОД.",
+            "seo_meta_tags": {"meta_title": "FamilyMira Enterprise", "pwa_status": "ACTIVE"},
+            "future_plans": "Внедрение автоматических чеков самозанятого и вывод смет openpyxl из ОЗУ"
+        }
+
         return {
             "status": "authenticated",
-            "welcome_message": f"Рады видеть на площадке, Линейный руководитель {request.guest_name_or_id}!",
-            "avatar": {"avatar_type": "Линейный_Прораб_Шилд", "visual_style": "Параллакс-Минимализм"},
-            "redirect_endpoint": "/portal/render/father_panel",
-            "layout_config": {
-                "layout": "parallax_minimalism",
-                "allowed_modules": ["warehouse_hub", "audio_orders", "daily_journal"]
-            }
+            "welcome_message": f"Добро пожаловать на капитанский мостик, Руководитель {request.guest_name_or_id}!",
+            "avatar": {"avatar_type": "Главный_Директор_Шилд", "visual_style": "Luxury-Параллакс-Gold"},
+            "redirect_endpoint": "/api/v5/products/catalog/",
+            "pto_resource_journal": simulated_resource_journal,
+            "executive_analytics": simulated_executive_analytics
         }
     else:
         return {
