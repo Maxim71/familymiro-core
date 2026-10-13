@@ -126,3 +126,27 @@ class TIMCascadeAnalysis(models.Model):
 
     def __str__(self):
         return f"ТИМ-Анализ {self.project_cipher} — Выгода: {self.cascade_profit_rub} RUB"
+
+
+class PTOResourceJournal(models.Model):
+    """Электронный Журнал Ресурсов и Моточасов для Техзаказчика и Директора"""
+    project_name = models.CharField(max_length=255, verbose_name="Объект стройки")
+    active_zone = models.CharField(max_length=255, verbose_name="Где сейчас идут работы")
+    machinery_hours = models.JSONField(verbose_name="Учет техники и моточасов")
+    cascade_resource_data = models.JSONField(verbose_name="Каскад привлеченных данных")
+    anchored_certificates = models.ManyToManyField("MaterialCertificate", blank=True, verbose_name="Ссылки-якоря на Паспорта")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Журнал: {self.project_name} -> {self.active_zone}"
+
+class ExecutiveAnalytics(models.Model):
+    """Не сухие цифры: Читаемый бизнес-анализ доходов и объемов сдачи для Директора и Менеджера"""
+    viewer_role = models.CharField(max_length=50, verbose_name="Кто залогинился (Директор/Менеджер)")
+    income_optimization = models.TextField(verbose_name="Где доход и где усилиться (Анализ Ёжика)")
+    seo_meta_tags = models.JSONField(verbose_name="Мета-аналитика и SEO продвижение контура")
+    future_plans_json = models.JSONField(verbose_name="Планы на будущее и согласования")
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Бизнес-Анализ для {self.viewer_role} — {self.updated_at.strftime(%Y-%m-%d)}"

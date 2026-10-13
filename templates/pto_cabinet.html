@@ -1,37 +1,105 @@
-<div style="background: #0d1117; color: #c9d1d9; padding: 40px; font-family: 'Courier New', monospace; min-height: 100vh;">
-    <div style="border: 2px solid #58a6ff; padding: 40px; background: #161b22; max-width: 900px; margin: 0 auto; box-shadow: 0 0 30px rgba(88,166,255,0.15);">
-        <table style="width: 100%; border-bottom: 2px solid #30363d; padding-bottom: 20px;">
-            <tr>
-                <td>
-                    <h1 style="color: #58a6ff; margin: 0; text-transform: uppercase; font-size: 20px;">ФОРМА М-15 И АКТ ПРИЕМА-ПЕРЕДАЧИ ПО ОСЯМ</h1>
-                    <p style="color: #8b949e; margin: 5px 0 0 0;">ХОЛДИНГ MIROHA СНАБЖЕНИЕ // База знаний Ёжика</p>
-                </td>
-            </tr>
-        </table>
-        <div style="margin-top: 30px; font-size: 15px;">
-            <p><strong>ОБЪЕКТ:</strong> {{ act.construction_object.name }}</p>
-            <p><strong>СУБПОДРЯДЧИК:</strong> {{ act.subcontractor_name }}</p>
-            <div style="background: #0d1117; padding: 15px; border-left: 4px solid #00ff66; margin: 20px 0;">
-                <strong>📍 ГЕОМЕТРИЧЕСКАЯ ПРИВЯЗКА ФРОНТА РАБОТ:</strong><br>
-                ЭТАЖ: {{ act.floor|default:"—" }} | ОСИ: {{ act.axes|default:"—" }} | ПОМЕЩЕНИЕ: {{ act.room|default:"—" }}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Рабочий Стол ПТО — Платформа Familymira</title>
+    <style>
+        body { background: #0b0f19; color: #f3f4f6; font-family: 'Courier New', monospace; padding: 30px; margin: 0; }
+        .pto-desk { max-width: 1200px; margin: 0 auto; background: #111827; border: 2px solid #3b82f6; border-radius: 12px; padding: 25px; box-shadow: 0 0 25px rgba(59, 130, 246, 0.2); }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #3b82f6; padding-bottom: 15px; }
+        .pipeline { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 25px; }
+        .stage-card { background: #1f2937; border: 1px solid #4b5563; border-radius: 8px; padding: 15px; position: relative; }
+        .stage-title { color: #3b82f6; font-weight: bold; border-bottom: 1px dashed #4b5563; padding-bottom: 5px; margin-bottom: 10px; text-transform: uppercase; font-size: 13px; }
+        .item-list { font-size: 12px; line-height: 1.8; color: #9ca3af; }
+        .btn-action { background: #10b981; color: #fff; border: none; padding: 8px 12px; font-size: 11px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 10px; width: 100%; }
+        .btn-action:hover { background: #059669; }
+        .ezhik-box { background: #1e1b4b; border: 1px solid #6366f1; border-radius: 8px; padding: 15px; margin-top: 25px; }
+        .pin-badge { background: #e60023; color: white; padding: 1px 5px; border-radius: 4px; font-size: 10px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="pto-desk">
+        <div class="header">
+            <h2>📐 КАБИНЕТ ИНЖЕНЕРА ПТО // СУВЕРЕННЫЙ РАБОЧИЙ СТОЛ</h2>
+            <div style="text-align: right;">
+                <span style="color: #10b981;">● Склад и База ВЕЧНОСТИ: Доступны</span><br>
+                <span style="color: #6366f1;">● Диспетчер IaC Nomad: Активен</span>
             </div>
-            <p><strong>ОПИСАНИЕ:</strong> {{ act.description }}</p>
-            <h3 style="color: #58a6ff; text-transform: uppercase; font-size: 16px; margin-top:30px;">📦 МАТЕРИАЛЫ ПО ФОРМЕ М-15:</h3>
-            <p style="color: #00ff66; font-weight: bold;">- {{ mat.material_name }}: {{ mat.quantity }} {{ mat.unit }}</p>
         </div>
-        <div style="margin-top: 50px; border-top: 2px dashed #30363d; padding-top: 30px;">
-            <table style="width: 100%;">
-                <tr>
-                    <td><div style="width: 120px; height: 120px; border: 2px dashed #30363d; text-align: center; line-height: 120px; color: #30363d; font-size: 11px;">М.П. СУБПОДРЯД</div></td>
-                    <td style="text-align: right;">
-                        {% if act.chief_approved %}
-                            <div style="border: 2px solid #00ff66; color: #00ff66; padding: 10px; font-weight: bold; display: inline-block;">🛡️ ВИЗА НАЧУЧАСТКА АКТИВНА</div>
-                        {% else %}
-                            <button style="background: #ff3366; color: #fff; border: none; padding: 10px 20px; font-weight: bold; cursor: pointer;">✍️ ПОДПИСАТЬ НАЧ. УЧАСТКА</button>
-                        {% endif %}
-                    </td>
-                </tr>
-            </table>
+
+        <!-- 4 СТАДИИ ЖИЗНЕННОГО ЦИКЛА ИТР НА ПЛОЩАДКЕ -->
+        <div class="pipeline">
+            <!-- Стадия 1 -->
+            <div class="stage-card">
+                <div class="stage-title">[1] Входной контроль</div>
+                <div class="item-list">
+                    • Сбор паспортов <span class="pin-badge">PIN</span><br>
+                    • Ведение журналов ИД<br>
+                    • Входной контроль материалов<br>
+                    <span style="color:#00ffcc;">→ Поступление ТТН/1С</span>
+                </div>
+                <button class="btn-action" onclick="triggerExport('local_pc')">💾 Выгрузить на ПК</button>
+            </div>
+            
+            <!-- Стадия 2 -->
+            <div class="stage-card">
+                <div class="stage-title">[2] Производство работ</div>
+                <div class="item-list">
+                    • Заполнение ОЖР / СЖР<br>
+                    • Геодезические схемы осей<br>
+                    • Лабораторные тесты бетона<br>
+                    <span style="color:#00ffcc;">→ Сверка слоев DXF</span>
+                </div>
+                <button class="btn-action" onclick="triggerExport('yandex_disk')">🪐 Колесо Яндекс.Диск</button>
+            </div>
+
+            <!-- Стадия 3 -->
+            <div class="stage-card">
+                <div class="stage-title">[3] Автоматизация ИД</div>
+                <div class="item-list">
+                    • Интеграция платформ (ЦУС)<br>
+                    • Автозаполнение актов АОСР<br>
+                    • Формирование реестров ИД<br>
+                    <span style="color:#ffd700;">→ Парсинг IFC / XML ГГЭ</span>
+                </div>
+                <button class="btn-action" style="background:#6366f1;" onclick="alert('Запрос передан ИИ-боту менеджера в Tornado!')">🤖 Запрос к боту</button>
+            </div>
+
+            <!-- Стадия 4 -->
+            <div class="stage-card">
+                <div class="stage-title">[4] Закрытие & Сдача</div>
+                <div class="item-list">
+                    • Проверка Технадзором<br>
+                    • Подписание КС-2, КС-3<br>
+                    • Накопительные ведомости КС-6<br>
+                    <span style="color:#10b981;">→ Сдача архива в Вечность</span>
+                </div>
+                <button class="btn-action" style="background:#e60023;" onclick="alert('КС-2/КС-3 подписаны. Начисление процентов ЦБ активировано.')">📈 Закрыть Этап</button>
+            </div>
+        </div>
+
+        <!-- ИНТЕЛЛЕКТУАЛЬНЫЙ ВАГОН ЁЖИКА -->
+        <div class="ezhik-box">
+            <h4 style="margin: 0 0 10px 0; color: #a5b4fc;">🦔 Аналитический ответ Ёжика (ТИМ-Каскад выгоды):</h4>
+            <p id="ezhik-output" style="margin: 0; font-size: 12px; color: #cbd5e1;">Ожидание загрузки IFC-спецификаций из мессенджер-группы...</p>
         </div>
     </div>
-</div>
+
+    <script>
+        async function triggerExport(dest) {
+            document.getElementById('ezhik-output').innerText = 'Ёжик обрабатывает каскад анализа и отправляет файлы...';
+            try {
+                let response = await fetch('/api/v1/export-cascade-data', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ file_name: '64-ЭОМ.ЦОД_Каскад_Анализа.xlsx', target_destination: dest })
+                });
+                let data = await response.json();
+                document.getElementById('ezhik-output').innerText = `[ОК] Выгрузка завершена! Статус: ${data.status}. Путь: ${data.target_pc_path || data.saved_path}`;
+            } catch (err) {
+                document.getElementById('ezhik-output').innerText = 'Ошибка связи с асинхронным OPC-шлюзом.';
+            }
+        }
+    </script>
+</body>
+</html>
