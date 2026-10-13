@@ -2,53 +2,77 @@ import os
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
-from parser_intelligence import ezhik_parse_filename
+from typing import Optional
 
-app = FastAPI(title="FamilyMira Вагонный Диспетчер")
+app = FastAPI(title="FamilyMira Живой ИИ-Онбординг")
 
-# ==========================================
-# ВАГОН 1: ИНТЕЛЛЕКТ ПОРТРЕТА ПОЛЬЗОВАТЕЛЯ
-# ==========================================
-class UserProfile:
-    @staticmethod
-    def get_portrait(user_status: str):
-        """Ёжик мгновенно составляет портрет и адаптирует дизайн"""
-        statuses = {
-            "самозанятый": {"layout": "параллакс_минимализм", "allowed_modules": ["баланс", "чек_онлайн"]},
-            "ип": {"layout": "параллакс_инженер", "allowed_modules": ["акты", "склад", "расходы", "ifc_B2B"]},
-            "вечность": {"layout": "космический_хронограф", "allowed_modules": ["капсула_времени", "память_лет"]}
+# Модель входящего гостя (пришедшего на пробный сеанс или из Telegram)
+class GuestOnboardingRequest(BaseModel):
+    guest_name_or_id: str          # Имя, ник или ID из мессенджера Familymira
+    chosen_skill: str              # Профессиональный скилл, например: "ПТО"
+    invitation_source: str         # "telegram_bot", "ezhik_invite", "free_trial"
+
+@app.post("/api/v1/portal/onboarding")
+def ezhik_onboarding_gate(request: GuestOnboardingRequest):
+    """
+    Живой привратник Ёжика: приветствует человека, запрашивает имя/ID,
+    предлагает создать Аватар Стройки и активирует ИТР-скилл.
+    """
+    skill = request.chosen_skill.upper()
+    
+    # Генерация ИИ-Аватара стройки на основе выбранного скилла
+    avatar_metadata = {
+        "avatar_type": f"ИТР-Кибер_Мастер_{skill}",
+        "visual_style": "Параллакс-Неон-Purple-CAD",
+        "access_shield": "Юридическая защита ВЕЧНОСТИ активна"
+    }
+    
+    # Ёжик распределяет пользователя по вагонам автоматизации
+    if "ПТО" in skill:
+        return {
+            "status": "authenticated",
+            "welcome_message": f"Приветствуем в системе, {request.guest_name_or_id}! Ёжик распознал твой Скилл ПТО.",
+            "avatar": avatar_metadata,
+            "redirect_endpoint": "/portal/render/pto_cabinet",
+            "layout_config": {
+                "layout": "parallax_industrial_engineer",
+                "theme": "neon_purple_cad",
+                "allowed_modules": ["dxf_blueprint_scan", "procurement_flow", "bim_collision_radar"]
+            }
         }
-        return statuses.get(user_status.lower(), {"layout": "гость", "allowed_modules": []})
+    elif "ПРОРАБ" in skill or "МАСТЕР" in skill:
+        return {
+            "status": "authenticated",
+            "welcome_message": f"Рады видеть на площадке, Линейный руководитель {request.guest_name_or_id}!",
+            "avatar": {"avatar_type": "Линейный_Прораб_Шилд", "visual_style": "Параллакс-Минимализм"},
+            "redirect_endpoint": "/portal/render/father_panel",
+            "layout_config": {
+                "layout": "parallax_minimalism",
+                "allowed_modules": ["warehouse_hub", "audio_orders", "daily_journal"]
+            }
+        }
+    else:
+        # Для обычных гостей, пришедших просто отдохнуть под Режиссера
+        return {
+            "status": "guest_access",
+            "welcome_message": f"Добро пожаловать на бесплатный пробный сеанс под Режиссера!",
+            "avatar": {"avatar_type": "Анонимный_Наблюдатель"},
+            "redirect_endpoint": "/portal/render/index",
+            "layout_config": {
+                "layout": "guest_parallax",
+                "allowed_modules": ["media_player", "trends_stream"]
+            }
+        }
 
-# ==========================================
-# ВАГОН 2: РЕЖИССЕР — AI МЕДИА (Озвучка Lip-Sync)
-# ==========================================
-class AIExecutiveDirector:
-    @staticmethod
-    def process_voice_acting(video_file: str, gender: str):
-        """Озвучка по губам: Мужской -> Геральт, Женский -> Цири"""
-        if gender == "male":
-            return {"status": "озвучено", "voice": "Геральт из Ривии", "effect": "Сглажено ИИ Ёжика"}
-        return {"status": "озвучено", "voice": "Цирилла (Цири)", "effect": "Lip-Sync выполнен"}
-
-# ==========================================
-# ВАГОН 3: МАРШРУТИЗАТОРЫ И ТЕКУЩИЕ HTML
-# ==========================================
-@app.get("/portal/{status}", response_class=HTMLResponse)
-async def render_portal(status: str):
-    portrait = UserProfile.get_portrait(status)
-    
-    # Вместо генерации кода с нуля, Ёжик считывает ваши существующие файлы из templates/
-    template_path = f"templates/storage_control/{status}.html" if os.path.exists(f"templates/storage_control/{status}.html") else "templates/index.html"
-    
+@app.get("/portal/render/{page_name}", response_class=HTMLResponse)
+async def render_html_page(page_name: str):
+    """Безопасный динамический подсос HTML-страниц из templates/"""
+    target_file = f"templates/{page_name}.html"
+    if not os.path.exists(target_file):
+        target_file = f"templates/storage_control/{page_name}.html"
+        
     try:
-        with open(template_path, "r", encoding="utf-8") as f:
-            html_content = f.read()
-        return html_content
+        with open(target_file, "r", encoding="utf-8") as f:
+            return f.read()
     except FileNotFoundError:
-        raise HTTPException(status_code=404, detail="Вагон с шаблоном не найден в системе")
-
-@app.post("/api/v1/ai-dubbing")
-def ai_dubbing(video_name: str, voice_type: str):
-    """Эндпоинт для ИИ-видео-утренников Режиссера"""
-    return AIExecutiveDirector.process_voice_acting(video_name, voice_type)
+        raise HTTPException(status_code=404, detail="Вагон интерфейса не найден в хранилище.")
