@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>BIM/TIM Асинхронная Борд-Панель ПТО</title>
+    <style>
+        body { background: #030712; color: #f3f4f6; font-family: 'Courier New', monospace; padding: 25px; margin: 0; }
+        .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; max-width: 1400px; margin: 0 auto; }
+        .board-panel { background: #0f172a; border: 2px solid #6366f1; border-radius: 12px; padding: 20px; box-shadow: 0 0 20px rgba(99,102,241,0.15); }
+        .panel-title { color: #818cf8; font-weight: bold; border-bottom: 1px solid #1e293b; padding-bottom: 8px; margin-bottom: 15px; text-transform: uppercase; font-size: 14px; }
+        .pipeline { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+        .stage-node { background: #1e293b; padding: 10px; border-radius: 6px; font-size: 11px; text-align: center; border-left: 3px solid #6366f1; }
+        .btn-pin { background: #e60023; color: white; border: none; padding: 6px 10px; font-size: 11px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 5px; }
+        .btn-pin:hover { background: #b70018; }
+        .log-box { background: #020617; border: 1px solid #334155; border-radius: 8px; padding: 12px; height: 180px; overflow-y: auto; font-size: 12px; color: #38bdf8; line-height: 1.6; }
+    </style>
+</head>
+<body>
+    <div style="max-width: 1400px; margin: 0 auto 20px auto; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #6366f1; padding-bottom: 10px;">
+        <h2 style="margin:0; color:#fff; text-shadow: 0 0 10px #6366f1;">📐 СТРОЙКА (ПТО) // АСИНХРОННАЯ БОРД-ПАНЕЛЬ КАСКАДОВ v94.0</h2>
+        <span style="color:#10b981; font-size:12px;">● Сервер Triton ИИ: Подключен</span>
+    </div>
+
+    <div class="dashboard-grid">
+        <!-- ЛЕВАЯ СТОРОНА: ЖИЗНЕННЫЙ ЦИКЛ И ЛОГИ СВЯЗИ -->
+        <div>
+            <div class="pipeline">
+                <div class="stage-node">📦 Входной Контроль</div>
+                <div class="stage-node">🏗️ Производство Работ</div>
+                <div class="stage-node">🤖 Автоматизация ИД</div>
+                <div class="stage-node">📈 Закрытие и Сдача</div>
+            </div>
+
+            <div class="board-panel" style="margin-bottom: 20px;">
+                <div class="panel-title">💬 Поток Живых Запросов и Ответов (Асинхронный Tornado-Чат)</div>
+                <div class="log-box" id="tornado-log">
+                    [16:40:12] Бот-Менеджер: Поступила ТТН №482 от Поставщика (Арматура А500С).<br>
+                    [16:41:05] Ёжик: Обнаружено отсутствие паспорта качества! Запрос передан инженеру ПТО.<br>
+                    [ОЖИДАНИЕ] Действие человека: примените Пин Быстрого Решения для автоматического сбора...
+                </div>
+            </div>
+
+            <div class="board-panel">
+                <div class="panel-title">🧠 Аналитическое Окно Мониторинга Triton Inference Server</div>
+                <p style="font-size: 12px; color: #94a3b8; margin: 0 0 15px 0;">Каскадный расчет выгоды, моточасов и динамики продвижения проекта:</p>
+                <div id="triton-output" style="font-size: 12px; color: #10b981; background: #020617; padding: 12px; border-radius: 6px;">
+                    Выгода ТИМ-координации осей (Раздел ОВ/КЖ): +14% экономии бюджета хоста. Рекомендовано усиление на захватке №3.
+                </div>
+            </div>
+        </div>
+
+        <!-- ПРАВАЯ СТОРОНА: СБОР ПИНОВ БЫСТРЫХ РЕШЕНИЙ -->
+        <div class="side-panel-grid" style="display: flex; flex-direction: column; gap: 20px;">
+            <div class="board-panel" style="flex: 1;">
+                <div class="panel-title">📌 Окно Пинов Быстрых Решений (Сбор Документов)</div>
+                <p style="font-size: 11px; color: #94a3b8; margin-top: -10px;">Клик по пину мгновенно генерирует готовую форму Excel/DWG для печати и закрывает замечания СКК:</p>
+                
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <div style="background:#1e293b; padding:10px; border-radius:6px;">
+                        <span style="font-size:11px; color:#f59e0b;">⚠️ Замечание: Нет паспорта бетона М400</span>
+                        <button class="btn-pin" onclick="applyResolution('БЕТОН_М400')">🎯 Применить Пин Решения</button>
+                    </div>
+                    <div style="background:#1e293b; padding:10px; border-radius:6px;">
+                        <span style="font-size:11px; color:#f59e0b;">⚠️ Замечание: Ошибки осей кабельного лотка</span>
+                        <button class="btn-pin" onclick="applyResolution('ОСИ_ЭОМ_ЦОД')">🎯 Исправить Сметный Каскад</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="board-panel">
+                <div class="panel-title">💾 Каскадный Экспорт</div>
+                <button class="btn-pin" style="background:#10b981;" onclick="alert('Файлы DWG/Excel успешно отправлены на Яндекс.Диск и твой ПК!')">🪐 Выгрузить на Яндекс.Диск и ПК</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function applyResolution(type) {
+            let log = document.getElementById('tornado-log');
+            if(type === 'БЕТОН_М400') {
+                log.innerHTML += `<br><span style="color:#10b981;">[ПИН ПРИМЕНЕН] Ёжик автоматически подтянул Сертификат качества №1024 из ВЕЧНОСТИ и вшил его ссылкой-якорем в Электронный журнал. Замечание СКК снято!</span>`;
+            } else {
+                log.innerHTML += `<br><span style="color:#10b981;">[ПИН ПРИМЕНЕН] Сметное задание автоматически откорректировано по данным IFC-модели. Готовая печатная форма Excel создана.</span>`;
+            }
+            log.scrollTop = log.scrollHeight;
+        }
+    </script>
+</body>
+</html>
