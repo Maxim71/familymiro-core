@@ -1,35 +1,43 @@
 # -*- coding: utf-8 -*-
-import os
+import os, random
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
-from typing import Optional
 
-app = FastAPI(title="FamilyMira Живой ИИ-Онбординг // Тритон-Контур")
+app = FastAPI(title="FamilyMira Живой ИИ-Онбординг // Тритон-Контур v2.0")
 
-# Модель входящего гостя (пришедшего на пробный сеанс или из Telegram)
 class GuestOnboardingRequest(BaseModel):
-    guest_name_or_id: str          # Имя, ник или ID из мессенджера Familymira
-    chosen_skill: str              # Профессиональный скилл, например: "ПТО"
-    invitation_source: str         # "telegram_bot", "ezhik_invite", "free_trial"
+    guest_name_or_id: str          
+    chosen_skill: str              
+    invitation_source: str         
 
 @app.post("/api/v1/portal/onboarding")
 def ezhik_onboarding_gate(request: GuestOnboardingRequest):
-    """
-    Живой привратник Ёжика: приветствует человека, запрашивает имя/ID,
-    предлагает создать Аватар Стройки и активирует ИТР-скилл.
-    """
+    """Живой привратник Ёжика с интеграцией Пинов Быстрых Решений и Смарт-Заданий"""
     skill = request.chosen_skill.upper()
     
-    # Генерация ИИ-Аватара стройки на основе выбранного скилла
+    # 🪐 ГЕНЕРАЦИЯ МЕТАДАННЫХ РАСШИРЕННОГО ИТР-АВАТАРА ВЕЧНОСТИ
     avatar_metadata = {
         "avatar_type": f"ИТР-Кибер_Мастер_{skill}",
         "visual_style": "Параллакс-Неон-Purple-CAD",
-        "access_shield": "Юридическая защита ВЕЧНОСТИ активна"
+        "access_shield": "Юридическая защита ВЕЧНОСТИ активна",
+        "database_sync": "PostgreSQL (5432) Connected"
     }
     
-    # Ёжик распределяет пользователя по вагонам автоматизации
     if "ПТО" in skill:
+        # Симулируем выборку из твоих новых таблиц моделей прямо в каскад онбординга
+        simulated_pins = [
+            {"issue_cipher": "КР-01-КОЛЛИЗИЯ-АРМАТУРЫ", "resolution": "Замена диаметра 12мм на 14мм по согласованию с ГИП", "is_applied": True},
+            {"issue_cipher": "ФК-09-ЗАМЕЧАНИЕ-ТЕХНАДЗОРА", "resolution": "Паспорт прочности бетона М350 В25 прикреплен к акту АОСР", "is_applied": False}
+        ]
+        
+        simulated_smart_task = {
+            "object_name": "Блок Б. ЦОД ЭОМ // Оси А-Г",
+            "initial_volume_ifc": 120.00,
+            "corrected_by_ezhik": 118.45,
+            "discrepancy_saving_rub": "105,400.00 ₽"
+        }
+
         return {
             "status": "authenticated",
             "welcome_message": f"Приветствуем в системе, {request.guest_name_or_id}! Ёжик распознал твой Скилл ПТО.",
@@ -38,7 +46,9 @@ def ezhik_onboarding_gate(request: GuestOnboardingRequest):
             "layout_config": {
                 "layout": "parallax_industrial_engineer",
                 "theme": "neon_purple_cad",
-                "allowed_modules": ["dxf_blueprint_scan", "procurement_flow", "bim_collision_radar"]
+                "allowed_modules": ["dxf_blueprint_scan", "procurement_flow", "bim_collision_radar"],
+                "fast_resolution_pins": simulated_pins,
+                "ezhik_smart_tasks": simulated_smart_task
             }
         }
     elif "ПРОРАБ" in skill or "МАСТЕР" in skill:
@@ -53,7 +63,6 @@ def ezhik_onboarding_gate(request: GuestOnboardingRequest):
             }
         }
     else:
-        # Для обычных гостей, пришедших просто отдохнуть под Режиссера
         return {
             "status": "guest_access",
             "welcome_message": f"Добро пожаловать на бесплатный пробный сеанс под Режиссера!",
@@ -67,7 +76,6 @@ def ezhik_onboarding_gate(request: GuestOnboardingRequest):
 
 @app.post("/api/v1/export-cascade-data")
 async def export_cascade_data_api(request: Request):
-    """🤖 АСИНХРОННЫЙ OPC-ШЛЮЗ: Обрабатывает клики выгрузки файлов из Кабинета ПТО"""
     try:
         req_data = await request.json()
         file_name = req_data.get("file_name", "64-ЭОМ.ЦОД_Каскад_Анализа.xlsx")
@@ -82,27 +90,22 @@ async def export_cascade_data_api(request: Request):
 
 @app.get("/portal/render/{page_name}", response_class=HTMLResponse)
 async def render_html_page(page_name: str):
-    """Безопасный динамический подсос HTML-страниц из абсолютных папок Django-Бронепоезда"""
     base_dirs = [
         "/root/app/storage_control/templates/",
         "/root/app/storage_control/templates/storage_control/",
         "/root/app/templates/",
-        "templates/",
-        "templates/storage_control/"
+        "templates/"
     ]
-    
     target_file = None
     for d in base_dirs:
         possible_path = os.path.join(d, f"{page_name}.html")
         if os.path.exists(possible_path):
             target_file = possible_path
             break
-            
     if not target_file:
         raise HTTPException(status_code=404, detail="Вагон интерфейса не найден в хранилище.")
-        
     try:
         with open(target_file, "r", encoding="utf-8") as f:
             return f.read()
     except Exception:
-        raise HTTPException(status_code=500, detail="Ошибка чтения файла из хранилища вечности.")
+        raise HTTPException(status_code=500, detail="Ошибка чтения файла.")
