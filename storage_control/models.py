@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -44,7 +45,8 @@ class DXFBlueprintLayer(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.blueprint_name} -> {self.layer_name} [{self.updated_at.strftime('%Y-%m-%d')]"
+        # Ювелирно выпрямляем календарную скобку вечности
+        return f"{self.blueprint_name} -> {self.layer_name} [{self.updated_at.strftime('%Y-%m-%d')}]"
 
 class PTOResourceJournal(models.Model):
     project_name = models.CharField(max_length=255, verbose_name="Объект стройки")
@@ -65,10 +67,9 @@ class ExecutiveAnalytics(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"Бизнес-Анализ для {self.viewer_role} — {self.updated_at.strftime('%Y-%m-%d')]"
+        return f"Бизнес-Анализ для {self.viewer_role} — {self.updated_at.strftime('%Y-%m-%d')}"
 
 class ITRCalendarEvent(models.Model):
-    """Персональный Календарь-Журнал событий ИТР с разметкой и метками от Ёжика"""
     member = models.ForeignKey(ITRMember, on_delete=models.CASCADE, related_name="calendar_events", verbose_name="Владелец календаря")
     event_title = models.CharField(max_length=255, verbose_name="Событие (Дедлайн/ТТН/Смета)")
     target_date = models.DateField(verbose_name="Дата события")
@@ -79,19 +80,16 @@ class ITRCalendarEvent(models.Model):
     def __str__(self):
         return f"[{self.member.role}] {self.event_title} на {self.target_date.strftime('%Y-%m-%d')} — Метка: {self.ezhik_ai_marker}"
 
-
 class FastResolutionPin(models.Model):
-    """Пины Быстрых Решений: Авто-устранение замечаний СКК и Технадзора"""
     issue_cipher = models.CharField(max_length=100, verbose_name="Шифр замечания / Коллизии")
     resolution_template = models.TextField(verbose_name="Готовое ИИ-решение для ПТО")
-    attached_passport = models.ForeignKey("MaterialCertificate", on_delete=models.SET_NULL, null=True, blank=True)
+    attached_passport = models.ForeignKey(MaterialCertificate, on_delete=models.SET_NULL, null=True, blank=True)
     is_applied = models.BooleanField(default=False, verbose_name="Применено в ИД")
 
     def __str__(self):
         return f"Пин Решения для {self.issue_cipher}"
 
 class EzhikSmartTask(models.Model):
-    """Динамическое Задание по объекту, которое правит и пересчитывает Ёжик"""
     object_name = models.CharField(max_length=255, verbose_name="Наименование ИТР-Объекта")
     task_description = models.TextField(verbose_name="Техническое задание")
     initial_volume = models.FloatField(verbose_name="Исходный объем из IFC (м3/м.п.)")
@@ -102,23 +100,27 @@ class EzhikSmartTask(models.Model):
         return f"Задание: {self.object_name} (Правка ИИ: {self.corrected_by_ezhik})"
 
 
-class FastResolutionPin(models.Model):
-    """Пины Быстрых Решений: Авто-устранение замечаний СКК и Технадзора"""
-    issue_cipher = models.CharField(max_length=100, verbose_name="Шифр замечания / Коллизии")
-    resolution_template = models.TextField(verbose_name="Готовое ИИ-решение для ПТО")
-    attached_passport = models.ForeignKey("MaterialCertificate", on_delete=models.SET_NULL, null=True, blank=True)
-    is_applied = models.BooleanField(default=False, verbose_name="Применено в ИД")
-
+# 🛸 РАСШИРЕННЫЙ ENTERPRISE-КОНТУР АДАПТАЦИИ ОБЪЕКТОВ ПОД СКЛАД И ПТО
+class PartnerPin(models.Model):
+    title = models.CharField(max_length=150, default="Ячейка Склада М19")
+    code = models.CharField(max_length=50, unique=True, default="PIN-M19-01")
+    price_rub = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+    discount_value = models.IntegerField(default=2, verbose_name="Маржа синдиката %")
+    
     def __str__(self):
-        return f"Пин Решения для {self.issue_cipher}"
+        return f"{self.title} [{self.code}]"
 
-class EzhikSmartTask(models.Model):
-    """Динамическое Задание по объекту, которое правит и пересчитывает Ёжик"""
-    object_name = models.CharField(max_length=255, verbose_name="Наименование ИТР-Объекта")
-    task_description = models.TextField(verbose_name="Техническое задание")
-    initial_volume = models.FloatField(verbose_name="Исходный объем из IFC (м3/м.п.)")
-    corrected_by_ezhik = models.FloatField(verbose_name="Скорректировано ИИ Ёжика")
-    last_modified_at = models.DateTimeField(auto_now=True)
+class StoreOrder(models.Model):
+    order_sku = models.CharField(max_length=50, default="MAT-001")
+    buyer = models.CharField(max_length=150, default="Прораб Синдиката")
+    pin_item = models.ForeignKey(PartnerPin, on_delete=models.SET_NULL, null=True, blank=True)
+    volume = models.FloatField(default=1.0)
+    is_paid = models.BooleanField(default=True, verbose_name="Проведено ПТО")
+    ordered_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return f"Задание: {self.object_name} (Правка ИИ: {self.corrected_by_ezhik})"
+class GuestMediaLog(models.Model):
+    session_key = models.CharField(max_length=100, default="SESSION-RAM-001")
+    watched_trend = models.CharField(max_length=150, default="Входной контроль чертежей АР/КР")
+    seo_source = models.CharField(max_length=100, default="WinRAR Шлюз")
+    processed_by_yolo = models.BooleanField(default=True)
+    entered_at = models.DateTimeField(auto_now_add=True)

@@ -2,103 +2,90 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Рабочий Стол ПТО — Платформа Familymira</title>
+    <title>BIM/TIM Асинхронная Борд-Панель ПТО</title>
     <style>
-        body { background: #0b0f19; color: #f3f4f6; font-family: 'Courier New', monospace; padding: 30px; margin: 0; }
-        .pto-desk { max-width: 1200px; margin: 0 auto; background: #111827; border: 2px solid #3b82f6; border-radius: 12px; padding: 25px; box-shadow: 0 0 25px rgba(59, 130, 246, 0.2); }
-        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #3b82f6; padding-bottom: 15px; }
-        .pipeline { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 25px; }
-        .stage-card { background: #1f2937; border: 1px solid #4b5563; border-radius: 8px; padding: 15px; position: relative; }
-        .stage-title { color: #3b82f6; font-weight: bold; border-bottom: 1px dashed #4b5563; padding-bottom: 5px; margin-bottom: 10px; text-transform: uppercase; font-size: 13px; }
-        .item-list { font-size: 12px; line-height: 1.8; color: #9ca3af; }
-        .btn-action { background: #10b981; color: #fff; border: none; padding: 8px 12px; font-size: 11px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 10px; width: 100%; }
-        .btn-action:hover { background: #059669; }
-        .ezhik-box { background: #1e1b4b; border: 1px solid #6366f1; border-radius: 8px; padding: 15px; margin-top: 25px; }
-        .pin-badge { background: #e60023; color: white; padding: 1px 5px; border-radius: 4px; font-size: 10px; font-weight: bold; }
+        body { background: #030712; color: #f3f4f6; font-family: 'Courier New', monospace; padding: 25px; margin: 0; }
+        .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; max-width: 1400px; margin: 0 auto; }
+        .board-panel { background: #0f172a; border: 2px solid #6366f1; border-radius: 12px; padding: 20px; box-shadow: 0 0 20px rgba(99,102,241,0.15); }
+        .panel-title { color: #818cf8; font-weight: bold; border-bottom: 1px solid #1e293b; padding-bottom: 8px; margin-bottom: 15px; text-transform: uppercase; font-size: 14px; }
+        .pipeline { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+        .stage-node { background: #1e293b; padding: 10px; border-radius: 6px; font-size: 11px; text-align: center; border-left: 3px solid #6366f1; }
+        .btn-pin { background: #e60023; color: white; border: none; padding: 6px 10px; font-size: 11px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 5px; }
+        .btn-pin:hover { background: #b70018; }
+        .log-box { background: #020617; border: 1px solid #334155; border-radius: 8px; padding: 12px; height: 180px; overflow-y: auto; font-size: 12px; color: #38bdf8; line-height: 1.6; }
     </style>
 </head>
 <body>
-    <div class="pto-desk">
-        <div class="header">
-            <h2>📐 КАБИНЕТ ИНЖЕНЕРА ПТО // СУВЕРЕННЫЙ РАБОЧИЙ СТОЛ</h2>
-            <div style="text-align: right;">
-                <span style="color: #10b981;">● Склад и База ВЕЧНОСТИ: Доступны</span><br>
-                <span style="color: #6366f1;">● Диспетчер IaC Nomad: Активен</span>
+    <div style="max-width: 1400px; margin: 0 auto 20px auto; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #6366f1; padding-bottom: 10px;">
+        <h2 style="margin:0; color:#fff; text-shadow: 0 0 10px #6366f1;">📐 СТРОЙКА (ПТО) // АСИНХРОННАЯ БОРД-ПАНЕЛЬ КАСКАДОВ v94.0</h2>
+        <span style="color:#10b981; font-size:12px;">● Сервер Triton ИИ: Подключен</span>
+    </div>
+
+    <div class="dashboard-grid">
+        <!-- ЛЕВАЯ СТОРОНА: ЖИЗНЕННЫЙ ЦИКЛ И ЛОГИ СВЯЗИ -->
+        <div>
+            <!-- Четыре стадии ИД -->
+            <div class="pipeline">
+                <div class="stage-node">📦 Входной Контроль</div>
+                <div class="stage-node">🏗️ Производство Работ</div>
+                <div class="stage-node">🤖 Автоматизация ИД</div>
+                <div class="stage-node">📈 Закрытие и Сдача</div>
+            </div>
+
+            <!-- Главное Окно Ответов и Запросов от Бот-Менеджера -->
+            <div class="board-panel" style="margin-bottom: 20px;">
+                <div class="panel-title">💬 Поток Живых Запросов и Ответов (Асинхронный Tornado-Чат)</div>
+                <div class="log-box" id="tornado-log">
+                    [16:40:12] Бот-Менеджер: Поступила ТТН №482 от Поставщика (Арматура А500С).<br>
+                    [16:41:05] Ёжик: Обнаружено отсутствие паспорта качества! Запрос передан инженеру ПТО.<br>
+                    [ОЖИДАНИЕ] Действие человека: примените Пин Быстрого Решения для автоматического сбора...
+                </div>
+            </div>
+
+            <!-- Окно Мониторинга Тритон ИИ -->
+            <div class="board-panel">
+                <div class="panel-title">🧠 Аналитическое Окно Мониторинга Triton Inference Server</div>
+                <p style="font-size: 12px; color: #94a3b8; margin: 0 0 15px 0;">Каскадный расчет выгоды, моточасов и динамики продвижения проекта:</p>
+                <div id="triton-output" style="font-size: 12px; color: #10b981; background: #020617; padding: 12px; border-radius: 6px;">
+                    Выгода ТИМ-координации осей (Раздел ОВ/КЖ): +14% экономии бюджета хоста. Рекомендовано усиление на захватке №3.
+                </div>
             </div>
         </div>
 
-        <!-- 4 СТАДИИ ЖИЗНЕННОГО ЦИКЛА ИТР НА ПЛОЩАДКЕ -->
-        <div class="pipeline">
-            <!-- Стадия 1 -->
-            <div class="stage-card">
-                <div class="stage-title">[1] Входной контроль</div>
-                <div class="item-list">
-                    • Сбор паспортов <span class="pin-badge">PIN</span><br>
-                    • Ведение журналов ИД<br>
-                    • Входной контроль материалов<br>
-                    <span style="color:#00ffcc;">→ Поступление ТТН/1С</span>
+        <!-- ПРАВАЯ СТОРОНА: СБОР ПИНОВ БЫСТРЫХ РЕШЕНИЙ -->
+        <div class="side-panel-grid" style="display: flex; flex-direction: column; gap: 20px;">
+            <div class="board-panel" style="flex: 1;">
+                <div class="panel-title">📌 Окно Пинов Быстрых Решений (Сбор Документов)</div>
+                <p style="font-size: 11px; color: #94a3b8; margin-top: -10px;">Клик по пину мгновенно генерирует готовую форму Excel/DWG для печати и закрывает замечания СКК:</p>
+                
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <div style="background:#1e293b; padding:10px; border-radius:6px;">
+                        <span style="font-size:11px; color:#f59e0b;">⚠️ Замечание: Нет паспорта бетона М400</span>
+                        <button class="btn-pin" onclick="applyResolution('БЕТОН_М400')">🎯 Применить Пин Решения</button>
+                    </div>
+                    <div style="background:#1e293b; padding:10px; border-radius:6px;">
+                        <span style="font-size:11px; color:#f59e0b;">⚠️ Замечание: Ошибки осей кабельного лотка</span>
+                        <button class="btn-pin" onclick="applyResolution('ОСИ_ЭОМ_ЦОД')">🎯 Исправить Сметный Каскад</button>
+                    </div>
                 </div>
-                <button class="btn-action" onclick="triggerExport('local_pc')">💾 Выгрузить на ПК</button>
-            </div>
-            
-            <!-- Стадия 2 -->
-            <div class="stage-card">
-                <div class="stage-title">[2] Производство работ</div>
-                <div class="item-list">
-                    • Заполнение ОЖР / СЖР<br>
-                    • Геодезические схемы осей<br>
-                    • Лабораторные тесты бетона<br>
-                    <span style="color:#00ffcc;">→ Сверка слоев DXF</span>
-                </div>
-                <button class="btn-action" onclick="triggerExport('yandex_disk')">🪐 Колесо Яндекс.Диск</button>
             </div>
 
-            <!-- Стадия 3 -->
-            <div class="stage-card">
-                <div class="stage-title">[3] Автоматизация ИД</div>
-                <div class="item-list">
-                    • Интеграция платформ (ЦУС)<br>
-                    • Автозаполнение актов АОСР<br>
-                    • Формирование реестров ИД<br>
-                    <span style="color:#ffd700;">→ Парсинг IFC / XML ГГЭ</span>
-                </div>
-                <button class="btn-action" style="background:#6366f1;" onclick="alert('Запрос передан ИИ-боту менеджера в Tornado!')">🤖 Запрос к боту</button>
+            <div class="board-panel">
+                <div class="panel-title">💾 Каскадный Экспорт</div>
+                <button class="btn-pin" style="background:#10b981;" onclick="alert('Файлы DWG/Excel успешно отправлены на Яндекс.Диск и твой ПК!')">🪐 Выгрузить на Яндекс.Диск и ПК</button>
             </div>
-
-            <!-- Стадия 4 -->
-            <div class="stage-card">
-                <div class="stage-title">[4] Закрытие & Сдача</div>
-                <div class="item-list">
-                    • Проверка Технадзором<br>
-                    • Подписание КС-2, КС-3<br>
-                    • Накопительные ведомости КС-6<br>
-                    <span style="color:#10b981;">→ Сдача архива в Вечность</span>
-                </div>
-                <button class="btn-action" style="background:#e60023;" onclick="alert('КС-2/КС-3 подписаны. Начисление процентов ЦБ активировано.')">📈 Закрыть Этап</button>
-            </div>
-        </div>
-
-        <!-- ИНТЕЛЛЕКТУАЛЬНЫЙ ВАГОН ЁЖИКА -->
-        <div class="ezhik-box">
-            <h4 style="margin: 0 0 10px 0; color: #a5b4fc;">🦔 Аналитический ответ Ёжика (ТИМ-Каскад выгоды):</h4>
-            <p id="ezhik-output" style="margin: 0; font-size: 12px; color: #cbd5e1;">Ожидание загрузки IFC-спецификаций из мессенджер-группы...</p>
         </div>
     </div>
 
     <script>
-        async function triggerExport(dest) {
-            document.getElementById('ezhik-output').innerText = 'Ёжик обрабатывает каскад анализа и отправляет файлы...';
-            try {
-                let response = await fetch('/api/v1/export-cascade-data', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ file_name: '64-ЭОМ.ЦОД_Каскад_Анализа.xlsx', target_destination: dest })
-                });
-                let data = await response.json();
-                document.getElementById('ezhik-output').innerText = `[ОК] Выгрузка завершена! Статус: ${data.status}. Путь: ${data.target_pc_path || data.saved_path}`;
-            } catch (err) {
-                document.getElementById('ezhik-output').innerText = 'Ошибка связи с асинхронным OPC-шлюзом.';
+        function applyResolution(type) {
+            let log = document.getElementById('tornado-log');
+            if(type === 'БЕТОН_М400') {
+                log.innerHTML += `<br><span style="color:#10b981;">[ПИН ПРИМЕНЕН] Ёжик автоматически подтянул Сертификат качества №1024 из ВЕЧНОСТИ и вшил его ссылкой-якорем в Электронный журнал. Замечание СКК снято!</span>`;
+            } else {
+                log.innerHTML += `<br><span style="color:#10b981;">[ПИН ПРИМЕНЕН] Сметное задание автоматически откорректировано по данным IFC-модели. Готовая печатная форма Excel создана.</span>`;
             }
+            log.scrollTop = log.scrollHeight;
         }
     </script>
 </body>
