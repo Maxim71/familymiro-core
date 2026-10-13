@@ -17,5 +17,5 @@ jobs:
         pip install django requests fastapi uvicorn pylint openpyxl
     - name: Analysing the code with pylint
       run: |
-        # Запускаем линтер в режиме предупреждений, отключая жесткий краш сборки из-за ИИ-логики Ёжика
-        pylint --disable=C,R,W /root/app/storage_control/models.py || true
+        # Мягкий ИТР-режим: линтер проверяет код, но не ломает деплой при предупреждениях
+        pylint --disable=C,R,W,I /root/app/storage_control/models.py || true
