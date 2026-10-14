@@ -6,6 +6,7 @@ from storage_control import products_box
 from storage_control import blogger_box
 
 urlpatterns = [
+    path("api/v5/ar-kr-parser/", views.parse_ar_kr_blueprint_api),
     path("admin/", admin.site.urls),
     path("", views.index_vancouver, name="index_vancouver"),
     path("pto/", views.pto_cabinet_view, name="pto_cabinet"),

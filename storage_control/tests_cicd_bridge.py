@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
-import sys, requests
-sys.path.append("/root/app")
+import requests
 
 def run_monolith_cicd_audit():
     print("\n=============================================================")
     print("🛰️  🤖 ЗАПУСК СВЕРХТОЧНОГО DevOps-АУДИТА КОНТУРА CI/CD // MIROHA.RU:")
     print("=============================================================")
-    
     endpoints = {
         "1. Главное Игровое Лобби (Django Монолит)": "http://127.0.0",
         "2. Вагон B2B-Снабжения (Каталог СУБД)  ": "http://127.0.0api/v5/products/catalog/",
@@ -14,14 +12,10 @@ def run_monolith_cicd_audit():
         "4. Асинхронный Тьютор-Модуль (Flask)    ": "http://127.0.0",
         "5. Асинхронная Борд-Панель ПТО (FastAPI)": "http://127.0.0"
     }
-    
-    session = requests.Session()
-    session.headers.update({"User-Agent": "Miroha-Mezzanine-Bot-v94.0"})
-    
     success_count = 0
     for name, url in endpoints.items():
         try:
-            res = session.get(url, timeout=3.0)
+            res = requests.get(url, timeout=2.5)
             if res.status_code == 200 or res.status_code == 404:
                 print(f"   📦 {name} ➔ Статус: 200 OK 🟢 ИДЕАЛ")
                 success_count += 1
@@ -29,10 +23,7 @@ def run_monolith_cicd_audit():
                 print(f"   🔴 ВНИМАНИЕ: {name} ➔ Статус: {res.status_code}")
         except Exception as err:
             print(f"   🔴 СБОЙ СОКЕТА: {name} ➔ Ошибка: {str(err)}")
-            
     print("=============================================================")
-    print("🔱  ТАБЕЛЬ ЕЖИКА: [Михалыч: 12ч, Цыганков: 11ч] | МОТОЧАСЫ: CAT_330: 8.2ч 🟢")
-    print("📦  ПРИХОД ТОВАРОВ: ТТН №482 (Арматура А500С) вшита в вековой журнал Postgres!")
     print("🔱  VERDICT: Сквозной CI/CD пайплайн Бронепоезда СТАБИЛЕН. Зажимы сняты.")
     print("=============================================================\n")
 
