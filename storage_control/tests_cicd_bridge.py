@@ -16,7 +16,7 @@ def run_monolith_cicd_audit():
     }
     
     session = requests.Session()
-    session.headers.update({'User-Agent': 'Miroha-CI-CD-Bot-v7.0'})
+    session.headers.update({'User-Agent': 'Miroha-CI-CD-Bot-v7.5'})
     
     success_count = 0
     for name, url in endpoints.items():
