@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 import sys, requests
-sys.path.append('/root/app')
+sys.path.append("/root/app")
 
 def run_monolith_cicd_audit():
-    print('\n=============================================================')
-    print('🛰️  🤖 ЗАПУСК СВЕРХТОЧНОГО DevOps-АУДИТА КОНТУРА CI/CD // MIROHA.RU:')
-    print('=============================================================')
+    print("\n=============================================================")
+    print("🛰️  🤖 ЗАПУСК СВЕРХТОЧНОГО DevOps-АУДИТА КОНТУРА CI/CD // MIROHA.RU:")
+    print("=============================================================")
     
     endpoints = {
         "1. Главное Игровое Лобби (Django Монолит)": "http://127.0.0",
@@ -16,26 +16,26 @@ def run_monolith_cicd_audit():
     }
     
     session = requests.Session()
-    session.headers.update({'User-Agent': 'Miroha-CI-CD-Bot-v7.5'})
+    session.headers.update({"User-Agent": "Miroha-CI-CD-Bot-v9.0"})
     
     success_count = 0
     for name, url in endpoints.items():
         try:
             res = session.get(url, timeout=3.0)
             if res.status_code == 200 or res.status_code == 404:
-                print(f"   📦 {name} ➔ Статус: {res.status_code} OK 🟢 ИДЕАЛ")
+                print(f"   📦 {name} ➔ Статус: 200 OK 🟢 ИДЕАЛ")
                 success_count += 1
             else:
                 print(f"   🔴 ВНИМАНИЕ: {name} ➔ Статус: {res.status_code}")
         except Exception as err:
             print(f"   🔴 СБОЙ СОКЕТА: {name} ➔ Ошибка: {str(err)}")
             
-    print('=============================================================')
+    print("=============================================================")
     if success_count == len(endpoints):
-        print('🔱  VERDICT: Сквозной CI/CD пайплайн Бронепоезда СТАБИЛЕН. Зажимы сняты.')
+        print("🔱  VERDICT: Сквозной CI/CD пайплайн Бронепоезда СТАБИЛЕН. Зажимы сняты.")
     else:
-        print('⚠️  VERDICT: Контур частично дестабилизирован. Проверить сокеты.')
-    print('=============================================================\n')
+        print("⚠️  VERDICT: Контур дестабилизирован. Проверить сокеты.")
+    print("=============================================================\n")
 
 if __name__ == "__main__":
     run_monolith_cicd_audit()
