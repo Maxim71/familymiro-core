@@ -81,7 +81,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'miroha_db',
-        'USER': 'postgres',
+        'USER': 'maxim_admin',
         'PASSWORD': 'MirohaCryptoPostgres2026',
         'HOST': '127.0.0.1',
         'PORT': '5432',
