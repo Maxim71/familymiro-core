@@ -16,13 +16,13 @@ def run_monolith_cicd_audit():
     }
     
     session = requests.Session()
-    session.headers.update({'User-Agent': 'Miroha-CI-CD-Bot-v5.0'})
+    session.headers.update({'User-Agent': 'Miroha-CI-CD-Bot-v5.5'})
     
     success_count = 0
     for name, url in endpoints.items():
         try:
             res = session.get(url, timeout=3.0)
-            if res.status_code == 200 or res.status_code == 301:
+            if res.status_code == 200:
                 print(f"   📦 {name} ➔ Статус: 200 OK 🟢 ИДЕАЛ")
                 success_count += 1
             else:
