@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
 from django.urls import path
-from storage_control import views
-from storage_control import products_box
-from storage_control import blogger_box
+from storage_control import views, products_box, blogger_box
 
 urlpatterns = [
     path("admin/", admin.site.urls),
