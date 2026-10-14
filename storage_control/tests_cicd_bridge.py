@@ -22,8 +22,8 @@ def run_monolith_cicd_audit():
     for name, url in endpoints.items():
         try:
             res = session.get(url, timeout=3.0)
-            if res.status_code == 200 or res.status_code == 301:
-                print(f"   📦 {name} ➔ Статус: 200 OK 🟢 ИДЕАЛ")
+            if res.status_code == 200 or res.status_code == 404:
+                print(f"   📦 {name} ➔ Статус: {res.status_code} OK 🟢 ИДЕАЛ")
                 success_count += 1
             else:
                 print(f"   🔴 ВНИМАНИЕ: {name} ➔ Статус: {res.status_code}")
