@@ -6,7 +6,6 @@ def run_monolith_cicd_audit():
     print("\n=============================================================")
     print("🛰️  🤖 ЗАПУСК СВЕРХТОЧНОГО DevOps-АУДИТА КОНТУРА CI/CD // MIROHA.RU:")
     print("=============================================================")
-    
     endpoints = {
         "1. Главное Игровое Лобби (Django Монолит)": "http://127.0.0",
         "2. Вагон B2B-Снабжения (Каталог СУБД)  ": "http://127.0.0api/v5/products/catalog/",
@@ -14,7 +13,6 @@ def run_monolith_cicd_audit():
         "4. Асинхронный Тьютор-Модуль (Flask)    ": "http://127.0.0",
         "5. Асинхронная Борд-Панель ПТО (FastAPI)": "http://127.0.0"
     }
-    
     session = requests.Session()
     success_count = 0
     for name, url in endpoints.items():
@@ -27,12 +25,11 @@ def run_monolith_cicd_audit():
                 print(f"   🔴 ВНИМАНИЕ: {name} ➔ Статус: {res.status_code}")
         except Exception as err:
             print(f"   🔴 СБОЙ СОКЕТА: {name} ➔ Ошибка: {str(err)}")
-            
     print("=============================================================")
     if success_count == len(endpoints):
         print("🔱  VERDICT: Сквозной CI/CD пайплайн Бронепоезда СТАБИЛЕН. Зажимы сняты.")
     else:
-        print("⚠️  VERDICT: Контур частично дестабилизирован. Проверить сокеты.")
+        print("⚠️  VERDICT: Контур частично дестабилизирован.")
     print("=============================================================\n")
 
 if __name__ == "__main__":
