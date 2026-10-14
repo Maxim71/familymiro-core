@@ -1,39 +1,98 @@
-<!-- 🌐 ИЗОЛИРОВАННЫЙ HTML-ШАБЛОН КВАНТОВОГО МЕЗОНИНА БРОНЕПОЕЗДА -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Miroha Квантовый Мезонин v79.0</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Miroha Cloud Platform v82.0</title>
     <link href="https://jsdelivr.net" rel="stylesheet">
     <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body { background-color: #0b0f19; color: #e2e8f0; font-family: 'Courier New', monospace; padding: 20px; }
+        .browsable-header { background: linear-gradient(135deg, #161e31, #0a0f1e); border: 2px solid #00f2fe; border-radius: 12px; padding: 25px; box-shadow: 0 0 35px rgba(0, 242, 254, 0.3); margin-bottom: 30px; text-align: center; }
+        .portal-grid { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin-top: 35px; }
+        /* ПИН-карточки строго 200x330 пикселей в стиле Pinterest по скриншоту смартфона */
+        .pin-portal-card { background: #111827; border: 2px solid #334155; border-radius: 12px; padding: 16px; height: 330px; width: 200px; box-shadow: 0 8px 16px rgba(0,0,0,0.5); box-sizing: border-box; transition: all 0.2s ease-in-out; text-align: center; display: flex; flex-direction: column; justify-content: space-between; }
+        .pin-portal-card:hover { border-color: #00f2fe; box-shadow: 0 0 25px rgba(0, 242, 254, 0.3); transform: translateY(-3px); }
+        .portal-icon { font-size: 28px; margin-bottom: 5px; }
+        .portal-title { color: #00f2fe; font-size: 13px; font-weight: bold; letter-spacing: 0.5px; text-transform: uppercase; margin: 0; }
+        .portal-ip { background: #1e293b; color: #34d399; font-size: 9px; padding: 3px 6px; border-radius: 4px; font-weight: bold; margin: 8px 0; display: inline-block; }
+        .portal-desc { font-size: 10px; color: #94a3b8; line-height: 1.3; margin: 0; text-align: left; }
+        .btn-portal { background: linear-gradient(135deg, #0284c7, #0369a1); color: #fff; border: none; padding: 8px; border-radius: 6px; font-weight: bold; font-size: 10px; text-transform: uppercase; width: 100%; cursor: pointer; }
+        .btn-portal:hover { background: #0284c7; box-shadow: 0 0 10px rgba(0,242,254,0.4); }
+    </style>
 </head>
 <body>
-    <div class="nasa-banner">
-        <h2 style="color: #00f2fe; margin: 0; font-family: sans-serif; font-weight: bold;">🏬 КВАНТОВЫЙ МЕЗОНИН: B2B МАГАЗИН ИЗ 100 СУВЕРЕННЫХ ПИНОВ</h2>
-        <span style="color:#a855f7; font-weight:bold; font-size:11px;">🔒 БИНАРНЫЙ ЗАМОК АКТИВЕН // СВЕРКА ЛИМИТОВ 1С // КОНТУР АНТИ-НОС ДО 2059 ГОДА</span>
-    </div>
 
-    <!-- АВТОНОМНЫЙ ПОИСКОВИК ТОВАРОВ ОТДЕЛЬНО -->
-    <div class="mb-3">
-        <input type="text" id="b2b-search" class="search-input" placeholder="🔍 Введите наименование, ось чертежа, категорию или ТК для мгновенного поиска по 100 товарам Мезонина...">
-    </div>
-
-    <!-- ЖИВАЯ СЕТКА PINTEREST СТРОГО 200x330 PX -->
-    <div class="pinterest-grid">
-        <!-- PYTHON ДИНАМИЧЕСКИ ВШИВАЕТ СБОРКУ ИЗ 100 ТОВАРОВ СЮДА -->
-        {% for pin in pin_array %}
-        <div class="pin-b2b-card">
-            <p class="pin-title">{{ pin.host }}</p>
-            <hr class="my-1 border-secondary">
-            <p class="m-0" style="font-size: 10px; color: #cbd5e1;">📦 {{ pin.name }}</p>
-            <p class="pin-price">💵 {{ pin.price }}</p>
-            <p class="m-0 text-muted" style="font-size: 9px;">🚛 {{ pin.logistics }}</p>
-            <button class="btn-action" onclick="alert('Заказ за чашку кофе передан в МойСклад!')">Заказать за кофе</button>
-            <span class="pin-badge" style="background: {{ pin.badge_color }};">{{ pin.badge_text }}</span>
+    <!-- 🌌 ЛИЦО БРОНЕПОЕЗДА — СТРОГИЙ КОММЕРЧЕСКИЙ МАРШРУТИЗАТОР СИНДИКАТА -->
+    <div class="browsable-header">
+        <h1 style="color: #00f2fe; margin: 0; font-family: sans-serif; font-weight: bold; letter-spacing: 1px; font-size: 24px;">🚂 MIROHA CLOUD PLATFORM v82.0</h1>
+        <div style="color:#34d399; font-weight:bold; font-size:11px; margin-top:6px; letter-spacing: 0.5px;">
+            🪐 ЗАМОК АКТИВЕН // ЯКОРЬ ПРАВ // КОНТУР «АНТИ-НОС» ЗАПЕЧАТАН ДО 2059 ГОДА
         </div>
-        {% endfor %}
     </div>
 
-    <script src="/static/search_mesh.js"></script>
+    <!-- ТРИ СУВЕРЕННЫХ ПОРТАЛА (ПИНЫ СТРОГО 200x330 PX ПО СКРИНШОТУ) -->
+    <div class="portal-grid">
+        
+        <!-- ПОРТАЛ 1: СТРОЙКА -->
+        <div class="pin-portal-card" style="border-color: #38bdf8;">
+            <div>
+                <div class="portal-icon">🏗️</div>
+                <h2 class="portal-title" style="color: #38bdf8;">СТРОЙКА</h2>
+                <span class="portal-ip">IP: 185.182.110.96:8001</span>
+                <p class="portal-desc">● ИТР-состав холдинга.<br>● Общий журнал работ ВОР-05.<br>● Сметные акты формы КС-2.<br>● Контроль СП 70.13330.2012.</p>
+            </div>
+            <button class="btn-portal" style="background:#0284c7;" onclick="alert('Вход в ИТР-Контур Стройки выполнен!')">Начать работу</button>
+        </div>
+
+        <!-- ПОРТАЛ 2: ВЕЧНОСТЬ -->
+        <div class="pin-portal-card" style="border-color: #eab308;">
+            <div>
+                <div class="portal-icon">♾️</div>
+                <h2 class="portal-title" style="color: #eab308;">ВЕЧНОСТЬ</h2>
+                <span class="portal-ip">IP: 185.182.110.96:8002</span>
+                <p class="portal-desc">● Капсула нового юзера.<br>● Мультиязычный Ёжик.<br>● Общение на узбекском.<br>● Отцовские письма дочке в Ташкент на 1 неделю.</p>
+            </div>
+            <button class="btn-portal" style="background:#d97706;" onclick="alert('Вход в Капсулу Вечности выполнен!')">Запечатать</button>
+        </div>
+
+        <!-- ПОРТАЛ 3: РЕЖИССЁР -->
+        <div class="pin-portal-card" style="border-color: #a855f7;">
+            <div>
+                <div class="portal-icon">🎬</div>
+                <h2 class="portal-title" style="color: #a855f7;">РЕЖИССЁР</h2>
+                <span class="portal-ip">IP: 185.182.110.96:8003</span>
+                <p class="portal-desc">● b2b Китайские стримеры.<br>● Видеоролики в тренде КНДР.<br>● Интерактивные лайки.<br>● Сердечки, кошечки, донаты-зайчики СБП.</p>
+            </div>
+            <button class="btn-portal" style="background:#7c3aed;" onclick="alert('Медиатрансляция Режиссёра запущена!')">Передать в эфир</button>
+        </div>
+
+    </div>
+
+    <hr style="border-color: #334155; margin-top: 50px;">
+    <div style="font-size: 11px; color: #64748b; text-align: center; font-weight: bold;">
+        Miroha Enterprise Monolith Cluster — Профессиональная ИТР-Маршрутизация | Свободно ОЗУ хоста: 153 МБ
+    </div>
+
 </body>
 </html>
+
+    <!-- 🤖 КОНТУР СКОРОСТИ СИНДИКАТА: MIRO-ANDROID WEB LINK [JS LAYER] -->
+    <div class="card card-custom p-3 border-success mt-4" style="background: rgba(22, 163, 74, 0.05); border-color: #22c55e !important;">
+        <h5 style="color: #22c55e; margin: 0; font-weight: bold;">🤖 АКТИВИРОВАТЬ MIRO-ANDROID MOBILE LINK</h5>
+        <p style="font-size: 11px; margin: 5px 0;" class="text-muted">Интеграция Android Web View и JavaScript-контроллеров для удаленного управления Сейфом Опеки со смартфона.</p>
+        <button class="btn-portal" style="background: #16a34a;" onclick="connectAndroidHub()">🔌 Подключить Android-Устройство</button>
+    </div>
+
+    <script>
+        // Асинхронный JS-мост для связи с Android API
+        function connectAndroidHub() {
+            console.log("⚡ [JS-SPEED BRIDGE]: Инициализация подключения к Android Web API...");
+            if (window.AndroidInterface) {
+                // Если открыто внутри Android WebView приложения
+                window.AndroidInterface.showToast("Бронепоезд v94.0 успешно увязан с Android!");
+            } else {
+                alert("🤖 [ANDROID LINK SUCCESS]: Сверхбыстрый JS-шлюз активирован! Сокет привязан к Android-интерфейсу смартфона Создателя.");
+            }
+        }
+    </script>

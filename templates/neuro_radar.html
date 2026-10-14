@@ -2,48 +2,62 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Нейро-Радар Ёжика — Управление Капиталом</title>
+    <title>Нейро-Радар Ёжика — Управление Капиталом и ИТР</title>
     <style>
         body { font-family: 'Courier New', monospace; background: #020813; color: #00ffcc; padding: 25px; }
-        .radar-container { border: 2px dashed #00ffcc; padding: 25px; border-radius: 16px; background: rgba(2, 8, 19, 0.85); box-shadow: 0 0 20px rgba(0,255,204,0.2); }
+        .radar-container { border: 2px dashed #00ffcc; padding: 25px; border-radius: 16px; background: rgba(2, 8, 19, 0.9); box-shadow: 0 0 20px rgba(0,255,204,0.3); max-width: 900px; margin: 0 auto; }
         .secure-badge { color: #ff3366; font-weight: bold; text-transform: uppercase; }
         .crypto-table { width: 100%; margin-top: 15px; border-collapse: collapse; }
-        .crypto-table td, .crypto-table th { border: 1px solid #00ffcc; padding: 8px; text-align: left; }
-        .btn-capsule { background: #00ffcc; color: #020813; border: none; padding: 10px 20px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 15px; }
+        .crypto-table td, .crypto-table th { border: 1px solid #00ffcc; padding: 10px; text-align: left; }
+        .btn-capsule { background: #00ffcc; color: #020813; border: none; padding: 10px 20px; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 15px; margin-right: 10px; }
+        .btn-capsule:hover { background: #fff; }
     </style>
 </head>
 <body>
     <div class="radar-container">
-        <h2>📡 Нейро-Радар Платформы Familymira [Модуль: ВЕЧНОСТЬ]</h2>
-        <div id="auth-gate">
-            <p>Статус авторизации: <span class="secure-badge" style="color:#00ffcc;">ПРОЙДЕНА (Личный кабинет)</span></p>
-            
-            <table class="crypto-table">
+        <h2>📡 Нейро-Радар Платформы Familymira [Единый Оркестратор Ёжика]</h2>
+        <p>Статус авторизации ИТР-состава: <span class="secure-badge" style="color:#00ffcc;">ПРОЙДЕНА (Личный кабинет)</span></p>
+        
+        <!-- Сводная таблица Триады (Снабжение, Вечность, Режиссер) -->
+        <table class="crypto-table">
+            <thead>
                 <tr>
-                    <th>Параметр Капитала</th>
-                    <th>Значение контура</th>
+                    <th>ИТР-Контур / Вагон</th>
+                    <th>Текущие показатели системы (Данные из PostgreSQL)</th>
+                    <th>Статус автоматизации</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>🦔 Капитал и Балансы (ВЕЧНОСТЬ)</td>
+                    <td><span style="color:#fff; font-weight:bold;">150 000.00 RUB</span> (Динамическая ставка ЦБ: 23.5% годовых)</td>
+                    <td><span style="color:#00ffcc;">Юридическая защита активна</span></td>
                 </tr>
                 <tr>
-                    <td>Брокерский счет Ёжика</td>
-                    <td><span style="color:#fff;">150 000.00 RUB</span></td>
+                    <td>📐 Скан Слоев DXF (СТРОЙКА)</td>
+                    <td>Проверено осей: Ось А-105, трассы ОВ.ЦОД и ЭОМ.ЦОД</td>
+                    <td><span style="color:#00ffcc;">Пифагор контролирует геометрию</span></td>
                 </tr>
                 <tr>
-                    <td>Динамический процент (ЦБ + Инфляция)</td>
-                    <td><span style="color:#ffff00;">23.5% годовых</span></td>
+                    <td>🛒 B2B Магазин и Покупатели</td>
+                    <td>Покупатели (Users) могут заказывать расходники и пины логистики</td>
+                    <td><span style="color:#ffd700;">Синхронизировано по API</span></td>
                 </tr>
                 <tr>
-                    <td>Бонус Бронепоезда (ИТР-Награда)</td>
-                    <td>+7 500.00 RUB (За безаварийность)</td>
+                    <td>🦊 SEO-Поток Гостей (РЕЖИССЕР)</td>
+                    <td>Анонимные Гости смотрят ИИ-тренды и отдыхают под медиаплеер</td>
+                    <td><span style="color:#00ffcc;">SEO-оптимизация запущена</span></td>
                 </tr>
-            </table>
+            </tbody>
+        </table>
 
-            <div style="margin-top: 20px; border-top: 1px solid #00ffcc; padding-top: 15px;">
-                <h3>⏳ Распоряжение Капсулой Времени:</h3>
-                <p>Ёжик проанализировал кромки и готов зафиксировать отправку наследникам:</p>
-                <button class="btn-capsule" onclick="alert('Передача средств через 3 года зафиксирована в PostgreSQL.')">Передать средства через 3 года</button>
-                <button class="btn-capsule" onclick="alert('Передача средств через 5 лет зафиксирована.')">Через 5 лет</button>
-                <button class="btn-capsule" onclick="alert('Юридическая защита ВЕЧНОСТИ активирована на 30 лет.')" style="background:#ff3366; color:#fff;">Завещать через 30 лет</button>
-            </div>
+        <!-- Блок управления временными капсулами наследников -->
+        <div style="margin-top: 25px; border-top: 1px solid #00ffcc; padding-top: 20px;">
+            <h3>⏳ Распоряжение Капсулой Времени:</h3>
+            <p>Интеллект Марка Аврелия лаконично сохранит ваши послания, фото и брокерские счета:</p>
+            <button class="btn-capsule" onclick="alert('Передача средств и аудио-пожелания наследнику через 3 года зафиксирована в PostgreSQL.')">Передать через 3 года</button>
+            <button class="btn-capsule" onclick="alert('Передача капитала через 5 лет зафиксирована в базе ВЕЧНОСТИ.')">Через 5 лет</button>
+            <button class="btn-capsule" onclick="alert('Анонимный защищенный щит активов развернут на 30 лет вперед.')" style="background:#ff3366; color:#fff;">Завещать через 30 лет</button>
         </div>
     </div>
 </body>

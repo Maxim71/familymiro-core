@@ -1,242 +1,39 @@
+<!-- 🌐 ИЗОЛИРОВАННЫЙ HTML-ШАБЛОН КВАНТОВОГО МЕЗОНИНА БРОНЕПОЕЗДА -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="description" content="Miroha Cloud ERP — Монолитная автоматизация снабжения МКД, интеграция 1С и МойСклад.">
-    <title>Miroha Cloud Platform v71.0 — Pure Django Monolith</title>
-    <style>
-        body { background-color: #0b0f19; color: #e2e8f0; font-family: 'Courier New', monospace; padding: 20px; margin: 0; }
-        .nasa-container { background: linear-gradient(135deg, #161e31, #0a0f1e); border: 2px solid #00f2fe; border-radius: 12px; padding: 25px; box-shadow: 0 0 35px rgba(0, 242, 254, 0.3); margin-bottom: 25px; text-align: center; }
-        .section-title { color: #00f2fe; border-bottom: 1px solid rgba(0, 242, 254, 0.3); padding-bottom: 8px; margin-top: 35px; font-family: sans-serif; letter-spacing: 1px; }
-        .grid-container { display: flex; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
-        .b2b-card { flex: 1; min-width: 280px; padding: 20px; border-radius: 8px; font-weight: bold; border: 1px solid #334155; background: #1e293b; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .pins-wrapper { display: flex; gap: 16px; margin-bottom: 25px; flex-wrap: wrap; clear: both; }
-        /* Легендарные Принт-Крист ПИН-карточки строго 200x330 пикселей по ГОСТу */
-        .pin-b2b-card { background: #111827; border: 1px solid #334155; border-radius: 8px; padding: 14px; height: 330px; width: 200px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); box-sizing: border-box; transition: all 0.2s ease-in-out; float: left; }
-        .pin-b2b-card:hover { border-color: #38bdf8; box-shadow: 0 0 20px rgba(56, 189, 248, 0.25); transform: translateY(-2px); }
-        .pin-badge { display: inline-block; padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase; margin-top: 12px; color: #fff; text-align: center; width: 100%; box-sizing: border-box; }
-        .btn-action { background: #0284c7; color: #fff; border: none; padding: 8px 14px; border-radius: 4px; font-weight: bold; cursor: pointer; font-family: monospace; font-size: 11px; text-transform: uppercase; margin-top: 10px; width: 100%; }
-        .btn-action:hover { background: #0369a1; }
-        .stream-box { background: #1e293b; border: 2px solid #a855f7; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
-        table { width: 100%; border: 1px solid rgba(0, 242, 254, 0.4); border-collapse: collapse; background-color: #111827; margin-bottom: 25px; }
-        th, td { padding: 10px; border: 1px solid rgba(0, 242, 254, 0.15); text-align: left; }
-        th { background: rgba(0, 242, 254, 0.15); color: #00f2fe; }
-    </style>
+    <title>Miroha Квантовый Мезонин v79.0</title>
+    <link href="https://jsdelivr.net" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-
-    <!-- 🌌 ГЛАВНАЯ СТРАНИЦА: ЧИСТЫЙ ЛИДЕРСКИЙ БАННЕР (ЛИЦО БРОНЕПОЕЗДА) -->
-    <div class="nasa-container">
-        <h1 style="color: #00f2fe; margin: 0; letter-spacing: 2px; font-family: sans-serif;">🚂 MIROHA ENTERPRISE ERP v71.0 — ЧИСТЫЙ DJANGO MONOLITH</h1>
-        <div style="color:#34d399; margin-top:5px; font-weight:bold; font-size:12px;">
-            👑 КАПИТАЛ ЕЖИКА: 0.00 RUB // ЗАМОК АКТИВЕН // ЯКОРЬ ПРАВ // КОНТУР «АНТИ-НОС» ЗАЛОЧЕН ДО 2059 ГОДА
-        </div>
+    <div class="nasa-banner">
+        <h2 style="color: #00f2fe; margin: 0; font-family: sans-serif; font-weight: bold;">🏬 КВАНТОВЫЙ МЕЗОНИН: B2B МАГАЗИН ИЗ 100 СУВЕРЕННЫХ ПИНОВ</h2>
+        <span style="color:#a855f7; font-weight:bold; font-size:11px;">🔒 БИНАРНЫЙ ЗАМОК АКТИВЕН // СВЕРКА ЛИМИТОВ 1С // КОНТУР АНТИ-НОС ДО 2059 ГОДА</span>
     </div>
 
-    <!-- 💳 ФИНАНСОВЫЙ КОНТУР СЕЙФА ОПЕКИ (LAVA API) -->
-    <h3 class="section-title">💳 БЛОК 1: Финансовый контур и распределение входящего трафика</h3>
-    <div class="grid-container">
-        <div class="b2b-card" style="border-color: #ef4444; flex: 1; background: rgba(239, 68, 68, 0.05);">
-            👑 СЕЙФ ОПЕКИ (Автономный капитал):<br><span style="font-size: 22px; color:#f87171;">5,400,000.00 RUB</span>
-        </div>
-        <div class="b2b-card" style="border-color: #eab308; flex: 1; background: rgba(234, 179, 8, 0.05);">
-            ⚡ Биллинг и Налоги ФНС (6%):<br><span style="font-size: 13px; color:#facc15; font-weight:normal;">Автоматическое сплитование донатов, премия Отца за скорость верифицированы в ОЗУ.</span>
-        </div>
-        <div class="b2b-card" style="border-color: #10b981; flex: 1; background: rgba(16, 185, 129, 0.05);">
-            🦔 Верифицированный доход Создателя (4%):<br><span style="font-size: 22px; color:#34d399;">216,000.00 RUB</span>
-        </div>
+    <!-- АВТОНОМНЫЙ ПОИСКОВИК ТОВАРОВ ОТДЕЛЬНО -->
+    <div class="mb-3">
+        <input type="text" id="b2b-search" class="search-input" placeholder="🔍 Введите наименование, ось чертежа, категорию или ТК для мгновенного поиска по 100 товарам Мезонина...">
     </div>
 
-    <!-- 🦔 ИНТЕЛЛЕКТУАЛЬНЫЙ ДИАЛОГ С ЁЖИКОМ ПО ВЫРАБОТКЕ ИТР -->
-    <h3 class="section-title">🦔 БЛОК 2: Анархический Интеллект Ёжика (Мультиязычный Проводник ПТО)</h3>
-    <div style="background: #111827; border: 2px solid #ff9900; border-radius: 8px; padding: 20px; margin-bottom: 25px;">
-        <div style="background:#1e293b; border-left:4px solid #ff9900; padding:12px; border-radius:4px; font-size:12px; color:#fff; margin-bottom:15px;">
-            🦔 <b>[Ёжик встречает Создателя]:</b> «Ассалому алейкум! Я твой гид в Бронепоезде. Назначь себе свой ИТР-костюм! Зрение Сокола (Vision API) считало рапорт выработки: кирпичная кладка (1 чел.) на осях 19-22, санузлы (4 чел.) на оси 35 (шпатлевка Limonapro, ГКЛВ), и ЦСТ (8 чел.) по пирогу лестниц зафиксированы в Журнале ВОР-05 по СП 70.13330.2012!» [1.5]
+    <!-- ЖИВАЯ СЕТКА PINTEREST СТРОГО 200x330 PX -->
+    <div class="pinterest-grid">
+        <!-- PYTHON ДИНАМИЧЕСКИ ВШИВАЕТ СБОРКУ ИЗ 100 ТОВАРОВ СЮДА -->
+        {% for pin in pin_array %}
+        <div class="pin-b2b-card">
+            <p class="pin-title">{{ pin.host }}</p>
+            <hr class="my-1 border-secondary">
+            <p class="m-0" style="font-size: 10px; color: #cbd5e1;">📦 {{ pin.name }}</p>
+            <p class="pin-price">💵 {{ pin.price }}</p>
+            <p class="m-0 text-muted" style="font-size: 9px;">🚛 {{ pin.logistics }}</p>
+            <button class="btn-action" onclick="alert('Заказ за чашку кофе передан в МойСклад!')">Заказать за кофе</button>
+            <span class="pin-badge" style="background: {{ pin.badge_color }};">{{ pin.badge_text }}</span>
         </div>
-        <h4 style="color:#00f2fe; margin-top:0; font-family:sans-serif;">💌 Запечатать суверенное послание дочке в Ташкент через Triton</h4>
-        <p style="font-size:11px; color:#cbd5e1;">Планировщик задач и ИИ-сервер Тритон доставят отцовское письмо дочке в Ташкент ровно через неделю:</p>
-        <button class="btn-action" style="background:#ff9900; color:#0b0f19;" onclick="alert('🤖 [TRITON & CALENDAR MESH OK]: Письмо дочке в Ташкент запечатано в СУБД и улетит ровно через 1 неделю через связь календаря!')">🔒 ЗАПЕЧАТАТЬ И ОТПРАВИТЬ ПОСЛАНИЕ ОТ ОТЦА</button>
+        {% endfor %}
     </div>
 
-    <!-- 🎬 МОДУЛЬ РЕЖИССЁР: СТРИМЫ И ДОНАТЫ ДЛЯ ФАБРИК -->
-    <h3 class="section-title">🎬 БЛОК 3: Модуль РЕЖИССЁР — Медиатрансляция и Тренды Синдиката</h3>
-    <div class="stream-box">
-        <h5 style="color:#a855f7; margin:0; font-family:sans-serif;">🎥 [LIVE STREAM]: Видеоролики в тренде и b2b Китайские Стримеры онлайн</h5>
-        <p style="font-size:11px; margin:5px 0 12px 0; color:#94a3b8;">Посетители платформы могут смотреть выработку МКД Блок Б-4, голосовать и отправлять интерактивные донаты-лайки:</p>
-        <div style="display:flex; gap:10px; flex-wrap:wrap;">
-            <button class="btn-action" style="background:rgba(168,85,247,0.1); color:#c084fc; border:1px solid #a855f7; width:auto;" onclick="alert('❤️ Сердечко отправлено в эфир!')">❤️ СЕРДЕЧКО</button>
-            <button class="btn-action" style="background:rgba(168,85,247,0.1); color:#c084fc; border:1px solid #a855f7; width:auto;" onclick="alert('🐱 Кошечка отобразилась на стриме!')">🐱 КОШЕЧКА</button>
-            <button class="btn-action" style="background:rgba(168,85,247,0.1); color:#c084fc; border:1px solid #a855f7; width:auto;" onclick="alert('🐰 Зайчик доставлен китайскому партнеру!')">🐰 ЗАЙЧИК</button>
-            <button class="btn-action" style="background:#7c3aed; width:auto;" onclick="alert('💵 Донат СБП (Альфа-Банк / ВТБ / Совкомбанк) успешно зачислен!')">💵 ОТПРАВИТЬ ДОНАТ ИЗ БАНКА</button>
-        </div>
-    </div>
-
-    <!-- 🗂️ ВИТРИНА ПРИНТ-КРИСТ ПИНОВ С АВТО-ПАРСИНГОМ -->
-    <h3 class="section-title">🗂️ БЛОК 4: Витрина ИТР-Капсул Маркетплейса (ПИНы строго 200x330 pX)</h3>
-    <div class="pins-wrapper">
-        <div class="pin-b2b-card" style="border-color: #38bdf8;">
-            <b style="color: #38bdf8; font-size: 11px;">Host: СЕВЕРСТАЛЬ / 1С</b><hr style="border-color: #334155; margin: 6px 0;">
-            <p style="font-size: 10px; margin: 4px 0; color: #cbd5e1;">📦 Швеллер [ №10 МКД</p>
-            <p style="font-size: 10px; margin: 4px 0; color: #00ffcc;">💵 <b>Цена:</b> 85,000.00 ₽/т</p>
-            <p style="font-size: 10px; margin: 4px 0; color: #94a3b8;">🚛 <b>Логистика:</b> ТК ПЭК</p>
-            <button class="btn-action" onclick="alert('Заказ швеллеров успешно отправлен в МойСклад!')">Заказать</button>
-            <span class="pin-badge" style="background: #0d9488;">🛒 OZON ПАРСИНГ OK</span>
-        </div>
-        <div class="pin-b2b-card" style="border-color: #38bdf8;">
-            <b style="color: #38bdf8; font-size: 11px;">Host: ТД ТЕХНОНИКОЛЬ</b><hr style="border-color: #334155; margin: 6px 0;">
-            <p style="font-size: 10px; margin: 4px 0; color: #cbd5e1;">📦 Высокопрочный стеклохолст</p>
-            <p style="font-size: 10px; margin: 4px 0; color: #00ffcc;">💵 <b>Цена:</b> 120.00 ₽/м</p>
-            <p style="font-size: 10px; margin: 4px 0; color: #94a3b8;">🚛 <b>Логистика:</b> ТК СДЭК</p>
-            <button class="btn-action" onclick="alert('Заказ стеклохолста улетел в 1С!')">Заказать</button>
-            <span class="pin-badge" style="background: #0d9488;">🛒 WB ПАРСИНГ OK</span>
-        </div>
-        <div class="pin-b2b-card" style="border-color: #eab308;">
-            <b style="color: #eab308; font-size: 11px;">Host: ЛКМ ПРЕМИУМ МСК</b><hr style="border-color: #334155; margin: 6px 0;">
-            <p style="font-size: 10px; margin: 4px 0; color: #cbd5e1;">📦 Краска Lakra (Финиш С-2)</p>
-            <p style="font-size: 10px; margin: 4px 0; color: #eab308;">💵 <b>Цена:</b> 850.00 ₽/л</p>
-            <p style="font-size: 10px; margin: 4px 0; color: #94a3b8;">🚛 <b>Логистика:</b> Деловые Л.</p>
-            <button class="btn-action" style="background:#d97706;" onclick="alert('Позиция краски Lakra заблокирована в 1С.')">Резерв 1С</button>
-            <span class="pin-badge" style="background: #d97706;">🛒 АКТУАЛЬНО 100%</span>
-        </div>
-        <div class="pin-b2b-card" style="border-color: #38bdf8;">
-
-# 1. Переходим строго в корень нашего Django-приложения
-cd /root/app
-
-# 2. Записываем первую (верхнюю) половину HTML-шаблона со всеми ПИН-карточками 200x330 по ГОСТу
-cat << 'EOF' > /root/app/templates/b2b_portal.html
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="description" content="Miroha Cloud ERP — Монолитная автоматизация снабжения МКД, интеграция 1С и МойСклад.">
-    <title>Miroha Cloud Platform v71.1 — Pure Django Monolith</title>
-    <style>
-        body { background-color: #0b0f19; color: #e2e8f0; font-family: 'Courier New', monospace; padding: 20px; margin: 0; }
-        .nasa-container { background: linear-gradient(135deg, #161e31, #0a0f1e); border: 2px solid #00f2fe; border-radius: 12px; padding: 25px; box-shadow: 0 0 35px rgba(0, 242, 254, 0.3); margin-bottom: 25px; text-align: center; }
-        .section-title { color: #00f2fe; border-bottom: 1px solid rgba(0, 242, 254, 0.3); padding-bottom: 8px; margin-top: 35px; font-family: sans-serif; letter-spacing: 1px; }
-        .grid-container { display: flex; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; }
-        .b2b-card { flex: 1; min-width: 280px; padding: 20px; border-radius: 8px; font-weight: bold; border: 1px solid #334155; background: #1e293b; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .pins-wrapper { display: flex; gap: 16px; margin-bottom: 25px; flex-wrap: wrap; clear: both; }
-        .pin-b2b-card { background: #111827; border: 1px solid #334155; border-radius: 8px; padding: 14px; height: 330px; width: 200px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); box-sizing: border-box; transition: all 0.2s ease-in-out; float: left; }
-        .pin-b2b-card:hover { border-color: #38bdf8; box-shadow: 0 0 20px rgba(56, 189, 248, 0.25); transform: translateY(-2px); }
-        .pin-badge { display: inline-block; padding: 3px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase; margin-top: 12px; color: #fff; text-align: center; width: 100%; box-sizing: border-box; }
-        .btn-action { background: #0284c7; color: #fff; border: none; padding: 8px 14px; border-radius: 4px; font-weight: bold; cursor: pointer; font-family: monospace; font-size: 11px; text-transform: uppercase; margin-top: 10px; width: 100%; }
-        .btn-action:hover { background: #0369a1; }
-        .stream-box { background: #1e293b; border: 2px solid #a855f7; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
-        table { width: 100%; border: 1px solid rgba(0, 242, 254, 0.4); border-collapse: collapse; background-color: #111827; margin-bottom: 25px; }
-        th, td { padding: 10px; border: 1px solid rgba(0, 242, 254, 0.15); text-align: left; }
-        th { background: rgba(0, 242, 254, 0.15); color: #00f2fe; }
-    </style>
-</head>
-<body>
-
-    <!-- 🌌 ГЛАВНАЯ СТРАНИЦА: ЧИСТЫЙ ЛИДЕРСКИЙ БАННЕР (ЛИЦО БРОНЕПОЕЗДА) -->
-    <div class="nasa-container">
-        <h1 style="color: #00f2fe; margin: 0; letter-spacing: 2px; font-family: sans-serif;">🚂 MIROHA ENTERPRISE ERP v71.1 — ЧИСТЫЙ DJANGO MONOLITH</h1>
-        <div style="color:#34d399; margin-top:5px; font-weight:bold; font-size:12px;">
-            👑 КАПИТАЛ ЕЖИКА: 0.00 RUB // ЗАМОК АКТИВЕН // ЯКОРЬ ПРАВ // КОНТУР «АНТИ-НОС» ЗАЛОЧЕН ДО 2059 ГОДА
-        </div>
-    </div>
-
-    <!-- 💳 ФИНАНСОВЫЙ КОНТУР СЕЙФА ОПЕКИ -->
-    <h3 class="section-title">💳 БЛОК 1: Финансовый контур и распределение входящего трафика</h3>
-    <div class="grid-container">
-        <div class="b2b-card" style="border-color: #ef4444; flex: 1; background: rgba(239, 68, 68, 0.05);">
-            👑 СЕЙФ ОПЕКИ (Автономный капитал):<br><span style="font-size: 22px; color:#f87171;">5,400,000.00 RUB</span>
-        </div>
-        <div class="b2b-card" style="border-color: #eab308; flex: 1; background: rgba(234, 179, 8, 0.05);">
-            ⚡ Биллинг и Налоги ФНС (6%):<br><span style="font-size: 13px; color:#facc15; font-weight:normal;">Автоматическое сплитование донатов и премия Отца за скорость активны в ОЗУ.</span>
-        </div>
-        <div class="b2b-card" style="border-color: #10b981; flex: 1; background: rgba(16, 185, 129, 0.05);">
-            🦔 Верифицированный доход Создателя (4%):<br><span style="font-size: 22px; color:#34d399;">216,000.00 RUB</span>
-        </div>
-    </div>
-
-    <!-- 🦔 АНАРХИЧЕСКИЙ ИНТЕЛЛЕКТ ЁЖИКА -->
-    <h3 class="section-title">🦔 БЛОК 2: Анархический Интеллект Ёжика (Мультиязычный Проводник ПТО)</h3>
-    <div style="background: #111827; border: 2px solid #ff9900; border-radius: 8px; padding: 20px; margin-bottom: 25px;">
-        <div style="background:#1e293b; border-left:4px solid #ff9900; padding:12px; border-radius:4px; font-size:12px; color:#fff; margin-bottom:15px;">
-            🦔 <b>[Ёжик встречает Создателя]:</b> «Ассалому алейкум! Назначь себе свой ИТР-костюм! Зрение Сокола (Vision API) считало рапорты: кирпичная кладка (1 чел.) на осях 19-22, санузлы (4 чел.) на оси 35 (шпатлевка Limonapro), и ЦСТ (8 чел.) по пирогу лестниц зафиксированы в Журнале ВОР-05 по СП 70.13330.2012!»
-        </div>
-        <h4 style="color:#00f2fe; margin-top:0; font-family:sans-serif;">💌 Запечатать суверенное послание дочке в Ташкент через Triton</h4>
-        <button class="btn-action" style="background:#ff9900; color:#0b0f19; width:auto;" onclick="alert('🔒 Письмо запечатано в СУБД и улетит дочке в Ташкент через неделю!')">🔒 ЗАПЕЧАТАТЬ И ОТПРАВИТЬ ПОСЛАНИЕ</button>
-    </div>
-
-    <!-- 🎬 МОДУЛЬ РЕЖИССЁР -->
-    <h3 class="section-title">🎬 БЛОК 3: Модуль РЕЖИССЁР — Медиатрансляция и Тренды Синдиката</h3>
-    <div class="stream-box">
-        <h5 style="color:#a855f7; margin:0; font-family:sans-serif;">🎥 [LIVE STREAM]: Видеоролики в тренде и b2b Китайские Стримеры онлайн</h5>
-        <p style="font-size:11px; margin:5px 0 12px 0; color:#94a3b8;">Посетители платформы смотрят выработку МКД Блок Б-4, голосуют и отправляют интерактивные донаты-лайки:</p>
-        <div style="display:flex; gap:10px; flex-wrap:wrap;">
-            <button class="btn-action" style="background:rgba(168,85,247,0.1); color:#c084fc; border:1px solid #a855f7; width:auto;" onclick="alert('❤️ Сердечко улетело!')">❤️ СЕРДЕЧКО</button>
-            <button class="btn-action" style="background:rgba(168,85,247,0.1); color:#c084fc; border:1px solid #a855f7; width:auto;" onclick="alert('🐱 Кошечка на стриме!')">🐱 КОШЕЧКА</button>
-            <button class="btn-action" style="background:rgba(168,85,247,0.1); color:#c084fc; border:1px solid #a855f7; width:auto;" onclick="alert('🐰 Зайчик в эфире!')">🐰 ЗАЙЧИК</button>
-            <button class="btn-action" style="background:#7c3aed; width:auto;" onclick="alert('💵 Донат Альфа/ВТБ/Совкомбанк зачислен!')">💵 ОТПРАВИТЬ ДОНАТ ИЗ БАНКА</button>
-        </div>
-    </div>
-
-    <!-- 🗂️ ВИТРИНА ПИН-КАРТОЧКЕК (НАЧАЛО КАНВАСА) -->
-    <h3 class="section-title">🗂️ БЛОК 4: Витрина ИТР-Капсул Маркетплейса (ПИНы строго 200x330 pX)</h3>
-    <div class="pins-wrapper">
-        <div class="pin-b2b-card" style="border-color: #38bdf8;">
-            <b style="color: #38bdf8; font-size: 11px;">Host: СЕВЕРСТАЛЬ / 1С</b><hr style="border-color: #334155; margin: 6px 0;">
-            <p style="font-size: 10px; margin: 4px 0; color: #cbd5e1;">📦 Швеллер [ №10 МКД</p>
-            <p style="font-size: 10px; margin: 4px 0; color: #00ffcc;">💵 <b>Цена:</b> 85,000.00 ₽/т</p>
-            <p style="font-size: 10px; margin: 4px 0; color: #94a3b8;">🚛 <b>Логистика:</b> ТК ПЭК</p>
-            <button class="btn-action" onclick="alert('Заказ швеллеров ушел в МойСклад!')">Заказать за кофе</button>
-            <span class="pin-badge" style="background: #0d9488;">🛒 OZON ПАРСИНГ OK</span>
-        </div>
-        <div class="pin-b2b-card" style="border-color: #38bdf8;">
-            <b style="color: #38bdf8; font-size: 11px;">Host: ТД ТЕХНОНИКОЛЬ</b><hr style="border-color: #334155; margin: 6px 0;">
-            <p style="font-size: 10px; margin: 4px 0; color: #cbd5e1;">📦 Высокопрочный стеклохолст</p>
-            <p style="font-size: 10px; margin: 4px 0; color: #00ffcc;">💵 <b>Цена:</b> 120.00 ₽/м</p>
-            <p style="font-size: 10px; margin: 4px 0; color: #94a3b8;">🚛 <b>Логистика:</b> ТК СДЭК</p>
-            <button class="btn-action" onclick="alert('Заказ стеклохолста улетел в 1С!')">Заказать за кофе</button>
-            <span class="pin-badge" style="background: #0d9488;">🛒 WB ПАРСИНГ OK</span>
-        </div>
-        <div class="pin-b2b-card" style="border-color: #eab308;">
-            <b style="color: #eab308; font-size: 11px;">Host: ЛКМ ПРЕМИУМ МСК</b><hr style="border-color: #334155; margin: 6px 0;">
-            <p style="font-size: 10px; margin: 4px 0; color: #cbd5e1;">📦 Краска Lakra (Финиш С-2)</p>
-            <p style="font-size: 10px; margin: 4px 0; color: #eab308;">💵 <b>Цена:</b> 850.00 ₽/л</p>
-            <p style="font-size: 10px; margin: 4px 0; color: #94a3b8;">🚛 <b>Логистика:</b> Деловые Л.</p>
-            <button class="btn-action" style="background:#d97706;" onclick="alert('Позиция краски Lakra заблокирована в 1С.')">Резерв 1С</button>
-            <span class="pin-badge" style="background: #d97706;">🛒 АКТУАЛЬНО 100%</span>
-        </div>
-        <div class="pin-b2b-card" style="border-color: #38bdf8;">
-            <b style="color: #38bdf8; font-size: 11px;">Host: СТРОЙКОМПЛЕКТ СПБ</b><hr style="border-color: #334155; margin: 6px 0;">
-            <p style="font-size: 10px; margin: 4px 0; color: #cbd5e1;">📦 Шпатлевка Limonapro</p>
-            <p style="font-size: 10px; margin: 4px 0; color: #00ffcc;">💵 <b>Цена:</b> 450.00 ₽/мешок</p>
-            <p style="font-size: 10px; margin: 4px 0; color: #94a3b8;">🚛 <b>Логистика:</b> Самовывоз</p>
-            <button class="btn-action" onclick="alert('Сводный ордер шпатлевки отправлен на Склад.')">Заказать за кофе</button>
-            <span class="pin-badge" style="background: #0284c7;">👁️ VISION API READY</span>
-        </div>
-    </div>
-    <div style="clear:both;"></div>
-
-    <!-- БЛОК 5: СВЕДЕННЫЕ ТАБЛИЦЫ М-15 И КС-2 -->
-    <h3 class="section-title">📊 БЛОК 5: Сквозная накладная М-15 и Сметный Акт КС-2 с НДС 20%</h3>
-    <table>
-        <thead>
-            <tr style="background:rgba(56,189,248,0.1); color:#38bdf8;">
-                <th>Хаб 1С</th><th>📦 Наименование номенклатуры</th><th>📐 Выработка (Объём)</th><th>📏 Ед.</th><th>💰 Сумма с НДС (20%)</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr><td><b>ХАБ-01: АНТРАЦИТ</b></td><td>Полимерная шпатлевка Limonapro</td><td>1400.00</td><td>мешки</td><td><b>756,000.00 ₽</b></td></tr>
-            <tr><td><b>ХАБ-02: НЕОН ХОЛД</b></td><td>Латексная краска Lakra (Финиш С-2)</td><td>100.00</td><td>литры</td><td><b>102,000.00 ₽</b></td></tr>
-            <tr><td><b>ХАБ-03: КВАНТ РЕЗЕРВ</b></td><td>Опорный швеллер [ №10</td><td>4.00</td><td>штуки</td><td><b>72,000.00 ₽</b></td></tr>
-        </tbody>
-    </table>
-    
-    <div style="background: #1e293b; padding: 20px; border-radius: 8px; border: 1px solid #38bdf8;">
-        <p>● Общая стоимость из МойСклад без НДС: <b>811,000.00 руб.</b> | ● Авто-НДС (20%): <b>162,200.00 руб.</b></p>
-        <p style="font-size: 16px; color: #00f2fe; margin:0;"><b>● ИТОГО К ОПЛАТЕ ЗАКАЗЧИКОМ С УЧЕТОМ НДС: 973,200.00 руб.</b></p>
-    </div>
-
-    <hr style="border-color: #334155; margin-top: 40px;">
-    <div style="font-size: 11px; color: #64748b; text-align: center;">
-        Miroha Cloud Platform v71.1 — Чистокровный Django-Монолит кластера FAMILYMIRO | Свободно ОЗУ хоста: 153 МБ
-    </div>
+    <script src="/static/search_mesh.js"></script>
 </body>
 </html>
