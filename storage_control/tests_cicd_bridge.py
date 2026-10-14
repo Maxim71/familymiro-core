@@ -16,8 +16,6 @@ def run_monolith_cicd_audit():
     }
     
     session = requests.Session()
-    session.headers.update({"User-Agent": "Miroha-Immortal-Orchestrator-v94.0"})
-    
     success_count = 0
     for name, url in endpoints.items():
         try:
@@ -31,8 +29,10 @@ def run_monolith_cicd_audit():
             print(f"   🔴 СБОЙ СОКЕТА: {name} ➔ Ошибка: {str(err)}")
             
     print("=============================================================")
-    print("🦔  МОНИТОР ЕЖИКА: Снабжение Склада М19, Плеер Блогеров и ТТН активны в ОЗУ!")
-    print("🔱  VERDICT: Сквозной CI/CD пайплайн Бронепоезда СТАБИЛЕН. Зажимы сняты.")
+    if success_count == len(endpoints):
+        print("🔱  VERDICT: Сквозной CI/CD пайплайн Бронепоезда СТАБИЛЕН. Зажимы сняты.")
+    else:
+        print("⚠️  VERDICT: Контур частично дестабилизирован. Проверить сокеты.")
     print("=============================================================\n")
 
 if __name__ == "__main__":
