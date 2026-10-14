@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import os, sys, requests
+import sys, requests
 sys.path.append('/root/app')
 
 def run_monolith_cicd_audit():
@@ -9,14 +9,14 @@ def run_monolith_cicd_audit():
     
     endpoints = {
         "1. Главное Игровое Лобби (Django Монолит)": "http://127.0.0",
-        "2. Вагон B2B-Снабжения (WinRAR Шаблон)  ": "http://127.0.0api/v5/openpyxl-parser/",
+        "2. Вагон B2B-Снабжения (Каталог СУБД)  ": "http://127.0.0api/v5/products/catalog/",
         "3. Блогерский Шлюз WB-II (СУБД & Маржа) ": "http://127.0.0api/v5/blogger/max/",
         "4. Асинхронный Тьютор-Модуль (Flask)    ": "http://127.0.0",
         "5. Асинхронная Борд-Панель ПТО (FastAPI)": "http://127.0.0"
     }
     
     session = requests.Session()
-    session.headers.update({'User-Agent': 'Miroha-CI-CD-Bot-v3.0'})
+    session.headers.update({'User-Agent': 'Miroha-CI-CD-Bot-v4.5'})
     
     success_count = 0
     for name, url in endpoints.items():
@@ -28,13 +28,13 @@ def run_monolith_cicd_audit():
             else:
                 print(f"   🔴 ВНИМАНИЕ: {name} ➔ Статус: {res.status_code}")
         except Exception as err:
-            print(f"   🔴 СБОЙ СОКЕТА: {name} ➔ Не отвечает. Ошибка: {str(err)}")
+            print(f"   🔴 СБОЙ СОКЕТА: {name} ➔ Ошибка: {str(err)}")
             
     print('=============================================================')
     if success_count == len(endpoints):
         print('🔱  VERDICT: Сквозной CI/CD пайплайн Бронепоезда СТАБИЛЕН. Зажимы сняты.')
     else:
-        print('⚠️  VERDICT: Контур частично дестабилизирован. Проверить порты.')
+        print('⚠️  VERDICT: Контур дестабилизирован. Проверить сокеты.')
     print('=============================================================\n')
 
 if __name__ == "__main__":

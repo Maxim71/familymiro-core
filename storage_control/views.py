@@ -153,3 +153,17 @@ def one_c_sync_bridge_api(request): return JsonResponse({'status': 'success'})
 def cac_metric_numpy_api(request): return JsonResponse({'status': 'success'})
 @csrf_exempt
 def seo_sitemap_xml_api(request): return JsonResponse({'status': 'success'})
+
+@csrf_exempt
+def infrastructure_docs_view(request):
+    """🦔 ЖИВАЯ ДОКУМЕНТАЦИЯ ЕЖИКА: Автоматическая карта ИТР-портов и ТРИАДЫ"""
+    return JsonResponse({
+        "platform_title": "Платформа автоматизации вечности Бронепоезда FamilyMira",
+        "status": "🟢 ВСЕ ВАГОНЫ СВЕДЕНЫ В ЕДИНЫЙ КРИСТАЛЛ АВТОНОМИИ",
+        "network_map": {
+            "Nginx Reverse Proxy": "Порты :80 и :443 (Слушают домен miroha.ru)",
+            "Django Core Monolith": "Порт :8000 (Лобби вечности, СУБД PostgreSQL)",
+            "Flask Tutor Module": "Порт :5000 (Синхронизация прямых логов)",
+            "FastAPI REST-Gateway": "Порт :8050 (Кабинет ПТО v94.0, Асинхронный экспорт)"
+        }
+    }, json_dumps_params={'ensure_ascii': False})
