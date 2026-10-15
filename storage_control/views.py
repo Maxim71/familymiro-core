@@ -1,122 +1,36 @@
 # -*- coding: utf-8 -*-
-import os, io, base64, random, requests, pyotp, openpyxl, struct, json
-from datetime import datetime
 from django.shortcuts import render
-from django.http import JsonResponse, HttpResponse
-from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from storage_control.logic_core import EzhikIntentClassifier, Universal1CHub
 
 def index_vancouver(request):
-    current_month = datetime.now().month
-    if current_month in (12, 1, 2):
-        current_season, weather_msg = 'WINTER', '❄️ Зима. Лимиты ОЗУ под замком.'
-    elif current_month in (3, 4, 5):
-        current_season, weather_msg = 'SPRING', '🌱 Весна. Реестры АР/КР/ФК активны.'
-    elif current_month in (6, 7, 8):
-        current_season, weather_msg = 'SUMMER', '☀️ Лето. Отгрузка со Склада М19 идет на полной мощности.'
-    else:
-        current_season, weather_msg = 'AUTUMN', '🍂 Осень. Пайплайны CI/CD выровнены.'
+    return render(request, "miro_monolith.html")
 
-    detected_region = "Российский Контур // Капитанский Мостик Максима"
-    ctx = {
-        "object_capital_rub": "15 000 000.00 ₽",
-        "market_status": "🇷🇺 РОССИЙСКИЙ LUXURY-КОНТУР АКТИВИРОВАН",
-        "chart_img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
-        "roles": ["MAX-ADMIN (Владелец)", "Окружение: Стабильно"],
-        "timestamp": datetime.now().strftime("%H:%M:%S"),
-        "current_season": current_season,
-        "weather_msg": weather_msg,
-        "spring_hex_view": "01af34c2",
-        "plants_dict": {},
-        "recipes_list": [f"🧪 IaC-Рецепт [{detected_region}]: Автопилот."],
-        "parsed_words": "Знахарь Максим контролирует контур безопасности смет холдинга",
-        "source_url": "https://miroha.ru",
-        "attention_sign": "Синхронизация с GitHub успешна.",
-        "surprise_token": "77777",
-        "design_theme": "RUSSIA"
-    }
-    return render(request, 'storage_control/miro_monolith.html', ctx)
-
-def pto_cabinet_view(request):
-    return render(request, "pto_cabinet.html", {"attention_sign": "ТИМ-КОНТУР АКТИВЕН"})
-
-@csrf_exempt
-def parse_pdf_and_sync_axes_api(request):
-    return JsonResponse({"status": "success", "message": "Парсер PDF активен"})
-
-@csrf_exempt
-def infrastructure_docs_view(request):
-    return JsonResponse({
-        "platform_title": "Платформа автоматизации вечности Бронепоезда FamilyMira",
-        "status": "🟢 ВСЕ ВАГОНЫ СВЕДЕНЫ В ЕДИНЫЙ КРИСТАЛЛ АВТОНОМИИ",
-        "network_map": {
-            "Nginx Reverse Proxy": "Порты :80 и :443",
-            "Django Core Monolith": "Порт :8000",
-            "Flask Tutor Module": "Порт :5000",
-            "FastAPI REST-Gateway": "Порт :8050"
-        }
-    }, json_dumps_params={'ensure_ascii': False})
-
-@csrf_exempt
-def export_cascade_data_api(request): return JsonResponse({"status": "SUCCESS"})
-def user_isolated_cabinet(request, client_id): return HttpResponse("Cabinet")
-@csrf_exempt
-def execute_ezhik_auth_api(request): return JsonResponse({'status': 'success'})
-@csrf_exempt
-def users_groups_matrix(request): return JsonResponse({'status': 'success'})
-@csrf_exempt
-def trigger_cyber_mesh_probe_api(request): return JsonResponse({'status': 'success'})
-@csrf_exempt
-def smtp_propropab_notifier_api(request): return JsonResponse({'status': 'success'})
-def generate_free_google_qr_view(request): return HttpResponse("QR")
-
-@csrf_exempt
-def parse_ar_kr_blueprint_api(request):
-    """📐 🤖 ЕЖИК ОБУЧАЕТСЯ: Глубокий парсинг разделов АР / КР и расчет логистики вечности"""
-    detected_layers = [
-        {"id": "02-АР0", "name": "Архитектурные решения. Подземная часть", "volume_m3": 450.0},
-        {"id": "11-КЖ0.3", "name": "Вертикальные конструкции -1-го этажа", "steel_tonns": 24.5},
-        {"id": "24-КМ3", "name": "Конструкции металлических лестниц", "steel_tonns": 12.8},
-        {"id": "64-ЭОМ.ЦОД", "name": "Силовое электрооборудование и освещение ЦОД", "status": "СИНХРОНИЗИРОВАНО"}
-    ]
+def classify_intent_endpoint(request):
+    user_text = request.GET.get("text", "")
+    api_input = request.GET.get("api_url", "")
+    token_input = request.GET.get("token", "")
     
-    # Каскадный расчет выгодных условий логистики
-    logistic_cost_rub = (450.0 * 320) + (37.3 * 1500)
-    saved_syndicate_margin = logistic_cost_rub * 0.12
+    # 1. Радар Яндекса
+    classifier = EzhikIntentClassifier()
+    ai_report = classifier.classify(user_text)
+    
+    # 2. Инициализация универсального ИИ-хаба 1С
+    hub_1c = Universal1CHub()
+    
+    # Отрабатываем все 3 каскадных способа в ОЗУ без повторений
+    api_status = hub_1c.execute_api_reset(api_input, token_input)
+    manual_status = hub_1c.ingest_manual_catalog(subject_id="Partner_Sub_82", file_name="ostatki_skлада.xlsx")
+    db_status = hub_1c.bypass_db_blockers()
     
     return JsonResponse({
-        "status": "success",
-        "blueprint_archive": "📦 RAR-Архив Документация_актуальная_Сплпв.rar успешно распакован в ОЗУ!",
-        "ezhik_parsed_layers": detected_layers,
-        "logistics_optimization": {
-            "optimal_carrier": "Яндекс.Грузовой & Деловые Линии (LISTEN контур)",
-            "calculated_logistic_cost": f"{logistic_cost_rub:,.2f} ₽",
-            "saved_margin_by_tonnage": f"{saved_syndicate_margin:,.2f} ₽",
-            "verdict": "🟢 РЕЛЬСЫ И КОЛЕСА СВЕДЕНЫ. Бутылочные горлышки поставок устранены Ёжиком."
+        "status": "CLASSIFY_SUCCESS",
+        "input_text": user_text,
+        "marker": "(0.0.0.23)",
+        "ai_analysis": ai_report,
+        "1c_integration_matrix": {
+            "способ_1_rest_api": api_status,
+            "способ_2_ручной_каталог": manual_status,
+            "способ_3_обход_блокировок": db_status
         }
-    }, json_dumps_params={"ensure_ascii": False})
-
-@csrf_exempt
-def analyze_plan_vs_ks2_api(request):
-    """📊 🤖 СВЕРКА ВЕЧНОСТИ: Сопоставление Спецификаций (План) и Актов КС-2 (Реальность) под 1С"""
-    plan_volume = 450.0  # Из спецификации АР/КР
-    fact_volume = 412.5  # Выкачано соколиным взглядом из PDF Акта КС-2
-    
-    delta_unused = plan_volume - fact_volume
-    status_material = "ЭКОНОМИЯ_ЛИМИТА" if delta_unused > 0 else "ПЕРЕРАСХОД"
-    
-    # Прокидываем мост к 1С и выгружаем данные в Excel-сводку прораба
-    return JsonResponse({
-        "status": "success",
-        "lerna_package": "familymira-ks2-mesh-v95.0",
-        "audit": {
-            "specification_plan_m3": plan_volume,
-            "pdf_ks2_fact_m3": fact_volume,
-            "delta_calculated_m3": round(delta_unused, 2),
-            "warehouse_m19_status": status_material
-        },
-        "one_c_sync_bridge": {
-            "bridge_status": "SYNCHRONIZED_200_OK",
-            "excel_export_path": "/root/app/staticfiles/exports/svodnaya_id_vs_ks2.xlsx",
-            "message": "🟢 Робот-Ёжик сопоставил плановые оси с актом КС-2. Избыток материала заблокирован в ОЗУ."
-        }
-    }, json_dumps_params={"ensure_ascii": False})
+    })

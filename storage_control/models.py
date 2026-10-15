@@ -124,3 +124,15 @@ class GuestMediaLog(models.Model):
     seo_source = models.CharField(max_length=100, default="WinRAR Шлюз")
     processed_by_yolo = models.BooleanField(default=True)
     entered_at = models.DateTimeField(auto_now_add=True)
+
+
+class PartnerStorePin(models.Model):
+    """🛒 23-Я ТАБЛИЦА СИНДИКАТА: ГЕО-ПИНЫ МАГАЗИНОВ И СКЛАДОВ ПАРТНЕРОВ"""
+    store_name = models.CharField(max_length=255, verbose_name="Название магазина / склада")
+    material_type = models.CharField(max_length=100, verbose_name="Профиль снабжения (CONCRETE/METALS/BRICKS)")
+    latitude = models.FloatField(verbose_name="Гео-широта (Latitude)")
+    longitude = models.FloatField(verbose_name="Гео-долгота (Longitude)")
+    has_delivery = models.BooleanField(default=True, verbose_name="Статус доставки самосвалами")
+    is_active = models.BooleanField(default=True, verbose_name="Доступен в ОЗУ")
+
+    def __str__(self): return f"{self.store_name} ({self.material_type})"

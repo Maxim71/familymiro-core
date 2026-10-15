@@ -4,5 +4,49 @@ nohup: ignoring input
 [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
  * Running on all addresses (0.0.0.0)
  * Running on http://127.0.0.1:5000
- * Running on http://192.168.0.231:5000
+ * Running on http://192.168.0.216:5000
 [33mPress CTRL+C to quit[0m
+68.69.177.101 - - [15/Oct/2026 00:08:13] code 400, message Bad HTTP/0.9 request type ('\x16\x03\x01\x00{\x01\x00\x00w\x03\x03é\x06\x18;\x9c\x91dî90\x11\x12\x91UÚÕÁxÀëó\x08\x08èe¢S\x8f¾âûU\x00\x00\x1aÀ/À+À\x11À\x07À\x13À')
+68.69.177.101 - - [15/Oct/2026 00:08:13] "[35m[1m\x16\x03\x01\x00{\x01\x00\x00w\x03\x03é\x06\x18;\x9c\x91dî90\x11\x12\x91UÚÕÁxÀëó\x08\x08èe¢S\x8f¾âûU\x00\x00\x1aÀ/À+À\x11À\x07À\x13À\x09À\x14À[0m" HTTPStatus.BAD_REQUEST -
+68.69.177.101 - - [15/Oct/2026 00:08:13] code 400, message Bad request version ('À\x14À')
+68.69.177.101 - - [15/Oct/2026 00:08:13] "[35m[1m\x16\x03\x01\x00{\x01\x00\x00w\x03\x03\x91b\x0b4\x8bÎ\x19¶E¯\x85`O\x91o®\x06a¹®ùå\x1d\x12;LàÄJ\x0f\x0ek\x00\x00\x1aÀ/À+À\x11À\x07À\x13À\x09À\x14À[0m" HTTPStatus.BAD_REQUEST -
+68.69.177.101 - - [15/Oct/2026 00:08:13] "GET / HTTP/1.1" 200 -
+198.235.24.179 - - [15/Oct/2026 01:44:18] "GET / HTTP/1.1" 200 -
+104.248.21.104 - - [15/Oct/2026 02:58:52] "GET / HTTP/1.0" 200 -
+64.225.100.0 - - [15/Oct/2026 02:58:52] "[33mGET /solr/admin/info/system HTTP/1.1[0m" 404 -
+138.68.74.149 - - [15/Oct/2026 02:58:52] code 400, message Bad request version ('\x15\x93Ñ\x11\x97')
+138.68.74.149 - - [15/Oct/2026 02:58:52] "[35m[1m\x16\x03\x01\x01\x0c\x01\x00\x01\x08\x03\x03\x9a>õ\x91#/\x9c)¯gý¨\x9bg£<ÎjãSÙäJ\x7fbC\x179Ñ,Ë\x90 Eö9E)4¹\x04Íë8M\x19\x80\x82¼³£4\x85£Ôkù¸\x1c\x15\x93Ñ\x11\x97[0m" HTTPStatus.BAD_REQUEST -
+165.245.251.170 - - [15/Oct/2026 02:58:52] "GET / HTTP/1.1" 200 -
+64.226.118.248 - - [15/Oct/2026 02:58:52] "[33mGET /v2/_catalog HTTP/1.1[0m" 404 -
+139.59.210.62 - - [15/Oct/2026 02:58:52] code 400, message Bad request version ("\x15ê\x99÷\x00>\x13\x02\x13\x03\x13\x01À,À0\x00\x9fÌ©Ì¨ÌªÀ+À/\x00\x9eÀ$À(\x00kÀ#À'\x00gÀ")
+139.59.210.62 - - [15/Oct/2026 02:58:52] "[35m[1m\x16\x03\x01\x01$\x01\x00\x01 \x03\x03ïw2eh\x13RÒ6\x14 èJ£íÈ&Ô<:m\x08U\x10þ\x97Ñn¥Z/Ã µá\x83$ìÒP\x9a\x127(¦\x13æ\x14£Ù\x99.\x08¼D\x1d\\\x10so\x0c\x15ê\x99÷\x00>\x13\x02\x13\x03\x13\x01À,À0\x00\x9fÌ©Ì¨ÌªÀ+À/\x00\x9eÀ$À(\x00kÀ#À'\x00gÀ[0m" HTTPStatus.BAD_REQUEST -
+138.68.74.149 - - [15/Oct/2026 02:58:53] code 400, message Bad request version ('À\x13À')
+138.68.74.149 - - [15/Oct/2026 02:58:53] "[35m[1m\x16\x03\x01\x01\x0c\x01\x00\x01\x08\x03\x03\x8efUàË÷ÕC\x86ß\x7fýº\x05,;MÈ3\x85«gÒ9Øñ\x90äù`;F ¬e"EÕV\x8743¤n}×RÎ;í\x84j³}ÉÑ\x8f0\x1bA\x93±]ýÀ\x00&À+À/À,À0Ì©Ì¨À\x09À\x13À[0m" HTTPStatus.BAD_REQUEST -
+64.225.100.0 - - [15/Oct/2026 02:58:53] "[33mGET /solr/admin/cores?action=STATUS&wt=json HTTP/1.1[0m" 404 -
+209.38.245.37 - - [15/Oct/2026 03:06:38] "[33mGET /cgi-bin/authLogin.cgi HTTP/1.1[0m" 404 -
+66.132.195.123 - - [15/Oct/2026 05:02:13] code 400, message Bad request version ('À\x14À')
+66.132.195.123 - - [15/Oct/2026 05:02:13] "[35m[1m\x16\x03\x01\x05º\x01\x00\x05¶\x03\x03ß·\x84Fó7¼\x91h¿B"¦ü-»êk¥,# \x0bv£\x96¦\\f\\^§ .\x89¤O`§\x15Æ a:;hã³^p\x0d \x0bGC\x94·\x8e\x0càÞÛjÄ\x05\x00&Ì¨Ì©À/À0À+À,À\x13À\x09À\x14À[0m" HTTPStatus.BAD_REQUEST -
+66.132.195.123 - - [15/Oct/2026 05:02:19] "GET / HTTP/1.1" 200 -
+66.132.195.123 - - [15/Oct/2026 05:02:20] code 505, message Invalid HTTP version (2.0)
+66.132.195.123 - - [15/Oct/2026 05:02:20] "[35m[1mPRI * HTTP/2.0[0m" HTTPStatus.HTTP_VERSION_NOT_SUPPORTED -
+66.132.195.123 - - [15/Oct/2026 05:02:21] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+66.132.195.123 - - [15/Oct/2026 05:03:22] code 400, message Bad request version ('À\x14À')
+66.132.195.123 - - [15/Oct/2026 05:03:22] "[35m[1m\x16\x03\x01\x05º\x01\x00\x05¶\x03\x03ÍÓÊDj¬Wu½%l\x92¡êäÿJ®Â;Ç©=É\x05J\x8aç\x08böz 0o¹õ±Òìä\x93s\x1a\x8cÇañ\x95ÿ6Ø\x1b\x94z\x01ð\x13ê\x02&½ÐÛ\x04\x00&Ì¨Ì©À/À0À+À,À\x13À\x09À\x14À[0m" HTTPStatus.BAD_REQUEST -
+66.132.195.123 - - [15/Oct/2026 05:03:24] "[33mGET /ads.txt HTTP/1.1[0m" 404 -
+164.92.171.91 - - [15/Oct/2026 06:13:41] "GET / HTTP/1.0" 200 -
+139.59.210.62 - - [15/Oct/2026 06:13:41] "[33mGET /solr/admin/info/system HTTP/1.1[0m" 404 -
+165.227.171.170 - - [15/Oct/2026 06:13:41] "GET / HTTP/1.1" 200 -
+165.245.251.170 - - [15/Oct/2026 06:13:41] code 400, message Bad request version ('À\x13À')
+165.245.251.170 - - [15/Oct/2026 06:13:41] "[35m[1m\x16\x03\x01\x01\x0c\x01\x00\x01\x08\x03\x039|\x11-ÐCá\x1cËvì\x00¶²äm<q\x8f\x91\x16ecM/Å$Û\x14®Õ¢ \x82°\x99÷\x96i1ÇqwÁtl+\x9cg\x04\x88\x14#fQ\x8eP\x82ÿ\x93M¹;i\x1d\x00&À+À/À,À0Ì©Ì¨À\x09À\x13À[0m" HTTPStatus.BAD_REQUEST -
+159.65.112.174 - - [15/Oct/2026 06:13:41] code 400, message Bad HTTP/0.9 request type ('\x16\x03\x01\x01$\x01\x00\x01')
+159.65.112.174 - - [15/Oct/2026 06:13:41] "[35m[1m\x16\x03\x01\x01$\x01\x00\x01 \x03\x03§G¥\x1b¾^_\x9f\x07L[0m" HTTPStatus.BAD_REQUEST -
+165.245.251.170 - - [15/Oct/2026 06:13:41] code 400, message Bad request version ('À\x13À')
+165.245.251.170 - - [15/Oct/2026 06:13:41] "[35m[1m\x16\x03\x01\x01\x0c\x01\x00\x01\x08\x03\x03TÕÉ\x16ìj5\x08ùF»\x919lËj2#ílIU,-\x91mÕÊÌæ\x91\x07 \x05\x96U¶\x8f.\x08\x12\x0bâæ`@ïo\x8bÎ2\x86Ê§\x86\x9e\x9da¾Çg\x00I)1\x00&À+À/À,À0Ì©Ì¨À\x09À\x13À[0m" HTTPStatus.BAD_REQUEST -
+139.59.210.62 - - [15/Oct/2026 06:13:41] "[33mGET /solr/admin/cores?action=STATUS&wt=json HTTP/1.1[0m" 404 -
+164.92.226.61 - - [15/Oct/2026 06:13:42] "[33mGET /cgi-bin/authLogin.cgi HTTP/1.1[0m" 404 -
+209.38.251.87 - - [15/Oct/2026 06:34:38] "GET / HTTP/1.1" 200 -
+209.38.251.87 - - [15/Oct/2026 06:34:38] code 400, message Bad request version ('À\x13À')
+209.38.251.87 - - [15/Oct/2026 06:34:38] "[35m[1m\x16\x03\x01\x01\x0c\x01\x00\x01\x08\x03\x03ùm\x81·->\x90?GåÚ1V\x7f¯\x00zÛeì£n\x9dl%\x97Ã\x05?ü¥3 yÎ3¨Ût\x95=°\x1f2;X\x96HëÙW\x0b\x99Öúl5\x97¥Í\x17;k|\x0e\x00&À+À/À,À0Ì©Ì¨À\x09À\x13À[0m" HTTPStatus.BAD_REQUEST -
+139.59.210.62 - - [15/Oct/2026 06:40:57] "[33mGET /v2/_catalog HTTP/1.1[0m" 404 -
+198.235.24.219 - - [15/Oct/2026 08:56:08] "GET / HTTP/1.0" 200 -
+40.119.27.183 - - [15/Oct/2026 09:02:12] "[33mGET /v2/ HTTP/1.1[0m" 404 -

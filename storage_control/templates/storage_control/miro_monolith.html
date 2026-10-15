@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FamilyMira — Суверенная ИТР Платформа</title>
+    <style>
+        body { background: #000000; color: #f5f5f7; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; -webkit-font-smoothing: antialiased; }
+        .monolith-card { width: 620px; max-width: 90%; padding: 40px; text-align: center; box-sizing: border-box; }
+        .logo-zone { font-size: 28px; font-weight: 700; color: #ffffff; letter-spacing: -0.5px; margin-bottom: 8px; text-transform: uppercase; }
+        .subtitle { font-size: 14px; color: #86868b; letter-spacing: 0.5px; margin-bottom: 40px; text-transform: uppercase; font-weight: 500; }
+        .form-group { margin-bottom: 25px; text-align: left; }
+        .form-group label { display: block; font-size: 11px; color: #86868b; margin-bottom: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        .form-control { width: 100%; padding: 16px; background: #121212; border: 1px solid #1d1d1f; border-radius: 12px; color: #ffffff; font-size: 14px; box-sizing: border-box; transition: 0.2s; }
+        .form-control:focus { border-color: #8b5cf6; outline: none; background: #161617; }
+        .btn-gate { width: 100%; padding: 16px; background: #ffffff; color: #000000; border: none; border-radius: 12px; font-weight: 600; font-size: 13px; cursor: pointer; text-transform: uppercase; transition: 0.2s; letter-spacing: 0.5px; margin-top: 10px; }
+        .btn-gate:hover { background: #f5f5f7; transform: translateY(-0.5px); }
+        .ezhik-dialog { margin-top: 30px; background: #121212; border: 1px solid #1d1d1f; padding: 25px; border-radius: 14px; display: none; text-align: left; font-size: 13px; line-height: 1.6; }
+        .dynamic-table { display: none; margin-top: 30px; padding: 25px; background: #121212; border: 1px dashed #1d1d1f; border-radius: 14px; text-align: left; }
+        .module-badge { background: #1d1d1f; color: #f5f5f7; padding: 5px 12px; border-radius: 6px; font-size: 11px; display: inline-block; margin: 5px; font-weight: 500; border: 1px solid #333336; }
+        .info-footer { margin-top: 50px; border-top: 1px solid #1d1d1f; padding-top: 25px; font-size: 11px; color: #434344; letter-spacing: 0.2px; }
+        .info-link { color: #86868b; text-decoration: none; transition: 0.2s; font-weight: 600; }
+        .info-link:hover { color: #ffffff; }
+    </style>
+</head>
+<body>
+    <div class="monolith-card">
+        <div class="logo-zone">FamilyMira</div>
+        <div class="subtitle">Суверенный IT-Ковчег // Платформа Miro Core [1.6]</div>
+
+        <div class="form-group">
+            <label>Идентификация (Имя, Ник или Telegram ID):</label>
+            <input type="text" id="guest_id" class="form-control" value="Telegram_ID_777_Maxim">
+        </div>
+
+        <div class="form-group">
+            <label>Кастовый ИТР-статус структуры:</label>
+            <select id="bird_status" class="form-control" style="background: #121212;" onchange="askEzhikQuestions()">
+                <option value="" disabled selected>-- ВЫБЕРИТЕ УРОВЕНЬ ДОСТУПА --</option>
+                <option value="SAMOZAN">Розничный Инвестор / Самозанятый 🦆</option>
+                <option value="IP">Индивидуальный Прораб (ИП) 🦅</option>
+                <option value="OOO">Строительный Штаб Корпорации (ООО) 👑</option>
+            </select>
+        </div>
+
+        <div id="ezhik_zone" class="ezhik-dialog">
+            <div style="color: #ffffff; font-weight: 600; margin-bottom: 12px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px;">🦔 Запрос Робота-Ёжика:</div>
+            <div id="ezhik_question" style="color: #86868b; margin-bottom: 20px;"></div>
+            <div id="ezhik_inputs"></div>
+            <button class="btn-gate" onclick="generateDigitalTable()">Активировать ядро и соединить контур</button>
+        </div>
+
+        <div id="digital_table" class="dynamic-table">
+            <div style="font-weight: 700; color: #ffffff; text-transform: uppercase; border-bottom: 1px solid #1d1d1f; padding-bottom: 12px; margin-bottom: 15px; font-size: 14px;" id="table_title"></div>
+            <div id="table_content" style="font-size: 13px; color: #86868b; margin-bottom: 20px; line-height: 1.5;"></div>
+            <div style="font-weight: 600; font-size: 11px; color: #86868b; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Соединенные модули базы данных:</div>
+            <div id="activated_modules"></div>
+            <button class="btn-gate" style="background: #121212; color: #ffffff; border: 1px solid #333336;" onclick="location.reload()">Сбросить сессию доступа 🔄</button>
+        </div>
+
+        <div class="info-footer">
+            Вековой Сейф опечатан до 2059 года. Токио-Чернь Слой 0 стабилен. <br>
+            <span style="color: #333336;">Код СБП: INV-ALFA-288003 // Капитан Максим // СУБД Postgres АКТИВНА</span>
+            <div style="margin-top: 15px;"><a href="/admin/" class="info-link">🔑 Резервный командный пункт Django (Админка)</a></div>
+        </div>
+    </div>
+
+    <script>
+        function askEzhikQuestions() {
+            var status = document.getElementById("bird_status").value;
+            var zone = document.getElementById("ezhik_zone");
+            var q = document.getElementById("ezhik_question");
+            var inputs = document.getElementById("ezhik_inputs");
+            var table = document.getElementById("digital_table");
+            table.style.display = "none";
+            zone.style.display = "block";
+            inputs.innerHTML = "";
+            if (status === "SAMOZAN") {
+                q.innerHTML = "«Приветствую. Система соединена с miroha_db. Готовы выгрузить аналитику цен снабжения и график занятости ИТР?»";
+                inputs.innerHTML = "<label style='font-size:11px; color:#86868b;'>Целевые материалы:</label><input type='text' id='samozan_focus' class='form-control' value='Срез цен на бетон, инертные материалы, загрузка бригад'>";
+            } else if (status === "IP") {
+                q.innerHTML = "«На связи. Соединяем исполнительный контур ПТО: АОСР, расчет КС-2, КС-3 и Общие журналы работ.»";
+                inputs.innerHTML = "<label style='font-size:11px; color:#86868b;'>Целевой технадзор:</label><input type='text' id='ip_object' class='form-control' value='Формирование АОСР, Общий Журнал Работ №3'>";
+            } else if (status === "OOO") {
+                q.innerHTML = "«Доступ уровня Корпорации. Синхронизируем таблицы СУБД, инвентаризацию складов 1С и гео-базу снабжения партнеров.»";
+                inputs.innerHTML = "<label style='font-size:11px; color:#86868b;'>Масштаб мониторинга:</label><input type='text' id='ooo_scope' class='form-control' value='Штаб ПТО, 3 склада корпорации, интеграция с 1С'>";
+            }
+        }
+        function generateDigitalTable() {
+            var status = document.getElementById("bird_status").value;
+            var zone = document.getElementById("ezhik_zone");
+            var table = document.getElementById("digital_table");
+            var title = document.getElementById("table_title");
+            var content = document.getElementById("table_content");
+            var mods = document.getElementById("activated_modules");
+            zone.style.display = "none";
+            table.style.display = "block";
+            mods.innerHTML = "";
+            if (status === "SAMOZAN") {
+                title.innerHTML = "Соединение: Обзорный Мониторинг Инвестора";
+                content.innerHTML = "Контур соединен пулей: Выведены актуальные котировки строительного сырья, распределение команд ИТР на объектах и коммерческие предложения холдинга.";
+                mods.innerHTML = "<span class='module-badge'>📊 РЫНОЧНЫЕ ЦЕНЫ</span><span class='module-badge'>📡 НОВОСТИ СТРОЙКИ</span><span class='module-badge'>📅 ГРАФИК КОМАНД</span>";
+            } else if (status === "IP") {
+                title.innerHTML = "Соединение: Исполнительный ИТР-Стол Прораба";
+                content.innerHTML = "Автоматизация рутины запущена: База данных активна, Журнал общих работ автоматически калькулирует объемы и подготавливает акты скрытых работ.";
+                mods.innerHTML = "<span class='module-badge'>📝 ГЕНЕРАТОР АОСР</span><span class='module-badge'>📈 РАСЧЕТ КС-2 / КС-3</span><span class='module-badge'>📒 ОБЩИЙ ЖУРНАЛ РАБОТ</span>";
+            } else if (status === "OOO") {
+                title.innerHTML = "Соединение: Цифровая Крепость Штаба ООО";
+                content.innerHTML = "Enterprise-учет соединен: Включена сквозная директорская аналитика маржинальности, инвентаризация складов и синхронизация с 1С. Подключен гео-поиск ближайших магазинов партнеров для мгновенного снабжения объектов.";
+                mods.innerHTML = "<span class='module-badge'>📦 1С:СКЛАДЫ</span><span class='module-badge'>💰 АНАЛИЗ ЧИСТОЙ МАРЖИ</span><span class='module-badge'>🛠️ УЧЕТ ДЕФЕКТОВ</span><span class='module-badge'>🛒 ГЕО-СНАБЖЕНИЕ</span>";
+            }
+        }
+    </script>
+</body>
+</html>
