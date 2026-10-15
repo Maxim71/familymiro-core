@@ -1,3 +1,6 @@
-*
-!web_portal.py
-!style.css
+hello/
+.venv/
+venv/
+.git
+*.pyc
+__pycache__

@@ -1,32 +1,15 @@
-import hashlib
+# -*- coding: utf-8 -*-
 import datetime
 
 class TritonVideoTranslator:
     @staticmethod
     def parse_tiktok_and_translate(video_id):
-        """
-        ИИ-Парсинг трендов TikTok, авто-перевод b2b видео КНР/КНДР на русский язык через Triton AI
-        """
-        return {
-            "video_id": video_id,
-            "source": "TikTok / Douyin (China Hub) / КНДР LIVE",
-            "triton_inference": "Triton Server active: Сжатие -65%, чистка звука по ГОСТу выполнены",
-            "translation_status": "Успешный авто-перевод на РУССКИЙ (Синхронный дубляж ИИ)",
-            "watermark": "Накложен тонкий плавный неоновый знак PROEKT MIRO v1.6"
-        }
+        return {"video_id": video_id, "source": "TikTok/Douyin", "triton_inference": "Active", "translation_status": "Успешный авто-перевод на РУССКИЙ", "watermark": "PROEKT MIRO v1.6"}
 
 class KafkaTransformsStream:
     @staticmethod
     def process_itr_chat(message_text, author):
-        """
-        Kafka Transforms: мгновенная обработка ИТР-чата и стримов в ОЗУ хоста
-        """
-        return {
-            "author": author,
-            "msg": message_text,
-            "kafka_partition": "partition_block_63_eternity",
-            "status": "ТРАНСЛЯЦИЯ В РЕАЛЬНОМ ВРЕМЕНИ ОК"
-        }
+        return {"author": author, "msg": message_text, "kafka_partition": "partition_block_63_eternity", "status": "ТРАНСЛЯЦИЯ ОК"}
 
 class КапсулаВечностиДочки:
     @staticmethod

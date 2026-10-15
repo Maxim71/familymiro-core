@@ -1,58 +1,81 @@
 version: '3.8'
 
+networks:
+  app_default:
+    driver: bridge
+
 services:
-  # Вагон 1: ВЕЧНОСТЬ (База данных PostgreSQL)
-  miro_postgres_evolution:
+  db:
     image: postgres:15-alpine
     container_name: miro_postgres_evolution
     restart: always
-    ports:
-      - "127.0.0.1:5432:5432"
     environment:
-      POSTGRES_DB: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+      POSTGRES_DB: miroha_db
+      POSTGRES_USER: maxim_admin
+      POSTGRES_PASSWORD: MirohaCryptoPostgres2026
+    ports:
+      - "5432:5432"
+    networks:
+      - app_default
 
-  # Вагон 2: СИГНАЛИЗАЦИЯ ОЧЕРЕДЕЙ (Redis брокер)
-  miro_redis_broker:
+  redis:
     image: redis:7-alpine
     container_name: miro_redis_broker
     restart: always
     ports:
-      - "127.0.0.1:6379:6379"
+      - "6379:6379"
+    networks:
+      - app_default
 
-  # Вагон 3: СТРОЙКА (Главный Django-Монолит)
-  miro_web_monolith:
-    image: python:3.10-slim
+  web:
+    image: app_miro_web_monolith:latest
     container_name: miro_web_monolith
     restart: always
-    working_dir: /root/app
-    volumes:
-      - /root/app:/root/app
-    ports:
-      - "0.0.0.0:8000:8000"
-    command: sh -c "pip install -r requirements.txt && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     depends_on:
-      - miro_postgres_evolution
-      - miro_redis_broker
+      - db
+      - redis
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    networks:
+      - app_default
 
-  # Вагон 4: МЕЗОНИН СНАБЖЕНИЯ (Flask контур)
   miro_marketing_flask:
     image: python:3.10-slim
     container_name: miro_marketing_flask
     restart: always
+    volumes:
+      - .:/app
     ports:
-      - "127.0.0.1:5000:5000"
+      - "5000:5000"
+    command: sh -c "pip install --no-cache-dir flask && python3 /app/app_flask.py"
+    networks:
+      - app_default
 
-  # Вагон 5: АСИНХРОННЫЙ ВЕБ-ЭФИР (Tornado Core)
   miro_tornado_core:
     image: python:3.10-slim
     container_name: miro_tornado_core
     restart: always
+    volumes:
+      - .:/app
     ports:
-      - "127.0.0.1:8888:8888"
+      - "8888:8888"
+    command: sh -c "pip install --no-cache-dir tornado && python3 /app/app_tornado.py"
+    networks:
+      - app_default
 
-volumes:
-  postgres_data:
+  nginx:
+    image: nginx:stable-alpine
+    container_name: miro_nginx_proxy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - .:/app
+    networks:
+      - app_default

@@ -1,9 +1,10 @@
 FROM python:3.10-slim
+ENV PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV LANG=C.UTF-8
+# RUN apt-get update && apt-get install -y build-essential libpq-dev ffmpeg libsm6 libxext6 && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
-COPY style.css /app/style.css
-COPY web_portal.py /app/web_portal.py
-COPY core_director.py /app/core_director.py
-COPY core_rollback.py /app/core_rollback.py
-RUN pip install --timeout=100 --no-cache-dir --index-url https://yandex.ru streamlit==1.32.0 pandas==2.2.0 pillow==10.2.0
-EXPOSE 3500
-CMD ["streamlit", "run", "web_portal.py", "--server.port=3500", "--server.address=0.0.0.0", "--server.enableCORS=false", "--server.enableXsrfProtection=false", "--server.maxUploadSize=2048"]
+COPY requirements.txt /app/
+RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir -r requirements.txt
+COPY . /app/
+EXPOSE 8000
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
