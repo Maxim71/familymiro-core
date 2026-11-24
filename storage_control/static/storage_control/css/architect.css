@@ -1,0 +1,165 @@
+﻿/* 👑 ПЕРЕМЕННЫЕ И СТИЛИ КОМАНДНОГО ПУЛЬТА (FAMILYMIRO 1.6 + v1.25.0) */
+:root {
+    --bg-dark: #060913;
+    --panel-bg: rgba(10, 16, 32, 0.7);
+    --neon-blue: #66fcf1;
+    --gold-glow: #f5a623;
+    --text-main: #ccced1;
+    --error-red: #ef4444;
+    --success-green: #10b981;
+}
+
+body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    background-color: #0F172A;
+    color: #E2E8F0;
+    margin: 0;
+    padding: 0;
+}
+
+/* 🎛️ СКВОЗНАЯ НАВИГАЦИЯ И ХЕДЕР */
+.top-navigation { background: #1E293B; padding: 12px 40px; border-bottom: 1px solid #334155; display: flex; align-items: center; gap: 10px; }
+.nav-label { color: #64748B; font-size: 11px; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
+.nav-item-link { color: #38BDF8; text-decoration: none; margin-right: 15px; font-weight: bold; font-size: 13px; transition: 0.2s; }
+.nav-item-link:hover { color: #60A5FA; text-decoration: underline; }
+
+.header-bar { background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%); padding: 25px 40px; border-bottom: 3px solid #1F497D; display: flex; justify-content: space-between; align-items: center; }
+.header-title h1 { color: #FFD700; margin: 0; font-size: 24px; text-transform: uppercase; }
+.header-title p { color: #94A3B8; margin: 5px 0 0 0; font-size: 13px; }
+
+/* 🧱 ДВУХКОЛОНОЧНАЯ СЕТКА ПОРТАЛА */
+.main-container { max-width: 1400px; margin: 30px auto; padding: 0 20px; display: grid; grid-template-columns: 320px 1fr; gap: 30px; position: relative; }
+@media (max-width: 900px) { .main-container { grid-template-columns: 1fr; } }
+
+.sidebar-wrapper, .content-area { min-width: 0; box-sizing: border-box; }
+.sidebar-card { background: #1E293B; border-radius: 12px; padding: 25px; border: 1px solid #334155; margin-bottom: 20px; }
+.sidebar-card h3 { color: #38BDF8; margin-top: 0; border-bottom: 1px dashed #475569; padding-bottom: 8px; font-size: 16px; }
+.menu-link { display: block; color: #94A3B8; padding: 10px 12px; text-decoration: none; border-radius: 6px; margin: 8px 0; font-size: 14px; font-weight: 500; }
+.menu-link:hover, .menu-link.active { background: #1F497D; color: #FFFFFF; }
+.menu-link.active { border-left: 4px solid #FFD700; }
+
+/* 📦 КАРТОЧКИ, ФОРМЫ И ТАБЛИЦЫ */
+.upload-box, .portal-card { background: #1E293B; border: 1px solid #334155; padding: 25px; border-radius: 12px; margin-top: 25px; max-width: 100%; box-sizing: border-box; }
+.form-select, .form-file { width: 100%; padding: 12px; background: #0F172A; color: white; border: 1px solid #475569; border-radius: 6px; box-sizing: border-box; font-size: 14px; margin-top: 8px; margin-bottom: 15px; }
+.btn-submit { display: block; background: #22C55E; color: #0F172A; font-weight: bold; border: none; padding: 15px 25px; border-radius: 6px; cursor: pointer; font-size: 15px; text-transform: uppercase; letter-spacing: 1px; width: 100%; box-shadow: 0 4px 15px rgba(34,197,94,0.3); transition: 0.2s; }
+.btn-submit:hover { background: #4ADE80; transform: translateY(-1px); }
+
+.alert-error { background: rgba(239,68,68,0.1); color: #F87171; padding: 15px; border-radius: 6px; margin-bottom: 25px; border-left: 5px solid #EF4444; font-family: monospace; font-size: 13px; }
+
+.pto-table { width: 100%; max-width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; box-sizing: border-box; }
+.pto-table th { background: #1F497D; color: white; padding: 12px 15px; text-align: left; border: 1px solid #334155; font-weight: bold; }
+.pto-table td { padding: 12px 15px; border: 1px solid #334155; background: #1E293B; color: #E2E8F0; }
+.pto-table tr:hover td { background: #243354; }
+.badge-stage { background: #7030A0; color: white; padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+
+/* 📐 ПТО-ШТАМП И PINTEREST-ПИН */
+.pto-stamp-box { margin-top: 40px; border: 3px double #38BDF8; padding: 15px; background: #0F172A; width: 320px; max-width: 100%; float: right; font-family: 'Courier New', monospace; box-shadow: 0 0 15px rgba(56,189,248,0.15); border-radius: 4px; box-sizing: border-box; }
+.stamp-row { display: flex; justify-content: space-between; border-bottom: 1px solid #1E293B; padding: 4px 0; font-size: 11px; color: #94A3B8; }
+.stamp-row:last-child { border-bottom: none; }
+.stamp-bold { color: #FFD700; font-weight: bold; }
+
+.pinterest-container { margin-top: 25px; display: flex; justify-content: flex-start; }
+.pinterest-pin { width: 223px; height: 230px; background: #1E293B; border: 2px solid #38BDF8; border-radius: 12px; padding: 12px; box-sizing: border-box; overflow-y: auto; overflow-x: hidden; position: relative; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); }
+.pin-img-wrapper { display: flex; justify-content: center; align-items: center; margin-bottom: 10px; background: #0F172A; border-radius: 8px; padding: 5px; }
+.pin-img-cert { width: 90px; height: 110px; object-fit: cover; border-radius: 4px; }
+.pin-img-default { width: 80px; height: 80px; object-fit: contain; }
+.pin-mini-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 8px; }
+.pin-mini-table th { background: #1F497D; color: #FFD700; padding: 4px; font-weight: bold; text-align: left; }
+.pin-mini-table td { padding: 4px; border-bottom: 1px solid #334155; color: #E2E8F0; font-family: monospace; }
+
+/* === ASTRA-STYLE NESTED CARDS & 5 CUBES WORKSPACE === */
+.astra-cube-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    background: #0B1120;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    padding: 6px;
+    margin-bottom: 12px;
+}
+
+.astra-cube-tab {
+    flex: 1;
+    min-width: 150px;
+    text-align: center;
+    padding: 8px 10px;
+    background: #1E293B;
+    border: 1px solid #334155;
+    border-radius: 4px;
+    color: #94A3B8;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: bold;
+    transition: all 0.15s ease;
+}
+
+.astra-cube-tab:hover {
+    border-color: #38BDF8;
+    color: #F8FAFC;
+}
+
+.astra-cube-tab.active {
+    background: #0F294A;
+    border: 1px solid #38BDF8;
+    box-shadow: inset 0 2px 0 #38BDF8;
+    color: #FFFFFF;
+}
+
+/* Внешняя рабочая станция Куба */
+.astra-shell-card {
+    background: #0F172A;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 14px;
+}
+
+.astra-shell-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #1E293B;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #38BDF8;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+/* Сетка вложенных карточек внутри Куба */
+.astra-nested-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.astra-inner-card {
+    background: #1E293B;
+    border: 1px solid #475569;
+    border-left: 3px solid #38BDF8;
+    border-radius: 4px;
+    padding: 12px;
+}
+
+.astra-inner-card.accent-gold { border-left-color: #FFD700; }
+.astra-inner-card.accent-green { border-left-color: #22C55E; }
+.astra-inner-card.accent-alert { border-left-color: #EF4444; }
+
+.astra-inner-title {
+    font-size: 12px;
+    font-weight: bold;
+    color: #E2E8F0;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.rec-type-tep { color: #38BDF8; }
+.rec-type-limit { color: #F59E0B; }
+.rec-type-buy { color: #4ADE80; }
+.deficit-alert { color: #EF4444; }
+.deficit-ok { color: #10b981; }

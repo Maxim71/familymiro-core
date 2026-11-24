@@ -1,0 +1,33 @@
+# -*- coding: utf-8 -*-
+from django.urls import path
+from . import views
+
+from .views import (
+    AdvancedConstructionControlView,
+    TrackerSearchAPIView,
+    PurchaseRequestAPIView,
+    parse_trigger,
+    export_staff_excel_view,
+    export_customer_gpr_view,
+    export_aosr_docx_view,
+    mark_passport_view,
+    export_dynamic_table_view,
+)
+
+app_name = 'storage_control'
+
+urlpatterns = [
+    path('', AdvancedConstructionControlView.as_view(), name='index_family'),
+    path('dashboard/', AdvancedConstructionControlView.as_view(), name='dashboard'),
+    path('api/tracker-search/', TrackerSearchAPIView.as_view(), name='tracker_search'),
+    path('api/purchase-requests/', PurchaseRequestAPIView.as_view(), name='purchase_requests'),
+    path('api/parse-trigger/', parse_trigger, name='parse_trigger'),
+    path('export/staff-excel/', export_staff_excel_view, name='export_staff_excel'),
+    path('export/customer-gpr/', export_customer_gpr_view, name='export_customer_gpr'),
+    path('export/aosr/', export_aosr_docx_view, name='export_aosr'),
+    path('mark-passport/', mark_passport_view, name='mark_passport'),
+    path("export-dynamic-table/", export_dynamic_table_view, name="export_dynamic_table"),
+    path("marka/<path:slug>/", views.mark_passport_seo_alias_view, name="mark_passport_seo_alias"),
+    path("api/search-async/", views.async_search_api_view, name="async_search_api"),
+
+]

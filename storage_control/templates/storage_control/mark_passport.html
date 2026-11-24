@@ -1,0 +1,119 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Паспорт Марки: {{ query }}</title>
+    <link rel="stylesheet" href="{% static 'storage_control/css/mark_passport.css' %}">
+</head>
+<body>
+<div class="mp-container">
+    <div class="mp-topbar">
+        <a href="/" class="mp-back">← Вернуться в штабную ведомость ПТО</a>
+        <div class="mp-slug-box">
+            <span>https://xn----7sbfkf5bif1g.ru{{ slug_alias }}/</span>
+            <button type="button" id="mp-copy-slug" class="mp-copy-btn" data-url="https://xn----7sbfkf5bif1g.ru{{ slug_alias }}/">📋 Копировать ссылку</button>
+        </div>
+    </div>
+
+    <div class="mp-hero">
+        <span class="mp-badge">{{ tech.category }}</span>
+        <h1 class="mp-title">{{ query }}</h1>
+        <p><strong>Расшифровка:</strong> {{ tech.decoded }}</p>
+        <p style="color: var(--text-muted); margin-bottom: 0;"><strong>Инженерная физика:</strong> {{ tech.physics }}</p>
+
+        <div class="mp-kpi-strip">
+            <div class="mp-kpi">
+                <div class="mp-kpi-label">Найдено томов РД</div>
+                <div class="mp-kpi-val val-ok">{{ history_timeline|length }} том.</div>
+            </div>
+            <div class="mp-kpi">
+                <div class="mp-kpi-label">Позиций в закупке</div>
+                <div class="mp-kpi-val val-warn">{{ requests|length }} поз.</div>
+            </div>
+            <div class="mp-kpi">
+                <div class="mp-kpi-label">Остаток на складе</div>
+                <div class="mp-kpi-val val-ok">{% if warehouse %}{{ warehouse.0.stock_balance }} {{ warehouse.0.unit }}{% else %}0 ед.{% endif %}</div>
+            </div>
+            <div class="mp-kpi">
+                <div class="mp-kpi-label">BIM-сверки узлов</div>
+                <div class="mp-kpi-val {% if bim_links %}val-err{% else %}val-ok{% endif %}">{{ bim_links|length }} связ.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mp-tabs">
+        <button type="button" class="mp-tab active" data-target="pane-tech">🛠️ Монтаж и Калькулятор смен</button>
+        <button type="button" class="mp-tab" data-target="pane-history">📜 История по томам и BIM ({{ history_timeline|length }})</button>
+        <button type="button" class="mp-tab" data-target="pane-schemes">📐 Схемы узлов и чертежи ({{ diagrams|length }})</button>
+    </div>
+
+    <div id="pane-tech" class="mp-pane active">
+        <div class="mp-grid-2">
+            <div class="mp-card">
+                <h3>🛠️ Полевая шпаргалка монтажника</h3>
+                <ul>
+                    {% for tip in tech.field_tips %}<li style="margin-bottom:8px;">{{ tip }}</li>{% endfor %}
+                </ul>
+                <h4 style="color: var(--accent-gold);">🔄 Прямые аналоги без пересогласования:</h4>
+                <ul>
+                    {% for an in tech.analogs %}<li>{{ an }}</li>{% endfor %}
+                </ul>
+            </div>
+
+            <div class="mp-card">
+                <h3>🧮 Живой калькулятор объёма, запаса и смен</h3>
+                <div class="mp-calc-row">
+                    <label>Объём: <input type="number" id="mp-calc-qty" class="mp-input" value="{% if requests %}{{ requests.0.required_qty|stringformat:'.2f' }}{% else %}100{% endif %}"></label>
+                    <label>Запас %: <input type="number" id="mp-calc-reserve" class="mp-input" value="5"></label>
+                    <label>Норма/см.: <input type="number" id="mp-calc-rate" class="mp-input" value="40"></label>
+                </div>
+                <div id="mp-calc-output" class="mp-calc-result"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="pane-history" class="mp-pane">
+        <div class="mp-grid-2">
+            <div class="mp-card">
+                <h3>📜 Хронология Марки в томах проекта</h3>
+                {% for h in history_timeline %}
+                    <div style="padding:8px 0; border-bottom:1px solid var(--border);">
+                        <strong>{{ h.doc_title }}</strong> ({{ h.revision }}) — Листы: <span style="color:var(--accent-gold);">{{ h.pages|join:", " }}</span>
+                    </div>
+                {% empty %}
+                    <p style="color: var(--text-muted);">Совпадений в других томах пока не найдено.</p>
+                {% endfor %}
+            </div>
+
+            <div class="mp-card">
+                <h3>🔗 Сквозные BIM-связи и коллизии из БД</h3>
+                {% for b in bim_links %}
+                    <div class="mp-bim-item {% if b.link_status == 'COLLISION' %}bim-collision{% else %}bim-matched{% endif %}">
+                        <strong>{{ b.bim_tag }}</strong><br>{{ b.engineering_note }}
+                    </div>
+                {% empty %}
+                    <p style="color: var(--text-muted);">Коллизий по этой марке не зафиксировано.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div id="pane-schemes" class="mp-pane">
+        <div class="mp-card">
+            <h3>📐 Схемы узлов и чертежи (нажмите на картинку для увеличения)</h3>
+            <div class="mp-img-grid">
+                {% for img_url in diagrams %}
+                    <div class="mp-img-card"><img src="{{ img_url }}" alt="Схема {{ query }}"></div>
+                {% empty %}
+                    <p style="color: var(--text-muted);">Схемы загружаются при наличии доступа к сети.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="mp-lightbox" class="mp-lightbox"><img id="mp-lightbox-img" src="" alt="Увеличенная схема"></div>
+<script src="{% static 'storage_control/js/mark_passport.js' %}"></script>
+</body>
+</html>

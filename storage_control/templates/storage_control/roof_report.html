@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>❄️ ИИ-Рапорт Технадзора Кровли</title>
+    <style>
+        body { background-color: #040810; color: #8ec5fc; font-family: monospace; padding: 40px; text-align: center; }
+        .glacier-box { max-width: 700px; margin: 0 auto; border: 1px solid #00f2fe; background: #091120; padding: 30px; border-radius: 8px; box-shadow: 0 0 30px rgba(0,242,254,0.2); }
+        h1 { color: #fff; text-shadow: 0 0 10px #00f2fe; }
+        .neon-status { color: #00ff00; font-weight: bold; text-shadow: 0 0 8px #00ff00; }
+    </style>
+</head>
+<body>
+    <div class="glacier-box">
+        <h1>❄️ ВЕРИФИКАЦИЯ КОНТРОЛЯ ИСПОЛНИТЕЛЬНЫХ РАБОТ</h1>
+        <p>ИИ-Эксперт: <b>{{ ezhik }}</b> | Региональный код: <b>{{ country_code }}</b></p>
+        <div style="text-align: left; background:#040810; padding:20px; border-radius:6px; border-left: 3px solid #00f2fe; margin-top:20px;">
+            <p>📋 Статус ТБ: <span class="neon-status">{{ roof_result.tb_status }}</span></p>
+            <p>🎯 Качество: <b>{{ roof_result.quality_status }}</b></p>
+            <p>🔬 Спецификация: <i>{{ roof_result.spec }}</i></p>
+        </div>
+    </div>
+</body>
+</html>

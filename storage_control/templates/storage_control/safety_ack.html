@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Журнал ОТ и ТБ — Подтверждение инструктажа</title>
+    <link rel="stylesheet" href="{% static 'storage_control/css/architect.css' %}">
+</head>
+<body style="padding: 16px; display: flex; justify-content: center;">
+    <div class="upload-box" style="max-width: 540px; width: 100%; border-color: #F97316;">
+        <div style="background: #7C2D12; color: #FFEDD5; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; margin-bottom: 10px;">
+            {{ item.get_hazard_signal_display }}
+        </div>
+        <h2 style="color: #FFD700; margin: 0 0 8px 0; font-size: 17px;">
+            Инструктаж ОТ и ТБ — Раздел {{ item.discipline }}
+        </h2>
+        <div style="font-size: 13px; color: #CBD5E1; margin-bottom: 12px;">
+            Подрядчик: <b>{{ item.contractor_name }}</b><br>
+            Бригадир: <b>{{ item.brigadier_name }}</b> ({{ item.workers_count }} чел.)
+        </div>
+
+        <pre style="white-space: pre-wrap; background: #0F172A; border: 1px solid #334155; padding: 12px; border-radius: 6px; color: #F8FAFC; font-size: 13px; line-height: 1.5;">{{ instruction_text }}</pre>
+
+        {% if item.worker_acknowledged %}
+            <div style="background: #064E3B; color: #6EE7B7; padding: 12px; border-radius: 6px; font-weight: bold; margin-top: 12px;">
+                ✅ Отклик зафиксирован в журнале ТБ ({{ item.acknowledged_at|date:"d.m.Y H:i" }}).
+            </div>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data" style="margin-top: 14px; display: flex; flex-direction: column; gap: 12px;">
+            {% csrf_token %}
+            <div>
+                <label style="font-size: 12px; color: #38BDF8; font-weight: bold;">
+                    📸 Фотоотчёт с места работ (проверка касок, привязей, ограждений):
+                </label>
+                <input type="file" name="photo_report" accept="image/*" class="form-file" style="margin-top: 4px;">
+            </div>
+
+            <button type="submit" style="background: #16A34A; color: #fff; border: none; padding: 12px; border-radius: 6px; font-weight: bold; font-size: 14px; cursor: pointer;">
+                ✍️ Согласен, инструктаж прочитан — расписаться в журнале ТБ
+            </button>
+        </form>
+    </div>
+</body>
+</html>

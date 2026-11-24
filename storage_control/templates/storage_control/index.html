@@ -1,0 +1,521 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html lang="ru" prefix="og: https://ogp.me">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0F172A">
+    <title>ПТО & АСУ ТП Портал | ЦОД НПО «СПЛАВ» — Цифровой штаб строительства</title>
+    <meta name="description" content="Профессиональная система автоматизации ПТО: распознавание комплектов РД, контроль строительных осей, ведомости ТМЦ, графики ГПР и акты АОСР по Приказу Минстроя РФ № 344/пр.">
+    <link rel="preconnect" href="https://googleapis.com">
+    <link rel="preconnect" href="https://gstatic.com" crossorigin>
+    <link href="https://googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com" defer></script>
+    <link rel="stylesheet" href="{% static 'storage_control/css/architect.css' %}">
+</head>
+<body>
+
+<!-- Сквозная верхняя панель навигации -->
+<nav class="top-navigation" style="justify-content: space-between; flex-wrap: wrap;">
+    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <span class="nav-label">КОНТУР ERP:</span>
+        {% for item in nav_items %}
+            <a href="{{ item.url }}" class="nav-item-link">{{ item.title }}</a>
+        {% endfor %}
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        {% if request.user.is_authenticated %}
+            <span style="color: #10b981; font-size: 12px; font-weight: bold;">👤 {{ request.user.username }}</span>
+            <a href="/admin/logout/" class="nav-item-link">Выйти</a>
+        {% else %}
+            <a href="/admin/login/?next=/" class="nav-item-link">🔑 Войти</a>
+        {% endif %}
+        <a href="/admin/" class="nav-item-link" style="color: #FFD700;">⚙️ Админ-панель</a>
+    </div>
+</nav>
+
+<!-- Фирменная шапка объекта (.header-bar из architect.css) -->
+<header class="header-bar" style="flex-wrap: wrap; gap: 15px;">
+    <div class="header-title">
+        <h1>🛡️ ПТО & АСУ ТП ПОРТАЛ | ЦОД НПО «СПЛАВ»</h1>
+        <p>Автоматизация разбора рабочей документации (1–73), снабжения ТМЦ, графиков ГПР и исполнительной документации</p>
+    </div>
+
+    <!-- Оперативные счётчики KPI объекта в шапке -->
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <div style="background: #0F172A; border: 1px solid #334155; border-left: 3px solid #38BDF8; padding: 8px 14px; border-radius: 6px;">
+            <div style="font-size: 10px; color: #94A3B8; text-transform: uppercase;">РД в производстве</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: bold; color: #F8FAFC;">
+                {{ crm_ceo_stats.work_docs|default:0 }} / {{ crm_ceo_stats.total_docs|default:0 }} ({{ crm_ceo_stats.readiness_pct|default:0 }}%)
+            </div>
+        </div>
+        <div style="background: #0F172A; border: 1px solid #334155; border-left: 3px solid #f5a623; padding: 8px 14px; border-radius: 6px;">
+            <div style="font-size: 10px; color: #94A3B8; text-transform: uppercase;">Дефицит ТМЦ</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: bold; color: #FFD700;">
+                {{ erp_b2b_stats.new_requests|default:0 }} поз.
+            </div>
+        </div>
+        <div style="background: #0F172A; border: 1px solid #334155; border-left: 3px solid #22C55E; padding: 8px 14px; border-radius: 6px;">
+            <div style="font-size: 10px; color: #94A3B8; text-transform: uppercase;">На складе</div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: bold; color: #4ADE80;">
+                {{ erp_b2b_stats.warehouse_positions|default:0 }} поз.
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Фирменная двухколоночная сетка (.main-container из architect.css) -->
+<div class="main-container">
+
+    <!-- ЛЕВАЯ КОЛОНКА (320px): Меню модулей, Выбор комплекта и Выгрузки -->
+    <aside class="sidebar-wrapper">
+        <div class="sidebar-card">
+            <h3>🧭 Рабочие контуры</h3>
+            <a href="javascript:void(0)" class="menu-link active" data-target="pto" onclick="switchContour('pto', this)">
+                📐 ПТО и Парсер РД (1–73)
+            </a>
+            <a href="javascript:void(0)" class="menu-link" data-target="search" onclick="switchContour('search', this)">
+                🗂️ Картотека и Листы PDF
+            </a>
+            <a href="javascript:void(0)" class="menu-link" data-target="supply" onclick="switchContour('supply', this)">
+                🛒 Снабжение и Склад ТМЦ
+            </a>
+            <a href="javascript:void(0)" class="menu-link" data-target="aosr" onclick="switchContour('aosr', this)">
+                📅 График ГПР и Акты АОСР
+            </a>
+            <a href="javascript:void(0)" class="menu-link" data-target="safety" onclick="switchContour('safety', this)">
+                🦺 Охрана труда и Фото смены
+            </a>
+        </div>
+
+        <div class="sidebar-card">
+            <h3>📁 Архив комплектов РД</h3>
+            <form method="get" action="">
+                <select name="doc_id" class="form-select" onchange="this.form.submit()">
+                    {% for d in documents_list %}
+                        <option value="{{ d.id }}" {% if active_doc and d.id == active_doc.id %}selected{% endif %}>
+                            {{ d.title }} (Рев. {{ d.revision_num }})
+                        </option>
+                    {% empty %}
+                        <option value="">Архив пуст — загрузите том №1</option>
+                    {% endfor %}
+                </select>
+                <input type="text" name="section" value="{{ section_filter }}" placeholder="Фильтр шифра (КЖ, АР...)" style="width: 100%; padding: 9px; background: #0F172A; border: 1px solid #475569; border-radius: 6px; color: #fff; font-size: 13px; box-sizing: border-box; margin-bottom: 10px;">
+                <button type="submit" class="btn-submit" style="padding: 10px; font-size: 13px;">Применить фильтр</button>
+            </form>
+        </div>
+
+        <div class="sidebar-card">
+            <h3>📊 Штабные выгрузки</h3>
+            <a href="{% url 'storage_control:export_staff_excel' %}" class="menu-link" style="background: #064E3B; color: #fff;">
+                📥 Штабной Excel (3 листа)
+            </a>
+            <a href="{% url 'storage_control:export_customer_gpr' %}" class="menu-link" style="background: #1F497D; color: #fff;">
+                📅 График ГПР Заказчику (.xlsx)
+            </a>
+        </div>
+    </aside>
+
+    <!-- ПРАВАЯ КОЛОНКА (.content-area из architect.css): Рабочая зона -->
+    <div class="content-area">
+
+        {% if error %}
+            <div class="alert-error">⚠️ {{ error }}</div>
+        {% endif %}
+
+        {% if messages %}
+            {% for message in messages %}
+                <div style="background: #1E293B; border-left: 4px solid #38BDF8; padding: 12px 15px; margin-bottom: 15px; border-radius: 6px; color: #F8FAFC; font-size: 13.5px;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        <!-- КОНТУР 1: ПТО И ПАРСЕР КОМПЛЕКТОВ РД (1–73) -->
+        <div class="contour-pane" data-contour="pto" style="display: block;">
+            <div class="upload-box" style="margin-top: 0;">
+                <h3 style="margin-top: 0; color: #FFD700;">📐 Запуск ПТО-парсера рабочей документации (PDF)</h3>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <label style="font-size: 13px; color: #CBD5E1; font-weight: bold;">1. Ответственный инженер ИТР:</label>
+                    <select name="staff_id" class="form-select">
+                        <option value="">-- Выберите сотрудника ИТР --</option>
+                        {% for person in staff_list %}
+                            <option value="{{ person.id }}">{{ person.name }} ({{ person.role }})</option>
+                        {% endfor %}
+                    </select>
+
+                    <label style="font-size: 13px; color: #CBD5E1; font-weight: bold;">2. Цель разбора комплекта:</label>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 8px; margin: 8px 0 15px 0; font-size: 12.5px;">
+                        <label style="background: #0F172A; padding: 8px 10px; border-radius: 6px; border: 1px solid #334155; cursor: pointer;">
+                            <input type="radio" name="parse_goal" value="BRIGADES" checked> 👷 Ведомость и бригады
+                        </label>
+                        <label style="background: #0F172A; padding: 8px 10px; border-radius: 6px; border: 1px solid #334155; cursor: pointer;">
+                            <input type="radio" name="parse_goal" value="SUPPLY"> 🛒 Спецификация ТМЦ и Excel
+                        </label>
+                        <label style="background: #0F172A; padding: 8px 10px; border-radius: 6px; border: 1px solid #334155; cursor: pointer;">
+                            <input type="radio" name="parse_goal" value="GPR"> 📅 Объёмы и график ГПР
+                        </label>
+                        <label style="background: #0F172A; padding: 8px 10px; border-radius: 6px; border: 1px solid #334155; cursor: pointer;">
+                            <input type="radio" name="parse_goal" value="AOSR"> 📄 Закрытие актов АОСР
+                        </label>
+                    </div>
+
+                    <div style="margin-bottom: 12px; font-size: 13px; color: #38BDF8;">
+                        <label style="cursor: pointer;">
+                            <input type="checkbox" name="send_telegram" value="1"> 📲 Отправить рапорт о загрузке в Telegram-бот штаба
+                        </label>
+                    </div>
+
+                    <label style="font-size: 13px; color: #CBD5E1; font-weight: bold;">3. Файл комплекта РД или ведомости (PDF):</label>
+                    <input type="file" name="pdf_file" accept=".pdf" required class="form-file">
+
+                    <button type="submit" class="btn-submit">Загрузить том и запустить разбор</button>
+                </form>
+            </div>
+
+             {% if brigade_groups %}
+            <div class="portal-card">
+                <h3 style="margin-top: 0; color: #38BDF8;">👷 Распределение комплектов РД по профильным бригадам ({{ brigade_groups|length }})</h3>
+                <table class="pto-table">
+                    <thead>
+                        <tr>
+                            <th>Профильная бригада</th>
+                            <th>Этап</th>
+                            <th>Шифр и наименование комплекта</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for grp in brigade_groups %}
+                            {% for doc_item in grp.items %}
+                            <tr>
+                                <td style="font-weight: bold; color: #38BDF8;">{{ grp.brigade }}</td>
+                                <td><span class="badge-stage">{{ grp.stage }}</span></td>
+                                <td><strong>{{ doc_item.code }}</strong> — {{ doc_item.name }}</td>
+                            </tr>
+                            {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+
+            {% if dynamic_tables %}
+                {% for dt in dynamic_tables %}
+                <div style="margin-top: 22px; background: #0F172A; border: 1px solid #F59E0B; border-radius: 8px; padding: 14px;">
+                    <div style="background: rgba(245, 158, 11, 0.16); color: #FCD34D; padding: 8px 12px; border-radius: 6px; font-weight: 700; font-size: 13px; margin-bottom: 12px;">
+                        {{ dt.schema_alert }} (Лист {{ dt.page }} · строк: {{ dt.rows|length }})
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table class="pto-table">
+                            <thead>
+                                <tr>
+                                    {% for h in dt.headers %}<th>{{ h }}</th>{% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for r in dt.rows %}
+                                <tr>
+                                    {% for cell in r %}<td>{{ cell|default:"—" }}</td>{% endfor %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endfor %}
+            {% endif %}
+
+            {% if active_doc %}
+            <div class="pto-stamp-box">
+                <div class="stamp-row"><span>КОМПЛЕКТ РД:</span><span class="stamp-bold">{{ active_doc.title }}</span></div>
+                <div class="stamp-row"><span>РЕВИЗИЯ / СТАТУС:</span><span class="stamp-bold">№{{ active_doc.revision_num }} ({{ active_doc.get_status_icon }})</span></div>
+                <div class="stamp-row"><span>ПОЗИЦИЙ ВЕДОМОСТИ:</span><span class="stamp-bold">{{ purchase_requests|length }} поз.</span></div>
+                <div class="stamp-row"><span>SHA-256 КОНТРОЛЬ:</span><span>{{ active_doc.file_hash|slice:":14" }}...</span></div>
+            </div>
+            <div style="clear: both;"></div>
+            {% endif %}
+        </div>
+
+        <!-- КОНТУР 2: КАРТОТЕКА-ИЩЕЙКА И ПРОСМОТР ЛИСТОВ PDF РЯДОМ -->
+        <div class="contour-pane" data-contour="search" style="display: none;">
+            <div class="upload-box" style="margin-top: 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <h3 style="margin: 0; color: #38BDF8;">🗂️ Картотека РД, паспортов качества и складских остатков</h3>
+                    <span id="tracker-search-counter" style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #FFD700;">Готов к поиску</span>
+                </div>
+
+                <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
+                    <input type="text" id="tracker-search-input" placeholder="Введите материал, кабель или прибор (Пульт С2000М, песок, ВВГнг)..." style="flex: 1; min-width: 240px; padding: 10px; background: #0F172A; border: 1px solid #475569; border-radius: 6px; color: #fff; font-size: 13px;" onkeydown="if(event.key==='Enter'){event.preventDefault(); runTrackerCardIndexSearch();}">
+                    <select id="tracker-search-mode" class="form-select" style="width: 190px; margin: 0;">
+                        <option value="all">Везде (РД + Склад)</option>
+                        <option value="passport">Чертежи и паспорта</option>
+                        <option value="stock">Склад ТМЦ</option>
+                    </select>
+                    <button type="button" onclick="runTrackerCardIndexSearch()" class="btn-submit" style="width: auto; padding: 10px 20px;">Найти</button>
+                </div>
+
+                <div id="tracker-folder-tabs" style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px;"></div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1.15fr; gap: 14px; align-items: start;">
+                    <div id="tracker-cards-container" style="max-height: 580px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+                        <div class="astra-inner-card">
+                            <div style="color: #94A3B8; font-size: 13px;">
+                                Введите запрос сверху — система разложит найденные листы по папкам разделов и откроет нужную страницу PDF справа.
+                            </div>
+                        </div>
+
+                        <table class="pin-mini-table">
+                            <thead>
+                                <tr>
+                                    <th>Шифр</th>
+                                    <th>Вид работ</th>
+                                    <th>Бригада</th>
+                                    <th>Ст.</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in rows|slice:":4" %}
+                                    <tr>
+                                        <td style="color: #38BDF8; white-space: nowrap;">{{ row.code }}</td>
+                                        <td style="font-family: 'Segoe UI', sans-serif; font-size: 10px;">{{ row.name|truncatechars:20 }}</td>
+                                        <td style="color: #22C55E; font-family: 'Segoe UI', sans-serif; font-size: 10px;">{{ row.brigade }}</td>
+                                        <td><span class="badge-stage" style="font-size: 9px; padding: 1px 4px;">{{ row.stage }}</span></td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr style="background: #0F172A; border-top: 1px solid #38BDF8;">
+                                    <td colspan="3" style="color: #94A3B8; font-size: 10px; font-family: 'Segoe UI', sans-serif;">Всего в работе:</td>
+                                    <td style="color: #FFD700; font-weight: bold; text-align: right;">{{ count }}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    <div class="astra-inner-card accent-gold" style="padding: 8px;">
+                        <div class="astra-inner-title">
+                            <span id="pdf-sheet-preview-title" style="color: #FFD700;">
+                                {% if active_doc %}{{ active_doc.title }} — Лист №1{% else %}Окно просмотра листа PDF{% endif %}
+                            </span>
+                        </div>
+
+
+
+                        <iframe id="pdf-sheet-preview-frame" src="{% if active_doc and active_doc.file %}{{ active_doc.file.url }}#page=1{% endif %}" style="width: 100%; height: 540px; border: 1px solid #334155; border-radius: 4px; background: #0B1120;"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- КОНТУР 3: СНАБЖЕНИЕ, СКЛАД И ВЕДОМОСТЬ ТМЦ -->
+        <div class="contour-pane" data-contour="supply" style="display: none;">
+            <div class="upload-box" style="margin-top: 0; overflow-x: auto;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h3 style="margin: 0; color: #FFD700;">🛒 Ведомость закупок ТМЦ и объёмов работ ({{ purchase_requests|length }} поз.)</h3>
+                    <a href="{% url 'storage_control:export_staff_excel' %}" class="nav-item-link" style="background: #064E3B; color: #fff; padding: 6px 12px; border-radius: 6px;">📊 Выгрузить Excel</a>
+                </div>
+
+ <table class="pto-table">
+                    <thead>
+                        <tr>
+                            <th>Тип</th>
+                            <th>Помещение / Отметка</th>
+                            <th>Наименование ТМЦ / Работ и BIM-статус</th>
+                            <th>Требуется / Кратность</th>
+                            <th>Склад</th>
+                            <th>Дефицит</th>
+                            <th>ИТР / Действие</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for req in purchase_requests %}
+                        <tr>
+                            <td class="rec-type-{{ req.record_type|lower }}" style="font-weight: bold;">
+                                {{ req.record_type_display }}
+                            </td>
+                            <td style="font-size: 12px; color: #CBD5E1;">{{ req.location }}</td>
+                            <td>
+                                <strong style="color: #F8FAFC; font-size: 13.5px;">{{ req.material_name }}</strong>
+                                {% if req.node_cabinet %}<div style="font-size: 11px; color: #38BDF8; margin-top: 2px;">{{ req.node_cabinet }}</div>{% endif %}
+                                {% if req.bim_badge %}
+                                    <div style="font-size: 11.5px; margin-top: 4px; padding: 3px 7px; border-radius: 4px; {% if req.bim_level == 'warn' %}background: rgba(239,68,68,0.18); color: #FCA5A5; border: 1px solid #EF4444;{% else %}background: rgba(34,197,94,0.15); color: #86EFAC; border: 1px solid #22C55E;{% endif %}">
+                                        {{ req.bim_badge }}
+                                    </div>
+                                {% endif %}
+                                {% if req.vendor_badge %}
+                                    <div style="font-size: 11.5px; color: #FCD34D; margin-top: 3px;">{{ req.vendor_badge }}</div>
+                                {% endif %}
+                            </td>
+                            <td style="font-family: 'JetBrains Mono', monospace;">
+                                <strong>{{ req.required_qty }} {{ req.unit }}</strong>
+                                {% if req.pack_hint %}<div style="font-size: 11px; color: #94A3B8; font-family: sans-serif;">{{ req.pack_hint }}</div>{% endif %}
+                            </td>
+                            <td style="font-family: 'JetBrains Mono', monospace; color: #4ADE80;">{{ req.stock_qty }} {{ req.unit }}</td>
+                            <td class="{% if req.deficit_qty > 0 %}deficit-alert{% else %}deficit-ok{% endif %}" style="font-family: 'JetBrains Mono', monospace; font-weight: bold;">
+                                {{ req.deficit_qty }} {{ req.unit }}
+                            </td>
+                                                      <td>
+                                <div style="font-size: 12px;">{{ req.assigned_itr }}</div>
+                                <div style="font-size: 11px; color: #5EEAD4; margin: 2px 0;">{{ req.schedule_hint }}</div>
+                                <div style="font-size: 11px; color: #94A3B8; margin-bottom: 5px;">{{ req.status_display }}</div>
+                                <a href="/mark-passport/?q={{ req.material_name|urlencode }}" style="display: inline-block; background: #0F766E; color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; text-decoration: none; border: 1px solid #14B8A6;">
+                                    ℹ️ Инф() Паспорт марки
+                                </a>
+                            </td>
+
+                        </tr>
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="7" style="text-align: center; color: #94A3B8;">По выбранному комплекту позиций ТМЦ нет.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- КОНТУР 4: ГРАФИК ГПР И АКТЫ СКРЫТЫХ РАБОТ (АОСР) -->
+        <div class="contour-pane" data-contour="aosr" style="display: none;">
+            <div class="upload-box" style="margin-top: 0;">
+                <h3 style="margin-top: 0; color: #FFD700;">📄 Формирование Акта освидетельствования скрытых работ (АОСР .docx)</h3>
+                {% if active_doc %}
+                <form method="get" action="{% url 'storage_control:export_aosr' %}">
+                    <input type="hidden" name="doc_id" value="{{ active_doc.id }}">
+                    <label style="font-size: 13px; color: #CBD5E1; font-weight: bold;">Контур передачи работ:</label>
+                    <select name="handover_mode" class="form-select">
+                        <option value="GEN_TO_CUSTOMER">Генподрядчик → Технадзор Заказчика</option>
+                        <option value="SUB_TO_GEN">Субподрядчик → Генподрядчик (ПТО)</option>
+                        <option value="STAGE_TO_NEXT">Передача фронта смежному участку</option>
+                    </select>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px;">
+                        <div>
+                            <label style="font-size: 12px; color: #CBD5E1;">Дата начала работ:</label>
+                            <input type="text" name="date_start" placeholder="17.11.2026" style="width: 100%; padding: 10px; background: #0F172A; border: 1px solid #475569; border-radius: 6px; color: #fff; box-sizing: border-box; margin-top: 4px;">
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; color: #CBD5E1;">Дата окончания работ:</label>
+                            <input type="text" name="date_end" placeholder="17.11.2026" style="width: 100%; padding: 10px; background: #0F172A; border: 1px solid #475569; border-radius: 6px; color: #fff; box-sizing: border-box; margin-top: 4px;">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-submit">Скачать готовый АОСР (.docx) по тому {{ active_doc.title }}</button>
+                </form>
+                {% else %}
+                <p style="color: #94A3B8;">Выберите активный комплект РД в левом меню для формирования акта.</p>
+                {% endif %}
+            </div>
+        </div>
+        <!-- КОНТУР 5: ОХРАНА ТРУДА И ФОТОКОНТРОЛЬ СМЕНЫ -->
+        <div class="contour-pane" data-contour="safety" style="display: none;">
+            <div class="upload-box" style="margin-top: 0;">
+                <h3 style="margin-top: 0; color: #38BDF8;">🦺 Допуски бригад по ОТ и ТБ и фотоотчёты со стройплощадки</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px;">
+                    {% for sp in safety_passes %}
+                    <div class="astra-inner-card {% if not sp.worker_acknowledged %}accent-alert{% elif not sp.safety_engineer_approved %}accent-gold{% else %}accent-green{% endif %}">
+                        <div class="astra-inner-title">
+                            <span style="color: #38BDF8;">Раздел {{ sp.discipline }}</span>
+                            <span style="color: #FFD700;">{{ sp.progress_pct }}%</span>
+                        </div>
+                        <div style="font-weight: bold; color: #fff; margin-bottom: 4px;">{{ sp.contractor_name }}</div>
+                        <div style="font-size: 12.5px; color: #CBD5E1; line-height: 1.5; margin-bottom: 8px;">
+                            Бригадир: {{ sp.brigadier_name }} ({{ sp.workers_count }} чел.)<br>
+                            Оси: {{ sp.axes_from_to|default:"По проекту" }} {{ sp.elevation_mark }}<br>
+                            Фактор ТБ: {{ sp.get_hazard_signal_display }}
+                        </div>
+                        {% if sp.photo_report %}
+                            <img src="{{ sp.photo_report.url }}" alt="Фотоотчёт" style="width: 100%; height: 130px; object-fit: cover; border-radius: 6px; margin-bottom: 8px;">
+                        {% endif %}
+                        <div style="font-size: 12px; font-weight: bold; color: #FFD700;">{{ sp.access_status_badge }}</div>
+                    </div>
+                    {% empty %}
+                    <p style="color: #94A3B8;">Карточки допусков бригад и фотоотчёты появятся здесь после назначения подрядчиков в Админ-панели.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /.content-area -->
+</div><!-- /.main-container -->
+
+<script>
+let allTrackerSearchItems = [];
+
+function switchContour(contourName, linkEl) {
+    document.querySelectorAll('.contour-pane').forEach(el => {
+        el.style.display = (el.dataset.contour === contourName) ? 'block' : 'none';
+    });
+    document.querySelectorAll('.sidebar-card .menu-link[data-target]').forEach(a => {
+        a.classList.toggle('active', a.dataset.target === contourName);
+    });
+    sessionStorage.setItem('active_pto_contour', contourName);
+}
+
+function openPdfSheetInViewer(pdfUrl, pageNum, docTitle) {
+    const frame = document.getElementById('pdf-sheet-preview-frame');
+    const label = document.getElementById('pdf-sheet-preview-title');
+    if (frame && pdfUrl) frame.src = pdfUrl + '#page=' + (pageNum || 1);
+    if (label) label.textContent = docTitle + ' — Лист №' + (pageNum || 1);
+}
+
+function renderTrackerCards(folderFilter) {
+    const container = document.getElementById('tracker-cards-container');
+    if (!container) return;
+    const filtered = (folderFilter === 'ALL') ? allTrackerSearchItems : allTrackerSearchItems.filter(it => it.folder_code === folderFilter);
+    if (!filtered.length) {
+        container.innerHTML = '<div class="astra-inner-card"><div style="color:#94A3B8;font-size:13px;">Совпадений не найдено.</div></div>';
+        return;
+    }
+    container.innerHTML = filtered.map(item => {
+        const safeUrl = (item.pdf_url || '').replace(/'/g, "\\'");
+        const safeTitle = (item.source || '').replace(/'/g, "\\'");
+        return `
+            <div class="astra-inner-card" style="cursor:pointer;" onclick="if('${safeUrl}') openPdfSheetInViewer('${safeUrl}', ${item.page_number || 1}, '${safeTitle}')">
+                <div class="astra-inner-title">
+                    <span style="color:#FFD700;">${item.source}</span>
+                    <span style="background:#1F497D;color:#fff;padding:2px 6px;border-radius:4px;font-size:11px;">${item.folder_code || item.norm}</span>
+                </div>
+                <div style="font-size:12.5px;color:#E2E8F0;line-height:1.45;">${item.snippet}</div>
+            </div>
+        `;
+    }).join('');
+}
+
+function runTrackerCardIndexSearch() {
+    const q = (document.getElementById('tracker-search-input')?.value || '').trim();
+    const mode = document.getElementById('tracker-search-mode')?.value || 'all';
+    const counter = document.getElementById('tracker-search-counter');
+    const folderBar = document.getElementById('tracker-folder-tabs');
+    if (!q) return;
+    if (counter) counter.textContent = 'Поиск...';
+
+    fetch(`/api/tracker-search/?q=${encodeURIComponent(q)}&mode=${encodeURIComponent(mode)}`)
+        .then(r => r.json())
+        .then(data => {
+            allTrackerSearchItems = data.results || [];
+            if (counter) counter.textContent = `Найдено: ${allTrackerSearchItems.length}`;
+            const folders = {};
+            allTrackerSearchItems.forEach(it => { const fc = it.folder_code || 'ПРОЧЕЕ'; folders[fc] = (folders[fc] || 0) + 1; });
+            if (folderBar) {
+                let html = `<button type="button" class="nav-item-link" style="background:#1F497D;color:#fff;border:none;padding:5px 10px;border-radius:4px;cursor:pointer;" onclick="renderTrackerCards('ALL')">Все (${allTrackerSearchItems.length})</button>`;
+                Object.entries(folders).forEach(([fc, cnt]) => {
+                    html += `<button type="button" class="nav-item-link" style="background:#0F172A;border:1px solid #475569;padding:5px 10px;border-radius:4px;cursor:pointer;" onclick="renderTrackerCards('${fc}')">Папка ${fc} (${cnt})</button>`;
+                });
+                folderBar.innerHTML = html;
+            }
+            renderTrackerCards('ALL');
+            const firstPdf = allTrackerSearchItems.find(it => it.pdf_url);
+            if (firstPdf) openPdfSheetInViewer(firstPdf.pdf_url, firstPdf.page_number, firstPdf.source);
+        });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const saved = sessionStorage.getItem('active_pto_contour');
+    if (saved && document.querySelector(`.contour-pane[data-contour="${saved}"]`)) switchContour(saved);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,11 @@
+﻿__pycache__/
+*.py[cod]
+hello/
+venv/
+.venv/
+media/pdfs/
+*.log
+
+static_root/
+test_*.png
+

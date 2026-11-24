@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>🪐 FAMILYMIRA ERP — Пульт Управления</title>
+    <style>
+        body { font-family: 'Segoe UI', 'Calibri', sans-serif; background-color: #0F172A; color: #E2E8F0; margin: 0; padding: 30px; }
+        .container { max-width: 1100px; margin: 0 auto; background: #1E293B; padding: 35px; border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); border: 1px solid #334155; }
+        h1 { color: #FFD700; margin-top: 0; border-bottom: 3px solid #1F497D; padding-bottom: 12px; }
+        .info-panel { background: #0F172A; padding: 15px; border-radius: 8px; border-left: 5px solid #22C55E; margin-bottom: 25px; font-weight: bold; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #0F172A; border-radius: 8px; overflow: hidden; }
+        th { background-color: #1F497D; color: white; padding: 12px; font-weight: bold; text-align: left; }
+        td { padding: 10px 12px; border-bottom: 1px solid #334155; font-size: 14px; }
+        tr:hover { background-color: #1E293B; }
+        .center { text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🪐 FAMILYMIRA INDUSTRIAL DASHBOARD v370.0.0</h1>
+        
+        <!-- Вывод ИТР лога уведомлений -->
+        <div class="info-panel">
+            📊 АВТОМАТИЧЕСКИЙ PDF-ПАРСИНГ УСПЕШНО ВЫПОЛНЕН! ИЗВЛЕЧЕНО ИЗ ВЕДОМОСТИ ТОМОВ РД: {{ total_count }} СУЩНОСТЕЙ
+        </div>
+
+        <h3>👁️ ИНТЕРАКТИВНАЯ ТАБЛИЦА ВЕДОМОСТИ ТОМОВ (ВЫГРУЗКА ИЗ БИНАРНОЙ МАТРИЦЫ PDF):</h3>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 25%;">Шифр / Код раздела (А)</th>
+                    <th style="width: 60%;">Наименование комплекта рабочих чертежей (B)</th>
+                    <th style="width: 15%;" class="center">Стадия (C)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in blueprint_table %}
+                <tr>
+                    <td style="color: #38BDF8; font-weight: bold;">{{ row.id }}</td>
+                    <td>{{ row.name }}</td>
+                    <td class="center" style="color: #22C55E; font-weight: bold;">{{ row.stage }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" style="text-align: center; color: #F87171;">🚨 Файл ведомости PDF не обнаружен или пуст! Проверьте ИТР-путь.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
