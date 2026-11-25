@@ -532,13 +532,47 @@ def export_aosr_docx_view(request):
 
 def mark_passport_view(request):
     from storage_control.services.mark_passport import build_mark_passport_data
+    from storage_control.services.turtle_geometry import extract_scaled_node_cuts_from_pdf
+    from .models import PhotoIntake, ParsedPage
+
     q = (request.GET.get("q") or "").strip()
     ctx = build_mark_passport_data(q)
 
-    from .models import PhotoIntake
-    ctx["field_photos"] = PhotoIntake.objects.all()[:15]
+    photos = list(PhotoIntake.objects.all()[:15])
+    ctx["field_photos"] = photos
+
+    turtle_plans = []
+    for ph in photos[:6]:
+        tp = (ph.payload_1c_json or {}).get("turtle_plan")
+        if tp and tp.get("ok") and tp.get("svg_preview"):
+            tp_copy = dict(tp)
+            tp_copy["photo_id"] = ph.id
+            turtle_plans.append(tp_copy)
+    ctx["turtle_plans"] = turtle_plans
+
+    # Авто-вырезка «Черепахой-Фрезой» узлов с масштабами (М 1:10, М 1:20, М 1:50...) по найденным листам РД
+    from django.db.models import Q
+    milled_cuts = []
+    q_compact = q.replace(" ", "")
+    page_filter = Q(text__icontains=q) | Q(text__icontains=q_compact) if q else Q(text__icontains="1:20")
+    matched_pages = ParsedPage.objects.select_related("document").filter(page_filter)[:4]
+    if not matched_pages:
+        matched_pages = ParsedPage.objects.select_related("document").filter(text__icontains="1:20")[:3]
+
+    by_doc = {}
+    for mp in matched_pages:
+
+        if mp.document and mp.document.file and os.path.exists(mp.document.file.path):
+            by_doc.setdefault(mp.document, []).append(mp.page_number)
+    for doc_obj, p_nums in list(by_doc.items())[:2]:
+        cuts = extract_scaled_node_cuts_from_pdf(doc_obj.file.path, doc_obj.id, p_nums, query_hint=q or "М 1:20")
+        for c in cuts:
+            c["doc_title"] = doc_obj.title
+            milled_cuts.append(c)
+    ctx["milled_cuts"] = milled_cuts
 
     return render(request, "storage_control/mark_passport.html", ctx)
+
 
 def export_dynamic_table_view(request):
     """Выгружает выбранную нестандартную таблицу чертежа (отделка, экспликация, журнал) в чистый Excel (.xlsx)."""
