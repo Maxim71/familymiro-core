@@ -51,3 +51,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     if (lb) lb.addEventListener("click", () => { lb.style.display = "none"; });
 });
+window.addEventListener("DOMContentLoaded", function () {
+    if (window.location.hash) {
+        const targetId = window.location.hash.replace("#", "");
+        const btn = document.querySelector('.mp-tab[data-target="' + targetId + '"]');
+        if (btn) btn.click();
+    }
+});

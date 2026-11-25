@@ -8,6 +8,8 @@ from django.conf import settings
 from django.views.generic import View
 from django.http import JsonResponse, HttpResponse
 from django.db import models
+from .services.pdf_ocr import extract_and_store_pages
+from .services.spec_matcher import parse_specifications_and_create_requests
 
 from .services.smart_router import resolve_section_and_brigade
 
@@ -248,34 +250,36 @@ class AdvancedConstructionControlView(View):
                     f"Загружена новая ревизия №{next_rev} тома «{doc.title}»! Предыдущие версии аннулированы."
                 )
 
+        import threading
+        from django.db import close_old_connections
         from .services.pdf_ocr import extract_and_store_pages
         from .services.spec_matcher import parse_specifications_and_create_requests
 
         staff_id = request.POST.get('selected_staff_id', '')
         staff_obj = ItrStaff.objects.filter(staff_id=staff_id).first()
         staff_label = f"{staff_obj.name} [{staff_obj.staff_id}]" if staff_obj else (staff_id or "Штаб ПТО")
+        notify_tg = request.POST.get('notify_telegram') == '1'
 
-        report = extract_and_store_pages(doc)
-        spec_report = parse_specifications_and_create_requests(doc, staff_label=staff_label)
+        def _background_turbo_parse(target_doc_id: int, operator_label: str, do_tg: bool):
+            close_old_connections()
+            try:
+                d_obj = Document.objects.filter(id=target_doc_id).first()
+                if not d_obj:
+                    return
+                rep = extract_and_store_pages(d_obj)
+                spec_rep = parse_specifications_and_create_requests(d_obj, staff_label=operator_label)
+                if do_tg:
+                    from .telegram_bot import send_pto_telegram_report
+                    req_cnt = d_obj.purchase_requests.count() if hasattr(d_obj, 'purchase_requests') else 0
+                    send_pto_telegram_report(operator_label, d_obj.title, rep.get("pages_processed", 0), req_cnt)
+            finally:
+                close_old_connections()
 
-        if report["pages_processed"] > 0:
-            messages.success(
-                request,
-                f"Том «{doc.title}» [Рев. {doc.revision_num}]: листов — {report['pages_processed']}, "
-                f"таблиц — {report['tables_rows']}, сигналов АСУ ТП — {report['total_io_signals']}, "
-                f"позиций спецификации — {spec_report['total_positions']}, "
-                f"заявок в дефиците — {spec_report['requests_created']}."
-            )
-        for err in report["errors"]:
-            messages.error(request, f"Внимание: {err}")
-
-        if request.POST.get('notify_telegram') == '1':
-            from .telegram_bot import send_pto_telegram_report
-            staff_id = request.POST.get('selected_staff_id', '')
-            staff_obj = ItrStaff.objects.filter(staff_id=staff_id).first()
-            staff_name = staff_obj.name if staff_obj else (staff_id or "Инженер ИТР")
-            req_cnt = doc.purchase_requests.count() if hasattr(doc, 'purchase_requests') else 0
-            send_pto_telegram_report(staff_name, doc.title, report["pages_processed"], req_cnt)
+        threading.Thread(target=_background_turbo_parse, args=(doc.id, staff_label, notify_tg), daemon=True).start()
+        messages.success(
+            request,
+            f"⚡ Том «{doc.title}» [Рев. {doc.revision_num}] принят в фоновый конвейер! Страницы, спецификации и узлы «Черепахи» появятся автоматически через несколько секунд."
+        )
 
         return redirect(f"{reverse('storage_control:dashboard')}?doc_id={doc.id}")
 
@@ -529,11 +533,12 @@ def export_aosr_docx_view(request):
     )
     response["Content-Disposition"] = f'attachment; filename="AOSR_Tom_{doc.id}.docx"'
     return response
-
 def mark_passport_view(request):
     from storage_control.services.mark_passport import build_mark_passport_data
     from storage_control.services.turtle_geometry import extract_scaled_node_cuts_from_pdf
-    from .models import PhotoIntake, ParsedPage
+    from .models import PhotoIntake, ParsedPage, Document
+    from django.db.models import Q
+    import re as _re
 
     q = (request.GET.get("q") or "").strip()
     ctx = build_mark_passport_data(q)
@@ -549,6 +554,41 @@ def mark_passport_view(request):
             tp_copy["photo_id"] = ph.id
             turtle_plans.append(tp_copy)
     ctx["turtle_plans"] = turtle_plans
+
+    milled_cuts = []
+    selected_doc_id = (request.GET.get("doc_id") or "").strip()
+    clean_q = _re.sub(r'\s*[Ll]\s*=.*$', '', q).strip()
+    q_compact = clean_q.replace(" ", "")
+
+    pages_qs = ParsedPage.objects.select_related("document").all()
+    if selected_doc_id.isdigit():
+        pages_qs = pages_qs.filter(document_id=int(selected_doc_id))
+        matched_pages = list(pages_qs.filter(Q(text__icontains="Узел") | Q(text__icontains="1:20") | Q(text__icontains="1:10") | Q(text__icontains="Спецификация")).order_by("page_number")[:2])
+        if not matched_pages:
+            matched_pages = list(pages_qs.order_by("-page_number")[:1])
+    elif clean_q:
+        page_filter = Q(text__icontains=clean_q) | Q(text__icontains=q_compact)
+        matched_pages = list(pages_qs.filter(page_filter).order_by("-document__uploaded_at", "page_number")[:2])
+    else:
+        matched_pages = list(pages_qs.filter(Q(text__icontains="Узел") | Q(text__icontains="1:20")).order_by("-document__uploaded_at", "page_number")[:2])
+
+    by_doc = {}
+    for mp in matched_pages:
+        if mp.document and mp.document.file and os.path.exists(mp.document.file.path):
+            by_doc.setdefault(mp.document, []).append(mp.page_number)
+
+    for doc_obj, p_nums in list(by_doc.items())[:1]:
+        cuts = extract_scaled_node_cuts_from_pdf(doc_obj.file.path, doc_obj.id, p_nums[:1], query_hint=clean_q or "Узел")
+        for c in cuts:
+            c["doc_id"] = doc_obj.id
+            c["doc_title"] = doc_obj.title
+            milled_cuts.append(c)
+
+    ctx["milled_cuts"] = milled_cuts
+    ctx["selected_doc_id"] = selected_doc_id
+    ctx["available_docs"] = list(Document.objects.order_by("-uploaded_at").values("id", "title")[:15])
+
+    return render(request, "storage_control/mark_passport.html", ctx)
 
     # Авто-вырезка «Черепахой-Фрезой» узлов с масштабами (М 1:10, М 1:20, М 1:50...) по найденным листам РД
     from django.db.models import Q

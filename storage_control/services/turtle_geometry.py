@@ -21,12 +21,12 @@ RU_AXIS_LETTERS = ("А", "Б", "В", "Г", "Д", "Е", "Ж", "И", "К", "Л", "
 SCALE_RE = re.compile(r'(?:[МM]\s*)?1\s*[:：]\s*(5|10|15|20|25|40|50|75|100|200|500)\b', re.IGNORECASE)
 
 
-def _cluster_coords(coords: list[float], min_gap: float) -> list[float]:
-    if not coords:
+def _cluster_coords(coords, min_gap: float) -> list[float]:
+    vals = sorted(float(v) for v in coords if v is not None)
+    if not vals:
         return []
-    coords = sorted(coords)
-    clusters = [[coords]]
-    for c in coords[1:]:
+    clusters = [[vals.pop(0)]]
+    for c in vals:
         if abs(c - clusters[-1][-1]) <= min_gap:
             clusters[-1].append(c)
         else:
@@ -35,32 +35,142 @@ def _cluster_coords(coords: list[float], min_gap: float) -> list[float]:
 
 
 def _detect_building_axes(gray_np: "np.ndarray", bx: int, by: int, bw: int, bh: int) -> tuple[list[float], list[float]]:
-    edges = cv2.Canny(gray_np, 50, 150, apertureSize=3)
-    min_v_len = max(35, int(bh * 0.28))
-    min_h_len = max(35, int(bw * 0.28))
-    lines = cv2.HoughLinesP(edges, 1, np.pi / 180, threshold=55, minLineLength=min(min_v_len, min_h_len), maxLineGap=14)
+    """
+    ?????????????? ???????? ??????????????? ???? ?? ???? 21.101:
+    ???????? ????????? ??????????????? ??? (???????? ????? >= 70% ???????? ???????,
+    ??????????? ?? ???????? ?????? ???? ? ??????? ????) ?? ?????????? ???????????.
+    """
+    edges = cv2.Canny(gray_np, 45, 140, apertureSize=3)
+    min_v_len = max(50, int(bh * 0.68))
+    min_h_len = max(50, int(bw * 0.68))
+    lines = cv2.HoughLinesP(edges, 1, np.pi / 180, threshold=65, minLineLength=min(min_v_len, min_h_len), maxLineGap=18)
 
     v_xs, h_ys = [], []
     if lines is not None:
-        for ln in lines:
-            x1, y1, x2, y2 = ln
+        for x1, y1, x2, y2 in lines.reshape(-1, 4):
+            x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
             dx, dy = abs(x2 - x1), abs(y2 - y1)
-            if dx <= 6 and dy >= min_v_len:
+            top_y, bot_y = min(y1, y2), max(y1, y2)
+            left_x, right_x = min(x1, x2), max(x1, x2)
+
+            # ???????????? ??? (???????? 1..12): ???????? ? ??????? ?? ??????? ??? ?????? ???????? ?????
+            if dx <= 5 and dy >= min_v_len:
                 mx = (x1 + x2) / 2.0
-                if bx - 10 <= mx <= bx + bw + 10:
+                extends_outside = (top_y <= by - 4) or (bot_y >= by + bh + 4)
+                if (bx - 8 <= mx <= bx + bw + 8) and extends_outside:
                     v_xs.append(mx)
-            elif dy <= 6 and dx >= min_h_len:
+
+            # ?????????????? ??? (????????? ???): ???????? ? ??????? ?? ????? ??? ?????? ???????? ?????
+            elif dy <= 5 and dx >= min_h_len:
                 my = (y1 + y2) / 2.0
-                if by - 10 <= my <= by + bh + 10:
+                extends_outside = (left_x <= bx - 4) or (right_x >= bx + bw + 4)
+                if (by - 8 <= my <= by + bh + 8) and extends_outside:
                     h_ys.append(my)
 
-    x_axes = _cluster_coords(v_xs, max(18.0, bw * 0.06))[:14]
-    y_axes = _cluster_coords(h_ys, max(18.0, bh * 0.06))[:12]
+    x_axes = _cluster_coords(v_xs, max(14.0, bw * 0.045))[:16]
+    y_axes = _cluster_coords(h_ys, max(18.0, bh * 0.14))[:8]
+
     if len(x_axes) < 2:
         x_axes = [float(bx), float(bx + bw)]
     if len(y_axes) < 2:
         y_axes = [float(by), float(by + bh)]
     return x_axes, y_axes
+
+
+def _nearest_axis_label(px: float, py: float, x_axes: list[float], y_axes: list[float]) -> str:
+    if not x_axes or not y_axes:
+        return "??? ????? ????"
+    best_x_idx = min(range(len(x_axes)), key=lambda i: abs(x_axes[i] - px)) + 1
+    rev_y = list(reversed(y_axes))
+    best_y_idx = min(range(len(rev_y)), key=lambda i: abs(rev_y[i] - py))
+    letter = RU_AXIS_LETTERS[best_y_idx] if best_y_idx < len(RU_AXIS_LETTERS) else f"?{best_y_idx + 1}"
+    return f"??? {letter} / {best_x_idx}"
+
+
+def _detect_manholes_and_passages(gray_np: "np.ndarray", bx: int, by: int, bw: int, bh: int, x_axes: list[float], y_axes: list[float]) -> tuple[list[dict], list[dict]]:
+    # 1. ???????? ????? / ???????? (?????? ?? ?????)
+    blurred = cv2.GaussianBlur(gray_np, (5, 5), 1.2)
+    min_r = max(5, int(min(bw, bh) * 0.012))
+    max_r = max(14, int(min(bw, bh) * 0.045))
+    circles = cv2.HoughCircles(
+        blurred, cv2.HOUGH_GRADIENT, dp=1.2, minDist=max(18, min_r * 3),
+        param1=90, param2=24, minRadius=min_r, maxRadius=max_r
+    )
+    manholes = []
+    if circles is not None:
+        for idx, c in enumerate(np.round(circles[0, :]).astype("int"), start=1):
+            cx, cy, cr = int(c[0]), int(c[1]), int(c[2])
+            if bx + 8 <= cx <= bx + bw - 8 and by + 8 <= cy <= by + bh - 8:
+                manholes.append({
+                    "code": f"?-{len(manholes) + 1}",
+                    "x": cx, "y": cy, "r": cr,
+                    "axis_ref": _nearest_axis_label(cx, cy, x_axes, y_axes),
+                })
+            if len(manholes) >= 12:
+                break
+
+    # 2. ???????? ???????? ? ??????? ? ?????? (??????????? ????? ?? ??????? / ???? ???????)
+    _, bin_walls = cv2.threshold(gray_np, 150, 255, cv2.THRESH_BINARY_INV)
+    thick_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (7, 7))
+    walls_only = cv2.morphologyEx(bin_walls, cv2.MORPH_OPEN, thick_kernel)
+    thin_lines = cv2.subtract(bin_walls, walls_only)
+    intersections = cv2.bitwise_and(cv2.dilate(walls_only, np.ones((5, 5), np.uint8)), thin_lines)
+
+    num_labels, _, stats, centroids = cv2.connectedComponentsWithStats(intersections)
+    passages = []
+    for lbl in range(1, num_labels):
+        area = int(stats[lbl, cv2.CC_STAT_AREA])
+        px, py = float(centroids[lbl][0]), float(centroids[lbl][1])
+        if 12 <= area <= 450 and (bx + 12 <= px <= bx + bw - 12) and (by + 12 <= py <= by + bh - 12):
+            if all(abs(px - p["x"]) > 22 or abs(py - p["y"]) > 22 for p in passages):
+                passages.append({
+                    "code": f"?-{len(passages) + 1}",
+                    "x": round(px, 1), "y": round(py, 1),
+                    "axis_ref": _nearest_axis_label(px, py, x_axes, y_axes),
+                })
+        if len(passages) >= 14:
+            break
+
+    return manholes, passages
+
+
+
+def _trace_cable_and_pipe_routes(gray_np: "np.ndarray", bx: int, by: int, bw: int, bh: int, x_axes: list[float], y_axes: list[float], step_m: float) -> tuple[list[dict], float]:
+    _, bin_all = cv2.threshold(gray_np, 165, 255, cv2.THRESH_BINARY_INV)
+    thick_walls = cv2.morphologyEx(bin_all, cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_RECT, (7, 7)))
+    thin_routes = cv2.subtract(bin_all, cv2.dilate(thick_walls, np.ones((3, 3), np.uint8)))
+
+    min_seg = max(24, int(min(bw, bh) * 0.08))
+    raw_lines = cv2.HoughLinesP(thin_routes, 1, np.pi / 180, threshold=40, minLineLength=min_seg, maxLineGap=10)
+
+    px_per_m = (bw / max(1, len(x_axes) - 1)) / max(1.0, step_m)
+    routes = []
+    total_m = 0.0
+
+    if raw_lines is not None:
+        for x1, y1, x2, y2 in raw_lines.reshape(-1, 4):
+            x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
+            if not (bx + 6 <= x1 <= bx + bw - 6 and by + 6 <= y1 <= by + bh - 6 and bx + 6 <= x2 <= bx + bw - 6 and by + 6 <= y2 <= by + bh - 6):
+                continue
+            seg_len_px = float(np.hypot(x2 - x1, y2 - y1))
+            if seg_len_px < min_seg:
+                continue
+            # ???????? ??????????? ???????????? ????? ????? 14 px
+            if any(abs((x1 + x2)/2 - (r["x1"] + r["x2"])/2) < 14 and abs((y1 + y2)/2 - (r["y1"] + r["y2"])/2) < 14 for r in routes):
+                continue
+            seg_m = round(seg_len_px / max(1.0, px_per_m), 1)
+            total_m += seg_m
+            routes.append({
+                "code": f"?-{len(routes) + 1}",
+                "x1": x1, "y1": y1, "x2": x2, "y2": y2,
+                "length_m": seg_m,
+                "from_axis": _nearest_axis_label(x1, y1, x_axes, y_axes),
+                "to_axis": _nearest_axis_label(x2, y2, x_axes, y_axes),
+            })
+            if len(routes) >= 12:
+                break
+
+    return routes, round(total_m, 1)
 
 
 def analyze_building_plan_footprint(image_path: str, operator_object_title: str = "", axis_step_mm: int = 6000) -> dict:
@@ -102,6 +212,8 @@ def analyze_building_plan_footprint(image_path: str, operator_object_title: str 
 
     inner_rooms = sum(1 for c in contours if 400.0 <= cv2.contourArea(c) < outer_area * 0.45)
     x_axes, y_axes = _detect_building_axes(gray, bx, by, bw, bh)
+    manholes, passages = _detect_manholes_and_passages(gray, bx, by, bw, bh, x_axes, y_axes)
+    routes, route_total_m = _trace_cable_and_pipe_routes(gray, bx, by, bw, bh, x_axes, y_axes, max(1.0, axis_step_mm / 1000.0))
 
     spans_x, spans_y = max(1, len(x_axes) - 1), max(1, len(y_axes) - 1)
     step_m = max(1.0, axis_step_mm / 1000.0)
@@ -115,7 +227,7 @@ def analyze_building_plan_footprint(image_path: str, operator_object_title: str 
     offset_x = pad_l + (draw_w - bw * scale) / 2.0
     offset_y = pad_t + (draw_h - bh * scale) / 2.0
 
-    poly_str = " ".join(f"{round(offset_x + (pt - bx) * scale, 1)},{round(offset_y + (pt - by) * scale, 1)}" for pt in approx)
+    poly_str = " ".join(f"{round(offset_x + (float(px_r) - bx) * scale, 1)},{round(offset_y + (float(py_r) - by) * scale, 1)}" for px_r, py_r in approx.reshape(-1, 2))
     axes_svg = []
     for idx, ax_x in enumerate(x_axes, start=1):
         sx = round(offset_x + (ax_x - bx) * scale, 1)
@@ -133,10 +245,25 @@ def analyze_building_plan_footprint(image_path: str, operator_object_title: str 
             f'<text x="16" y="{sy + 4}" fill="#38bdf8" font-size="10" font-weight="bold" text-anchor="middle" font-family="sans-serif">{letter}</text>'
         )
 
+    arrow_defs = '<defs><marker id="turtleArrow" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#10b981"/></marker></defs>'
+    routes_svg = "".join(
+        f'<line x1="{round(offset_x + (rt["x1"] - bx) * scale, 1)}" y1="{round(offset_y + (rt["y1"] - by) * scale, 1)}" '
+        f'x2="{round(offset_x + (rt["x2"] - bx) * scale, 1)}" y2="{round(offset_y + (rt["y2"] - by) * scale, 1)}" '
+        f'stroke="#10b981" stroke-width="2.2" marker-end="url(#turtleArrow)" opacity="0.92"/>'
+        for rt in routes
+    )
     svg_code = (
         f'<svg viewBox="0 0 {svg_w} {svg_h}" width="100%" height="260" style="background:#090d16;border:1px solid #1e293b;border-radius:10px;">'
-        + "".join(axes_svg)
+        + arrow_defs + "".join(axes_svg) + routes_svg
         + f'<polygon points="{poly_str}" fill="rgba(56,189,248,0.18)" stroke="#e2e8f0" stroke-width="2.5"/>'
+        + "".join(
+            f'<circle cx="{round(offset_x + (m["x"] - bx) * scale, 1)}" cy="{round(offset_y + (m["y"] - by) * scale, 1)}" r="5" fill="#f97316" stroke="#fff" stroke-width="1.2"/>'
+            for m in manholes
+        )
+        + "".join(
+            f'<circle cx="{round(offset_x + (ps["x"] - bx) * scale, 1)}" cy="{round(offset_y + (ps["y"] - by) * scale, 1)}" r="4.5" fill="#ef4444" stroke="#fef08a" stroke-width="1.2"/>'
+            for ps in passages
+        )
         + f'<text x="{pad_l}" y="16" fill="#94a3b8" font-size="11" font-family="monospace">Черепаха CAD-Оси · Осей X:{len(x_axes)} Y:{len(y_axes)} · ~{est_length_m}×{est_width_m}м</text></svg>'
     )
 
@@ -151,6 +278,13 @@ def analyze_building_plan_footprint(image_path: str, operator_object_title: str 
         "extent_pct": extent_pct,
         "corners_count": corners_count,
         "detected_cells_count": inner_rooms,
+        "manholes_count": len(manholes),
+        "passages_count": len(passages),
+        "manholes_list": manholes,
+        "passages_list": passages,
+        "routes_count": len(routes),
+        "route_total_m": route_total_m,
+        "routes_list": routes,
         "svg_preview": svg_code,
     }
 ELEVATION_RE = re.compile(r'(?:отм\.?|уровень|ур\.?\s*ч\.?\s*п\.?)\s*([+\-±]?\d{1,3}[\.,]\d{3})\b', re.IGNORECASE)
@@ -189,9 +323,11 @@ def _extract_node_engineering_context(page_text: str) -> dict:
 
 
 NODE_TITLE_RE = re.compile(
-    r'((?:боковое|верхнее|нижнее)?\s*(?:сопряжение|примыкание|узел|разрез|сечение|схема|крепление|пожарная\s+отсечка)[^\n]{3,95})',
+    r'((?:боковое|верхнее|нижнее)?\s*(?:сопряжение|примыкание|узел|разрез|сечение|схема|крепление|'
+    r'пожарная\s+отсечка|ввод\s+кабел[а-я]*|заземлен[а-я]*|дсуп|лоток|лотков|гильз[а-я]*|проходк[а-я]*|вру|щит[а-я]*)[^\n]{2,95})',
     re.IGNORECASE,
 )
+
 
 
 def extract_scaled_node_cuts_from_pdf(pdf_path: str, doc_id: int, page_numbers: list[int], query_hint: str = "") -> list[dict]:

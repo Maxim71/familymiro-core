@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -100,7 +100,15 @@
             </div>
         </div>
     </div>
-    <div id="pane-drawings" class="mp-pane">
+        <div id="pane-drawings" class="mp-pane">
+        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px;padding:10px;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;">
+            <strong style="font-size:12px;color:var(--accent-gold);">🗂️ Картотека узлов по томам РД:</strong>
+            <a href="?q={{ query|urlencode }}#pane-drawings" class="mp-copy-btn" style="text-decoration:none;{% if not selected_doc_id %}background:var(--accent-sky);color:#0f172a;font-weight:700;{% endif %}">Все тома ({{ available_docs|length }})</a>
+            {% for d_item in available_docs %}
+                <a href="?q={{ query|urlencode }}&doc_id={{ d_item.id }}#pane-drawings" class="mp-copy-btn" style="text-decoration:none;{% if selected_doc_id == d_item.id|stringformat:'s' %}background:var(--accent-sky);color:#0f172a;font-weight:700;{% endif %}">{{ d_item.title|truncatechars:28 }}</a>
+            {% endfor %}
+        </div>
+
         {% if milled_cuts %}
             <div class="mp-grid-2" style="margin-bottom:16px;">
                 {% for cut in milled_cuts %}
@@ -253,3 +261,4 @@
 <script src="{% static 'storage_control/js/mark_passport.js' %}"></script>
 </body>
 </html>
+
