@@ -534,6 +534,10 @@ def mark_passport_view(request):
     from storage_control.services.mark_passport import build_mark_passport_data
     q = (request.GET.get("q") or "").strip()
     ctx = build_mark_passport_data(q)
+
+    from .models import PhotoIntake
+    ctx["field_photos"] = PhotoIntake.objects.all()[:15]
+
     return render(request, "storage_control/mark_passport.html", ctx)
 
 def export_dynamic_table_view(request):
@@ -629,3 +633,104 @@ def async_search_api_view(request):
     ]
     return JsonResponse({"ok": True, "query": q, "count": len(results), "results": results})
 
+def mark_passport_seo_alias_view(request, slug):
+    from django.http import QueryDict
+    from .templatetags.seo_tags import make_seo_slug
+
+    clean_slug = make_seo_slug(slug)
+    matched_title = slug.replace("-", " ").strip()
+    for mat_name in PurchaseRequest.objects.values_list("material_name", flat=True).distinct()[:500]:
+        if make_seo_slug(mat_name) == clean_slug or clean_slug in make_seo_slug(mat_name):
+            matched_title = mat_name
+            break
+
+    qd = QueryDict(mutable=True)
+    qd["q"] = matched_title
+    request.GET = qd
+    return mark_passport_view(request)
+
+
+def async_search_api_view(request):
+    from django.http import JsonResponse
+    from .templatetags.seo_tags import make_seo_slug
+
+    q = request.GET.get("q", "").strip()
+    if len(q) < 2:
+        return JsonResponse({"ok": True, "query": q, "count": 0, "results": []})
+    pages = ParsedPage.objects.select_related("document").filter(text__icontains=q)[:15]
+    results = [
+        {
+            "doc_title": p.document.title if p.document else "РД",
+            "page": p.page_number,
+            "snippet": (p.text or "")[:180].replace("\n", " "),
+            "passport_url": f"/marka/{make_seo_slug(q)}/",
+        }
+        for p in pages
+    ]
+    return JsonResponse({"ok": True, "query": q, "count": len(results), "results": results})
+
+
+def photo_1c_hub_view(request):
+    from .models import PhotoIntake
+    from .services.falcon_vision import analyze_field_photo
+    from .services.one_c_bridge import extract_1c_document_payload, build_photo_catalog_answer
+    from .services.turtle_geometry import analyze_building_plan_footprint
+
+    if request.method == "POST" and request.FILES.get("image"):
+        kind = request.POST.get("photo_kind", "UPD_INVOICE")
+        scene = request.POST.get("scene_mode", "AUTO")
+        notes = request.POST.get("notes", "").strip()
+        obj = PhotoIntake.objects.create(
+            photo_kind=kind,
+            image=request.FILES["image"],
+            uploaded_by=request.user.username if request.user.is_authenticated else "ПТО Штаб",
+            notes=notes[:250],
+        )
+        vision = analyze_field_photo(obj.image.path, manual_hint_text=notes, scene_mode=scene)
+        payload_1c = extract_1c_document_payload(vision)
+        payload_1c["catalog_answer"] = build_photo_catalog_answer(vision, payload_1c)
+        payload_1c["turtle_plan"] = analyze_building_plan_footprint(obj.image.path, operator_object_title=notes)
+        codes_txt = ", ".join(f"{c['type']}:{c['raw'][:30]}" for c in vision.get("codes_found", []))
+
+        obj.scene_label = vision.get("scene_info", {}).get("scene_label", "")
+        obj.sharpness_pct = vision.get("sharpness_after_pct", 0.0)
+        obj.barcode_summary = codes_txt[:250]
+        obj.detected_axes = vision.get("detected_axes", "")[:115]
+        obj.detected_elevation = vision.get("detected_elevation", "")[:55]
+        obj.supplier_inn = payload_1c.get("supplier_inn", "")[:20]
+        obj.doc_number = payload_1c.get("doc_number", "")[:115]
+        obj.ocr_raw_text = vision.get("ocr_preview", "")
+        obj.payload_1c_json = payload_1c
+        obj.save()
+
+    return redirect(request.POST.get("return_to") or "/marka/truba-pe-110/")
+
+
+
+def photo_1c_accept_view(request, pk):
+    from .models import PhotoIntake
+    from .services.one_c_bridge import commit_1c_intake_to_warehouse_and_log
+    if request.method == "POST":
+        obj = get_object_or_404(PhotoIntake, pk=pk)
+        operator = request.user.username if request.user.is_authenticated else "ПТО Штаб"
+        commit_1c_intake_to_warehouse_and_log(obj.payload_1c_json or {}, operator=operator)
+        obj.status = "ACCEPTED_1C"
+        obj.save(update_fields=["status"])
+    return redirect(request.META.get("HTTP_REFERER") or "/marka/truba-pe-110/")
+
+
+def photo_1c_export_view(request, pk, fmt):
+    from .models import PhotoIntake
+    from .services.one_c_bridge import build_1c_exchange_files
+    obj = get_object_or_404(PhotoIntake, pk=pk)
+    xlsx_bytes, xml_bytes = build_1c_exchange_files(obj.payload_1c_json or {})
+    if fmt == "xml":
+        resp = HttpResponse(xml_bytes, content_type="application/xml; charset=utf-8")
+        resp["Content-Disposition"] = f'attachment; filename="1C_UPD_{obj.id}.xml"'
+        return resp
+    resp = HttpResponse(
+        xlsx_bytes,
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
+    resp["Content-Disposition"] = f'attachment; filename="1C_Prihod_M4_{obj.id}.xlsx"'
+    return resp

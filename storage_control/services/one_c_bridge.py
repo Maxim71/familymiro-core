@@ -11,7 +11,6 @@ from openpyxl.styles import Font, PatternFill, Alignment
 from django.conf import settings
 from storage_control.models import PurchaseRequest, WarehouseTmc
 
-# Справочник кодов ОКЕИ для прямого обмена с 1С:Бухгалтерия / 1С:УТ / 1С:ERP
 OKEI_MAP = {
     "шт": ("796", "шт"),
     "шт.": ("796", "шт"),
@@ -31,16 +30,11 @@ OKEI_MAP = {
 
 
 def normalize_okei(unit_raw: str) -> tuple[str, str]:
-    """Возвращает пару (код_ОКЕИ_для_1С, стандартное_обозначение)."""
     u = (unit_raw or "шт").strip().lower()
     return OKEI_MAP.get(u, ("796", "шт"))
 
 
 def extract_1c_document_payload(vision_result: dict) -> dict:
-    """
-    Шаги 4–5: Превращает сырой результат «Зрения сокола» (OCR + QR ФНС + штрихкоды)
-    в структурированный пакет реквизитов для Склада, Реестра ИД и 1С.
-    """
     ocr_text = vision_result.get("ocr_preview", "") or ""
     codes = vision_result.get("codes_found", []) or []
     doc_kind = vision_result.get("doc_kind", "UPD_INVOICE")
@@ -109,13 +103,7 @@ def extract_1c_document_payload(vision_result: dict) -> dict:
         "items": extracted_lines,
         "ready_for_1c": bool(extracted_lines or inn or doc_number),
     }
-
-
 def commit_1c_intake_to_warehouse_and_log(payload: dict, operator: str = "ПТО Штаб") -> dict:
-    """
-    Шаги 6–7: Проводит приёмку позиций из УПД/паспорта на склад WarehouseTmc,
-    уменьшает дефицит по заявкам РД и записывает событие в журнал аудита «Тритон & Жук».
-    """
     accepted = []
     doc_num = payload.get("doc_number") or "Б/Н"
     doc_date = payload.get("doc_date") or datetime.now().strftime("%d.%m.%Y")
@@ -126,22 +114,10 @@ def commit_1c_intake_to_warehouse_and_log(payload: dict, operator: str = "ПТО
         qty = Decimal(str(it["incoming_qty"]))
         unit = it["unit"]
 
-            for it in payload.get("items", []):
-        title = it["photo_material_name"]
-        qty = Decimal(str(it["incoming_qty"]))
-        unit = it["unit"]
-
         auto_code = f"1C-{abs(hash(title)) % 900000 + 100000}"
         wh_obj, _ = WarehouseTmc.objects.get_or_create(
             nomenclature=title,
             defaults={"item_code": auto_code, "unit": unit, "stock_balance": Decimal("0")},
-        )
-        wh_obj.stock_balance = (wh_obj.stock_balance or Decimal("0")) + qty
-
-
-        wh_obj, _ = WarehouseTmc.objects.get_or_create(
-            nomenclature=title,
-            defaults={"unit": unit, "stock_balance": Decimal("0")},
         )
         wh_obj.stock_balance = (wh_obj.stock_balance or Decimal("0")) + qty
         if hasattr(wh_obj, "certificate_number") and not wh_obj.certificate_number:
@@ -185,14 +161,7 @@ def commit_1c_intake_to_warehouse_and_log(payload: dict, operator: str = "ПТО
         lf.write(json.dumps(event_record, ensure_ascii=False) + "\n")
 
     return {"ok": True, "accepted_items": accepted, "log_file": log_path}
-
-
 def build_1c_exchange_files(payload: dict) -> tuple[bytes, bytes]:
-    """
-    Шаги 8–9: Генерирует два готовых файла обмена с 1С:
-    1) Excel-шаблон загрузки документа в 1С (.xlsx);
-    2) Стандартный XML-файл КоммерческаяИнформация 2.10 (.xml) для 1С:УТ / 1С:Бухгалтерия / 1С:ERP.
-    """
     wb = openpyxl.Workbook()
     ws = wb.active
     ws.title = "Загрузка_1С_Приход"
@@ -250,3 +219,39 @@ def build_1c_exchange_files(payload: dict) -> tuple[bytes, bytes]:
     xlsx_buf = io.BytesIO()
     wb.save(xlsx_buf)
     return xlsx_buf.getvalue(), "\n".join(xml_lines).encode("utf-8")
+
+
+def build_photo_catalog_answer(vision_result: dict, payload_1c: dict) -> list[dict]:
+    items = payload_1c.get("items") or [{"photo_material_name": "Документ без товарных строк", "incoming_qty": 0, "unit": "шт", "okei_code_1c": "796", "matched_rd_name": "Требует уточнения"}]
+    catalog_entries = []
+    for it in items:
+        mat_name = it.get("photo_material_name", "")
+        catalog_entries.append({
+            "catalog_id": f"PHOTO-1C-{it.get('okei_code_1c', '796')}-{abs(hash(mat_name)) % 9000 + 1000}",
+            "1_passport_and_1c": {
+                "canonical_name": mat_name,
+                "okei_code_1c": it.get("okei_code_1c", "796"),
+                "unit": it.get("unit", "шт"),
+                "incoming_qty": it.get("incoming_qty", 0),
+                "matched_rd_name": it.get("matched_rd_name", ""),
+                "supplier_inn": payload_1c.get("supplier_inn", ""),
+                "doc_number": payload_1c.get("doc_number", ""),
+            },
+            "2_montage_and_enir": {
+                "target_1c_operation": payload_1c.get("target_1c_doc", ""),
+                "shift_norm_hint": "Расчёт по ЕНиР при привязке к виду работ",
+                "quality_check": vision_result.get("quality_warning", ""),
+            },
+            "3_bim_axes_and_ojr": {
+                "grid_axes": payload_1c.get("detected_axes", "") or "Не указаны на фото",
+                "elevation": payload_1c.get("detected_elevation", "") or "Не указана на фото",
+                "ojr_section3_ready": bool(payload_1c.get("detected_axes") or payload_1c.get("detected_elevation")),
+            },
+            "4_turtle_nodes_and_id": {
+                "scene_profile": vision_result.get("scene_info", {}).get("scene_label", ""),
+                "sharpness_pct": vision_result.get("sharpness_after_pct", 0.0),
+                "codes_detected": [c.get("raw", "") for c in vision_result.get("codes_found", [])],
+                "id_package_status": "Готово к подшивке в Реестр материалов АОСР и ИД",
+            },
+        })
+    return catalog_entries

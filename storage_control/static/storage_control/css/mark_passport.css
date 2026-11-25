@@ -209,3 +209,22 @@ body {
     cursor: zoom-out;
 }
 .mp-lightbox img { max-width: 92vw; max-height: 92vh; background: #FFF; padding: 10px; border-radius: 8px; }
+.bim-pill-warn,
+.bim-pill-ok {
+  font-size: 11.5px;
+  margin-top: 4px;
+  padding: 3px 7px;
+  border-radius: 4px;
+}
+
+.bim-pill-warn {
+  background: rgba(239, 68, 68, 0.18);
+  color: #FCA5A5;
+  border: 1px solid #EF4444;
+}
+
+.bim-pill-ok {
+  background: rgba(34, 197, 94, 0.15);
+  color: #86EFAC;
+  border: 1px solid #22C55E;
+}

@@ -46,6 +46,7 @@
         <button type="button" class="mp-tab active" data-target="pane-tech">🛠️ Монтаж и Калькулятор смен</button>
         <button type="button" class="mp-tab" data-target="pane-history">📜 История по томам и BIM ({{ history_timeline|length }})</button>
         <button type="button" class="mp-tab" data-target="pane-schemes">📐 Схемы узлов и чертежи ({{ diagrams|length }})</button>
+        <button type="button" class="mp-tab" data-target="pane-photos">📸 Фото УПД, ИД и Каталог 1С ({{ field_photos|length }})</button>
     </div>
 
     <div id="pane-tech" class="mp-pane active">
@@ -109,6 +110,87 @@
                     <p style="color: var(--text-muted);">Схемы загружаются при наличии доступа к сети.</p>
                 {% endfor %}
             </div>
+        </div>
+    </div>
+</div>
+
+<div id="pane-photos" class="mp-pane">
+    <div class="mp-grid-2">
+        <div class="mp-card">
+            <h3>1️⃣ Загрузить фото УПД, паспорта качества или бирки</h3>
+            <form method="post" action="{% url 'storage_control:photo_1c_hub' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="return_to" value="{{ request.get_full_path }}">
+                <div style="margin-bottom:10px;">
+                    <label style="font-size:12px;color:var(--text-muted);">Тип документа на фото:</label>
+                    <select name="photo_kind" class="mp-input" style="margin-top:4px;">
+                        <option value="UPD_INVOICE">🧾 Накладная / УПД / ТТН (Приход в Склад и 1С)</option>
+                        <option value="QUALITY_CERT">📜 Паспорт качества / Сертификат ФЗ-123 (в ИД)</option>
+                        <option value="TAG_LABEL">🏷️ Бирка / Этикетка партии / Барабан / QR</option>
+                        <option value="FIELD_NODE">📐 Фото узла / Осей / Отметки со стройки</option>
+                    </select>
+                </div>
+                <div style="margin-bottom:10px;">
+                    <label style="font-size:12px;color:var(--text-muted);">Условия освещения («Зрение сокола»):</label>
+                    <select name="scene_mode" class="mp-input" style="margin-top:4px;">
+                        <option value="AUTO">🤖 Автоопределение по яркости кадра</option>
+                        <option value="GARAGE_HANGAR">🏚️ Гараж / Ангар / Сумерки</option>
+                        <option value="OUTDOOR_SUN">☀️ Улица / Яркое солнце</option>
+                        <option value="WAREHOUSE_INDOOR">🏭 Помещение / Склад</option>
+                        <option value="CONSTRUCTION_SITE">🏗️ Стройплощадка (пыль / синие печати)</option>
+                    </select>
+                </div>
+                <div style="margin-bottom:10px;">
+                    <input type="file" name="image" accept="image/*" required class="mp-input">
+                </div>
+                <div style="margin-bottom:12px;">
+                    <input type="text" name="notes" class="mp-input" value="{{ query }}" placeholder="Марка, № УПД или оси">
+                </div>
+                <button type="submit" class="mp-copy-btn" style="padding:10px 18px;font-size:14px;">🔍 Распознать («Зрение сокола»)</button>
+            </form>
+        </div>
+
+        <div class="mp-card">
+            <h3>2️⃣ Приёмка на склад, выгрузка в 1С и Каталог Ответа [[{[XxX]}]]</h3>
+            {% for ph in field_photos %}
+                <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:10px;padding:10px;margin-bottom:10px;">
+                    <div style="display:flex;gap:10px;align-items:flex-start;">
+                        <img src="{{ ph.image.url }}" alt="Фото #{{ ph.id }}" style="width:84px;height:84px;object-fit:cover;border-radius:8px;border:1px solid var(--border);">
+                        <div style="flex:1;font-size:12px;">
+                            <div style="font-weight:700;color:var(--accent-sky);">#{{ ph.id }} · {{ ph.get_photo_kind_display }}</div>
+                            <div style="color:var(--accent-gold);">{{ ph.get_status_display }} · Резкость: {{ ph.sharpness_pct }}%</div>
+                            <div>Док. № <strong>{{ ph.doc_number|default:"—" }}</strong> · ИНН: <strong>{{ ph.supplier_inn|default:"—" }}</strong> · Оси: <strong>{{ ph.detected_axes|default:"—" }}</strong></div>
+
+                            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;">
+                                {% if ph.status != "ACCEPTED_1C" %}
+                                    <form method="post" action="{% url 'storage_control:photo_1c_accept' ph.id %}" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="mp-copy-btn" style="background:#10b981;color:#052e16;font-weight:700;">✅ Принять на склад</button>
+                                    </form>
+                                {% endif %}
+                                <a href="{% url 'storage_control:photo_1c_export' ph.id 'xlsx' %}" class="mp-copy-btn" style="text-decoration:none;">📊 Excel 1С</a>
+                                <a href="{% url 'storage_control:photo_1c_export' ph.id 'xml' %}" class="mp-copy-btn" style="text-decoration:none;">🧾 XML 1С</a>
+                            </div>
+
+                            {% if ph.payload_1c_json.catalog_answer %}
+                                <details style="margin-top:8px;background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:6px 8px;">
+                                    <summary style="cursor:pointer;font-weight:700;color:var(--accent-gold);">🧬 Каталог Ответа [[{[XxX]}]] ({{ ph.payload_1c_json.catalog_answer|length }})</summary>
+                                    {% for entry in ph.payload_1c_json.catalog_answer %}
+                                        <div style="margin-top:6px;padding-top:6px;border-top:1px dashed var(--border);line-height:1.45;">
+                                            <div><strong>[1. Паспорт/1С]:</strong> {{ entry.1_passport_and_1c.canonical_name }} · {{ entry.1_passport_and_1c.incoming_qty }} {{ entry.1_passport_and_1c.unit }} (ОКЕИ <code>{{ entry.1_passport_and_1c.okei_code_1c }}</code>)</div>
+                                            <div><strong>[2. ЕНиР]:</strong> {{ entry.2_montage_and_enir.target_1c_operation }}</div>
+                                            <div><strong>[3. Оси/ОЖР]:</strong> {{ entry.3_bim_axes_and_ojr.grid_axes }} · Отм. {{ entry.3_bim_axes_and_ojr.elevation }}</div>
+                                            <div><strong>[4. ИД]:</strong> {{ entry.4_turtle_nodes_and_id.scene_profile }} ({{ entry.4_turtle_nodes_and_id.sharpness_pct }}%)</div>
+                                        </div>
+                                    {% endfor %}
+                                </details>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p style="color:var(--text-muted);">Загрузите первое фото УПД, паспорта качества или бирки слева — оно появится здесь с разбором для 1С и ИД.</p>
+            {% endfor %}
         </div>
     </div>
 </div>

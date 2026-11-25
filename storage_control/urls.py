@@ -29,5 +29,9 @@ urlpatterns = [
     path("export-dynamic-table/", export_dynamic_table_view, name="export_dynamic_table"),
     path("marka/<path:slug>/", views.mark_passport_seo_alias_view, name="mark_passport_seo_alias"),
     path("api/search-async/", views.async_search_api_view, name="async_search_api"),
+    path("photo-1c-hub/", views.photo_1c_hub_view, name="photo_1c_hub"),
+    path("photo-1c-hub/<int:pk>/accept/", views.photo_1c_accept_view, name="photo_1c_accept"),
+    path("photo-1c-hub/<int:pk>/export/<str:fmt>/", views.photo_1c_export_view, name="photo_1c_export"),
+
 
 ]

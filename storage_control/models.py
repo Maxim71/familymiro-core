@@ -449,3 +449,51 @@ class BimCrossLink(models.Model):
 
     def __str__(self):
         return f"{self.bim_tag} ({self.source_discipline} ↔ {self.target_discipline}) [{self.get_link_status_display()}]"
+
+class PhotoIntake(models.Model):
+    """Шлюз приёма фото со стройплощадки («Зрение сокола» + Оси/Высоты + QR/Штрихкоды + Мост 1С)."""
+    KIND_CHOICES = [
+        ("UPD_INVOICE", "🧾 Накладная / УПД / ТТН (Приход в Склад и 1С)"),
+        ("QUALITY_CERT", "📜 Паспорт качества / Сертификат ФЗ-123 (в ИД)"),
+        ("TAG_LABEL", "🏷️ Бирка / Этикетка партии / Барабан / QR"),
+        ("FIELD_NODE", "📐 Фото узла / Осей / Отметки со стройки"),
+    ]
+    STATUS_CHOICES = [
+        ("VISION_OCR_DONE", "🔵 Распознано («Зрение сокола» + OCR)"),
+        ("ACCEPTED_1C", "🟢 Принято на склад / в ИД / готово для 1С"),
+    ]
+
+    document = models.ForeignKey(
+        Document, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="field_photos", verbose_name="Связанный том РД"
+    )
+    photo_kind = models.CharField("Тип фотодокумента", max_length=20, choices=KIND_CHOICES, default="UPD_INVOICE")
+    image = models.ImageField("Фото со стройки", upload_to="field_photos/%Y/%m/")
+    uploaded_by = models.CharField("Кто загрузил", max_length=120, default="ПТО Штаб")
+
+    # Резюме «Зрения сокола» и QR/штрихкодов
+    scene_label = models.CharField("Профиль освещения", max_length=80, blank=True, default="")
+    sharpness_pct = models.FloatField("Резкость кадра (%)", default=0.0)
+    barcode_summary = models.CharField("QR / Штрихкоды", max_length=255, blank=True, default="")
+
+    # Геометрия объекта (Оси и Высоты)
+    detected_axes = models.CharField("Оси на фото / в документе", max_length=120, blank=True, default="")
+    detected_elevation = models.CharField("Высотная отметка", max_length=60, blank=True, default="")
+
+    # Структурированный пакет для 1С и ИД
+    supplier_inn = models.CharField("ИНН поставщика (1С)", max_length=20, blank=True, default="")
+    doc_number = models.CharField("№ УПД / Накладной / Паспорта", max_length=120, blank=True, default="")
+    ocr_raw_text = models.TextField("Распознанный текст (OCR)", blank=True, default="")
+    payload_1c_json = models.JSONField("Готовый пакет реквизитов для 1С", default=dict, blank=True)
+
+    status = models.CharField("Статус", max_length=20, choices=STATUS_CHOICES, default="VISION_OCR_DONE")
+    notes = models.CharField("Комментарий / Марка", max_length=255, blank=True, default="")
+    created_at = models.DateTimeField("Дата загрузки", auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Фотодокумент со стройки"
+        verbose_name_plural = "Фотодокументы со стройки (Шлюз 1С / ИД)"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"#{self.id} [{self.get_photo_kind_display()}] {self.doc_number or self.created_at:%d.%m.%Y}"

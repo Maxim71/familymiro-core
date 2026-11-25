@@ -1,3 +1,4 @@
+{% load seo_tags %}
 ﻿{% load static %}
 <!DOCTYPE html>
 <html lang="ru" prefix="og: https://ogp.me">
@@ -6,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0F172A">
+    
     <title>ПТО & АСУ ТП Портал | ЦОД НПО «СПЛАВ» — Цифровой штаб строительства</title>
     <meta name="description" content="Профессиональная система автоматизации ПТО: распознавание комплектов РД, контроль строительных осей, ведомости ТМЦ, графики ГПР и акты АОСР по Приказу Минстроя РФ № 344/пр.">
     <link rel="preconnect" href="https://googleapis.com">
@@ -15,6 +17,12 @@
     <link rel="stylesheet" href="{% static 'storage_control/css/architect.css' %}">
 </head>
 <body>
+<div style="display:flex;flex-wrap:wrap;gap:10px;margin:12px 16px;padding:10px 14px;background:#0f172a;border:1px solid #1e293b;border-radius:10px;">
+  <a href="/" style="color:#38bdf8;font-weight:700;text-decoration:none;padding:6px 12px;background:#1e293b;border-radius:6px;">📂 1. Картотека РД и BIM</a>
+  <a href="/marka/truba-pe-110/#pane-photos" style="color:#34d399;font-weight:700;text-decoration:none;padding:6px 12px;background:#064e3b;border-radius:6px;">📸 2. Приёмка Фото УПД → Склад → 1С</a>
+  <a href="/marka/truba-pe-110/#pane-drawings" style="color:#fbbf24;font-weight:700;text-decoration:none;padding:6px 12px;background:#451a03;border-radius:6px;">🐢 3. Черепаха CAD-Оси</a>
+  <a href="/export/aosr/" style="color:#c084fc;font-weight:700;text-decoration:none;padding:6px 12px;background:#3b0764;border-radius:6px;">📑 4. Скачать Акт АОСР (Word)</a>
+</div>
 
 <!-- Сквозная верхняя панель навигации -->
 <nav class="top-navigation" style="justify-content: space-between; flex-wrap: wrap;">
@@ -339,9 +347,10 @@
                                 <strong style="color: #F8FAFC; font-size: 13.5px;">{{ req.material_name }}</strong>
                                 {% if req.node_cabinet %}<div style="font-size: 11px; color: #38BDF8; margin-top: 2px;">{{ req.node_cabinet }}</div>{% endif %}
                                 {% if req.bim_badge %}
-                                    <div style="font-size: 11.5px; margin-top: 4px; padding: 3px 7px; border-radius: 4px; {% if req.bim_level == 'warn' %}background: rgba(239,68,68,0.18); color: #FCA5A5; border: 1px solid #EF4444;{% else %}background: rgba(34,197,94,0.15); color: #86EFAC; border: 1px solid #22C55E;{% endif %}">
-                                        {{ req.bim_badge }}
+                                    <div class="{% if req.bim_level == 'warn' %}bim-pill-warn{% else %}bim-pill-ok{% endif %}" style="font-size: 11.5px; margin-top: 4px; padding: 3px 7px; border-radius: 4px;">
+                                       {{ req.bim_badge }}
                                     </div>
+
                                 {% endif %}
                                 {% if req.vendor_badge %}
                                     <div style="font-size: 11.5px; color: #FCD34D; margin-top: 3px;">{{ req.vendor_badge }}</div>
@@ -359,7 +368,7 @@
                                 <div style="font-size: 12px;">{{ req.assigned_itr }}</div>
                                 <div style="font-size: 11px; color: #5EEAD4; margin: 2px 0;">{{ req.schedule_hint }}</div>
                                 <div style="font-size: 11px; color: #94A3B8; margin-bottom: 5px;">{{ req.status_display }}</div>
-                                <a href="/mark-passport/?q={{ req.material_name|urlencode }}" style="display: inline-block; background: #0F766E; color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; text-decoration: none; border: 1px solid #14B8A6;">
+                                <a href="/marka/{{ req.material_name|seo_slug }}/" style="display: inline-block; background: #0F766E; color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; text-decoration: none; border: 1px solid #14B8A6;">
                                     ℹ️ Инф() Паспорт марки
                                 </a>
                             </td>
