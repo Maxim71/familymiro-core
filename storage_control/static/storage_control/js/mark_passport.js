@@ -58,3 +58,60 @@ window.addEventListener("DOMContentLoaded", function () {
         if (btn) btn.click();
     }
 });
+
+
+let _turtlePts = [];
+function updateTurtleLiveStep(stepMmRaw) {
+    const stepMm = Math.max(1000, parseFloat(stepMmRaw) || 6000);
+    const stepM = stepMm / 1000.0;
+    document.querySelectorAll('.turtle-dim-text').forEach(el => { el.textContent = Math.round(stepMm); });
+    const cols = Math.max(1, document.querySelectorAll('.turtle-dim-text').length);
+    const lenM = (cols * stepM).toFixed(1);
+    const areaM2 = (cols * stepM * stepM).toFixed(1);
+    const out = document.getElementById('turtle-live-calc');
+    if (out) out.textContent = `??????????: ~${lenM} ? ? ????????: ~${areaM2} ??`;
+}
+
+function turtleMeasureClick(evt, svgEl) {
+    const rect = svgEl.getBoundingClientRect();
+    const vb = svgEl.viewBox.baseVal;
+    const x = ((evt.clientX - rect.left) / rect.width) * vb.width;
+    const y = ((evt.clientY - rect.top) / rect.height) * vb.height;
+    _turtlePts.push({x, y});
+
+    const dot = document.createElementNS("http://w3.org", "circle");
+    dot.setAttribute("cx", x.toFixed(1));
+    dot.setAttribute("cy", y.toFixed(1));
+    dot.setAttribute("r", "4.5");
+    dot.setAttribute("fill", "#f472b6");
+    dot.setAttribute("class", "turtle-ruler-mark");
+    svgEl.appendChild(dot);
+
+    if (_turtlePts.length >= 2) {
+        const p1 = _turtlePts[_turtlePts.length - 2];
+        const p2 = _turtlePts[_turtlePts.length - 1];
+        const line = document.createElementNS("http://w3.org", "line");
+        line.setAttribute("x1", p1.x.toFixed(1));
+        line.setAttribute("y1", p1.y.toFixed(1));
+        line.setAttribute("x2", p2.x.toFixed(1));
+        line.setAttribute("y2", p2.y.toFixed(1));
+        line.setAttribute("stroke", "#f472b6");
+        line.setAttribute("stroke-width", "2.4");
+        line.setAttribute("stroke-dasharray", "5 3");
+        line.setAttribute("class", "turtle-ruler-mark");
+        svgEl.appendChild(line);
+
+        const stepM = (parseFloat(document.getElementById('turtle-step-input')?.value) || 6000) / 1000.0;
+        const pxDist = Math.hypot(p2.x - p1.x, p2.y - p1.y);
+        const meters = ((pxDist / 90.0) * stepM).toFixed(2);
+        const out = document.getElementById('turtle-ruler-out');
+        if (out) out.textContent = `?? ????? ??????: ${meters} ? (????? ??????? ??????)`;
+    }
+}
+
+function clearTurtleRuler() {
+    _turtlePts = [];
+    document.querySelectorAll('.turtle-ruler-mark').forEach(el => el.remove());
+    const out = document.getElementById('turtle-ruler-out');
+    if (out) out.textContent = '?? ???????: ???????? 2 ????? ?? ?????';
+}

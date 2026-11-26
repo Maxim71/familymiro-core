@@ -150,6 +150,15 @@
                 {% for tp in turtle_plans %}
                     <div class="mp-card">
                         <h3>🐢 Черепаха CAD-Оси и Углы контура (Снимок #{{ tp.photo_id }})</h3>
+                        
+                        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:8px 10px;background:#0f172a;border:1px solid #1e293b;border-radius:8px;margin:8px 0;font-size:12px;">
+                            <span style="color:#38bdf8;font-weight:700;">??? ????? ??????????:</span>
+                            <label>??? ???? (??): <input type="number" id="turtle-step-input" value="6000" step="600" min="1500" max="24000" onchange="updateTurtleLiveStep(this.value)" style="width:78px;background:#1e293b;color:#fbbf24;border:1px solid #334155;border-radius:5px;padding:3px 6px;font-weight:700;"></label>
+                            <span id="turtle-live-calc" style="color:#34d399;font-weight:700;">??????????: ~24.0 ? ? ???????: ~144.0 ??</span>
+                            <span id="turtle-ruler-out" style="color:#f472b6;font-weight:700;">?? ???????: ???????? 2 ????? ?? ?????</span>
+                            <button type="button" class="mp-copy-btn" onclick="clearTurtleRuler()" style="padding:3px 8px;">?? ????? ??????</button>
+                        </div>
+
                         <div style="margin:8px 0;">{{ tp.svg_preview|safe }}</div>
                         <div style="font-size:12px;line-height:1.55;">
                             <div><strong>Объект (по факту):</strong> {{ tp.object_title_fact }}</div>
