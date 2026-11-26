@@ -3,6 +3,7 @@ from django.urls import path
 from . import views
 
 from .views import (
+    project_totals_and_analogs_api,
     operation_memo_export_view,
     new_client_wizard_view,
     id_registry_export_view,
@@ -23,6 +24,7 @@ from .views import (
 app_name = 'storage_control'
 
 urlpatterns = [
+    path("api/project-totals/", project_totals_and_analogs_api, name="project_totals_api"),
     path("operation-memo/export/", operation_memo_export_view, name="operation_memo_export"),
     path("new-client/", new_client_wizard_view, name="new_client"),
     path("id-registry/export/", id_registry_export_view, name="id_registry_export"),

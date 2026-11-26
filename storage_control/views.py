@@ -1095,3 +1095,62 @@ def operation_memo_export_view(request):
     resp = HttpResponse(data, content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
     resp["Content-Disposition"] = 'attachment; filename="Pamyatka_Ekspluatacii_i_Garantii.docx"'
     return resp
+
+
+def _suggest_analog_for_material(name: str) -> str:
+    low = (name or "").lower()
+    if "\u0449\u0435\u0431\u0435\u043d" in low:
+        return "\u0410\u043d\u0430\u043b\u043e\u0433: \u0449\u0435\u0431\u0435\u043d\u044c \u0433\u0440\u0430\u043d\u0438\u0442\u043d\u044b\u0439/\u0433\u0440\u0430\u0432\u0438\u0439\u043d\u044b\u0439 \u0442\u043e\u0439 \u0436\u0435 \u0444\u0440\u0430\u043a\u0446\u0438\u0438 (\u0413\u041e\u0421\u0422 8267-93) + \u043f\u0430\u0441\u043f\u043e\u0440\u0442 \u043a\u0430\u0447\u0435\u0441\u0442\u0432\u0430"
+    if any(k in low for k in ("\u0440\u043e\u0437\u0435\u0442\u043a", "\u0432\u044b\u043a\u043b\u044e\u0447")):
+        return "\u0410\u043d\u0430\u043b\u043e\u0433: \u0441\u0442\u0440\u043e\u0433\u043e \u0441 \u0442\u043e\u0439 \u0436\u0435 \u0441\u0442\u0435\u043f\u0435\u043d\u044c\u044e IP (IP20/IP44/IP54), 16\u0410 \u0438 \u0442\u0438\u043f\u043e\u043c \u043c\u043e\u043d\u0442\u0430\u0436\u0430"
+    if any(k in low for k in ("\u043b\u0430\u043c\u043f", "\u0441\u0432\u0435\u0442\u0438\u043b", "\u0431\u0440\u0430")):
+        return "\u0410\u043d\u0430\u043b\u043e\u0433: \u043f\u043e \u0441\u0432\u0435\u0442\u043e\u0432\u043e\u043c\u0443 \u043f\u043e\u0442\u043e\u043a\u0443 (\u043b\u043c), \u0446\u043e\u043a\u043e\u043b\u044e (E27/GU10/LED), \u0442\u0435\u043c\u043f\u0435\u0440\u0430\u0442\u0443\u0440\u0435 3000/4000K \u0438 IP"
+    if "\u0440\u0430\u0434\u0438\u0430\u0442\u043e\u0440" in low:
+        return "\u0410\u043d\u0430\u043b\u043e\u0433: \u043f\u043e \u043c\u043e\u0449\u043d\u043e\u0441\u0442\u0438 (\u0412\u0442), \u043c\u0435\u0436\u043e\u0441\u0435\u0432\u043e\u043c\u0443 \u0440\u0430\u0441\u0441\u0442\u043e\u044f\u043d\u0438\u044e (350/500 \u043c\u043c) \u0438 \u0434\u0430\u0432\u043b\u0435\u043d\u0438\u044e (\u0413\u041e\u0421\u0422 31311)"
+    return "\u0410\u043d\u0430\u043b\u043e\u0433: \u043f\u043e \u0413\u041e\u0421\u0422/\u0421\u041f \u0447\u0435\u0440\u0435\u0437 \u043b\u0438\u0441\u0442 \u0430\u0432\u0442\u043e\u0440\u0441\u043a\u043e\u0433\u043e \u043d\u0430\u0434\u0437\u043e\u0440\u0430 \u0441 \u043f\u0440\u043e\u0435\u043a\u0442\u0438\u0440\u043e\u0432\u0449\u0438\u043a\u043e\u043c"
+
+
+def project_totals_and_analogs_api(request):
+    import re, functools
+    from django.http import JsonResponse
+    from django.db.models import Q
+    from storage_control.models import PurchaseRequest, ParsedPage
+    from storage_control.services.building_twin import fix_autocad_mojibake
+
+    q = (request.GET.get("q") or "").strip()
+    if not q:
+        return JsonResponse({"ok": True, "items": [], "totals_by_unit": {}, "pdf_mentions": []})
+    variants = _norm_x_variants(q)
+    stem = q[:max(4, len(q) - 2)] if len(q) >= 5 else q
+    if stem not in variants:
+        variants.append(stem)
+
+    cond = functools.reduce(lambda a, b: a | b, [Q(material_name__icontains=v) for v in variants])
+    reqs = list(PurchaseRequest.objects.select_related("document").filter(cond).order_by("id")[:150])
+
+    grouped, totals_by_unit = {}, {}
+    for r in reqs:
+        key = f"{(r.material_name or '').strip()} | {(r.floor_info or '\u041f\u043e \u043f\u0440\u043e\u0435\u043a\u0442\u0443').strip()}"
+        u = (r.unit or "\u0448\u0442.").strip()
+        qty = float(r.required_qty or 0)
+        totals_by_unit[u] = round(totals_by_unit.get(u, 0.0) + qty, 2)
+        entry = grouped.setdefault(key, {
+            "req_num": f"\u0417\u041c-{r.id:04d}",
+            "mark_name": (r.material_name or "").strip(),
+            "floor_or_zone": (r.floor_info or "\u041f\u043e \u043f\u043b\u0430\u043d\u0443 \u0420\u0414").strip(),
+            "doc_title": r.document.title if r.document else "\u0420\u0414",
+            "qty": 0.0,
+            "unit": u,
+        })
+        entry["qty"] = round(entry["qty"] + qty, 2)
+
+    pdf_mentions = []
+    p_cond = functools.reduce(lambda a, b: a | b, [Q(text__icontains=v) for v in variants])
+    for pg in ParsedPage.objects.select_related("document").filter(p_cond)[:12]:
+        txt = fix_autocad_mojibake(pg.text or "")
+        idx = txt.lower().find(stem.lower())
+        if idx >= 0:
+            snip = re.sub(r'\s+', ' ', txt[max(0, idx - 35): idx + 110]).strip()
+            pdf_mentions.append({"doc": pg.document.title if pg.document else "\u0420\u0414", "page": pg.page_number, "snippet": snip})
+
+    return JsonResponse({"ok": True, "query": q, "totals_by_unit": totals_by_unit, "items": list(grouped.values()), "pdf_mentions": pdf_mentions, "general_analog": _suggest_analog_for_material(q)})
