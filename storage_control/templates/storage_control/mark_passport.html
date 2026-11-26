@@ -114,19 +114,19 @@
     </div>
         <div id="pane-drawings" class="mp-pane">
             <div class="mp-card" style="margin-bottom:14px;border-left:4px solid #38bdf8;">
-                <h3 style="margin:0 0 4px 0;">?? ???????? CAD ? ????????? ??????, ?????? ?????? ? ??????? ?? ????</h3>
+                <h3 style="margin:0 0 4px 0;">🐢 Черепаха CAD — Поэтажный разрез, Схема раздела и Закупка на этап</h3>
                 <p style="margin:0 0 10px 0;font-size:12px;color:#94a3b8;"><strong>????? ???? ????:</strong> ?????????? ???????? ????????? ????? ?? ??????????? PDF, ???????? ???? ?????? ??? (2,0 ?) ??? ????? ??????? ? ??????? ??????, ??? ???????? ?? ??????? ????? ?????????????.</p>
                 <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;">
                     {% for fc in project_floor_cuts.floor_cuts %}
-                        <button type="button" class="mp-copy-btn" onclick="document.querySelectorAll('.t-fl-cut').forEach(e=>e.style.display='none');document.getElementById('tfl-{{ forloop.counter }}').style.display='block';">?? {{ fc.floor_label }} (???? ?{{ fc.page_number }})</button>
+                        <button type="button" class="mp-copy-btn" onclick="document.querySelectorAll('.t-fl-cut').forEach(e=>e.style.display='none');document.getElementById('tfl-{{ forloop.counter }}').style.display='block';">?? {{ fc.floor_label }} (Лист №{{ fc.page_number }})</button>
                     {% endfor %}
-                    <button type="button" class="mp-copy-btn" onclick="document.querySelectorAll('.bim-p').forEach(e=>e.style.display='none');document.getElementById('bim-sleeves').style.display='block';">?? ?????? ? ??????</button>
-                    <button type="button" class="mp-copy-btn" onclick="document.querySelectorAll('.bim-p').forEach(e=>e.style.display='none');document.getElementById('bim-doors').style.display='block';">?? ?????? ? ?????</button>
-                    <button type="button" class="mp-copy-btn" onclick="document.querySelectorAll('.bim-p').forEach(e=>e.style.display='none');document.getElementById('bim-pipes').style.display='block';">?? ?????-?????? ????</button>
+                    <button type="button" class="mp-copy-btn" onclick="document.querySelectorAll('.bim-p').forEach(e=>e.style.display='none');document.getElementById('bim-sleeves').style.display='block';">🔩 Гильзы и высоты</button>
+                    <button type="button" class="mp-copy-btn" onclick="document.querySelectorAll('.bim-p').forEach(e=>e.style.display='none');document.getElementById('bim-doors').style.display='block';">🚪 Проёмы и двери</button>
+                    <button type="button" class="mp-copy-btn" onclick="document.querySelectorAll('.bim-p').forEach(e=>e.style.display='none');document.getElementById('bim-pipes').style.display='block';">🚰 Карта-график труб</button>
                 </div>
                 {% for fc in project_floor_cuts.floor_cuts %}
                     <div id="tfl-{{ forloop.counter }}" class="t-fl-cut" style="display:{% if forloop.first %}block{% else %}none{% endif %};margin-bottom:10px;">
-                        <div style="font-size:12px;color:#38bdf8;margin-bottom:4px;"><strong>{{ fc.floor_label }}</strong> ? {{ fc.doc_title }} (???? ?{{ fc.page_number }})</div>
+                        <div style="font-size:12px;color:#38bdf8;margin-bottom:4px;"><strong>{{ fc.floor_label }}</strong> ? {{ fc.doc_title }} (Лист №{{ fc.page_number }})</div>
                         {% if fc.img_url %}<img src="{{ fc.img_url }}" style="max-width:100%;max-height:420px;border-radius:8px;border:1px solid #334155;">{% endif %}
                     </div>
                 {% endfor %}
@@ -145,11 +145,11 @@
                     {% for s in cad_modes.sleeves %}<div style="margin-top:4px;">? <strong>{{ s.axis }}</strong> | <strong>{{ s.elev }}</strong> ? {{ s.spec }} ? <strong>{{ s.qty }}</strong></div>{% endfor %}
                 </div>
                 <div id="bim-doors" class="bim-p" style="display:none;background:#0f172a;border-left:3px solid #38bdf8;padding:10px;border-radius:8px;margin-top:8px;font-size:12px;">
-                    <strong style="color:#38bdf8;">?? ?????????? ???????, ???? ?????????? ?????? ? ???????:</strong>
+                    <strong style="color:#38bdf8;">?? ?????????? ???????, ???? ????????🔩 Гильзы и высоты?:</strong>
                     {% for d in cad_modes.doors %}<div style="margin-top:4px;">? <strong>{{ d.axis }}</strong> | <strong>{{ d.elev }}</strong> ? {{ d.spec }} ? <strong>{{ d.qty }}</strong></div>{% endfor %}
                 </div>
                 <div id="bim-pipes" class="bim-p" style="display:none;background:#0f172a;border-left:3px solid #10b981;padding:10px;border-radius:8px;margin-top:8px;font-size:12px;">
-                    <strong style="color:#34d399;">?? ?????-?????? ????????? ???? ? ??????? ?? ?????? ?????????????:</strong>
+                    <strong style="color:#34d399;">🚰 Карта-график труб????? ???? ? ??????? ?? ?????? ?????????????:</strong>
                     {% for p in cad_modes.pipe_stages %}<div style="margin-top:4px;">? <strong>{{ p.stage }}</strong> ({{ p.zone }}, {{ p.elev }}) ? <strong>???????:</strong> {{ p.buy }}</div>{% endfor %}
                 </div>
             </div>
@@ -205,9 +205,9 @@
                         
                         
                         <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:8px 10px;background:#0f172a;border:1px solid #1e293b;border-radius:8px;margin:8px 0;font-size:12px;">
-                            <button type="button" class="mp-copy-btn" onclick="switchTurtleBimTab('sleeves')">?? ?????? ? ??????</button>
+                            <button type="button" class="mp-copy-btn" onclick="switchTurtleBimTab('sleeves')">🔩 Гильзы и высоты</button>
                             <button type="button" class="mp-copy-btn" onclick="switchTurtleBimTab('doors')">?? ?????? ? ???? ??????</button>
-                            <button type="button" class="mp-copy-btn" onclick="switchTurtleBimTab('pipes')">?? ?????-?????? ????</button>
+                            <button type="button" class="mp-copy-btn" onclick="switchTurtleBimTab('pipes')">🚰 Карта-график труб</button>
                             <label style="margin-left:auto;color:#38bdf8;">??? ???? (??): <input type="number" id="turtle-step-input" value="6000" step="600" min="1500" max="24000" onchange="updateTurtleLiveStep(this.value)" style="width:74px;background:#1e293b;color:#fbbf24;border:1px solid #334155;border-radius:5px;padding:3px 6px;font-weight:700;"></label>
                             <span id="turtle-ruler-out" style="color:#f472b6;font-weight:700;">?? ???????? 2 ????? ?? ?????</span>
                             <button type="button" class="mp-copy-btn" onclick="clearTurtleRuler()" style="padding:3px 8px;">?? ?????</button>
