@@ -1105,6 +1105,8 @@ def _suggest_analog_for_material(name: str) -> str:
         return "\u0410\u043d\u0430\u043b\u043e\u0433: \u0441\u0442\u0440\u043e\u0433\u043e \u0441 \u0442\u043e\u0439 \u0436\u0435 \u0441\u0442\u0435\u043f\u0435\u043d\u044c\u044e IP (IP20/IP44/IP54), 16\u0410 \u0438 \u0442\u0438\u043f\u043e\u043c \u043c\u043e\u043d\u0442\u0430\u0436\u0430"
     if any(k in low for k in ("\u043b\u0430\u043c\u043f", "\u0441\u0432\u0435\u0442\u0438\u043b", "\u0431\u0440\u0430")):
         return "\u0410\u043d\u0430\u043b\u043e\u0433: \u043f\u043e \u0441\u0432\u0435\u0442\u043e\u0432\u043e\u043c\u0443 \u043f\u043e\u0442\u043e\u043a\u0443 (\u043b\u043c), \u0446\u043e\u043a\u043e\u043b\u044e (E27/GU10/LED), \u0442\u0435\u043c\u043f\u0435\u0440\u0430\u0442\u0443\u0440\u0435 3000/4000K \u0438 IP"
+    if "\u043c\u0438\u043d" in low or "\u0432\u0430\u0442\u0430" in low:
+        return "\u0410\u043d\u0430\u043b\u043e\u0433: \u043f\u043b\u0438\u0442\u044b \u043c\u0438\u043d\u0435\u0440\u0430\u043b\u043e\u0432\u0430\u0442\u043d\u044b\u0435 \u041d\u0413 \u0442\u043e\u0439 \u0436\u0435 \u043f\u043b\u043e\u0442\u043d\u043e\u0441\u0442\u0438 (75\u2013120 \u043a\u0433/\u043c\u00b3) \u0438 \u0442\u043e\u043b\u0449\u0438\u043d\u044b (Rockwool / \u0422\u0435\u0445\u043d\u043e\u041d\u0418\u041a\u041e\u041b\u042c / ISOROC, \u0413\u041e\u0421\u0422 9573-2012)"
     if "\u0440\u0430\u0434\u0438\u0430\u0442\u043e\u0440" in low:
         return "\u0410\u043d\u0430\u043b\u043e\u0433: \u043f\u043e \u043c\u043e\u0449\u043d\u043e\u0441\u0442\u0438 (\u0412\u0442), \u043c\u0435\u0436\u043e\u0441\u0435\u0432\u043e\u043c\u0443 \u0440\u0430\u0441\u0441\u0442\u043e\u044f\u043d\u0438\u044e (350/500 \u043c\u043c) \u0438 \u0434\u0430\u0432\u043b\u0435\u043d\u0438\u044e (\u0413\u041e\u0421\u0422 31311)"
     return "\u0410\u043d\u0430\u043b\u043e\u0433: \u043f\u043e \u0413\u041e\u0421\u0422/\u0421\u041f \u0447\u0435\u0440\u0435\u0437 \u043b\u0438\u0441\u0442 \u0430\u0432\u0442\u043e\u0440\u0441\u043a\u043e\u0433\u043e \u043d\u0430\u0434\u0437\u043e\u0440\u0430 \u0441 \u043f\u0440\u043e\u0435\u043a\u0442\u0438\u0440\u043e\u0432\u0449\u0438\u043a\u043e\u043c"
@@ -1154,3 +1156,25 @@ def project_totals_and_analogs_api(request):
             pdf_mentions.append({"doc": pg.document.title if pg.document else "\u0420\u0414", "page": pg.page_number, "snippet": snip})
 
     return JsonResponse({"ok": True, "query": q, "totals_by_unit": totals_by_unit, "items": list(grouped.values()), "pdf_mentions": pdf_mentions, "general_analog": _suggest_analog_for_material(q)})
+
+
+def inventory_foreman_api(request):
+    import os, json
+    from django.conf import settings
+    from django.http import JsonResponse
+    fpath = os.path.join(settings.BASE_DIR, "foreman_inventory.json")
+    items = json.load(open(fpath, encoding="utf-8")) if os.path.exists(fpath) else []
+    if request.method == "POST":
+        inv_num = f"\u0418\u041d\u0412-{len(items) + 1:04d}"
+        rec = {
+            "inv_num": inv_num,
+            "item_name": (request.POST.get("item_name") or "").strip(),
+            "qty": (request.POST.get("qty") or "1").strip(),
+            "foreman": (request.POST.get("foreman") or "\u041f\u0440\u043e\u0440\u0430\u0431 \u0443\u0447\u0430\u0441\u0442\u043a\u0430").strip(),
+            "zone": (request.POST.get("zone") or "\u0423\u0447\u0430\u0441\u0442\u043e\u043a \u043c\u043e\u043d\u043e\u043b\u0438\u0442\u0430").strip(),
+            "invoice_check": (request.POST.get("invoice_check") or "\u0421\u0432\u0435\u0440\u0435\u043d\u043e \u043f\u043e \u0444\u043e\u0442\u043e \u0423\u041f\u0414 \u0438 \u0444\u0430\u043a\u0442\u0443").strip(),
+        }
+        if rec["item_name"]:
+            items.insert(0, rec)
+            json.dump(items, open(fpath, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+    return JsonResponse({"ok": True, "items": items})
