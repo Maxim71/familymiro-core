@@ -780,3 +780,124 @@ def build_contextual_cad_modes(x_axes_count: int = 5, y_axes_count: int = 2, ste
         {"stage": "???? 3 (?????? 3)", "zone": "??? 4?5 / ??? (??????? ? ??????????)", "elev": "???. +3,860", "buy": f"????? ?????????? ~{step_m*1.5:.1f} ?, ????? ??????? (4 ??.), ???????? ? ???????? ??? ??????????"},
     ]
     return {"sleeves": sleeves, "doors": doors, "pipe_stages": pipe_stages}
+
+
+def build_project_axes_and_floor_cuts() -> dict:
+    """
+    ?????? ??????????? PDF-???? ???????, ???????????? ???????? ??????????????? ??? ???????
+    (???????? ? ?????????) ? ???????? ????????? ????? ?? PDF ? PNG ?? ??????.
+    """
+    import os, re
+    from django.conf import settings
+    from storage_control.models import ParsedPage, Document
+    from storage_control.services.building_twin import build_building_twin_index, fix_autocad_mojibake
+
+    num_axes = set()
+    let_axes = set()
+    axis_mentions = set()
+
+    pages = list(ParsedPage.objects.select_related("document").order_by("document_id", "page_number")[:250])
+    for pg in pages:
+        txt = fix_autocad_mojibake(pg.text or "")
+        for m in re.finditer(r'(?:\u043e\u0441[\u0438\u044f\u0445])\s+([\u0410-\u042fA-Z0-9\-\/\u2013\u2014\s]{2,24})', txt, re.I):
+            raw = re.sub(r'\s+', ' ', m.group(1)).strip(" .,;:")
+            if len(raw) >= 2:
+                axis_mentions.add(raw)
+            for n_m in re.finditer(r'\b(\d{1,2})\b', raw):
+                v = int(n_m.group(1))
+                if 1 <= v <= 40:
+                    num_axes.add(v)
+            for l_m in re.finditer(r'\b([\u0410-\u042fA-Z])\b', raw):
+                let_axes.add(l_m.group(1))
+
+    # ??????? ????????? ????? ? ????? ?? ? ???????? ?? ? PNG ?? ??????
+    out_dir = os.path.join(settings.MEDIA_ROOT, "turtle_floors")
+    os.makedirs(out_dir, exist_ok=True)
+    floor_cuts = []
+    seen_floors = set()
+
+    for pg in pages:
+        doc_title = (pg.document.title if pg.document else "")
+        if not any(tag in doc_title.upper() for tag in ("\u0410\u0420", "AP", "AR")):
+            continue
+        txt = fix_autocad_mojibake(pg.text or "")
+        m_fl = re.search(r'(?:\u043f\u043b\u0430\u043d\s+)?([1-9])[\-\s]*\u0439\s*\u044d\u0442\u0430\u0436|\u044d\u0442\u0430\u0436\s*([1-9])|\u043f\u043e\u0434\u0432\u0430\u043b', txt, re.I)
+        if not m_fl:
+            continue
+        fl_key = (m_fl.group(1) or m_fl.group(2) or "0")
+        fl_label = "\u041f\u043e\u0434\u0432\u0430\u043b (0xx)" if fl_key == "0" else f"{fl_key}-\u0439 \u044d\u0442\u0430\u0436"
+        if fl_label in seen_floors:
+            continue
+        seen_floors.add(fl_label)
+
+        img_url = ""
+        try:
+            pdf_path = pg.document.file.path if (pg.document and pg.document.file) else ""
+            if pdf_path and os.path.exists(pdf_path):
+                import pypdfium2 as pdfium
+                fname = f"doc{pg.document_id}_p{pg.page_number}_fl{fl_key}.png"
+                fpath = os.path.join(out_dir, fname)
+                if not os.path.exists(fpath):
+                    pdf = pdfium.PdfDocument(pdf_path)
+                    page_obj = pdf[pg.page_number - 1]
+                    pil_img = page_obj.render(scale=1.6).to_pil()
+                    pil_img.save(fpath, "PNG")
+                img_url = f"{settings.MEDIA_URL}turtle_floors/{fname}"
+        except Exception:
+            pass
+
+        floor_cuts.append({
+            "floor_key": fl_key,
+            "floor_label": fl_label,
+            "doc_title": doc_title,
+            "page_number": pg.page_number,
+            "img_url": img_url,
+        })
+        if len(floor_cuts) >= 8:
+            break
+
+    twin = build_building_twin_index()
+    num_sorted = sorted(num_axes)
+    let_sorted = sorted(let_axes)
+    return {
+        "num_axes_count": len(num_sorted),
+        "let_axes_count": len(let_sorted),
+        "num_axes_range": f"{num_sorted}?{num_sorted[-1]}" if len(num_sorted) >= 2 else (", ".join(map(str, num_sorted)) or "1?12"),
+        "let_axes_range": f"{let_sorted}?{let_sorted[-1]}" if len(let_sorted) >= 2 else (", ".join(let_sorted) or "???"),
+        "axis_mentions": sorted(axis_mentions)[:10],
+        "floor_cuts": sorted(floor_cuts, key=lambda x: int(x["floor_key"])),
+        "twin_floors": twin.get("floors", []),
+    }
+
+
+def build_nss_cable_vector_svg() -> str:
+    """?????? ????????? ????? ?????? ?????? ???, ???????? ???, ????? ? ???. 017 ? ???????? ???? 2.0 ? ??? ????? ????????? ???????."""
+    return (
+        '<svg viewBox="0 0 560 250" width="100%" height="235" style="background:#070b14;border:1px solid #1e293b;border-radius:10px;margin-top:8px;">'
+        '<defs><marker id="vec-arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 z" fill="#10b981"/></marker></defs>'
+        '<text x="16" y="20" fill="#e2e8f0" font-size="11" font-weight="bold" font-family="monospace">?????? ?????? ?????? ??? (?? + ???) ? ???????? ???? ????? ???????</text>'
+        # ???????? ????? ? ???. 017
+        '<rect x="20" y="38" width="140" height="175" fill="rgba(56,189,248,0.10)" stroke="#38bdf8" stroke-width="2"/>'
+        '<text x="90" y="62" fill="#38bdf8" font-size="10" font-weight="bold" text-anchor="middle" font-family="monospace">?????? (??? 1 / ???)</text>'
+        '<text x="90" y="80" fill="#cbd5e1" font-size="9.5" text-anchor="middle" font-family="monospace">???. 017 (???? ??)</text>'
+        '<text x="90" y="96" fill="#fbbf24" font-size="9.5" text-anchor="middle" font-family="monospace">?????? ???. -0,950</text>'
+        # ???????? ??????? 2.0 ? ?????? ?????? ???
+        '<rect x="160" y="92" width="235" height="56" fill="rgba(239,68,68,0.14)" stroke="#ef4444" stroke-width="1.2" stroke-dasharray="5 3"/>'
+        '<text x="278" y="106" fill="#fca5a5" font-size="8.5" font-weight="bold" text-anchor="middle" font-family="monospace">???????? ???? 2.0 ? ? ?????????? ????????!</text>'
+        # ?????? ?????? ???
+        '<line x1="360" y1="120" x2="155" y2="120" stroke="#10b981" stroke-width="3.2" marker-end="url(#vec-arr)"/>'
+        '<text x="260" y="138" fill="#34d399" font-size="9" font-weight="bold" text-anchor="middle" font-family="monospace">?????? ??? (??? ?110 ? ??. 0,85 ?)</text>'
+        # ?????????????? ??????? ???-2
+        '<circle cx="375" cy="120" r="18" fill="#0f172a" stroke="#10b981" stroke-width="2.4"/>'
+        '<text x="375" y="124" fill="#34d399" font-size="9" font-weight="bold" text-anchor="middle" font-family="monospace">???-2</text>'
+        '<text x="375" y="152" fill="#94a3b8" font-size="8.5" text-anchor="middle" font-family="monospace">???????????</text>'
+        # ???????? ?????? ??????? ?????
+        '<rect x="445" y="82" width="90" height="76" fill="rgba(245,158,11,0.16)" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4 3"/>'
+        '<text x="490" y="114" fill="#fbbf24" font-size="9.5" font-weight="bold" text-anchor="middle" font-family="monospace">?????</text>'
+        '<text x="490" y="128" fill="#fbbf24" font-size="9.5" font-weight="bold" text-anchor="middle" font-family="monospace">???????</text>'
+        '<text x="490" y="144" fill="#fde68a" font-size="8" text-anchor="middle" font-family="monospace">(????? ???????)</text>'
+        # ?????? ??????? 1.0 ?
+        '<line x1="395" y1="185" x2="445" y2="185" stroke="#fbbf24" stroke-width="1.3"/>'
+        '<text x="420" y="179" fill="#fbbf24" font-size="9" font-weight="bold" text-anchor="middle" font-family="monospace">min 1.0 ?</text>'
+        '</svg>'
+    )
