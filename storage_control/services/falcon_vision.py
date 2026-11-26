@@ -324,3 +324,45 @@ def split_collage_and_match_positions(image_path: str) -> list[dict]:
             "raw_snippet": re.sub(r'\s+', ' ', txt)[:160],
         })
     return results
+
+
+def analyze_cad_node_photo(image_path: str) -> dict:
+    """
+    ?????????? ????/???????? ????????????? ???? ??????? (??-6??, ????? ?? ?160, ????, ?5-92-39, ???????)
+    ? ???????????? ????????? ???????? ? ?????????? ???????.
+    """
+    import re
+    from PIL import Image, ImageOps
+    from storage_control.models import PurchaseRequest
+
+    img = Image.open(image_path).convert("L")
+    up = ImageOps.autocontrast(img.resize((img.width * 2, img.height * 2)))
+    txt = ""
+    try:
+        import pytesseract
+        txt = pytesseract.image_to_string(up, lang="rus+eng")
+    except Exception:
+        pass
+
+    low = txt.lower()
+    detected_items = []
+    patterns = [
+        (r'\u0422\u0440\u0443\u0431\u0430\s+\u041f\u042d[^\n]{0,25}', "\u0422\u0440\u0443\u0431\u0430 \u041f\u042d (\u0437\u0430\u0449\u0438\u0442\u043d\u044b\u0439 \u0444\u0443\u0442\u043b\u044f\u0440 \u043f\u043e\u0434 \u0434\u043e\u0440\u043e\u0433\u043e\u0439)"),
+        (r'\u0423\u041a\u041f\u0422', "\u0423\u043f\u043b\u043e\u0442\u043d\u0438\u0442\u0435\u043b\u044c \u043a\u0430\u0431\u0435\u043b\u044c\u043d\u044b\u0445 \u043f\u0440\u043e\u0445\u043e\u0434\u043e\u0432 \u0423\u041a\u041f\u0422 (2 \u0448\u0442. \u043d\u0430 \u0442\u0440\u0443\u0431\u0443)"),
+        (r'\u041a\u041b[-\s]?6\s?\u043a\u0412', "\u041a\u0430\u0431\u0435\u043b\u044c\u043d\u0430\u044f \u043b\u0438\u043d\u0438\u044f \u041a\u041b-6\u043a\u0412"),
+        (r'[A\u0410]5-92-39', "\u0422\u0438\u043f\u043e\u0432\u043e\u0439 \u0443\u0437\u0435\u043b \u04105-92-39 (\u043f\u0435\u0440\u0435\u0441\u0435\u0447\u0435\u043d\u0438\u0435 \u0441 \u0434\u043e\u0440\u043e\u0433\u043e\u0439)"),
+    ]
+    for rx, label in patterns:
+        if re.search(rx, txt, re.I):
+            detected_items.append(label)
+
+    dims = sorted(set(re.findall(r'\b(?:150|260|560|1000|2000)\b', txt)))
+    if not detected_items:
+        detected_items.append("\u0421\u0442\u0440\u043e\u0438\u0442\u0435\u043b\u044c\u043d\u044b\u0439 \u0443\u0437\u0435\u043b \u0447\u0435\u0440\u0442\u0435\u0436\u0430 (\u0433\u043e\u0442\u043e\u0432\u043e \u043a \u043f\u0440\u0438\u0432\u044f\u0437\u043a\u0435 \u043a \u0441\u043f\u0435\u0446\u0438\u0444\u0438\u043a\u0430\u0446\u0438\u0438 \u0438 \u0410\u041e\u0421\u0420)")
+
+    return {
+        "mode": "CAD_DRAWING_NODE",
+        "elements": detected_items,
+        "dimensions_mm": dims,
+        "raw_text": re.sub(r'\s+', ' ', txt)[:240],
+    }
