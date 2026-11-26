@@ -551,6 +551,7 @@ def _enrich_mark_passport_ctx(ctx: dict, query: str) -> dict:
     return ctx
 
 def mark_passport_view(request):
+    query = str(request.GET.get("q") or "")
     from storage_control.services.mark_passport import build_mark_passport_data
     from storage_control.services.turtle_geometry import extract_scaled_node_cuts_from_pdf
     from .models import PhotoIntake, ParsedPage, Document
