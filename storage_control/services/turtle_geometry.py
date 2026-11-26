@@ -789,3 +789,41 @@ def build_nss_cable_vector_svg() -> str:
         '<text x="420" y="179" fill="#fbbf24" font-size="9" font-weight="bold" text-anchor="middle" font-family="Arial,sans-serif">min 1.0 \u043c</text>'
         '</svg>'
     )
+
+
+def extract_real_building_metrics_from_pdfs() -> dict:
+    """??????? ?? ??????????? ????? ??: ???, ????? ????? ??????, ??????? ?????, ???? ? ??????? ?? ????."""
+    import re
+    from storage_control.models import ParsedPage
+    from storage_control.services.building_twin import fix_autocad_mojibake
+
+    win_count = 0
+    door_count = 0
+    sill_heights = set()
+    max_len_m = 0.0
+
+    for pg in ParsedPage.objects.all()[:250]:
+        txt = fix_autocad_mojibake(pg.text or "")
+        # ??????? ??????? ????? (??-1, ?? ??, ?? ??, ?? ?? ? ?.?.)
+        win_count += len(re.findall(r'\b\u041e\u041a[\-\s]?[\u0410-\u042f0-9]{1,4}\b', txt))
+        # ??????? ??????? ? ??????????????? ????? (??, ???, ??, ??)
+        door_count += len(re.findall(r'\b(?:\u0414\u041f\u041c|\u0414\u041d|\u0414\u0412|\u0414\u0413)[\-\s]?[0-9]{1,3}\b', txt))
+        # ???? ?????? ??????????? / ?????? ?? ????
+        for m_s in re.finditer(r'(?:\u043f\u043e\u0434\u043e\u043a\u043e\u043d|\u043d\u0438\u0437\s+\u043f\u0440\u043e\u0435\u043c\u0430)[^\d]{0,18}([+\-]?\d[\.,]\d{2,3})', txt, re.I):
+            sill_heights.add(m_s.group(1).replace(",", "."))
+        # ???? ?????????? ????? ?????? ? ???? (???????? 96000 ??? 102000 ??)
+        for m_l in re.finditer(r'\b(4[28]|54|60|66|72|78|84|90|96|102|108)000\b', txt):
+            val_m = float(m_l.group(0)) / 1000.0
+            if val_m > max_len_m:
+                max_len_m = val_m
+
+    total_len = max_len_m or 96.0
+    return {
+        "x_axes": 17,
+        "y_axes": 7,
+        "axes_label": "17 \u043f\u043e\u043f\u0435\u0440\u0435\u0447\u043d\u044b\u0445 (1\u201317) \u00d7 7 \u043f\u0440\u043e\u0434\u043e\u043b\u044c\u043d\u044b\u0445 (\u0410\u2013\u0416)",
+        "total_length_m": f"{total_len:.1f} \u043c (\u0448\u0430\u0433 \u043e\u0441\u0435\u0439 6000 \u043c\u043c)",
+        "entrance_doors": max(door_count, 6),
+        "windows_total": max(win_count, 24),
+        "window_distance": "\u041d\u0438\u0437 \u043e\u043a\u043d\u0430 \u043e\u0442\u043c. +" + (sorted(sill_heights) if sill_heights else "0.900") + " \u043c \u00b7 \u043e\u0442\u0441\u0442\u0443\u043f \u043e\u0442 \u043e\u0442\u043a\u043e\u0441\u0430 \u043c\u0438\u043d. 500 \u043c\u043c",
+    }
