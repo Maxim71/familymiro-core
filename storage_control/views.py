@@ -1,4 +1,21 @@
 
+def _extract_mark_search_tokens(q: str) -> list[str]:
+    import re
+    clean = re.sub(r'^\d+(?:\.\d+)+\s*', '', (q or '').strip())
+    tokens = []
+    # ??????? (???????? 35064)
+    for art in re.findall(r'\b\d{4,7}\b', clean):
+        tokens.append(art)
+    # ??????? ? x / ? (???????? 200?80)
+    for dim in re.findall(r'\d{2,4}[xX\u0445\u00d7]\d{2,4}', clean):
+        tokens.append(dim.replace('x', '\u0445').replace('X', '\u0445'))
+        tokens.append(dim.replace('\u0445', 'x'))
+    # ?????? 2 ???????? ????? (???????? "????? ????????")
+    words = [w for w in re.findall(r'[\u0410-\u042f\u0430-\u044fA-Za-z]{4,}', clean) if w.lower() not in ('\u0441\u0442\u0430\u043b\u044c\u043d\u043e\u0439', '\u043e\u0446\u0438\u043d\u043a\u043e\u0432\u0430\u043d\u043d\u044b\u0439')]
+    if words:
+        tokens.append(words)
+    return list(dict.fromkeys([t for t in tokens if t]))
+
 def _norm_x_variants(q: str) -> list[str]:
     base = (q or "").strip()
     if not base:
