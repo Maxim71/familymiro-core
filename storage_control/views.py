@@ -975,3 +975,19 @@ def id_registry_export_view(request):
     resp = HttpResponse(xlsx_data, content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
     resp["Content-Disposition"] = 'attachment; filename="Reestr_ID_344pr.xlsx"'
     return resp
+
+
+def new_client_wizard_view(request):
+    from django.shortcuts import redirect
+    from storage_control.services.id_template_engine import save_object_passport
+    from storage_control.models import Document, ParsedPage, PurchaseRequest, StockMovement, PhotoIntake
+    if request.method == "POST":
+        save_object_passport(request.POST.dict())
+        if request.POST.get("wipe_old_data") == "1":
+            StockMovement.objects.all().delete()
+            PurchaseRequest.objects.all().delete()
+            ParsedPage.objects.all().delete()
+            Document.objects.all().delete()
+            PhotoIntake.objects.all().delete()
+        return redirect("storage_control:dashboard")
+    return render(request, "storage_control/new_client.html", {})

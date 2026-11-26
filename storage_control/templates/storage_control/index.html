@@ -559,6 +559,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <button type="button" onclick="applyPortalRole('PTO')" style="background:#1e293b;color:#e2e8f0;border:1px solid #475569;border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;">📐 Инженер ПТО</button>
             <button type="button" onclick="applyPortalRole('WAREHOUSE')" style="background:#1e293b;color:#e2e8f0;border:1px solid #475569;border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;">📦 Склад и Прораб</button>
         </div>
+        <a href="{% url 'storage_control:new_client' %}" style="background:#f59e0b;color:#451a03;text-decoration:none;border-radius:6px;padding:5px 12px;font-size:12px;font-weight:700;">🆕 Новый клиент</a>
         <button type="button" onclick="const f=document.getElementById('obj-passport-form');f.style.display=f.style.display==='none'?'grid':'none';" style="background:#10b981;color:#052e16;border:none;border-radius:6px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;">📋 Анкета объекта (оси, этажи, реквизиты АОСР)</button>
     </div>
     <div id="obj-passport-form" style="display:none;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid #1e293b;font-size:12px;">

@@ -28,3 +28,8 @@ class Aosr344PrRegressionTest(TestCase):
         from storage_control.services.id_template_engine import build_executive_site_dashboard
         kpi = build_executive_site_dashboard()
         self.assertIn("readiness_pct", kpi)
+
+    def test_new_client_wizard_page(self):
+        from django.test import Client
+        resp = Client().get("/new-client/")
+        self.assertEqual(resp.status_code, 200)

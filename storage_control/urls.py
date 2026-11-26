@@ -3,6 +3,7 @@ from django.urls import path
 from . import views
 
 from .views import (
+    new_client_wizard_view,
     id_registry_export_view,
     save_object_passport_view,
     room_passport_view,
@@ -21,6 +22,7 @@ from .views import (
 app_name = 'storage_control'
 
 urlpatterns = [
+    path("new-client/", new_client_wizard_view, name="new_client"),
     path("id-registry/export/", id_registry_export_view, name="id_registry_export"),
     path("api/object-passport/", save_object_passport_view, name="save_object_passport"),
     path("pomeshchenie/<str:room_code>/", room_passport_view, name="room_passport"),
