@@ -189,7 +189,9 @@ class AdvancedConstructionControlView(View):
             except Exception:
                 dynamic_tables = []
 
+        from storage_control.services.building_twin import build_building_twin_index
         return render(request, "storage_control/index.html", {
+            "building_twin": build_building_twin_index(),
             "rows": parsed_data,
             "error": err_msg,
             "count": len(parsed_data),
@@ -533,6 +535,19 @@ def export_aosr_docx_view(request):
     )
     response["Content-Disposition"] = f'attachment; filename="AOSR_Tom_{doc.id}.docx"'
     return response
+
+def _enrich_mark_passport_ctx(ctx: dict, query: str) -> dict:
+    from storage_control.models import StockMovement, PurchaseRequest
+    from storage_control.services.turtle_geometry import (
+        build_contextual_cad_modes, build_project_axes_and_floor_cuts, build_nss_cable_vector_svg
+    )
+    ctx["cad_modes"] = build_contextual_cad_modes(mark_query=query)
+    ctx["project_floor_cuts"] = build_project_axes_and_floor_cuts()
+    ctx["nss_vector_svg"] = build_nss_cable_vector_svg()
+    ctx["stock_movements"] = list(StockMovement.objects.select_related("purchase_request", "photo_intake").all()[:15])
+    ctx["gpr_positions"] = list(PurchaseRequest.objects.order_by("-id").values("id", "material_name", "required_qty", "unit")[:40])
+    return ctx
+
 def mark_passport_view(request):
     from storage_control.services.mark_passport import build_mark_passport_data
     from storage_control.services.turtle_geometry import extract_scaled_node_cuts_from_pdf
@@ -593,6 +608,7 @@ def mark_passport_view(request):
     ctx["cad_modes"] = build_contextual_cad_modes(mark_query=query)
     ctx["stock_movements"] = list(StockMovement.objects.select_related("purchase_request", "photo_intake").all()[:15])
     ctx["gpr_positions"] = list(PurchaseRequest.objects.order_by("-id").values("id", "material_name", "required_qty", "unit")[:40])
+    ctx = _enrich_mark_passport_ctx(ctx, query)
     return render(request, "storage_control/mark_passport.html", ctx)
 
     # Авто-вырезка «Черепахой-Фрезой» узлов с масштабами (М 1:10, М 1:20, М 1:50...) по найденным листам РД
@@ -621,6 +637,7 @@ def mark_passport_view(request):
     ctx["cad_modes"] = build_contextual_cad_modes(mark_query=query)
     ctx["stock_movements"] = list(StockMovement.objects.select_related("purchase_request", "photo_intake").all()[:15])
     ctx["gpr_positions"] = list(PurchaseRequest.objects.order_by("-id").values("id", "material_name", "required_qty", "unit")[:40])
+    ctx = _enrich_mark_passport_ctx(ctx, query)
     return render(request, "storage_control/mark_passport.html", ctx)
 
 
