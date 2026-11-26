@@ -3,6 +3,7 @@ from django.urls import path
 from . import views
 
 from .views import (
+    room_cascade_dynamics_api,
     inventory_foreman_api,
     project_totals_and_analogs_api,
     operation_memo_export_view,
@@ -25,6 +26,7 @@ from .views import (
 app_name = 'storage_control'
 
 urlpatterns = [
+    path("api/room-cascade-dynamics/", room_cascade_dynamics_api, name="room_cascade_dynamics_api"),
     path("api/inventory-foreman/", inventory_foreman_api, name="inventory_foreman_api"),
     path("api/project-totals/", project_totals_and_analogs_api, name="project_totals_api"),
     path("operation-memo/export/", operation_memo_export_view, name="operation_memo_export"),
