@@ -115,3 +115,31 @@ function clearTurtleRuler() {
     const out = document.getElementById('turtle-ruler-out');
     if (out) out.textContent = '?? ???????: ???????? 2 ????? ?? ?????';
 }
+
+
+function switchTurtleBimTab(tabName) {
+    document.querySelectorAll('.bim-tab-pane').forEach(el => el.style.display = 'none');
+    const target = document.getElementById('bim-tab-' + tabName);
+    if (target) target.style.display = 'block';
+    const svg = document.getElementById('live-turtle-svg');
+    if (!svg) return;
+    document.querySelectorAll('.turtle-bim-overlay').forEach(el => el.remove());
+    if (tabName === 'doors') {
+        const arc = document.createElementNS("http://w3.org", "path");
+        arc.setAttribute("d", "M 230 238 L 230 212 A 26 26 0 0 1 256 238");
+        arc.setAttribute("fill", "rgba(56,189,248,0.18)");
+        arc.setAttribute("stroke", "#38bdf8");
+        arc.setAttribute("stroke-width", "2");
+        arc.setAttribute("class", "turtle-bim-overlay");
+        svg.appendChild(arc);
+    } else if (tabName === 'pipes') {
+        const path = document.createElementNS("http://w3.org", "polyline");
+        path.setAttribute("points", "185,155 265,155 265,115 355,115");
+        path.setAttribute("fill", "none");
+        path.setAttribute("stroke", "#f59e0b");
+        path.setAttribute("stroke-width", "3");
+        path.setAttribute("stroke-dasharray", "6 4");
+        path.setAttribute("class", "turtle-bim-overlay");
+        svg.appendChild(path);
+    }
+}

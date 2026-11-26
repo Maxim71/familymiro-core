@@ -589,6 +589,8 @@ def mark_passport_view(request):
     ctx["available_docs"] = list(Document.objects.order_by("-uploaded_at").values("id", "title")[:15])
 
     from .models import StockMovement, PurchaseRequest
+    from storage_control.services.turtle_geometry import build_contextual_cad_modes
+    ctx["cad_modes"] = build_contextual_cad_modes()
     ctx["stock_movements"] = list(StockMovement.objects.select_related("purchase_request", "photo_intake").all()[:15])
     ctx["gpr_positions"] = list(PurchaseRequest.objects.order_by("-id").values("id", "material_name", "required_qty", "unit")[:40])
     return render(request, "storage_control/mark_passport.html", ctx)
@@ -615,6 +617,8 @@ def mark_passport_view(request):
     ctx["milled_cuts"] = milled_cuts
 
     from .models import StockMovement, PurchaseRequest
+    from storage_control.services.turtle_geometry import build_contextual_cad_modes
+    ctx["cad_modes"] = build_contextual_cad_modes()
     ctx["stock_movements"] = list(StockMovement.objects.select_related("purchase_request", "photo_intake").all()[:15])
     ctx["gpr_positions"] = list(PurchaseRequest.objects.order_by("-id").values("id", "material_name", "required_qty", "unit")[:40])
     return render(request, "storage_control/mark_passport.html", ctx)

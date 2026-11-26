@@ -151,15 +151,32 @@
                     <div class="mp-card">
                         <h3>🐢 Черепаха CAD-Оси и Углы контура (Снимок #{{ tp.photo_id }})</h3>
                         
-                        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:8px 10px;background:#0f172a;border:1px solid #1e293b;border-radius:8px;margin:8px 0;font-size:12px;">
-                            <span style="color:#38bdf8;font-weight:700;">??? ????? ??????????:</span>
-                            <label>??? ???? (??): <input type="number" id="turtle-step-input" value="6000" step="600" min="1500" max="24000" onchange="updateTurtleLiveStep(this.value)" style="width:78px;background:#1e293b;color:#fbbf24;border:1px solid #334155;border-radius:5px;padding:3px 6px;font-weight:700;"></label>
-                            <span id="turtle-live-calc" style="color:#34d399;font-weight:700;">??????????: ~24.0 ? ? ???????: ~144.0 ??</span>
-                            <span id="turtle-ruler-out" style="color:#f472b6;font-weight:700;">?? ???????: ???????? 2 ????? ?? ?????</span>
-                            <button type="button" class="mp-copy-btn" onclick="clearTurtleRuler()" style="padding:3px 8px;">?? ????? ??????</button>
+                        
+                        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:8px 10px;background:#0f172a;border:1px solid #1e293b;border-radius:8px;margin:8px 0;font-size:12px;">
+                            <button type="button" class="mp-copy-btn" onclick="switchTurtleBimTab('sleeves')">?? ?????? ? ??????</button>
+                            <button type="button" class="mp-copy-btn" onclick="switchTurtleBimTab('doors')">?? ?????? ? ???? ??????</button>
+                            <button type="button" class="mp-copy-btn" onclick="switchTurtleBimTab('pipes')">?? ?????-?????? ????</button>
+                            <label style="margin-left:auto;color:#38bdf8;">??? ???? (??): <input type="number" id="turtle-step-input" value="6000" step="600" min="1500" max="24000" onchange="updateTurtleLiveStep(this.value)" style="width:74px;background:#1e293b;color:#fbbf24;border:1px solid #334155;border-radius:5px;padding:3px 6px;font-weight:700;"></label>
+                            <span id="turtle-ruler-out" style="color:#f472b6;font-weight:700;">?? ???????? 2 ????? ?? ?????</span>
+                            <button type="button" class="mp-copy-btn" onclick="clearTurtleRuler()" style="padding:3px 8px;">?? ?????</button>
+                        </div>
+                        <div style="margin:8px 0;">{{ tp.svg_preview|safe }}</div>
+
+                        <div id="bim-tab-sleeves" class="bim-tab-pane" style="background:#0f172a;border:1px solid #1e293b;border-left:3px solid #ef4444;border-radius:8px;padding:10px;margin-top:8px;font-size:12px;">
+                            <strong style="color:#fca5a5;">?? ????? ????????? ????? (??????????, ?????? ? ??????? ?? ????????????? / ??????):</strong>
+                            {% for s in cad_modes.sleeves %}<div style="margin-top:4px;">? <strong>{{ s.axis }}</strong> | <strong>{{ s.elev }}</strong> ? {{ s.spec }} ? <strong>{{ s.qty }}</strong></div>{% endfor %}
                         </div>
 
-                        <div style="margin:8px 0;">{{ tp.svg_preview|safe }}</div>
+                        <div id="bim-tab-doors" class="bim-tab-pane" style="display:none;background:#0f172a;border:1px solid #1e293b;border-left:3px solid #38bdf8;border-radius:8px;padding:10px;margin-top:8px;font-size:12px;">
+                            <strong style="color:#38bdf8;">?? ?????????? ???????, ???? ?????????? ?????? (???? 21.501) ? ???????:</strong>
+                            {% for d in cad_modes.doors %}<div style="margin-top:4px;">? <strong>{{ d.axis }}</strong> | <strong>{{ d.elev }}</strong> ? {{ d.spec }} ? <strong>{{ d.qty }}</strong></div>{% endfor %}
+                        </div>
+
+                        <div id="bim-tab-pipes" class="bim-tab-pane" style="display:none;background:#0f172a;border:1px solid #1e293b;border-left:3px solid #10b981;border-radius:8px;padding:10px;margin-top:8px;font-size:12px;">
+                            <strong style="color:#34d399;">?? ?????-???????? ??????? ????????? ???? ? ??? ???????? ?? ?????? ?????????????:</strong>
+                            {% for p in cad_modes.pipe_stages %}<div style="margin-top:4px;">? <strong>{{ p.stage }}</strong> ({{ p.zone }}, {{ p.elev }}) ? <strong>???????:</strong> {{ p.buy }}</div>{% endfor %}
+                        </div>
+
                         <div style="font-size:12px;line-height:1.55;">
                             <div><strong>Объект (по факту):</strong> {{ tp.object_title_fact }}</div>
                             <div><strong>Форма и углы:</strong> {{ tp.footprint_shape }} · <code>L:W = {{ tp.aspect_ratio }}</code></div>
