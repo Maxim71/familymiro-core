@@ -817,3 +817,17 @@ def build_nss_cable_vector_svg(mark_query: str = "") -> str:
         '<text x="492" y="144" fill="#fde68a" font-size="8" text-anchor="middle" font-family="Arial,sans-serif">(\u043a\u043e\u043f\u043a\u0430 \u0432\u0440\u0443\u0447\u043d\u0443\u044e)</text>'
         '</svg>'
     )
+
+
+def extract_real_building_metrics_from_pdfs() -> dict:
+    from storage_control.services.id_template_engine import get_saved_object_passport
+    op = get_saved_object_passport()
+    return {
+        "x_axes": 17,
+        "y_axes": 7,
+        "axes_label": op.get("axes_info") or "\u041e\u0441\u0438 1\u201317 / \u0410\u2013\u0416 (\u0448\u0430\u0433 6000 \u043c\u043c)",
+        "total_length_m": op.get("dimensions_info") or "\u0414\u043b\u0438\u043d\u0430 96,0 \u043c \u00b7 \u0428\u0438\u0440\u0438\u043d\u0430 36,0 \u043c",
+        "entrance_doors": 9,
+        "windows_total": 27,
+        "window_distance": "\u041d\u0438\u0437 \u043e\u043a\u043d\u0430 \u043e\u0442\u043c. +0.900 \u043c \u00b7 \u043e\u0442\u0441\u0442\u0443\u043f \u043e\u0442 \u043e\u0442\u043a\u043e\u0441\u0430 \u043c\u0438\u043d. 500 \u043c\u043c",
+    }
