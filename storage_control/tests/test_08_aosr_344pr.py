@@ -23,3 +23,8 @@ class Aosr344PrRegressionTest(TestCase):
         from storage_control.services.id_template_engine import build_filled_customer_registry_xlsx
         data = build_filled_customer_registry_xlsx()
         self.assertTrue(len(data) > 500)
+
+    def test_executive_site_dashboard_kpi(self):
+        from storage_control.services.id_template_engine import build_executive_site_dashboard
+        kpi = build_executive_site_dashboard()
+        self.assertIn("readiness_pct", kpi)

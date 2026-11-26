@@ -192,6 +192,7 @@ class AdvancedConstructionControlView(View):
         from storage_control.services.building_twin import build_building_twin_index
         return render(request, "storage_control/index.html", {
             "building_twin": build_building_twin_index(),
+            "exec_kpi": __import__("storage_control.services.id_template_engine", fromlist=["build_executive_site_dashboard"]).build_executive_site_dashboard(),
             "rows": parsed_data,
             "error": err_msg,
             "count": len(parsed_data),

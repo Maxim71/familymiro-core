@@ -181,3 +181,37 @@ def build_filled_customer_registry_xlsx(template_bytes: bytes | None = None, mem
     buf = io.BytesIO()
     wb.save(buf)
     return buf.getvalue()
+
+
+def build_executive_site_dashboard() -> dict:
+    """
+    ??????? ????? KPI ??????? ??? ???????????? ? ?????????:
+    - ???????? ?????? (??????? ??? / ??????? ???? / ?????? ? ??-2)
+    - ???????????? (????????-????? ?? ???) ? ?????????? ?????????????? ????????????
+    """
+    from storage_control.models import Document, PurchaseRequest, StockMovement, PhotoIntake
+
+    total_docs = Document.objects.count()
+    total_reqs = PurchaseRequest.objects.count()
+    deficit_reqs = PurchaseRequest.objects.filter(deficit_qty__gt=0).count()
+    covered_reqs = max(0, total_reqs - deficit_reqs)
+    acts_count = StockMovement.objects.count()
+    photos_count = PhotoIntake.objects.count()
+
+    # ?????? ??????????? ? ?????????? ? ????? ??
+    readiness_pct = round((covered_reqs / total_reqs) * 100) if total_reqs else 100
+    if acts_count > 0:
+        readiness_pct = min(100, max(readiness_pct, round((acts_count / max(1, total_docs)) * 25)))
+
+    return {
+        "total_docs": total_docs,
+        "total_reqs": total_reqs,
+        "deficit_reqs": deficit_reqs,
+        "covered_reqs": covered_reqs,
+        "acts_count": acts_count,
+        "photos_count": photos_count,
+        "readiness_pct": readiness_pct,
+        "red_alert": f"{deficit_reqs} \u043f\u043e\u0437. \u0432 \u0434\u0435\u0444\u0438\u0446\u0438\u0442\u0435 \u043d\u0430 \u0441\u043a\u043b\u0430\u0434\u0435 (\u0440\u0438\u0441\u043a \u043f\u0440\u043e\u0441\u0442\u043e\u044f \u0431\u0440\u0438\u0433\u0430\u0434)",
+        "yellow_alert": f"{total_docs} \u0442\u043e\u043c\u043e\u0432 \u0420\u0414 \u0433\u043e\u0442\u043e\u0432\u044b \u043a \u0432\u044b\u043f\u0443\u0441\u043a\u0443 \u0410\u041e\u0421\u0420 (\u041f\u0440\u0438\u043a\u0430\u0437 \u2116 344/\u043f\u0440)",
+        "green_status": f"{acts_count} \u043f\u0440\u043e\u0432\u0435\u0434\u0451\u043d\u043d\u044b\u0445 \u0430\u043a\u0442\u043e\u0432 \u041c-11/\u041c-15 \u00b7 {photos_count} \u0444\u043e\u0442\u043e \u0423\u041f\u0414 \u0432 1\u0421",
+    }

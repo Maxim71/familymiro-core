@@ -527,6 +527,29 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 
+
+{% if exec_kpi %}
+<div id="executive-kpi-panel" style="background:linear-gradient(135deg,#0f172a 0%,#111827 100%);border:1px solid #38bdf8;border-radius:12px;padding:12px 14px;margin:10px 0;">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+        <strong style="color:#f8fafc;font-size:14px;">🚦 Штабной Светофор Объекта (для Руководителя и Заказчика)</strong>
+        <span style="background:#10b981;color:#052e16;padding:3px 10px;border-radius:6px;font-size:12px;font-weight:700;">Готовность и обеспеченность: {{ exec_kpi.readiness_pct }}%</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px;font-size:12px;">
+        <div style="background:rgba(239,68,68,0.12);border:1px solid #ef4444;border-radius:8px;padding:8px 10px;">
+            <strong style="color:#fca5a5;">🔴 Критично (Дефицит ТМЦ):</strong>
+            <div style="color:#fecaca;margin-top:2px;">{{ exec_kpi.red_alert }}</div>
+        </div>
+        <div style="background:rgba(245,158,11,0.12);border:1px solid #f59e0b;border-radius:8px;padding:8px 10px;">
+            <strong style="color:#fcd34d;">🟡 В работе (ИД и АОСР):</strong>
+            <div style="color:#fde68a;margin-top:2px;">{{ exec_kpi.yellow_alert }}</div>
+        </div>
+        <div style="background:rgba(16,185,129,0.12);border:1px solid #10b981;border-radius:8px;padding:8px 10px;">
+            <strong style="color:#6ee7b7;">🟢 Подтверждено (Склад и 1С):</strong>
+            <div style="color:#a7f3d0;margin-top:2px;">{{ exec_kpi.green_status }}</div>
+        </div>
+    </div>
+</div>
+{% endif %}
 <div style="background:#0f172a;border:1px solid #38bdf8;border-radius:12px;padding:12px 14px;margin:10px 0;">
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
         <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
