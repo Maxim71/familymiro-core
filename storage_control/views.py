@@ -1078,6 +1078,21 @@ def new_client_wizard_view(request):
                 import io, docx
                 d = docx.Document(io.BytesIO(raw))
                 extracted_lines = [p.text.strip() for p in d.paragraphs if p.text.strip()][:12]
+            elif ext in ("dwg", "dxf"):
+                ver_map = {"AC1032": "AutoCAD 2018\u20132026 DWG", "AC1027": "AutoCAD 2013\u20132017 DWG", "AC1024": "AutoCAD 2010\u20132012 DWG", "AC1021": "AutoCAD 2007\u20132009 DWG"}
+                hdr = raw[:6].decode("ascii", errors="ignore")
+                cad_ver = ver_map.get(hdr, f"AutoCAD {ext.upper()} ({hdr or 'BIM'})")
+                # ????????? ???????? ??????? ? ?????????? ?????? (CP1251 ? UTF-16LE) ?? ????????? ?????? DWG/DXF
+                s_cp = re.findall(r'[\xc0-\xffA-Za-z0-9\s\-\.,\(\)\u2116\u00d8]{6,80}', raw.decode("cp1251", errors="ignore"))
+                s_u16 = re.findall(r'[\u0410-\u044f\u0401\u0451A-Za-z0-9\s\-\.,\(\)\u2116\u00d8]{6,80}', raw.decode("utf-16le", errors="ignore"))
+                uniq_lines = []
+                for cand in (s_u16 + s_cp):
+                    cl = re.sub(r'\s+', ' ', cand).strip()
+                    if len(cl) >= 6 and sum(ch.isalpha() for ch in cl) >= 4 and cl not in uniq_lines:
+                        uniq_lines.append(cl)
+                    if len(uniq_lines) >= 14:
+                        break
+                extracted_lines = [f"\u0424\u043e\u0440\u043c\u0430\u0442 \u0447\u0435\u0440\u0442\u0435\u0436\u0430: {cad_ver} ({round(len(raw)/1048576, 2)} \u041c\u0411)"] + uniq_lines
             else:
                 extracted_lines = [f"\u0413\u0440\u0430\u0444\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u043b\u0438\u0441\u0442 / \u0444\u043e\u0442\u043e ({ext.upper()}), \u0440\u0430\u0437\u043c\u0435\u0440 {round(len(raw)/1024, 1)} \u041a\u0411 \u2014 \u0433\u043e\u0442\u043e\u0432\u043e \u043a \u0432\u0435\u043a\u0442\u043e\u0440\u043d\u043e\u0439 \u043a\u0430\u043b\u0438\u0431\u0440\u043e\u0432\u043a\u0435 \u0427\u0435\u0440\u0435\u043f\u0430\u0445\u0438 CAD \u0438 \u043f\u0440\u0438\u0451\u043c\u043a\u0435 \u0423\u041f\u0414 \u0421\u043e\u043aолом."]
 
