@@ -348,7 +348,46 @@
                     <p style="color:var(--text-muted);">Загрузите первое фото УПД, паспорта качества или плана слева.</p>
                 {% endfor %}
             </div>
+        <div class="mp-card" style="margin-top:12px;border-left:4px solid #38bdf8;">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+        <strong style="color:#38bdf8;font-size:14px;">🚚 На воротах склада: {{ recent_5_intakes|length }} из 5 машин · В архиве УПД: {{ archived_intakes|length }}</strong>
+        <input type="text" id="upd-archive-q" oninput="filterUpdArchive(this.value)" placeholder="Приходил ли: герметик, анкер, саморез, розетки, счётчик..." style="background:#1e293b;color:#f8fafc;border:1px solid #38bdf8;border-radius:8px;padding:6px 12px;font-size:12.5px;min-width:310px;">
+    </div>
+    <div id="upd-search-answer" style="display:none;background:#0f172a;border:1px solid #10b981;border-radius:8px;padding:8px 12px;margin-bottom:8px;font-size:12.5px;color:#6ee7b7;"></div>
+    <details {% if archived_intakes %}open{% endif %}>
+        <summary style="cursor:pointer;color:#94a3b8;font-size:12px;font-weight:700;">🗄️ Открыть весь Архив приёмок УПД ({{ total_intakes_count }} накладных за всё время стройки)</summary>
+        <div id="upd-archive-list" style="margin-top:8px;max-height:240px;overflow-y:auto;">
+            {% for item in recent_5_intakes %}
+                <div class="upd-arch-row" style="padding:6px 8px;border-bottom:1px solid #1e293b;font-size:12px;">
+                    <strong style="color:#34d399;">[На воротах #{{ item.id }}]</strong> {{ item.doc_number|default:"УПД" }} · {{ item.notes }} · <span style="color:#94a3b8;">{{ item.ocr_raw_text|truncatechars:110 }}</span>
+                </div>
+            {% endfor %}
+            {% for item in archived_intakes %}
+                <div class="upd-arch-row" style="padding:6px 8px;border-bottom:1px solid #1e293b;font-size:12px;">
+                    <strong style="color:#fbbf24;">[Архив #{{ item.id }}]</strong> {{ item.doc_number|default:"УПД" }} · {{ item.notes }} · <span style="color:#94a3b8;">{{ item.ocr_raw_text|truncatechars:110 }}</span>
+                </div>
+            {% endfor %}
         </div>
+    </details>
+</div>
+<script>
+function filterUpdArchive(q) {
+    const needle = (q || "").trim().toLowerCase();
+    const rows = document.querySelectorAll(".upd-arch-row");
+    const ans = document.getElementById("upd-search-answer");
+    let found = 0;
+    rows.forEach(r => {
+        const ok = !needle || r.innerText.toLowerCase().includes(needle);
+        r.style.display = ok ? "block" : "none";
+        if (ok && needle) found++;
+    });
+    if (ans) {
+        if (!needle) { ans.style.display = "none"; }
+        else { ans.style.display = "block"; ans.textContent = found > 0 ? ("✅ Найдено приходов по запросу «" + q + "»: " + found + " накладных.") : ("❌ По запросу «" + q + "» приходов на склад пока не было."); }
+    }
+}
+</script>
+</div>
     </div>
 </div>
 

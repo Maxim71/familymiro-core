@@ -551,6 +551,12 @@ def _enrich_mark_passport_ctx(ctx: dict, query: str) -> dict:
     ctx["gpr_positions"] = list(PurchaseRequest.objects.order_by("-id").values("id", "material_name", "required_qty", "unit")[:40])
     from storage_control.services.building_twin import build_building_twin_index
     ctx["building_twin"] = build_building_twin_index()
+
+    all_intakes = list(PhotoIntake.objects.order_by("-id")[:120])
+    ctx["recent_5_intakes"] = all_intakes[:5]
+    ctx["archived_intakes"] = all_intakes[5:]
+    ctx["total_intakes_count"] = len(all_intakes)
+
     return ctx
 
 def mark_passport_view(request):
