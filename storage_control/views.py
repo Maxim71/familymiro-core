@@ -1,3 +1,13 @@
+
+def _norm_x_variants(q: str) -> list[str]:
+    base = (q or "").strip()
+    if not base:
+        return []
+    import re
+    v_ru = re.sub(r'(?<=\d)[xX\u00d7\*](?=\d)', '\u0445', base)
+    v_en = re.sub(r'(?<=\d)[\u0445\u0425\u00d7\*](?=\d)', 'x', base)
+    v_mul = re.sub(r'(?<=\d)[xX\u0445\u0425\*](?=\d)', '\u00d7', base)
+    return list(dict.fromkeys([base, v_ru, v_en, v_mul]))
 # -*- coding: utf-8 -*-
 import os
 import re
