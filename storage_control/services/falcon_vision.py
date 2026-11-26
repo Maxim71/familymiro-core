@@ -272,3 +272,55 @@ def analyze_field_photo(image_path: str, manual_hint_text: str = "", scene_mode:
         "ocr_preview": ocr_text[:600],
         "matched_rd_items": matched_rd[:5],
     }
+
+
+def split_collage_and_match_positions(image_path: str) -> list[dict]:
+    """
+    ????????? ?????? ?? ?????????? ????????? ??? ?? ????????? ????? ?? ??????? ????????????
+    ? ???????????? ???????????? ??? ? ????????? ????????? PurchaseRequest.
+    """
+    import os, re
+    from PIL import Image, ImageOps
+    from storage_control.models import PurchaseRequest
+
+    img = Image.open(image_path).convert("RGB")
+    w, h = img.size
+    # ???? ?????? ????????? (??????? ??? ?????????? ? ??????????? ???????), ????? ?? ????? 2x2 ??? 3x2
+    crops = []
+    if w >= 900 and h >= 900:
+        cols = 3 if w > h * 1.15 else 2
+        rows = 2
+        cw, ch = w // cols, h // rows
+        for r in range(rows):
+            for c in range(cols):
+                box = (c * cw, r * ch, min(w, (c + 1) * cw), min(h, (r + 1) * ch))
+                crops.append(img.crop(box))
+    else:
+        crops = [img]
+
+    results = []
+    all_reqs = list(PurchaseRequest.objects.values("id", "material_name", "unit"))
+    for idx, sub in enumerate(crops, start=1):
+        up = ImageOps.autocontrast(sub.resize((sub.width * 2, sub.height * 2)))
+        txt = ""
+        try:
+            import pytesseract
+            txt = pytesseract.image_to_string(up, lang="rus+eng")
+        except Exception:
+            pass
+        m_doc = re.search(r'(?:\u0420\u0414\u041a|\u2116)[\-\s]?([A-Z\u0410-\u042f0-9\-]{3,16})', txt)
+        m_inn = re.search(r'\b(\d{10}|\d{12})\b', txt)
+        matched_req = None
+        for rq in all_reqs:
+            first_word = (rq["material_name"] or "").split() if (rq["material_name"] or "").split() else ""
+            if len(first_word) >= 4 and first_word.lower() in txt.lower():
+                matched_req = rq
+                break
+        results.append({
+            "card_index": idx,
+            "doc_number": m_doc.group(0) if m_doc else f"\u041b\u0438\u0441\u0442 #{idx}",
+            "inn": m_inn.group(1) if m_inn else "",
+            "matched_position": matched_req["material_name"] if matched_req else "\u0413\u043e\u0442\u043e\u0432\u043e \u043a \u043f\u0440\u0438\u0432\u044f\u0437\u043a\u0435 \u0432 1\u0421",
+            "raw_snippet": re.sub(r'\s+', ' ', txt)[:160],
+        })
+    return results
