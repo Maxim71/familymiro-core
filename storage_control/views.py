@@ -967,8 +967,26 @@ def save_object_passport_view(request):
 
 
 def id_registry_export_view(request):
+    import io, openpyxl
     from django.http import HttpResponse
+    from django.utils import timezone
     from storage_control.services.id_template_engine import build_filled_customer_registry_xlsx
+    if request.GET.get("demo") == "1" and request.session.get("demo_sandbox_file"):
+        dr = request.session["demo_sandbox_file"]
+        today_str = timezone.localdate().strftime("%d.%m.%Y")
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "\u0420\u0435\u0435\u0441\u0442\u0440_\u0418\u0414_\u0414\u0435\u043c\u043e"
+        ws.append([f"\u0420\u0415\u0415\u0421\u0422\u0420 \u0418\u0414 \u0418 \u0412\u0415\u0414\u041e\u041c\u041e\u0421\u0422\u042c \u0420\u0410\u0411\u041e\u0422 \u041f\u041e \u0424\u0410\u0419\u041b\u0423: {dr.get('filename', '')}"])
+        ws.append(["\u2116 \u043f/\u043f", "\u041d\u0430\u0438\u043c\u0435\u043d\u043e\u0432\u0430\u043d\u0438\u0435 \u043f\u043e\u0437\u0438\u0446\u0438\u0438 / \u0434\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u0430", "\u0412\u044b\u0441\u043e\u0442\u043d\u044b\u0435 \u043e\u0442\u043c\u0435\u0442\u043a\u0438", "\u041e\u0441\u0438 / \u0418\u0441\u0442\u043e\u0447\u043d\u0438\u043a", "\u0414\u0430\u0442\u0430 \u0444\u043e\u0440\u043c\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u044f"])
+        ws.append([1, f"\u0410\u041e\u0421\u0420 (\u041f\u0440\u0438\u043a\u0430\u0437 \u2116 344/\u043f\u0440) \u043f\u043e \u043a\u043e\u043c\u043f\u043b\u0435\u043a\u0442\u0443: {dr.get('filename', '')}", dr.get("elevs", ""), dr.get("axes", ""), today_str])
+        for i, ln in enumerate(dr.get("lines", []), start=2):
+            ws.append([i, ln, dr.get("elevs", ""), dr.get("filename", ""), today_str])
+        buf = io.BytesIO()
+        wb.save(buf)
+        resp = HttpResponse(buf.getvalue(), content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        resp["Content-Disposition"] = 'attachment; filename="Reestr_ID_Novyy_Klient.xlsx"'
+        return resp
     tpl_bytes = request.FILES["customer_xlsx"].read() if (request.method == "POST" and "customer_xlsx" in request.FILES) else None
     memo_txt = request.FILES["memo_file"].read().decode("utf-8", errors="ignore") if (request.method == "POST" and "memo_file" in request.FILES) else ""
     xlsx_data = build_filled_customer_registry_xlsx(template_bytes=tpl_bytes, memo_text=memo_txt)
@@ -1025,6 +1043,7 @@ def new_client_wizard_view(request):
                 "axes": ", ".join(axes) or "\u0413\u043eтов\u043e \u043a \u043f\u0440\u0438вязке \u043a \u0441етке \u043eсей",
                 "lines": extracted_lines or ["\u0424\u0430\u0439\u043b \u0443спе\u0448\u043d\u043e \u043f\u0440\u0438\u043d\u044f\u0442 \u0438 \u0433\u043e\u0442\u043e\u0432 \u043a \u0432\u044b\u043f\u0443\u0441\u043a\u0443 АОСР № 344/пр \u0438 р\u0435\u0435стр\u0430 ИД."],
             }
+            request.session["demo_sandbox_file"] = demo_result
             return render(request, "storage_control/new_client.html", {"demo_result": demo_result})
 
         save_object_passport(request.POST.dict())
