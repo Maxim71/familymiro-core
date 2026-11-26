@@ -978,10 +978,55 @@ def id_registry_export_view(request):
 
 
 def new_client_wizard_view(request):
+    import re
     from django.shortcuts import redirect
     from storage_control.services.id_template_engine import save_object_passport
     from storage_control.models import Document, ParsedPage, PurchaseRequest, StockMovement, PhotoIntake
+    demo_result = None
     if request.method == "POST":
+        if "demo_any_file" in request.FILES:
+            f = request.FILES["demo_any_file"]
+            fname = f.name
+            ext = fname.rsplit(".", 1)[-1].lower() if "." in fname else ""
+            raw = f.read()
+            extracted_lines = []
+            pages_cnt = 1
+            if ext == "pdf":
+                import io, pypdf
+                reader = pypdf.PdfReader(io.BytesIO(raw))
+                pages_cnt = len(reader.pages)
+                txt = "\n".join((p.extract_text() or "") for p in reader.pages[:5])
+                extracted_lines = [ln.strip() for ln in txt.splitlines() if len(ln.strip()) > 6][:12]
+            elif ext in ("xlsx", "xls"):
+                import io, openpyxl
+                wb = openpyxl.load_workbook(io.BytesIO(raw), data_only=True)
+                pages_cnt = len(wb.sheetnames)
+                for row in wb.active.iter_rows(values_only=True):
+                    vals = [str(v).strip() for v in row if v is not None and str(v).strip()]
+                    if vals:
+                        extracted_lines.append(" | ".join(vals[:5]))
+                    if len(extracted_lines) >= 12:
+                        break
+            elif ext == "docx":
+                import io, docx
+                d = docx.Document(io.BytesIO(raw))
+                extracted_lines = [p.text.strip() for p in d.paragraphs if p.text.strip()][:12]
+            else:
+                extracted_lines = [f"\u0413\u0440\u0430\u0444\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u043b\u0438\u0441\u0442 / \u0444\u043e\u0442\u043e ({ext.upper()}), \u0440\u0430\u0437\u043c\u0435\u0440 {round(len(raw)/1024, 1)} \u041a\u0411 \u2014 \u0433\u043e\u0442\u043e\u0432\u043e \u043a \u0432\u0435\u043a\u0442\u043e\u0440\u043d\u043e\u0439 \u043a\u0430\u043b\u0438\u0431\u0440\u043e\u0432\u043a\u0435 \u0427\u0435\u0440\u0435\u043f\u0430\u0445\u0438 CAD \u0438 \u043f\u0440\u0438\u0451\u043c\u043a\u0435 \u0423\u041f\u0414 \u0421\u043e\u043aолом."]
+
+            joined = " ".join(extracted_lines)
+            elevs = sorted(set(re.findall(r'[+\-]\d[\.,]\d{3}', joined)))[:6]
+            axes = sorted(set(re.findall(r'(?:\u043e\u0441[\u0438\u044f\u0445]|\u043e\u0441\u044c)\s+[0-9\u0410-\u042fA-Z\-\/]{1,12}', joined, re.I)))[:6]
+            demo_result = {
+                "filename": fname,
+                "ext": ext.upper(),
+                "pages_cnt": pages_cnt,
+                "elevs": ", ".join(elevs) or "\u041e\u043f\u0440\u0435\u0434\u0435\u043b\u044f\u044e\u0442\u0441\u044f \u043f\u043e \u043f\u0430\u0441порту \u043eбъекта",
+                "axes": ", ".join(axes) or "\u0413\u043eтов\u043e \u043a \u043f\u0440\u0438вязке \u043a \u0441етке \u043eсей",
+                "lines": extracted_lines or ["\u0424\u0430\u0439\u043b \u0443спе\u0448\u043d\u043e \u043f\u0440\u0438\u043d\u044f\u0442 \u0438 \u0433\u043e\u0442\u043e\u0432 \u043a \u0432\u044b\u043f\u0443\u0441\u043a\u0443 АОСР № 344/пр \u0438 р\u0435\u0435стр\u0430 ИД."],
+            }
+            return render(request, "storage_control/new_client.html", {"demo_result": demo_result})
+
         save_object_passport(request.POST.dict())
         if request.POST.get("wipe_old_data") == "1":
             StockMovement.objects.all().delete()
@@ -990,4 +1035,4 @@ def new_client_wizard_view(request):
             Document.objects.all().delete()
             PhotoIntake.objects.all().delete()
         return redirect("storage_control:dashboard")
-    return render(request, "storage_control/new_client.html", {})
+    return render(request, "storage_control/new_client.html", {"demo_result": demo_result})
