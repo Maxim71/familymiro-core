@@ -526,6 +526,36 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
+
+<div style="background:#0f172a;border:1px solid #38bdf8;border-radius:12px;padding:12px 14px;margin:10px 0;">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+            <strong style="color:#38bdf8;font-size:13px;">🎯 Режим экрана:</strong>
+            <button type="button" onclick="applyPortalRole('ALL')" style="background:#38bdf8;color:#082f49;border:none;border-radius:6px;padding:4px 10px;font-size:12px;font-weight:700;cursor:pointer;">Все контуры</button>
+            <button type="button" onclick="applyPortalRole('CLIENT')" style="background:#1e293b;color:#e2e8f0;border:1px solid #475569;border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;">👔 Заказчик / Директор</button>
+            <button type="button" onclick="applyPortalRole('PTO')" style="background:#1e293b;color:#e2e8f0;border:1px solid #475569;border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;">📐 Инженер ПТО</button>
+            <button type="button" onclick="applyPortalRole('WAREHOUSE')" style="background:#1e293b;color:#e2e8f0;border:1px solid #475569;border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;">📦 Склад и Прораб</button>
+        </div>
+        <button type="button" onclick="const f=document.getElementById('obj-passport-form');f.style.display=f.style.display==='none'?'grid':'none';" style="background:#10b981;color:#052e16;border:none;border-radius:6px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;">📋 Анкета объекта (оси, этажи, реквизиты АОСР)</button>
+    </div>
+    <div id="obj-passport-form" style="display:none;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid #1e293b;font-size:12px;">
+        <input id="op-name" value="ЦОД НПО «СПЛАВ» (г. Тула)" placeholder="Наименование объекта" style="background:#1e293b;color:#f8fafc;border:1px solid #334155;border-radius:6px;padding:6px;">
+        <input id="op-axes" value="Оси 1–17 / А–Ж (шаг 6000 мм)" placeholder="Координационные оси (А–Б / 1–12)" style="background:#1e293b;color:#f8fafc;border:1px solid #334155;border-radius:6px;padding:6px;">
+        <input id="op-floors" value="5 этажей + подвал (-3,640 → +16,800 м)" placeholder="Этажность и высоты" style="background:#1e293b;color:#f8fafc;border:1px solid #334155;border-radius:6px;padding:6px;">
+        <input id="op-len" value="Длина 96,0 м · Ширина 36,0 м" placeholder="Общая длина и ширина (м)" style="background:#1e293b;color:#f8fafc;border:1px solid #334155;border-radius:6px;padding:6px;">
+        <input id="op-builder" placeholder="Генподрядчик (ООО, ИНН, № НРС)" style="background:#1e293b;color:#f8fafc;border:1px solid #334155;border-radius:6px;padding:6px;">
+        <button type="button" onclick="localStorage.setItem('fm_obj_passport',JSON.stringify({name:opName.value,axes:opAxes.value,floors:opFloors.value,len:opLen.value,builder:opBuilder.value}));alert('Анкета объекта сохранена!');" style="background:#38bdf8;color:#082f49;border:none;border-radius:6px;padding:6px 12px;font-weight:700;cursor:pointer;">💾 Сохранить паспорт объекта</button>
+    </div>
+</div>
+<script>
+const opName=document.getElementById('op-name'),opAxes=document.getElementById('op-axes'),opFloors=document.getElementById('op-floors'),opLen=document.getElementById('op-len'),opBuilder=document.getElementById('op-builder');
+function applyPortalRole(role){
+    if(role==='CLIENT'){ if(typeof switchContour==='function') switchContour('archive'); }
+    else if(role==='PTO'){ if(typeof switchContour==='function') switchContour('pto'); }
+    else if(role==='WAREHOUSE'){ if(typeof switchContour==='function') switchContour('warehouse'); }
+}
+</script>
+
 {% if building_twin.floors %}
 <div style="background:#0f172a;border:1px solid #38bdf8;border-radius:12px;padding:14px;margin:14px 0;">
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:6px;">

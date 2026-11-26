@@ -767,11 +767,40 @@ def build_project_axes_and_floor_cuts() -> dict:
     return {"num_axes_count": 17, "let_axes_count": 7, "num_axes_range": "1\u201317", "let_axes_range": "\u0410\u2013\u0416", "axis_mentions": ["\u041e\u0441\u0438 1\u201317 / \u0410\u2013\u0416"], "floor_cuts": floor_cuts, "twin_floors": build_building_twin_index().get("floors", [])}
 
 
-def build_nss_cable_vector_svg() -> str:
+def build_nss_cable_vector_svg(mark_query: str = "") -> str:
+    q = (mark_query or "").lower()
+    # 1. ?????? ???? / ?? / ?????????? / ??????????? ??????????? (??, L=1...3,5 ?, ????, ????????????)
+    if any(k in q for k in ("\u0431\u044d", "\u043e\u0437\u0434\u0441", "\u0437\u0430\u0437\u0435\u043c\u043b", "\u043c\u043e\u043b\u043d\u0438", "\u0448\u0438\u043d\u0430", "\u044d\u0441", "\u0449\u0438\u0442")):
+        return (
+            '<svg viewBox="0 0 560 245" width="100%" height="230" style="background:#070b14;border:1px solid #1e293b;border-radius:10px;margin-top:8px;">'
+            '<text x="16" y="20" fill="#e2e8f0" font-size="11" font-weight="bold" font-family="Arial,sans-serif">CAD-\u0421\u0425\u0415\u041c\u0410 \u0420\u0410\u0417\u0414\u0415\u041b\u0410 \u041e\u0417\u0414\u0421 / \u042d\u0421: \u0423\u0420\u0410\u0412\u041d\u0418\u0412\u0410\u041d\u0418\u0415 \u041f\u041e\u0422\u0415\u041d\u0426\u0418\u0410\u041b\u041e\u0412 (\u0411\u042d, L=1...3,5 \u043c)</text>'
+            '<rect x="20" y="42" width="140" height="170" fill="rgba(245,158,11,0.12)" stroke="#f59e0b" stroke-width="2"/>'
+            '<text x="90" y="68" fill="#fbbf24" font-size="10" font-weight="bold" text-anchor="middle" font-family="Arial,sans-serif">\u0413\u0417\u0428 (\u041f\u043e\u043c. 003)</text>'
+            '<text x="90" y="86" fill="#cbd5e1" font-size="9" text-anchor="middle" font-family="Arial,sans-serif">\u042d\u043b\u0435\u043a\u0442\u0440\u043e\u0449\u0438\u0442\u043e\u0432\u0430\u044f</text>'
+            '<text x="90" y="104" fill="#34d399" font-size="9" text-anchor="middle" font-family="Arial,sans-serif">\u043e\u0442\u043c. -3,640 \u043c (R \u2264 4 \u041e\u043c)</text>'
+            '<line x1="160" y1="85" x2="365" y2="85" stroke="#10b981" stroke-width="3"/>'
+            '<text x="262" y="76" fill="#34d399" font-size="9" font-weight="bold" text-anchor="middle" font-family="Arial,sans-serif">\u041c\u0430\u0433\u0438\u0441\u0442\u0440\u0430\u043b\u044c PE \u043f\u043e \u043b\u043e\u0442\u043a\u0430\u043c \u0421\u041a\u041a (1\u20135 \u044d\u0442.)</text>'
+            '<line x1="230" y1="85" x2="230" y2="145" stroke="#38bdf8" stroke-width="2.2" stroke-dasharray="4 3"/>'
+            '<line x1="315" y1="85" x2="315" y2="145" stroke="#38bdf8" stroke-width="2.2" stroke-dasharray="4 3"/>'
+            '<rect x="185" y="145" width="95" height="58" fill="rgba(56,189,248,0.12)" stroke="#38bdf8" stroke-width="1.8"/>'
+            '<text x="232" y="168" fill="#38bdf8" font-size="9.5" font-weight="bold" text-anchor="middle" font-family="Arial,sans-serif">\u041f\u0435\u0440\u0435\u043c\u044b\u0447\u043a\u0430 \u0411\u042d</text>'
+            '<text x="232" y="184" fill="#e2e8f0" font-size="8.5" text-anchor="middle" font-family="Arial,sans-serif">L = 1,0...3,5 \u043c (\u041f\u043e\u043c. 017/018)</text>'
+            '<rect x="295" y="145" width="110" height="58" fill="rgba(56,189,248,0.12)" stroke="#38bdf8" stroke-width="1.8"/>'
+            '<text x="350" y="168" fill="#38bdf8" font-size="9.5" font-weight="bold" text-anchor="middle" font-family="Arial,sans-serif">\u041a\u043e\u0440\u043f\u0443\u0441\u0430 \u0438 \u0442\u0440\u0443\u0431\u044b</text>'
+            '<text x="350" y="184" fill="#e2e8f0" font-size="8.5" text-anchor="middle" font-family="Arial,sans-serif">\u0418\u0422\u041f / \u0412\u0435\u043d\u0442\u043a\u0430\u043c\u0435\u0440\u0430 (001/002)</text>'
+            '<rect x="425" y="42" width="115" height="170" fill="rgba(16,185,129,0.10)" stroke="#10b981" stroke-width="1.6"/>'
+            '<text x="482" y="68" fill="#34d399" font-size="9.5" font-weight="bold" text-anchor="middle" font-family="Arial,sans-serif">\u0417\u0410\u041a\u0423\u041f\u041a\u0410 \u041e\u0417\u0414\u0421</text>'
+            '<text x="482" y="90" fill="#cbd5e1" font-size="8.5" text-anchor="middle" font-family="Arial,sans-serif">\u2022 \u041f\u0440\u043e\u0432\u043e\u0434 \u041f\u0443\u0413\u0412 1\u00d76/1\u00d710</text>'
+            '<text x="482" y="110" fill="#cbd5e1" font-size="8.5" text-anchor="middle" font-family="Arial,sans-serif">\u2022 \u041d\u0430\u043a\u043e\u043d\u0435\u0447\u043d\u0438\u043a\u0438 \u0422\u041c\u041b</text>'
+            '<text x="482" y="130" fill="#cbd5e1" font-size="8.5" text-anchor="middle" font-family="Arial,sans-serif">\u2022 \u0421\u0436\u0438\u043c\u044b \u0438 \u0431\u043e\u043b\u0442\u044b \u041c8</text>'
+            '<text x="482" y="150" fill="#fbbf24" font-size="8.5" text-anchor="middle" font-family="Arial,sans-serif">\u2022 \u0410\u041e\u0421\u0420 + \u041f\u0440\u043e\u0442\u043e\u043a\u043e\u043b \u042d\u0422\u041b</text>'
+            '</svg>'
+        )
+    # 2. ?? ????????? ? ???????? ???? ??? ? ???? ??????? ? ???. 017
     return (
-        '<svg viewBox="0 0 560 250" width="100%" height="235" style="background:#070b14;border:1px solid #1e293b;border-radius:10px;margin-top:8px;">'
+        '<svg viewBox="0 0 560 245" width="100%" height="230" style="background:#070b14;border:1px solid #1e293b;border-radius:10px;margin-top:8px;">'
         '<defs><marker id="vec-arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 z" fill="#10b981"/></marker></defs>'
-        '<text x="16" y="20" fill="#e2e8f0" font-size="11" font-weight="bold" font-family="Arial,sans-serif">\u0412\u0415\u041a\u0422\u041e\u0420 \u0422\u0420\u0410\u0421\u0421\u042b \u041a\u0410\u0411\u0415\u041b\u042f \u041d\u0421\u0421 (\u0413\u041f + \u041d\u0421\u0421) \u0418 \u041e\u0425\u0420\u0410\u041d\u041d\u0410\u042f \u0417\u041e\u041d\u0410 \u041a\u041e\u041b\u041e\u0414\u0426\u0410</text>'
+        '<text x="16" y="20" fill="#e2e8f0" font-size="11" font-weight="bold" font-family="Arial,sans-serif">CAD-\u0421\u0425\u0415\u041c\u0410 \u041d\u0421\u0421: \u0412\u0415\u041a\u0422\u041e\u0420 \u0412\u0412\u041e\u0414\u0410 \u041a\u0410\u0411\u0415\u041b\u042f \u0418 \u041e\u0425\u0420\u0410\u041d\u041d\u0410\u042f \u0417\u041e\u041d\u0410 \u041a\u041e\u041b\u041e\u0414\u0426\u0410</text>'
         '<rect x="20" y="38" width="145" height="175" fill="rgba(56,189,248,0.10)" stroke="#38bdf8" stroke-width="2"/>'
         '<text x="92" y="62" fill="#38bdf8" font-size="10" font-weight="bold" text-anchor="middle" font-family="Arial,sans-serif">\u0417\u0414\u0410\u041d\u0418\u0415 (\u041e\u0441\u044c 1 / \u0410\u2013\u0411)</text>'
         '<text x="92" y="80" fill="#cbd5e1" font-size="9.5" text-anchor="middle" font-family="Arial,sans-serif">\u041f\u043e\u043c. 017 (\u0412\u0432\u043e\u0434 \u0421\u0421)</text>'
@@ -786,44 +815,5 @@ def build_nss_cable_vector_svg() -> str:
         '<text x="492" y="114" fill="#fbbf24" font-size="9.5" font-weight="bold" text-anchor="middle" font-family="Arial,sans-serif">\u041d\u041e\u0412\u042b\u0419</text>'
         '<text x="492" y="128" fill="#fbbf24" font-size="9.5" font-weight="bold" text-anchor="middle" font-family="Arial,sans-serif">\u041a\u041e\u041b\u041e\u0414\u0415\u0426</text>'
         '<text x="492" y="144" fill="#fde68a" font-size="8" text-anchor="middle" font-family="Arial,sans-serif">(\u043a\u043e\u043f\u043a\u0430 \u0432\u0440\u0443\u0447\u043d\u0443\u044e)</text>'
-        '<text x="420" y="179" fill="#fbbf24" font-size="9" font-weight="bold" text-anchor="middle" font-family="Arial,sans-serif">min 1.0 \u043c</text>'
         '</svg>'
     )
-
-
-def extract_real_building_metrics_from_pdfs() -> dict:
-    """??????? ?? ??????????? ????? ??: ???, ????? ????? ??????, ??????? ?????, ???? ? ??????? ?? ????."""
-    import re
-    from storage_control.models import ParsedPage
-    from storage_control.services.building_twin import fix_autocad_mojibake
-
-    win_count = 0
-    door_count = 0
-    sill_heights = set()
-    max_len_m = 0.0
-
-    for pg in ParsedPage.objects.all()[:250]:
-        txt = fix_autocad_mojibake(pg.text or "")
-        # ??????? ??????? ????? (??-1, ?? ??, ?? ??, ?? ?? ? ?.?.)
-        win_count += len(re.findall(r'\b\u041e\u041a[\-\s]?[\u0410-\u042f0-9]{1,4}\b', txt))
-        # ??????? ??????? ? ??????????????? ????? (??, ???, ??, ??)
-        door_count += len(re.findall(r'\b(?:\u0414\u041f\u041c|\u0414\u041d|\u0414\u0412|\u0414\u0413)[\-\s]?[0-9]{1,3}\b', txt))
-        # ???? ?????? ??????????? / ?????? ?? ????
-        for m_s in re.finditer(r'(?:\u043f\u043e\u0434\u043e\u043a\u043e\u043d|\u043d\u0438\u0437\s+\u043f\u0440\u043e\u0435\u043c\u0430)[^\d]{0,18}([+\-]?\d[\.,]\d{2,3})', txt, re.I):
-            sill_heights.add(m_s.group(1).replace(",", "."))
-        # ???? ?????????? ????? ?????? ? ???? (???????? 96000 ??? 102000 ??)
-        for m_l in re.finditer(r'\b(4[28]|54|60|66|72|78|84|90|96|102|108)000\b', txt):
-            val_m = float(m_l.group(0)) / 1000.0
-            if val_m > max_len_m:
-                max_len_m = val_m
-
-    total_len = max_len_m or 96.0
-    return {
-        "x_axes": 17,
-        "y_axes": 7,
-        "axes_label": "17 \u043f\u043e\u043f\u0435\u0440\u0435\u0447\u043d\u044b\u0445 (1\u201317) \u00d7 7 \u043f\u0440\u043e\u0434\u043e\u043b\u044c\u043d\u044b\u0445 (\u0410\u2013\u0416)",
-        "total_length_m": f"{total_len:.1f} \u043c (\u0448\u0430\u0433 \u043e\u0441\u0435\u0439 6000 \u043c\u043c)",
-        "entrance_doors": max(door_count, 6),
-        "windows_total": max(win_count, 24),
-        "window_distance": "\u041d\u0438\u0437 \u043e\u043a\u043d\u0430 \u043e\u0442\u043c. +" + (sorted(sill_heights)[0] if sill_heights else "0.900") + " \u043c \u00b7 \u043e\u0442\u0441\u0442\u0443\u043f \u043e\u0442 \u043e\u0442\u043a\u043e\u0441\u0430 \u043c\u0438\u043d. 500 \u043c\u043c",
-    }

@@ -543,7 +543,7 @@ def _enrich_mark_passport_ctx(ctx: dict, query: str) -> dict:
     )
     ctx["cad_modes"] = build_contextual_cad_modes(mark_query=str(ctx.get("query") or request.GET.get("q") or ""))
     ctx["project_floor_cuts"] = build_project_axes_and_floor_cuts()
-    ctx["nss_vector_svg"] = build_nss_cable_vector_svg()
+    ctx["nss_vector_svg"] = build_nss_cable_vector_svg(mark_query=query)
     from storage_control.services.turtle_geometry import extract_real_building_metrics_from_pdfs
     ctx["real_metrics"] = extract_real_building_metrics_from_pdfs()
     ctx["stock_movements"] = list(StockMovement.objects.select_related("purchase_request", "photo_intake").all()[:15])
