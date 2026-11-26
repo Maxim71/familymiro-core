@@ -825,5 +825,5 @@ def extract_real_building_metrics_from_pdfs() -> dict:
         "total_length_m": f"{total_len:.1f} \u043c (\u0448\u0430\u0433 \u043e\u0441\u0435\u0439 6000 \u043c\u043c)",
         "entrance_doors": max(door_count, 6),
         "windows_total": max(win_count, 24),
-        "window_distance": "\u041d\u0438\u0437 \u043e\u043a\u043d\u0430 \u043e\u0442\u043c. +" + (sorted(sill_heights) if sill_heights else "0.900") + " \u043c \u00b7 \u043e\u0442\u0441\u0442\u0443\u043f \u043e\u0442 \u043e\u0442\u043a\u043e\u0441\u0430 \u043c\u0438\u043d. 500 \u043c\u043c",
+        "window_distance": "\u041d\u0438\u0437 \u043e\u043a\u043d\u0430 \u043e\u0442\u043c. +" + (sorted(sill_heights)[0] if sill_heights else "0.900") + " \u043c \u00b7 \u043e\u0442\u0441\u0442\u0443\u043f \u043e\u0442 \u043e\u0442\u043a\u043e\u0441\u0430 \u043c\u0438\u043d. 500 \u043c\u043c",
     }
