@@ -43,8 +43,8 @@ FLOOR_ELEVATIONS = {
 }
 
 def _floor_for_code(code: str) -> tuple[int, str]:
-    c0 = (code or "1")
-    n = int(c0) if c0.isdigit() else 1
+    c0 = str(code or "1").strip()[:1]
+    n = int(c0) if (c0.isdigit() and int(c0) in range(0, 6)) else 1
     lbl, elev = FLOOR_ELEVATIONS.get(n, (f"{n}-\u0439 \u044d\u0442\u0430\u0436", ""))
     return n, f"{lbl} \u00b7 {elev}".strip(" \u00b7")
 
