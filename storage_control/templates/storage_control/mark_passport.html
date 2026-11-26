@@ -16,8 +16,8 @@
     <div class="mp-topbar">
         <a href="/" class="mp-back">← Вернуться в штабную ведомость ПТО</a>
         <div class="mp-slug-box">
-            <span>https://xn----7sbfkf5bif1g.ru{{ slug_alias }}/</span>
-            <button type="button" id="mp-copy-slug" class="mp-copy-btn" data-url="https://xn----7sbfkf5bif1g.ru{{ slug_alias }}/">📋 Копировать ссылку</button>
+            <span>{{ request.scheme }}://{{ request.get_host }}/marka/{{ slug_alias }}/</span>
+            <button type="button" id="mp-copy-slug" class="mp-copy-btn" data-url="{{ request.scheme }}://{{ request.get_host }}/marka/{{ slug_alias }}/">📋 Копировать ссылку</button>
         </div>
     </div>
 
