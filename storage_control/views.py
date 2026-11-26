@@ -982,6 +982,20 @@ def id_registry_export_view(request):
         ws.append([1, f"\u0410\u041e\u0421\u0420 (\u041f\u0440\u0438\u043a\u0430\u0437 \u2116 344/\u043f\u0440) \u043f\u043e \u043a\u043e\u043c\u043f\u043b\u0435\u043a\u0442\u0443: {dr.get('filename', '')}", dr.get("elevs", ""), dr.get("axes", ""), today_str])
         for i, ln in enumerate(dr.get("lines", []), start=2):
             ws.append([i, ln, dr.get("elevs", ""), dr.get("filename", ""), today_str])
+        from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+        thin = Side(style="thin", color="CBD5E1")
+        border = Border(left=thin, right=thin, top=thin, bottom=thin)
+        ws["A1"].font = Font(bold=True, size=12, color="0F172A")
+        for col_let, w in [("A", 8), ("B", 64), ("C", 24), ("D", 32), ("E", 18)]:
+            ws.column_dimensions[col_let].width = w
+        for cell in ws[2]:
+            cell.font = Font(bold=True, color="FFFFFF")
+            cell.fill = PatternFill("solid", fgColor="1E3A8A")
+            cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+        for row in ws.iter_rows(min_row=2, max_row=ws.max_row, max_col=5):
+            for c in row:
+                c.border = border
+                c.alignment = Alignment(vertical="center", wrap_text=True)
         buf = io.BytesIO()
         wb.save(buf)
         resp = HttpResponse(buf.getvalue(), content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
@@ -1013,7 +1027,8 @@ def new_client_wizard_view(request):
                 import io, pypdf
                 reader = pypdf.PdfReader(io.BytesIO(raw))
                 pages_cnt = len(reader.pages)
-                txt = "\n".join((p.extract_text() or "") for p in reader.pages[:5])
+                txt = "\n".join((p.extract_text() or "") for p in reader.pages[:30])
+                txt = re.sub(r"([?-???-???])\n([?-???-???])", r"\1\2", txt)
                 extracted_lines = [ln.strip() for ln in txt.splitlines() if len(ln.strip()) > 6][:12]
             elif ext in ("xlsx", "xls"):
                 import io, openpyxl
