@@ -220,51 +220,83 @@ def analyze_building_plan_footprint(image_path: str, operator_object_title: str 
     est_length_m, est_width_m = round(spans_x * step_m, 1), round(spans_y * step_m, 1)
     est_area_m2 = round(est_length_m * est_width_m * (extent_pct / 100.0), 1)
 
-    svg_w, svg_h = 460, 300
-    pad_l, pad_r, pad_t, pad_b = 46, 26, 32, 46
+    svg_w, svg_h = 540, 330
+    pad_l, pad_r, pad_t, pad_b = 54, 34, 42, 62
     draw_w, draw_h = svg_w - pad_l - pad_r, svg_h - pad_t - pad_b
     scale = min(draw_w / max(1, bw), draw_h / max(1, bh))
     offset_x = pad_l + (draw_w - bw * scale) / 2.0
     offset_y = pad_t + (draw_h - bh * scale) / 2.0
 
-    poly_str = " ".join(f"{round(offset_x + (float(px_r) - bx) * scale, 1)},{round(offset_y + (float(py_r) - by) * scale, 1)}" for px_r, py_r in approx.reshape(-1, 2))
+    x0_s = round(offset_x, 1)
+    y0_s = round(offset_y, 1)
+    x1_s = round(offset_x + bw * scale, 1)
+    y1_s = round(offset_y + bh * scale, 1)
+
     axes_svg = []
+    ax_coords_svg = []
     for idx, ax_x in enumerate(x_axes, start=1):
         sx = round(offset_x + (ax_x - bx) * scale, 1)
+        ax_coords_svg.append((idx, sx))
         axes_svg.append(
-            f'<line x1="{sx}" y1="{pad_t - 10}" x2="{sx}" y2="{svg_h - 28}" stroke="#f59e0b" stroke-width="1" stroke-dasharray="7 3 2 3" opacity="0.85"/>'
-            f'<circle cx="{sx}" cy="{svg_h - 16}" r="10" fill="#0f172a" stroke="#f59e0b" stroke-width="1.4"/>'
-            f'<text x="{sx}" y="{svg_h - 12}" fill="#fbbf24" font-size="10" font-weight="bold" text-anchor="middle" font-family="sans-serif">{idx}</text>'
-        )
-    for idx, ay_y in enumerate(reversed(y_axes)):
-        sy = round(offset_y + (ay_y - by) * scale, 1)
-        letter = RU_AXIS_LETTERS[idx] if idx < len(RU_AXIS_LETTERS) else f"О{idx + 1}"
-        axes_svg.append(
-            f'<line x1="28" y1="{sy}" x2="{svg_w - 14}" y2="{sy}" stroke="#38bdf8" stroke-width="1" stroke-dasharray="7 3 2 3" opacity="0.85"/>'
-            f'<circle cx="16" cy="{sy}" r="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.4"/>'
-            f'<text x="16" y="{sy + 4}" fill="#38bdf8" font-size="10" font-weight="bold" text-anchor="middle" font-family="sans-serif">{letter}</text>'
+            f'<line x1="{sx}" y1="{pad_t - 12}" x2="{sx}" y2="{svg_h - 38}" stroke="#64748b" stroke-width="0.9" stroke-dasharray="6 3 1.5 3"/>'
+            f'<circle cx="{sx}" cy="{svg_h - 24}" r="10" fill="#0f172a" stroke="#f59e0b" stroke-width="1.4"/>'
+            f'<text x="{sx}" y="{svg_h - 20}" fill="#fbbf24" font-size="10" font-weight="bold" text-anchor="middle" font-family="monospace">{idx}</text>'
         )
 
-    arrow_defs = '<defs><marker id="turtleArrow" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#10b981"/></marker></defs>'
-    routes_svg = "".join(
-        f'<line x1="{round(offset_x + (rt["x1"] - bx) * scale, 1)}" y1="{round(offset_y + (rt["y1"] - by) * scale, 1)}" '
-        f'x2="{round(offset_x + (rt["x2"] - bx) * scale, 1)}" y2="{round(offset_y + (rt["y2"] - by) * scale, 1)}" '
-        f'stroke="#10b981" stroke-width="2.2" marker-end="url(#turtleArrow)" opacity="0.92"/>'
-        for rt in routes
-    )
+    # ????????? ??????? ?? ???? 2.307 (??? ???? ? ?? ? ???????)
+    dim_svg = []
+    dim_y = svg_h - 44
+    for i in range(len(ax_coords_svg) - 1):
+        _, sx1 = ax_coords_svg[i]
+        _, sx2 = ax_coords_svg[i + 1]
+        mid_x = round((sx1 + sx2) / 2.0, 1)
+        dim_svg.append(
+            f'<line x1="{sx1}" y1="{dim_y}" x2="{sx2}" y2="{dim_y}" stroke="#94a3b8" stroke-width="1"/>'
+            f'<line x1="{sx1 - 3}" y1="{dim_y + 3}" x2="{sx1 + 3}" y2="{dim_y - 3}" stroke="#94a3b8" stroke-width="1.3"/>'
+            f'<line x1="{sx2 - 3}" y1="{dim_y + 3}" x2="{sx2 + 3}" y2="{dim_y - 3}" stroke="#94a3b8" stroke-width="1.3"/>'
+            f'<text x="{mid_x}" y="{dim_y - 3}" fill="#cbd5e1" font-size="9" text-anchor="middle" font-family="monospace">{axis_step_mm}</text>'
+        )
+
+    ay_coords_svg = []
+    for idx, ay_y in enumerate(reversed(y_axes)):
+        sy = round(offset_y + (ay_y - by) * scale, 1)
+        letter = RU_AXIS_LETTERS[idx] if idx < len(RU_AXIS_LETTERS) else f"?{idx + 1}"
+        ay_coords_svg.append((letter, sy))
+        axes_svg.append(
+            f'<line x1="34" y1="{sy}" x2="{svg_w - 16}" y2="{sy}" stroke="#64748b" stroke-width="0.9" stroke-dasharray="6 3 1.5 3"/>'
+            f'<circle cx="18" cy="{sy}" r="10" fill="#0f172a" stroke="#38bdf8" stroke-width="1.4"/>'
+            f'<text x="18" y="{sy + 4}" fill="#38bdf8" font-size="10" font-weight="bold" text-anchor="middle" font-family="monospace">{letter}</text>'
+        )
+
+    # ??????? ????????????? ?????????? ? ?????? ?? ????????? (?????? ????????? ?????)
+    mid_y = round((y0_s + y1_s) / 2.0, 1)
+    trunk_svg = [
+        f'<line x1="{x0_s + 10}" y1="{mid_y}" x2="{x1_s - 10}" y2="{mid_y}" stroke="#10b981" stroke-width="2.6"/>',
+        f'<rect x="{x0_s + 6}" y="{mid_y - 6}" width="12" height="12" fill="#0284c7" stroke="#fff" stroke-width="1.2"/>',
+        f'<text x="{x0_s + 12}" y="{mid_y - 10}" fill="#38bdf8" font-size="9" font-weight="bold" font-family="monospace">???? / ????</text>',
+    ]
+    sleeve_nodes = []
+    for idx, sx in ax_coords_svg[1:-1]:
+        trunk_svg.append(f'<line x1="{sx}" y1="{y0_s + 12}" x2="{sx}" y2="{y1_s - 12}" stroke="#10b981" stroke-width="1.3" stroke-dasharray="4 3"/>')
+        sleeve_nodes.append(
+            f'<circle cx="{sx}" cy="{mid_y}" r="5.5" fill="#ef4444" stroke="#fef08a" stroke-width="1.4"/>'
+            f'<text x="{sx + 7}" y="{mid_y - 6}" fill="#fca5a5" font-size="8.5" font-weight="bold" font-family="monospace">?????? ??? {idx}</text>'
+        )
+
+    # ?????? ??????????? ??????? ??? ?? ??????????? ? ?????????
+    internal_crossings = max(1, len(ax_coords_svg) - 2)
+    trunk_len_m = est_length_m
+    branches_len_m = round(internal_crossings * est_width_m, 1)
+    total_pipe_m = round((trunk_len_m + branches_len_m) * 1.07, 1)
+
     svg_code = (
-        f'<svg viewBox="0 0 {svg_w} {svg_h}" width="100%" height="260" style="background:#090d16;border:1px solid #1e293b;border-radius:10px;">'
-        + arrow_defs + "".join(axes_svg) + routes_svg
-        + f'<polygon points="{poly_str}" fill="rgba(56,189,248,0.18)" stroke="#e2e8f0" stroke-width="2.5"/>'
-        + "".join(
-            f'<circle cx="{round(offset_x + (m["x"] - bx) * scale, 1)}" cy="{round(offset_y + (m["y"] - by) * scale, 1)}" r="5" fill="#f97316" stroke="#fff" stroke-width="1.2"/>'
-            for m in manholes
-        )
-        + "".join(
-            f'<circle cx="{round(offset_x + (ps["x"] - bx) * scale, 1)}" cy="{round(offset_y + (ps["y"] - by) * scale, 1)}" r="4.5" fill="#ef4444" stroke="#fef08a" stroke-width="1.2"/>'
-            for ps in passages
-        )
-        + f'<text x="{pad_l}" y="16" fill="#94a3b8" font-size="11" font-family="monospace">Черепаха CAD-Оси · Осей X:{len(x_axes)} Y:{len(y_axes)} · ~{est_length_m}×{est_width_m}м</text></svg>'
+        f'<svg viewBox="0 0 {svg_w} {svg_h}" width="100%" height="295" style="background:#070b14;border:1px solid #1e293b;border-radius:10px;">'
+        f'<text x="{pad_l}" y="18" fill="#e2e8f0" font-size="11" font-weight="bold" font-family="monospace">CAD-????? ??? (???? 21.101) ? ??????? {int(est_length_m*1000)}?{int(est_width_m*1000)} ?? ? {est_area_m2} ??</text>'
+        + '<g class="turtle-layer-axes">' + "".join(axes_svg) + "".join(dim_svg) + '</g>'
+        + f'<rect x="{x0_s}" y="{y0_s}" width="{round(x1_s - x0_s, 1)}" height="{round(y1_s - y0_s, 1)}" fill="rgba(14,165,233,0.08)" stroke="#e2e8f0" stroke-width="2.4"/>'
+        + '<g class="turtle-layer-routes">' + "".join(trunk_svg) + '</g>'
+        + '<g class="turtle-layer-nodes">' + "".join(sleeve_nodes) + '</g>'
+        + '</svg>'
     )
 
     return {
@@ -279,11 +311,11 @@ def analyze_building_plan_footprint(image_path: str, operator_object_title: str 
         "corners_count": corners_count,
         "detected_cells_count": inner_rooms,
         "manholes_count": len(manholes),
-        "passages_count": len(passages),
+        "passages_count": internal_crossings,
         "manholes_list": manholes,
         "passages_list": passages,
-        "routes_count": len(routes),
-        "route_total_m": route_total_m,
+        "routes_count": internal_crossings + 1,
+        "route_total_m": total_pipe_m,
         "routes_list": routes,
         "svg_preview": svg_code,
     }
@@ -634,4 +666,69 @@ def build_sheet_decision_engine(pdf_path: str, doc_id: int, doc_title: str, page
         "network_plan": net_info if net_info.get("ok") else {},
         "matrix_table": matrix_info if matrix_info.get("ok") else {},
         "gost_zones": gost_zones.get("zones", {}) if gost_zones.get("ok") else {},
+    }
+
+
+ROOM_ROW_RE = re.compile(
+    r'(?:\u043f\u043e\u043c\.?|\u043f\u043e\u043c\u0435\u0449\u0435\u043d\u0438\u0435)?\s*(\d{1,3}[\u0430-\u044fa-z]?)\s+([\u0410-\u042f\u0401][\u0410-\u042f\u0401\u0430-\u044f\u04510-9\s\-\(\)\.,]{3,55}?)\s+(\d{1,4}[\.,]\d{1,2})\s*(?:\u043c2|\u043c\u00b2)?',
+    re.IGNORECASE,
+)
+
+
+def find_rooms_in_axis_sector(axis_query: str = "\u0410-\u0411 / 1-3", floor_hint: str = "1") -> dict:
+    from storage_control.models import ParsedPage
+
+    clean_axes = (axis_query or "\u0410-\u0411 / 1-3").strip()
+    fl = (floor_hint or "1").strip()
+
+    qs = ParsedPage.objects.select_related("document").filter(
+        text__icontains="0,000"
+    ).order_by("-document__uploaded_at", "page_number")[:15]
+    if not qs:
+        qs = ParsedPage.objects.select_related("document").filter(
+            text__icontains="0.000"
+        ).order_by("-document__uploaded_at", "page_number")[:15]
+
+    rooms_found = []
+    seen_nums = set()
+    matched_docs = []
+    stop_words = ("\u043b\u0438\u0441\u0442", "\u043c\u0430\u0441\u0448\u0442\u0430\u0431", "\u0433\u043e\u0441\u0442", "\u0434\u0430\u0442\u0430", "\u043f\u043e\u0434\u043f", "\u0438\u043d\u0432")
+
+    for pg in qs:
+        txt = pg.text or ""
+        if pg.document and pg.document.title not in matched_docs:
+            matched_docs.append(pg.document.title)
+
+        for m in ROOM_ROW_RE.finditer(txt):
+            r_num = m.group(1).strip()
+            r_name = re.sub(r'\s+', ' ', m.group(2)).strip(" -.,:")
+            r_area = m.group(3).replace(",", ".")
+            if len(r_name) < 4 or r_num in seen_nums:
+                continue
+            if any(bad in r_name.lower() for bad in stop_words):
+                continue
+            seen_nums.add(r_num)
+            rooms_found.append({
+                "room_num": r_num,
+                "room_name": r_name,
+                "area_m2": float(r_area),
+                "floor": f"{fl}-\u0439 \u044d\u0442\u0430\u0436 (\u043e\u0442\u043c. 0.000)",
+                "axis_sector": clean_axes,
+                "doc_title": pg.document.title if pg.document else "",
+                "page_number": pg.page_number,
+            })
+            if len(rooms_found) >= 20:
+                break
+        if len(rooms_found) >= 20:
+            break
+
+    total_area = round(sum(r["area_m2"] for r in rooms_found), 2)
+    return {
+        "ok": True,
+        "axis_sector": clean_axes,
+        "floor": f"{fl}-\u0439 \u044d\u0442\u0430\u0436",
+        "rooms_count": len(rooms_found),
+        "total_area_m2": total_area,
+        "source_docs": matched_docs[:4],
+        "rooms": rooms_found,
     }

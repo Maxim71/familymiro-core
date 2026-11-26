@@ -3,6 +3,7 @@ from django.urls import path
 from . import views
 
 from .views import (
+    stock_movement_create_view, stock_movement_status_view, stock_movement_print_view,
     AdvancedConstructionControlView,
     TrackerSearchAPIView,
     PurchaseRequestAPIView,
@@ -17,6 +18,9 @@ from .views import (
 app_name = 'storage_control'
 
 urlpatterns = [
+    path("stock-movement/create/", stock_movement_create_view, name="stock_movement_create"),
+    path("stock-movement/<int:movement_id>/status/", stock_movement_status_view, name="stock_movement_status"),
+    path("stock-movement/<int:movement_id>/print/", stock_movement_print_view, name="stock_movement_print"),
     path('', AdvancedConstructionControlView.as_view(), name='index_family'),
     path('dashboard/', AdvancedConstructionControlView.as_view(), name='dashboard'),
     path('api/tracker-search/', TrackerSearchAPIView.as_view(), name='tracker_search'),

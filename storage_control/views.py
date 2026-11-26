@@ -588,6 +588,9 @@ def mark_passport_view(request):
     ctx["selected_doc_id"] = selected_doc_id
     ctx["available_docs"] = list(Document.objects.order_by("-uploaded_at").values("id", "title")[:15])
 
+    from .models import StockMovement, PurchaseRequest
+    ctx["stock_movements"] = list(StockMovement.objects.select_related("purchase_request", "photo_intake").all()[:15])
+    ctx["gpr_positions"] = list(PurchaseRequest.objects.order_by("-id").values("id", "material_name", "required_qty", "unit")[:40])
     return render(request, "storage_control/mark_passport.html", ctx)
 
     # Авто-вырезка «Черепахой-Фрезой» узлов с масштабами (М 1:10, М 1:20, М 1:50...) по найденным листам РД
@@ -611,6 +614,9 @@ def mark_passport_view(request):
             milled_cuts.append(c)
     ctx["milled_cuts"] = milled_cuts
 
+    from .models import StockMovement, PurchaseRequest
+    ctx["stock_movements"] = list(StockMovement.objects.select_related("purchase_request", "photo_intake").all()[:15])
+    ctx["gpr_positions"] = list(PurchaseRequest.objects.order_by("-id").values("id", "material_name", "required_qty", "unit")[:40])
     return render(request, "storage_control/mark_passport.html", ctx)
 
 
@@ -808,3 +814,63 @@ def photo_1c_export_view(request, pk, fmt):
     )
     resp["Content-Disposition"] = f'attachment; filename="1C_Prihod_M4_{obj.id}.xlsx"'
     return resp
+
+
+from django.views.decorators.http import require_POST
+
+
+@require_POST
+def stock_movement_create_view(request):
+    from storage_control.services.stock_acts import register_stock_movement
+    return_to = request.POST.get("return_to") or reverse("storage_control:dashboard")
+    pr_raw = (request.POST.get("purchase_request_id") or "").strip()
+    ph_raw = (request.POST.get("photo_intake_id") or "").strip()
+    try:
+        qty_val = float((request.POST.get("qty") or "0").replace(",", ".").strip())
+    except ValueError:
+        qty_val = 0.0
+
+    mv, alerts = register_stock_movement(
+        movement_kind=(request.POST.get("movement_kind") or "OUT_M11").strip(),
+        material_name=(request.POST.get("material_name") or "").strip(),
+        qty=qty_val,
+        unit=(request.POST.get("unit") or "\u0448\u0442.").strip(),
+        purchase_request_id=int(pr_raw) if pr_raw.isdigit() else None,
+        photo_intake_id=int(ph_raw) if ph_raw.isdigit() else None,
+        upd_batch_number=(request.POST.get("upd_batch_number") or "").strip(),
+        brigade_or_subcontractor=(request.POST.get("brigade_or_subcontractor") or "").strip(),
+        axes_and_ojr=(request.POST.get("axes_and_ojr") or "").strip(),
+        responsible_itr=(request.POST.get("responsible_itr") or "\u0428\u0442\u0430\u0431 \u041f\u0422\u041e").strip(),
+        doc_status=(request.POST.get("doc_status") or "CONFIRMED").strip(),
+    )
+    messages.success(request, f"\u041e\u0444\u043e\u0440\u043c\u043b\u0435\u043d \u0434\u043e\u043a\u0443\u043c\u0435\u043d\u0442 \u2116{mv.id}: {mv.get_movement_kind_display()} ({mv.qty} {mv.unit}).")
+    for al in alerts:
+        messages.warning(request, al)
+    return redirect(return_to)
+
+
+@require_POST
+def stock_movement_status_view(request, movement_id: int):
+    from storage_control.models import StockMovement
+    mv = get_object_or_404(StockMovement, id=movement_id)
+    new_status = (request.POST.get("doc_status") or "CONFIRMED").strip()
+    if new_status in {c for c in StockMovement.DOC_STATUS_CHOICES}:
+        mv.doc_status = new_status
+        mv.save(update_fields=["doc_status"])
+    return redirect(request.POST.get("return_to") or reverse("storage_control:dashboard"))
+
+
+def stock_movement_print_view(request, movement_id: int):
+    from storage_control.models import StockMovement
+    mv = get_object_or_404(StockMovement, id=movement_id)
+    html = f"""<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8"><title>???????? ?{mv.id}</title>
+    <style>body{{font-family:Arial,sans-serif;padding:28px;color:#111}}table{{width:100%;border-collapse:collapse;margin:16px 0}}th,td{{border:1px solid #222;padding:8px;font-size:13px}}th{{background:#f1f5f9}}.signs{{display:flex;justify-content:space-between;margin-top:36px}}@media print{{.no-print{{display:none}}}}</style></head><body>
+    <div class="no-print" style="margin-bottom:16px;"><button onclick="window.print()" style="padding:10px 18px;font-size:14px;font-weight:bold;cursor:pointer;">??? ??????????? / PDF</button></div>
+    <h2>{mv.get_movement_kind_display()} ? ???????? ? {mv.id} ?? {mv.created_at:%d.%m.%Y}</h2>
+    <div>??????: <strong>{mv.get_doc_status_display()}</strong> ? ?????? ???: <strong>{mv.upd_batch_number or '?? ????????? ??'}</strong> ? ???/???: <strong>{mv.axes_and_ojr or '?'}</strong></div>
+    <div>?????????? (??????? / ????????????): <strong>{mv.brigade_or_subcontractor or '?'}</strong></div>
+    <table><thead><tr><th>?</th><th>???????????? ???</th><th>??.</th><th>???-??</th><th>??????? ???</th></tr></thead>
+    <tbody><tr><td>1</td><td>{mv.material_name}</td><td>{mv.unit}</td><td><strong>{mv.qty}</strong></td><td>{mv.purchase_request.material_name if mv.purchase_request else '?????'}</td></tr></tbody></table>
+    <div class="signs"><div>???? (????????? / ???): _____________ / {mv.responsible_itr} /</div><div>?????? ({mv.brigade_or_subcontractor or '????????'}): _____________ / __________ /</div></div>
+    </body></html>"""
+    return HttpResponse(html)

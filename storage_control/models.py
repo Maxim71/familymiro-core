@@ -497,3 +497,48 @@ class PhotoIntake(models.Model):
 
     def __str__(self):
         return f"#{self.id} [{self.get_photo_kind_display()}] {self.doc_number or self.created_at:%d.%m.%Y}"
+
+
+class StockMovement(models.Model):
+    KIND_CHOICES = [
+        ("IN_UPD", "\u041f\u0440\u0438\u0445\u043e\u0434 \u043f\u043e \u0423\u041f\u0414 / \u041c-4"),
+        ("OUT_M11", "\u0412\u044b\u0434\u0430\u0447\u0430 \u0431\u0440\u0438\u0433\u0430\u0434\u0435 (\u041c-11)"),
+        ("OUT_M15_SUB", "\u041f\u0435\u0440\u0435\u0434\u0430\u0447\u0430 \u0441\u0443\u0431\u043f\u043e\u0434\u0440\u044f\u0434\u0447\u0438\u043a\u0443 (\u041c-15)"),
+        ("RET_M11", "\u0412\u043e\u0437\u0432\u0440\u0430\u0442 \u043d\u0430 \u0441\u043a\u043b\u0430\u0434 (\u043e\u0441\u0442\u0430\u0442\u043e\u043a)"),
+        ("DEFECT_TORG2", "\u0411\u0440\u0430\u043a / \u0432\u043e\u0437\u0432\u0440\u0430\u0442 \u043f\u043e\u0441\u0442\u0430\u0432\u0449\u0438\u043a\u0443 (\u0422\u041e\u0420\u0413-2)"),
+        ("WRITE_OFF_AOSR", "\u0421\u043f\u0438\u0441\u0430\u043d\u0438\u0435 \u0432 \u043a\u043e\u043d\u0441\u0442\u0440\u0443\u043a\u0446\u0438\u044e (\u0410\u041e\u0421\u0420 / \u041a\u0421-2)"),
+    ]
+    DOC_STATUS_CHOICES = [
+        ("DRAFT", "\u0427\u0435\u0440\u043d\u043e\u0432\u0438\u043a"),
+        ("REVIEW", "\u041d\u0430 \u0441\u043e\u0433\u043b\u0430\u0441\u043e\u0432\u0430\u043d\u0438\u0438"),
+        ("CONFIRMED", "\u041f\u043e\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0451\u043d"),
+        ("CANCELLED", "\u041e\u0442\u043c\u0435\u043d\u0451\u043d"),
+    ]
+
+    purchase_request = models.ForeignKey(
+        PurchaseRequest, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="movements", verbose_name="\u041f\u043e\u0437\u0438\u0446\u0438\u044f \u0413\u041f\u0420 / \u0412\u0435\u0434\u043e\u043c\u043e\u0441\u0442\u0438"
+    )
+    photo_intake = models.ForeignKey(
+        PhotoIntake, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="movements", verbose_name="\u0424\u043e\u0442\u043e \u0423\u041f\u0414 / \u0410\u043a\u0442\u0430"
+    )
+    movement_kind = models.CharField("\u0412\u0438\u0434 \u0434\u0432\u0438\u0436\u0435\u043d\u0438\u044f", max_length=20, choices=KIND_CHOICES, default="OUT_M11")
+    doc_status = models.CharField("\u0421\u0442\u0430\u0442\u0443\u0441 \u0434\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u0430", max_length=20, choices=DOC_STATUS_CHOICES, default="CONFIRMED")
+    material_name = models.CharField("\u041d\u0430\u0438\u043c\u0435\u043d\u043e\u0432\u0430\u043d\u0438\u0435 \u0422\u041c\u0426", max_length=255)
+    qty = models.FloatField("\u041a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u043e", default=0.0)
+    unit = models.CharField("\u0415\u0434. \u0438\u0437\u043c.", max_length=32, default="\u0448\u0442.")
+    upd_batch_number = models.CharField("\u041f\u0430\u0440\u0442\u0438\u044f / \u2116 \u0423\u041f\u0414", max_length=120, blank=True, default="")
+    brigade_or_subcontractor = models.CharField("\u0411\u0440\u0438\u0433\u0430\u0434\u0430 / \u0421\u0443\u0431\u043f\u043e\u0434\u0440\u044f\u0434\u0447\u0438\u043a", max_length=180, blank=True, default="")
+    axes_and_ojr = models.CharField("\u041e\u0441\u0438 \u0438 \u0434\u0430\u0442\u0430 \u041e\u0416\u0420", max_length=160, blank=True, default="")
+    responsible_itr = models.CharField("\u041e\u0442\u0432\u0435\u0442\u0441\u0442\u0432\u0435\u043d\u043d\u044b\u0439 \u0418\u0422\u0420", max_length=120, default="\u0428\u0442\u0430\u0431 \u041f\u0422\u041e")
+    history_log = models.JSONField("\u0418\u0441\u0442\u043e\u0440\u0438\u044f \u0441\u0442\u0430\u0442\u0443\u0441\u043e\u0432", default=list, blank=True)
+    created_at = models.DateTimeField("\u0414\u0430\u0442\u0430 \u043e\u043f\u0435\u0440\u0430\u0446\u0438\u0438", auto_now_add=True)
+
+    class Meta:
+        verbose_name = "\u0414\u0432\u0438\u0436\u0435\u043d\u0438\u0435 \u0422\u041c\u0426 (\u041c-11 / \u041c-15 / \u0422\u041e\u0420\u0413-2)"
+        verbose_name_plural = "\u0414\u0432\u0438\u0436\u0435\u043d\u0438\u0435 \u0422\u041c\u0426 \u0438 \u0410\u043a\u0442\u044b \u043f\u0435\u0440\u0435\u0434\u0430\u0447"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"#{self.id} [{self.get_movement_kind_display()}] {self.material_name} ({self.qty} {self.unit})"
