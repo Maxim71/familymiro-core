@@ -918,3 +918,9 @@ def stock_movement_print_view(request, movement_id: int):
     </div>
     </body></html>"""
     return HttpResponse(html)
+
+
+def room_passport_view(request, room_code: str):
+    from storage_control.services.building_twin import build_single_room_passport
+    ctx = build_single_room_passport(room_code)
+    return render(request, "storage_control/room_passport.html", ctx)
