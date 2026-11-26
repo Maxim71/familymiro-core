@@ -1158,6 +1158,8 @@ def project_totals_and_analogs_api(request):
             snip = re.sub(r'\s+', ' ', txt[max(0, idx - 35): idx + 110]).strip()
             pdf_mentions.append({"doc": pg.document.title if pg.document else "\u0420\u0414", "page": pg.page_number, "snippet": snip})
 
+    if "\u043a\u0433" in totals_by_unit:
+        totals_by_unit["\u0442 (\u0442\u043e\u043d\u043d)"] = round(totals_by_unit["\u043a\u0433"] / 1000.0, 3)
     return JsonResponse({"ok": True, "query": q, "totals_by_unit": totals_by_unit, "items": list(grouped.values()), "pdf_mentions": pdf_mentions, "general_analog": _suggest_analog_for_material(q)})
 
 
