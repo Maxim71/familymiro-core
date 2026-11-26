@@ -3,6 +3,7 @@ from django.urls import path
 from . import views
 
 from .views import (
+    id_registry_export_view,
     save_object_passport_view,
     room_passport_view,
     stock_movement_create_view, stock_movement_status_view, stock_movement_print_view,
@@ -20,6 +21,7 @@ from .views import (
 app_name = 'storage_control'
 
 urlpatterns = [
+    path("id-registry/export/", id_registry_export_view, name="id_registry_export"),
     path("api/object-passport/", save_object_passport_view, name="save_object_passport"),
     path("pomeshchenie/<str:room_code>/", room_passport_view, name="room_passport"),
     path("stock-movement/create/", stock_movement_create_view, name="stock_movement_create"),

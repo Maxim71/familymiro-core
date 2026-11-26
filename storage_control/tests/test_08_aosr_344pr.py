@@ -18,3 +18,8 @@ class Aosr344PrRegressionTest(TestCase):
         self.assertIn("\u041f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u0435 \u2116 3", full_text)
         self.assertIn("\u041b\u043e\u0442\u043e\u043a \u043a\u0430\u0431\u0435\u043b\u044c\u043d\u044b\u0439 \u043f\u0435\u0440\u0444\u043e\u0440\u0438\u0440\u043e\u0432\u0430\u043d\u043d\u044b\u0439 200\u044560", full_text)
         self.assertIn("7. \u0420\u0430\u0437\u0440\u0435\u0448\u0430\u0435\u0442\u0441\u044f \u043f\u0440\u043e\u0438\u0437\u0432\u043e\u0434\u0441\u0442\u0432\u043e \u043f\u043e\u0441\u043b\u0435\u0434\u0443\u044e\u0449\u0438\u0445 \u0440\u0430\u0431\u043e\u0442", full_text)
+
+    def test_customer_id_registry_xlsx_export(self):
+        from storage_control.services.id_template_engine import build_filled_customer_registry_xlsx
+        data = build_filled_customer_registry_xlsx()
+        self.assertTrue(len(data) > 500)

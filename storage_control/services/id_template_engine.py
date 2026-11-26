@@ -111,3 +111,73 @@ def save_object_passport(data: dict) -> dict:
     fpath = os.path.join(settings.BASE_DIR, "object_passport.json")
     json.dump(cur, open(fpath, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
     return cur
+
+
+def build_filled_customer_registry_xlsx(template_bytes: bytes | None = None, memo_text: str = "") -> bytes:
+    """
+    ????????? ?????? ??????? ?? ????????? (.xlsx) ????????? ??????????? ? ?????? ?? ????
+    ??? ??????? ????????? ?????? ?? ?? ??????? ???????? ?? ? 344/??.
+    """
+    import io
+    import openpyxl
+    from django.utils import timezone
+    from storage_control.models import Document, StockMovement
+    from storage_control.services.id_template_engine import get_saved_object_passport
+
+    op = get_saved_object_passport()
+    today_str = timezone.localdate().strftime("%d.%m.%Y")
+
+    # ???????? ???????? ?????? ??????? ?? ?? ????
+    rows_data = []
+    idx = 1
+    for doc in Document.objects.order_by("id")[:40]:
+        rows_data.append((
+            idx,
+            f"\u0410\u043a\u0442 \u043e\u0441\u0432\u0438\u0434\u0435\u0442\u0435\u043b\u044c\u0441\u0442\u0432\u043e\u0432\u0430\u043d\u0438\u044f \u0441\u043a\u0440\u044b\u0442\u044b\u0445 \u0440\u0430\u0431\u043e\u0442 (\u041f\u0440\u0438\u043a\u0430\u0437 \u2116 344/\u043f\u0440) \u043f\u043e \u043a\u043e\u043c\u043f\u043b\u0435\u043a\u0442\u0443 {doc.title}",
+            f"\u2116 {idx}-\u0410\u041e\u0421\u0420 \u043e\u0442 {today_str}",
+            doc.title,
+            4,
+            "\u041f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u0435 \u2116 3 (\u044d\u043a\u0437. 1\u20134)",
+        ))
+        idx += 1
+
+    for mv in StockMovement.objects.order_by("-id")[:25]:
+        rows_data.append((
+            idx,
+            f"{mv.get_movement_kind_display()}: {mv.material_name} ({mv.qty} {mv.unit})",
+            f"\u2116 {mv.id} \u043e\u0442 {today_str}",
+            mv.axes_and_ojr or op.get("axes_info", ""),
+            2,
+            mv.brigade_or_subcontractor or "\u041f\u0430\u0441\u043f\u043e\u0440\u0442\u0430 \u0438 \u0441\u0435\u0440\u0442\u0438\u0444\u0438\u043a\u0430\u0442\u044b \u043f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u044b",
+        ))
+        idx += 1
+
+    if not rows_data:
+        rows_data.append((1, "\u0410\u043a\u0442 \u043e\u0441\u0432\u0438\u0434\u0435\u0442\u0435\u043b\u044c\u0441\u0442\u0432\u043e\u0432\u0430\u043d\u0438\u044f \u0441\u043a\u0440\u044b\u0442\u044b\u0445 \u0440\u0430\u0431\u043e\u0442 (\u041f\u0440\u0438\u043a\u0430\u0437 \u2116 344/\u043f\u0440)", f"\u2116 1-\u0410\u041e\u0421\u0420 \u043e\u0442 {today_str}", op.get("axes_info", ""), 4, "\u0413\u043e\u0442\u043e\u0432\u043e \u043a \u043f\u0435\u0440\u0435\u0434\u0430\u0447\u0435 \u0421\u041a"))
+
+    if template_bytes:
+        wb = openpyxl.load_workbook(io.BytesIO(template_bytes))
+        ws = wb.active
+        start_row = ws.max_row + 1
+        for r_off, row_vals in enumerate(rows_data):
+            for c_idx, val in enumerate(row_vals, start=1):
+                ws.cell(row=start_row + r_off, column=c_idx, value=val)
+    else:
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "\u0420\u0435\u0435\u0441\u0442\u0440_\u0418\u0414_344\u043f\u0440"
+        ws.append([f"\u0420\u0415\u0415\u0421\u0422\u0420 \u0418\u0421\u041f\u041e\u041b\u041d\u0418\u0422\u0415\u041b\u042c\u041d\u041e\u0419 \u0414\u041e\u041a\u0423\u041c\u0415\u041d\u0422\u0410\u0426\u0418\u0418 \u2014 {op.get('object_name', '')}"])
+        ws.append([
+            "\u2116 \u043f/\u043f",
+            "\u041d\u0430\u0438\u043c\u0435\u043d\u043e\u0432\u0430\u043d\u0438\u0435 \u0434\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u0430 (\u041f\u0440\u0438\u043a\u0430\u0437 \u041c\u0438\u043d\u0441\u0442\u0440\u043e\u044f \u0420\u0424 \u2116 344/\u043f\u0440)",
+            "\u041d\u043e\u043c\u0435\u0440 \u0438 \u0434\u0430\u0442\u0430",
+            "\u0420\u0430\u0437\u0434\u0435\u043b \u0420\u0414 / \u041e\u0441\u0438",
+            "\u041a\u043e\u043b-\u0432\u043e \u043b\u0438\u0441\u0442\u043e\u0432",
+            "\u041f\u0440\u0438\u043c\u0435\u0447\u0430\u043d\u0438\u0435",
+        ])
+        for row_vals in rows_data:
+            ws.append(list(row_vals))
+
+    buf = io.BytesIO()
+    wb.save(buf)
+    return buf.getvalue()

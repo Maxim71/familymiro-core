@@ -963,3 +963,14 @@ def save_object_passport_view(request):
         saved = save_object_passport(request.POST.dict())
         return JsonResponse({"ok": True, "passport": saved})
     return JsonResponse({"ok": True, "passport": get_saved_object_passport()})
+
+
+def id_registry_export_view(request):
+    from django.http import HttpResponse
+    from storage_control.services.id_template_engine import build_filled_customer_registry_xlsx
+    tpl_bytes = request.FILES["customer_xlsx"].read() if (request.method == "POST" and "customer_xlsx" in request.FILES) else None
+    memo_txt = request.FILES["memo_file"].read().decode("utf-8", errors="ignore") if (request.method == "POST" and "memo_file" in request.FILES) else ""
+    xlsx_data = build_filled_customer_registry_xlsx(template_bytes=tpl_bytes, memo_text=memo_txt)
+    resp = HttpResponse(xlsx_data, content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    resp["Content-Disposition"] = 'attachment; filename="Reestr_ID_344pr.xlsx"'
+    return resp

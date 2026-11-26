@@ -556,6 +556,16 @@ function applyPortalRole(role){
 }
 </script>
 
+
+<div style="background:#0f172a;border:1px solid #10b981;border-radius:12px;padding:12px 14px;margin:10px 0;">
+    <form method="post" action="{% url 'storage_control:id_registry_export' %}" enctype="multipart/form-data" style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-size:12px;">
+        {% csrf_token %}
+        <strong style="color:#34d399;font-size:13px;">📑 Памятка и Реестр ИД заказчика (.xlsx):</strong>
+        <label style="color:#cbd5e1;">Памятка (.docx/.txt): <input type="file" name="memo_file" accept=".docx,.txt" style="color:#94a3b8;font-size:11px;"></label>
+        <label style="color:#cbd5e1;">Шаблон реестра (.xlsx): <input type="file" name="customer_xlsx" accept=".xlsx" style="color:#94a3b8;font-size:11px;"></label>
+        <button type="submit" style="margin-left:auto;background:#10b981;color:#052e16;border:none;border-radius:6px;padding:6px 14px;font-weight:700;cursor:pointer;">📥 Заполнить и скачать Реестр ИД (.xlsx)</button>
+    </form>
+</div>
 {% if building_twin.floors %}
 <div style="background:#0f172a;border:1px solid #38bdf8;border-radius:12px;padding:14px;margin:14px 0;">
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:6px;">
