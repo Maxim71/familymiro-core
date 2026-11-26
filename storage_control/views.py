@@ -1124,8 +1124,11 @@ def project_totals_and_analogs_api(request):
         return JsonResponse({"ok": True, "items": [], "totals_by_unit": {}, "pdf_mentions": []})
     variants = _norm_x_variants(q)
     stem = q[:max(4, len(q) - 2)] if len(q) >= 5 else q
-    if stem not in variants:
-        variants.append(stem)
+    for s_c in (stem, stem.lower(), stem.capitalize(), stem.upper(), q.lower(), q.capitalize(), q.upper()):
+        if s_c and s_c not in variants:
+            variants.append(s_c)
+    if "\u0430\u0440\u043c\u0430\u0442" in q.lower() or "\u043c\u0435\u0442\u0430\u043b" in q.lower():
+        variants.extend(["\u0410500\u0421", "\u0410240", "\u0410400", "A500C", "A240", "34028", "5781"])
 
     cond = functools.reduce(lambda a, b: a | b, [Q(material_name__icontains=v) for v in variants])
     reqs = list(PurchaseRequest.objects.select_related("document").filter(cond).order_by("id")[:150])

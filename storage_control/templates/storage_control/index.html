@@ -46,6 +46,7 @@ function runTopTotals(){
     fetch('/api/project-totals/?q='+encodeURIComponent(q)).then(r=>r.json()).then(d=>{
         const sums=Object.entries(d.totals_by_unit||{}).map(([u,v])=>'<strong style="color:#34d399;font-size:14px;">'+v+' '+u+'</strong>').join(' + ')||'0';
         let h='<div style="background:#111827;border:1px solid #334155;border-radius:8px;padding:8px 10px;margin-bottom:6px;">📊 <strong>Заложено по проекту:</strong> '+sums+' | <span style="color:#fbbf24;">К заказу (дефицит): '+sums+'</span><div style="color:#38bdf8;margin-top:4px;">🔄 '+(d.general_analog||'')+'</div></div>';
+        if(d.pdf_mentions&&d.pdf_mentions.length)h+='<div style="margin:6px 0;color:#cbd5e1;"><strong>📄 Найдено в чертежах PDF (КЖ / КМ / РД):</strong>'+d.pdf_mentions.map(m=>'<div>• '+m.doc+' (Л.'+m.page+'): '+m.snippet+'</div>').join('')+'</div>';
         if(d.items)h+=d.items.map(it=>'<div style="padding:4px 8px;border-bottom:1px solid #1e293b;display:flex;justify-content:space-between;"><span><strong style="color:#38bdf8;">['+it.req_num+']</strong> '+it.mark_name+' <span style="color:#fbbf24;">['+it.floor_or_zone+' · '+it.doc_title+']</span></span><strong style="color:#34d399;">'+it.qty+' '+it.unit+'</strong></div>').join('');
         box.innerHTML=h;
     });
