@@ -1184,34 +1184,67 @@ def room_cascade_dynamics_api(request):
     import datetime
     from django.http import JsonResponse
     from django.utils import timezone
-    from storage_control.models import PurchaseRequest
+    from storage_control.models import PurchaseRequest, PhotoIntake
 
-    room_code = (request.GET.get("code") or "001").strip()
-    room_name = (request.GET.get("name") or "\u0412\u0435\u043d\u0442\u043a\u0430\u043c\u0435\u0440\u0430").strip()
-    area = (request.GET.get("area") or "0").strip()
+    room_code = (request.GET.get("code") or "101").strip()
+    room_name = (request.GET.get("name") or "\u041a\u043e\u0440\u0438\u0434\u043e\u0440").strip()
+    area = (request.GET.get("area") or "45.0").strip()
     today = timezone.localdate()
 
-    flows = [
-        {"sub": "\u0421\u0443\u0431\u043f\u043e\u0434\u0440\u044f\u0434\u0447\u0438\u043a \u041e\u0442\u0434\u0435\u043b\u043a\u0430 / \u0410\u0420", "stage": "\u0427\u0435\u0440\u043d\u043e\u0432\u0430\u044f \u043e\u0442\u0434\u0435\u043b\u043a\u0430, \u043f\u0435\u0440\u0435\u0433\u043e\u0440\u043e\u0434\u043a\u0438 \u0438 \u0433\u0438\u0434\u0440\u043e\u0438\u0437\u043e\u043b\u044f\u0446\u0438\u044f", "enter": (today + datetime.timedelta(days=2)).strftime("%d.%m.%Y"), "plan_pct": 40, "fact_pct": 35, "status": "\u0412 \u0440\u0430\u0431\u043e\u0442\u0435 (\u043e\u0442\u043a\u0440\u044b\u0442 \u0444\u0440\u043e\u043d\u0442)"},
-        {"sub": "\u0421\u0443\u0431\u043f\u043e\u0434\u0440\u044f\u0434\u0447\u0438\u043a \u041e\u0412\u0438\u041a / \u041a\u043e\u043d\u0434\u0438\u0446\u0438\u043e\u043d\u0435\u0440\u044b", "stage": "\u041c\u043e\u043d\u0442\u0430\u0436 \u0432\u043e\u0437\u0434\u0443\u0445\u043e\u0432\u043e\u0434\u043e\u0432, \u0443\u0441\u0442\u0430\u043d\u043e\u0432\u043e\u043a \u0438 \u0444\u0440\u0435\u043e\u043d\u043e\u043f\u0440\u043e\u0432\u043e\u0434\u043e\u0432", "enter": (today + datetime.timedelta(days=7)).strftime("%d.%m.%Y"), "plan_pct": 20, "fact_pct": 15, "status": "\u041e\u0436\u0438\u0434\u0430\u0435\u0442 \u043f\u0440\u0438\u0451\u043c\u043a\u0443 \u0441\u0442\u0435\u043d \u043e\u0442 \u0410\u0420"},
-        {"sub": "\u0421\u0443\u0431\u043f\u043e\u0434\u0440\u044f\u0434\u0447\u0438\u043a \u0412\u041a / \u041a\u0430\u043d\u0430\u043b\u0438\u0437\u0430\u0446\u0438\u044f", "stage": "\u0422\u0440\u0430\u043f\u044b, \u0434\u0440\u0435\u043d\u0430\u0436 \u0438 \u0442\u0440\u0443\u0431\u043e\u043f\u0440\u043e\u0432\u043e\u0434\u044b", "enter": (today + datetime.timedelta(days=10)).strftime("%d.%m.%Y"), "plan_pct": 15, "fact_pct": 10, "status": "\u041f\u043e \u0433\u0440\u0430\u0444\u0438\u043a\u0443 \u0413\u041f\u0420"},
-        {"sub": "\u0421\u0443\u0431\u043f\u043e\u0434\u0440\u044f\u0434\u0447\u0438\u043a \u041f\u043e\u0436\u0430\u0440\u043a\u0430 (\u0410\u041f\u0421/\u0410\u0423\u041f\u0422) + \u042d\u0421", "stage": "\u0414\u0430\u0442\u0447\u0438\u043a\u0438, \u043e\u043f\u043e\u0432\u0435\u0449\u0435\u043d\u0438\u0435, \u0437\u0430\u0437\u0435\u043c\u043b\u0435\u043d\u0438\u0435 \u0438 \u0449\u0438\u0442\u044b", "enter": (today + datetime.timedelta(days=14)).strftime("%d.%m.%Y"), "plan_pct": 0, "fact_pct": 0, "status": "\u042d\u0441\u0442\u0430\u0444\u0435\u0442\u0430 \u043f\u043e\u0441\u043b\u0435 \u041e\u0412\u0438\u041a"},
-        {"sub": "\u0421\u0443\u0431\u043f\u043e\u0434\u0440\u044f\u0434\u0447\u0438\u043a \u0427\u0438\u0441\u0442\u043e\u0432\u0430\u044f \u043e\u0442\u0434\u0435\u043b\u043a\u0430 + \u041f\u041d\u0420", "stage": "\u041f\u043e\u043a\u0440\u0430\u0441\u043a\u0430, \u043f\u043b\u0438\u0442\u043a\u0430, \u043f\u0443\u0441\u043a\u043e\u043d\u0430\u043b\u0430\u0434\u043a\u0430 \u0438 \u0441\u0434\u0430\u0447\u0430 \u0410\u041e\u0421\u0420", "enter": (today + datetime.timedelta(days=19)).strftime("%d.%m.%Y"), "plan_pct": 0, "fact_pct": 0, "status": "\u0424\u0438\u043d\u0430\u043b\u044c\u043d\u044b\u0439 \u044d\u0442\u0430\u043f"},
-    ]
+    # ????????? ?????????? ?? ??????? ????????? ?? 3 ?????????? ??????? ??? ???? ???????
+    finishing, cables_trays, pipes_mep = [], [], []
+    for r in PurchaseRequest.objects.order_by("-required_qty")[:120]:
+        nm = (r.material_name or "").strip()
+        low = nm.lower()
+        row = {"req_num": f"\u0417\u041c-{r.id:04d}", "name": nm[:85], "plan": f"{r.required_qty} {r.unit}", "deficit": f"{r.deficit_qty} {r.unit}"}
+        if any(k in low for k in ("\u043f\u0433\u043f", "\u043f\u043b\u0438\u0442", "\u0448\u0442\u0443\u043a\u0430\u0442", "\u043a\u0440\u0430\u0441\u043a", "\u043f\u043e\u043b", "\u0434\u0432\u0435\u0440", "\u0432\u0430\u0442\u0430")):
+            if len(finishing) < 5: finishing.append(row)
+        elif any(k in low for k in ("\u043a\u0430\u0431\u0435\u043b", "\u043b\u043e\u0442\u043e\u043a", "\u043b\u043e\u0442\u043a", "\u043f\u0440\u043e\u0432\u043e\u0434", "\u0431\u044d", "\u0449\u0438\u0442", "\u0440\u043e\u0437\u0435\u0442")):
+            if len(cables_trays) < 5: cables_trays.append(row)
+        elif any(k in low for k in ("\u0442\u0440\u0443\u0431", "\u0432\u043e\u0437\u0434\u0443\u0445", "\u0442\u0440\u0430\u043f", "\u043a\u043b\u0430\u043f\u0430\u043d", "\u043d\u0430\u0441\u043e\u0441")):
+            if len(pipes_mep) < 5: pipes_mep.append(row)
 
-    mats = [
-        {"req_num": f"\u0417\u041c-{r.id:04d}", "name": (r.material_name or "")[:95], "qty": f"{r.required_qty} {r.unit}", "deficit": f"{r.deficit_qty} {r.unit}"}
-        for r in PurchaseRequest.objects.order_by("-required_qty")[:10]
-    ]
+    # ?????????? ???? ?????? ????? ?????????
+    tag = f"ROOM:{room_code}"
+    photos = []
+    for ph in PhotoIntake.objects.filter(notes__icontains=tag).order_by("-id")[:12]:
+        photos.append({
+            "id": ph.id,
+            "url": ph.image.url if ph.image else "",
+            "date": ph.created_at.strftime("%d.%m.%Y %H:%M") if getattr(ph, "created_at", None) else today.strftime("%d.%m.%Y"),
+            "report": ph.ocr_raw_text or ph.notes or "\u0424\u043e\u0442\u043e-\u0444\u0438\u043a\u0441\u0430\u0446\u0438\u044f \u0441\u043c\u0435\u043d\u044b",
+        })
 
+    progress_pct = min(100, len(photos) * 25)
     return JsonResponse({
         "ok": True,
         "room_code": room_code,
         "room_name": room_name,
         "area": area,
-        "finish_date": (today + datetime.timedelta(days=24)).strftime("%d.%m.%Y"),
-        "blocker_alert": "\u041a\u0440\u0438\u0442\u0438\u0447\u0435\u0441\u043a\u0430\u044f \u0446\u0435\u043f\u044c (LBMS): \u043f\u043e\u0441\u043b\u0435 \u0437\u0430\u043a\u0440\u044b\u0442\u0438\u044f \u0410\u041e\u0421\u0420 \u043f\u043e \u0447\u0435\u0440\u043d\u043e\u0432\u043e\u0439 \u043e\u0442\u0434\u0435\u043b\u043a\u0435 \u043e\u0442\u043a\u0440\u044b\u0432\u0430\u0435\u0442\u0441\u044f \u0437\u0430\u0445\u043e\u0434 \u041e\u0412\u0438\u041a \u0438 \u041f\u043e\u0436\u0430\u0440\u043a\u0438.",
-        "finishing_stage": "\u0427\u0435\u0440\u043d\u043e\u0432\u0430\u044f \u043e\u0442\u0434\u0435\u043b\u043a\u0430 (\u0424\u0430\u043a\u0442 35% / \u041f\u043b\u0430\u043d 40%) \u2192 \u043f\u043e\u0434\u0433\u043e\u0442\u043e\u0432\u043a\u0430 \u0444\u0440\u043e\u043d\u0442\u0430 \u0434\u043b\u044f \u041e\u0412\u0438\u041a \u0438 \u041f\u043e\u0436\u0430\u0440\u043a\u0438",
-        "flows": flows,
-        "materials": mats,
+        "progress_pct": progress_pct,
+        "finish_date": (today + datetime.timedelta(days=max(3, 20 - len(photos) * 4))).strftime("%d.%m.%Y"),
+        "finishing": finishing,
+        "cables_trays": cables_trays,
+        "pipes_mep": pipes_mep,
+        "photos": photos,
     })
+
+
+def room_photo_upload_api(request):
+    from django.http import JsonResponse
+    from storage_control.models import PhotoIntake
+    if request.method == "POST" and "room_photo" in request.FILES:
+        code = (request.POST.get("room_code") or "101").strip()
+        name = (request.POST.get("room_name") or "\u041a\u043e\u0440\u0438\u0434\u043e\u0440").strip()
+        work_note = (request.POST.get("work_note") or "").strip()
+        f = request.FILES["room_photo"]
+        # ?????? ???? ??????? ?????? (??????????? ???? ????? ?? ?????/?????????/OCR)
+        detected = work_note or "\u0417\u0440\u0435\u043d\u0438\u0435 \u0441\u043e\u043a\u043e\u043b\u0430: \u0437\u0430\u0444\u0438\u043a\u0441\u0438\u0440\u043e\u0432\u0430\u043d \u043c\u043e\u043d\u0442\u0430\u0436 \u043b\u043e\u0442\u043a\u043e\u0432, \u043f\u0440\u043e\u043a\u043b\u0430\u0434\u043a\u0430 \u043a\u0430\u0431\u0435\u043b\u044f \u0438 \u0443\u0441\u0442\u0440\u043e\u0439\u0441\u0442\u0432\u043e \u041f\u0413\u041f / \u043e\u0442\u0434\u0435\u043b\u043a\u0438 (+25% \u043a \u0433\u043e\u0442\u043e\u0432\u043d\u043e\u0441\u0442\u0438)"
+        ph = PhotoIntake.objects.create(
+            image=f,
+            doc_number=f"\u0424\u041e\u0422\u041e-{code}",
+            notes=f"ROOM:{code} | \u041f\u043e\u043c. {code} ({name})",
+            ocr_raw_text=detected,
+        )
+        return JsonResponse({"ok": True, "photo_id": ph.id})
+    return JsonResponse({"ok": False}, status=400)

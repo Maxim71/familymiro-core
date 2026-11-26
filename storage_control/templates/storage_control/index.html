@@ -682,49 +682,7 @@ function applyPortalRole(role){
     </div>
     {% for fl in building_twin.floors %}
         <div id="twin-box-{{ forloop.counter }}" class="twin-fl-box" style="display:{% if forloop.first %}grid{% else %}none
-<div style="background:#0f172a;border:1px solid #38bdf8;border-radius:10px;padding:10px 12px;margin:10px 0;">
-    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;">
-        <strong style="color:#38bdf8;font-size:13px;">👷 Динамические группы субподрядчиков (кликните по любому помещению выше или направлению):</strong>
-        <div id="sub-group-chips" style="display:flex;gap:5px;flex-wrap:wrap;">
-            <button type="button" onclick="openRoomDynamics('001','Венткамера','137.54')" style="background:#1e293b;color:#38bdf8;border:1px solid #38bdf8;border-radius:6px;padding:4px 9px;font-size:11.5px;cursor:pointer;">❄️ ОВиК / Кондиционеры</button>
-            <button type="button" onclick="openRoomDynamics('012','Насосная','31.65')" style="background:#1e293b;color:#34d399;border:1px solid #34d399;border-radius:6px;padding:4px 9px;font-size:11.5px;cursor:pointer;">🚰 ВК / Канализация</button>
-            <button type="button" onclick="openRoomDynamics('002','Электрощитовая','61.29')" style="background:#1e293b;color:#f87171;border:1px solid #f87171;border-radius:6px;padding:4px 9px;font-size:11.5px;cursor:pointer;">🔥 Пожарка (АПС/АУПТ) + ЭС</button>
-            <button type="button" onclick="openRoomDynamics('005','Коридор','12.05')" style="background:#1e293b;color:#fbbf24;border:1px solid #fbbf24;border-radius:6px;padding:4px 9px;font-size:11.5px;cursor:pointer;">🎨 Отделка и КМ</button>
-            <button type="button" onclick="const g=prompt('Введите направление субподрядчика:');if(g){const b=document.createElement('button');b.type='button';b.textContent='👷 '+g;b.style.cssText='background:#1e293b;color:#e2e8f0;border:1px solid #94a3b8;border-radius:6px;padding:4px 9px;font-size:11.5px;cursor:pointer;';b.onclick=()=>openRoomDynamics('001',g,'137.54');document.getElementById('sub-group-chips').appendChild(b);}" style="background:#10b981;color:#052e16;border:none;border-radius:6px;padding:4px 9px;font-size:11.5px;font-weight:700;cursor:pointer;">+ Направление</button>
-        </div>
-    </div>
-    <div id="room-dynamics-panel" style="display:none;margin-top:10px;background:#111827;border:1px solid #334155;border-radius:10px;padding:12px;font-size:12.5px;"></div>
-</div>
-<script>
-function openRoomDynamics(code, name, area) {
-    const p = document.getElementById('room-dynamics-panel');
-    if (!p) return;
-    p.style.display = 'block';
-    fetch('/api/room-cascade-dynamics/?code=' + encodeURIComponent(code) + '&name=' + encodeURIComponent(name) + '&area=' + encodeURIComponent(area))
-        .then(r => r.json())
-        .then(d => {
-            let h = '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:6px;">' +
-                '<strong style="color:#38bdf8;font-size:14px;">🏢 Пом. ' + d.room_code + ' — ' + d.room_name + ' (' + d.area + ' м²)</strong>' +
-                '<span style="background:#10b981;color:#052e16;padding:3px 10px;border-radius:6px;font-weight:700;">📅 Прогноз сдачи: ' + d.finish_date + '</span></div>' +
-                '<div style="color:#fbbf24;margin-bottom:4px;"><strong>🎨 Стадия отделки:</strong> ' + d.finishing_stage + '</div>' +
-                '<div style="color:#f87171;font-size:12px;margin-bottom:8px;">⚡ ' + (d.blocker_alert || '') + '</div>' +
-                '<div style="margin-bottom:8px;"><strong>👷 Эстафета субподрядчиков (Пла\u043d / Факт):</strong>' +
-                d.flows.map(f => '<div style="padding:5px 6px;border-bottom:1px solid #1e293b;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;"><span><strong style="color:#e2e8f0;">' + f.sub + '</strong>: ' + f.stage + '</span><span style="color:#34d399;">Заход: ' + f.enter + ' · Факт ' + f.fact_pct + '% / План ' + f.plan_pct + '% (' + f.status + ')</span></div>').join('') + '</div>' +
-                '<div><strong>📦 Заложенные материалы:</strong>' +
-                d.materials.slice(0, 5).map(m => '<div style="color:#cbd5e1;font-size:12px;">• [' + m.req_num + '] ' + m.name + ' — <strong>' + m.qty + '</strong> (дефицит: ' + m.deficit + ')</div>').join('') + '</div>';
-            p.innerHTML = h;
-        });
-}
-document.addEventListener('click', function(e) {
-    const tile = e.target.closest('a[href*="/pomeshchenie/"]');
-    if (!tile || e.ctrlKey || e.metaKey) return;
-    e.preventDefault();
-    const lines = (tile.innerText || '').trim().split('\n').map(s => s.trim()).filter(Boolean);
-    const code = (lines[0] || '001').replace(/[^0-9\.]/g, '') || '001';
-    const name = lines[1] || lines[0] || 'Помещение';
-    openRoomDynamics(code, name, '137.54');
-});
-</script>
+
 
 {% endif %};grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:8px;max-height:210px;overflow-y:auto;margin-bottom:10px;">
             {% for rm in fl.rooms %}
@@ -824,6 +782,63 @@ document.addEventListener('click', function(e) {
     }
     box.style.display = 'block';
     box.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+});
+</script>
+
+
+<div id="room-dynamics-panel" style="display:none;background:#0f172a;border:2px solid #38bdf8;border-radius:12px;padding:14px;margin:12px 16px;font-size:12.5px;"></div>
+<script>
+let activeRoomCode = '101', activeRoomName = 'Коридор', activeRoomArea = '45.0';
+function openRoomDynamics(code, name, area) {
+    activeRoomCode = code; activeRoomName = name; activeRoomArea = area;
+    const p = document.getElementById('room-dynamics-panel');
+    if (!p) return;
+    p.style.display = 'block';
+    fetch('/api/room-cascade-dynamics/?code=' + encodeURIComponent(code) + '&name=' + encodeURIComponent(name) + '&area=' + encodeURIComponent(area))
+        .then(r => r.json())
+        .then(d => {
+            const renderList = (arr) => (arr && arr.length) ? arr.map(m => '<div style="padding:3px 0;border-bottom:1px solid #1e293b;">• <strong style="color:#38bdf8;">[' + m.req_num + ']</strong> ' + m.name + ' — <strong>' + m.plan + '</strong> <span style="color:#f87171;">(недостаёт: ' + m.deficit + ')</span></div>').join('') : '<div style="color:#64748b;">По загруженному тому РД позиций нет</div>';
+            const photosHtml = (d.photos && d.photos.length) ? d.photos.map(ph => '<div style="display:flex;gap:8px;align-items:center;background:#111827;padding:6px;border-radius:8px;margin-top:6px;"><img src="' + ph.url + '" style="width:64px;height:48px;object-fit:cover;border-radius:4px;"><div><strong style="color:#34d399;">[' + ph.date + ']</strong><div style="color:#e2e8f0;">' + ph.report + '</div></div></div>').join('') : '<div style="color:#94a3b8;margin-top:4px;">Пока нет ежедневных фото этой комнаты — загрузите фото справа, и Зрение сокола обновит готовность!</div>';
+            p.innerHTML =
+                '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px;">' +
+                '<strong style="color:#38bdf8;font-size:15px;">🏢 Пом. ' + d.room_code + ' — ' + d.room_name + ' (' + d.area + ' м²)</strong>' +
+                '<div style="display:flex;gap:8px;align-items:center;"><span style="background:#10b981;color:#052e16;padding:3px 10px;border-radius:6px;font-weight:700;">Готовность: ' + d.progress_pct + '% · Сдача: ' + d.finish_date + '</span>' +
+                '<button type="button" onclick="document.getElementById('room-dynamics-panel').style.display='none'" style="background:#1e293b;color:#94a3b8;border:1px solid #334155;border-radius:6px;padding:3px 8px;cursor:pointer;">✕</button></div></div>' +
+                '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin-bottom:10px;">' +
+                '<div style="background:#111827;padding:9px;border-radius:8px;border-left:3px solid #fbbf24;"><strong style="color:#fbbf24;">🧱 Отделка и ПГП-плиты:</strong>' + renderList(d.finishing) + '</div>' +
+                '<div style="background:#111827;padding:9px;border-radius:8px;border-left:3px solid #38bdf8;"><strong style="color:#38bdf8;">⚡ Кабели и лотки:</strong>' + renderList(d.cables_trays) + '</div>' +
+                '<div style="background:#111827;padding:9px;border-radius:8px;border-left:3px solid #34d399;"><strong style="color:#34d399;">🚰 Трубы и ОВиК:</strong>' + renderList(d.pipes_mep) + '</div></div>' +
+                '<div style="background:#0b1120;border:1px solid #334155;border-radius:8px;padding:10px;">' +
+                '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">' +
+                '<strong style="color:#34d399;">📸 Ежедневные фото-отчёты помещения (Зрение сокола):</strong>' +
+                '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">' +
+                '<input type="file" id="room-photo-input" accept="image/*" style="color:#94a3b8;font-size:11px;">' +
+                '<input type="text" id="room-photo-note" placeholder="Что сделано (лотки, кабель, ПГП...)" style="background:#1e293b;color:#f8fafc;border:1px solid #334155;border-radius:6px;padding:4px 8px;font-size:11.5px;">' +
+                '<button type="button" onclick="uploadRoomDailyPhoto()" style="background:#10b981;color:#052e16;border:none;border-radius:6px;padding:5px 12px;font-weight:700;font-size:11.5px;cursor:pointer;">📤 Загрузить фото и обновить %</button></div></div>' +
+                photosHtml + '</div>';
+            p.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+        });
+}
+function uploadRoomDailyPhoto() {
+    const inp = document.getElementById('room-photo-input');
+    if (!inp || !inp.files || !inp.files.length) return;
+    const fd = new FormData();
+    fd.append('room_photo', inp.files);
+    fd.append('room_code', activeRoomCode);
+    fd.append('room_name', activeRoomName);
+    fd.append('work_note', (document.getElementById('room-photo-note').value || '').trim());
+    fetch('/api/room-photo-upload/', {method: 'POST', headers: {'X-CSRFToken': '{{ csrf_token }}'}, body: fd})
+        .then(r => r.json())
+        .then(() => openRoomDynamics(activeRoomCode, activeRoomName, activeRoomArea));
+}
+document.addEventListener('click', function(e) {
+    const tile = e.target.closest('a[href*="/pomeshchenie/"]');
+    if (!tile || e.ctrlKey || e.metaKey) return;
+    e.preventDefault();
+    const lines = (tile.innerText || '').trim().split('\n').map(s => s.trim()).filter(Boolean);
+    const code = (lines || '101').replace(/[^0-9\.]/g, '') || '101';
+    const name = lines || lines || 'Коридор';
+    openRoomDynamics(code, name, '45.0');
 });
 </script>
 
