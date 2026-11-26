@@ -43,7 +43,15 @@
         </div>
     </div>
 
-    <div class="mp-tabs">
+    {% if building_twin.floors %}
+<div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:8px 12px;background:#0f172a;border:1px solid #1e293b;border-radius:10px;margin-bottom:12px;font-size:12px;">
+    <strong style="color:#38bdf8;">🏢 Привязка к этажу (для электрики / сетей):</strong>
+    {% for fl in building_twin.floors %}
+        <span style="background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:6px;padding:3px 9px;">{{ fl.floor_label }} ({{ fl.rooms|length }} комн.)</span>
+    {% endfor %}
+</div>
+{% endif %}
+<div class="mp-tabs">
         <button type="button" class="mp-tab active" data-target="pane-tech">🛠️ Монтаж и Калькулятор смен</button>
         <button type="button" class="mp-tab" data-target="pane-history">📜 История по томам и BIM ({{ history_timeline|length }})</button>
         <button type="button" class="mp-tab" data-target="pane-drawings">📐 Схемы узлов и чертежи ({{ milled_cuts|length|add:turtle_plans|length }})</button>

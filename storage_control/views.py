@@ -546,6 +546,8 @@ def _enrich_mark_passport_ctx(ctx: dict, query: str) -> dict:
     ctx["nss_vector_svg"] = build_nss_cable_vector_svg()
     ctx["stock_movements"] = list(StockMovement.objects.select_related("purchase_request", "photo_intake").all()[:15])
     ctx["gpr_positions"] = list(PurchaseRequest.objects.order_by("-id").values("id", "material_name", "required_qty", "unit")[:40])
+    from storage_control.services.building_twin import build_building_twin_index
+    ctx["building_twin"] = build_building_twin_index()
     return ctx
 
 def mark_passport_view(request):
@@ -608,7 +610,9 @@ def mark_passport_view(request):
     ctx["cad_modes"] = build_contextual_cad_modes(mark_query=query)
     ctx["stock_movements"] = list(StockMovement.objects.select_related("purchase_request", "photo_intake").all()[:15])
     ctx["gpr_positions"] = list(PurchaseRequest.objects.order_by("-id").values("id", "material_name", "required_qty", "unit")[:40])
-    ctx = _enrich_mark_passport_ctx(ctx, query)
+    from storage_control.services.building_twin import build_building_twin_index
+    ctx["building_twin"] = build_building_twin_index()
+    ctx = _enrich_mark_passport_ctx(ctx, str(ctx.get("query") or request.GET.get("q") or ""))
     return render(request, "storage_control/mark_passport.html", ctx)
 
     # Авто-вырезка «Черепахой-Фрезой» узлов с масштабами (М 1:10, М 1:20, М 1:50...) по найденным листам РД
@@ -637,7 +641,9 @@ def mark_passport_view(request):
     ctx["cad_modes"] = build_contextual_cad_modes(mark_query=query)
     ctx["stock_movements"] = list(StockMovement.objects.select_related("purchase_request", "photo_intake").all()[:15])
     ctx["gpr_positions"] = list(PurchaseRequest.objects.order_by("-id").values("id", "material_name", "required_qty", "unit")[:40])
-    ctx = _enrich_mark_passport_ctx(ctx, query)
+    from storage_control.services.building_twin import build_building_twin_index
+    ctx["building_twin"] = build_building_twin_index()
+    ctx = _enrich_mark_passport_ctx(ctx, str(ctx.get("query") or request.GET.get("q") or ""))
     return render(request, "storage_control/mark_passport.html", ctx)
 
 
