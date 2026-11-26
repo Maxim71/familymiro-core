@@ -589,6 +589,7 @@ function applyPortalRole(role){
         <label style="color:#cbd5e1;">Шаблон реестра (.xlsx): <input type="file" name="customer_xlsx" accept=".xlsx" style="color:#94a3b8;font-size:11px;"></label>
         <button type="submit" style="margin-left:auto;background:#10b981;color:#052e16;border:none;border-radius:6px;padding:6px 14px;font-weight:700;cursor:pointer;">📥 Заполнить и скачать Реестр ИД (.xlsx)</button>
     </form>
+    <div style="margin-top:8px;"><a href="{% url 'storage_control:operation_memo_export' %}" style="background:#38bdf8;color:#082f49;text-decoration:none;border-radius:6px;padding:6px 12px;font-weight:700;font-size:12px;">📘 Памятка эксплуатации и Гарантия (.docx)</a></div>
 </div>
 {% if building_twin.floors %}
 <div style="background:#0f172a;border:1px solid #38bdf8;border-radius:12px;padding:14px;margin:14px 0;">

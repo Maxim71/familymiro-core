@@ -1076,3 +1076,12 @@ def new_client_wizard_view(request):
             PhotoIntake.objects.all().delete()
         return redirect("storage_control:dashboard")
     return render(request, "storage_control/new_client.html", {"demo_result": demo_result})
+
+
+def operation_memo_export_view(request):
+    from django.http import HttpResponse
+    from storage_control.services.id_template_engine import build_operation_memo_docx_bytes
+    data = build_operation_memo_docx_bytes()
+    resp = HttpResponse(data, content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+    resp["Content-Disposition"] = 'attachment; filename="Pamyatka_Ekspluatacii_i_Garantii.docx"'
+    return resp

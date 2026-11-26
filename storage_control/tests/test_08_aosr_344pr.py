@@ -33,3 +33,8 @@ class Aosr344PrRegressionTest(TestCase):
         from django.test import Client
         resp = Client().get("/new-client/")
         self.assertEqual(resp.status_code, 200)
+
+    def test_operation_memo_docx_export(self):
+        from storage_control.services.id_template_engine import build_operation_memo_docx_bytes
+        data = build_operation_memo_docx_bytes()
+        self.assertTrue(len(data) > 500)
