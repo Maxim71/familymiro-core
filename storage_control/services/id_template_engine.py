@@ -76,3 +76,38 @@ def parse_id_memo_and_template(file_path: str) -> dict:
         "extracted_rules": rules,
         "text_preview": raw_text[:800],
     }
+
+
+def get_saved_object_passport() -> dict:
+    import os, json
+    from django.conf import settings
+    fpath = os.path.join(settings.BASE_DIR, "object_passport.json")
+    defaults = {
+        "object_name": "\u0426\u041e\u0414 \u041d\u041f\u041e \u00ab\u0421\u041f\u041b\u0410\u0412\u00bb (\u0433. \u0422\u0443\u043b\u0430)",
+        "axes_info": "\u041e\u0441\u0438 1\u201317 / \u0410\u2013\u0416 (\u0448\u0430\u0433 6000 \u043c\u043c)",
+        "floors_info": "5 \u044d\u0442\u0430\u0436\u0435\u0439 + \u043f\u043e\u0434\u0432\u0430\u043b (-3,640 \u2192 +16,800 \u043c)",
+        "dimensions_info": "\u0414\u043b\u0438\u043d\u0430 96,0 \u043c \u00b7 \u0428\u0438р\u0438\u043d\u0430 36,0 \u043c",
+        "developer_info": "\u0417\u0430\u0441\u0442\u0440\u043e\u0439\u0449\u0438\u043a / \u0422\u0435\u0445\u0437\u0430\u043a\u0430\u0437\u0447\u0438\u043a (\u041e\u0413\u0420\u041d, \u0418\u041d\u041d, \u0421\u0420\u041e)",
+        "builder_info": "\u0413\u0435\u043d\u043f\u043e\u0434\u0440я\u0434\u0447и\u043a (\u041e\u0413\u0420\u041d, \u0418\u041d\u041d, \u0421\u0420\u041e)",
+        "designer_info": "\u041f\u0440\u043e\u0435\u043a\u0442\u0438\u0440\u043e\u0432\u0449\u0438\u043a (\u041e\u0413\u0420\u041d, \u0418\u041d\u041d, \u0421\u0420\u041e)",
+        "subcontractor_info": "\u0421\u0443\u0431\u043f\u043e\u0434\u0440\u044f\u0434\u0447\u0438\u043a",
+        "nrs_inspector": "",
+        "nrs_executor": "",
+    }
+    if os.path.exists(fpath):
+        try:
+            saved = json.load(open(fpath, encoding="utf-8"))
+            defaults.update({k: v for k, v in saved.items() if v})
+        except Exception:
+            pass
+    return defaults
+
+
+def save_object_passport(data: dict) -> dict:
+    import os, json
+    from django.conf import settings
+    cur = get_saved_object_passport()
+    cur.update({k: str(v).strip() for k, v in data.items() if v is not None})
+    fpath = os.path.join(settings.BASE_DIR, "object_passport.json")
+    json.dump(cur, open(fpath, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+    return cur

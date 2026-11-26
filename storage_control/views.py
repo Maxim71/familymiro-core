@@ -954,3 +954,12 @@ def room_passport_view(request, room_code: str):
     from storage_control.services.building_twin import build_single_room_passport
     ctx = build_single_room_passport(room_code)
     return render(request, "storage_control/room_passport.html", ctx)
+
+
+def save_object_passport_view(request):
+    from django.http import JsonResponse
+    from storage_control.services.id_template_engine import save_object_passport, get_saved_object_passport
+    if request.method == "POST":
+        saved = save_object_passport(request.POST.dict())
+        return JsonResponse({"ok": True, "passport": saved})
+    return JsonResponse({"ok": True, "passport": get_saved_object_passport()})

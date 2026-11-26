@@ -27,6 +27,13 @@ def build_aosr_docx_bytes(
     d_end = (date_end or "").strip() or now_dt.strftime("%d.%m.%Y")
     d_start = (date_start or "").strip() or (now_dt - timedelta(days=7)).strftime("%d.%m.%Y")
 
+    from storage_control.services.id_template_engine import get_saved_object_passport
+    _op = get_saved_object_passport()
+    object_name = str(extra_kwargs.get("object_name") or f"{_op['object_name']} ({_op['axes_info']})")
+    if _op.get("builder_info") and "(\u041e\u0413\u0420\u041d" in builder_info:
+        builder_info = _op["builder_info"]
+    if _op.get("subcontractor_info") and subcontractor_info == "\u0421\u0443\u0431\u043f\u043e\u0434\u0440\u044f\u0434\u0447\u0438\u043a":
+        subcontractor_info = _op["subcontractor_info"]
     document = docx.Document()
     for section in document.sections:
         section.top_margin, section.bottom_margin = Cm(1.2), Cm(1.2)
