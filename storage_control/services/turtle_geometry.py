@@ -796,7 +796,7 @@ def build_nss_cable_vector_svg(mark_query: str = "") -> str:
             '<text x="482" y="150" fill="#fbbf24" font-size="8.5" text-anchor="middle" font-family="Arial,sans-serif">\u2022 \u0410\u041e\u0421\u0420 + \u041f\u0440\u043e\u0442\u043e\u043a\u043e\u043b \u042d\u0422\u041b</text>'
             '</svg>'
         )
-    # 2. ?? ????????? ? ???????? ???? ??? ? ???? ??????? ? ???. 017
+    # 2. ?? ????????? · ???????? ???? ??? · ???? ??????? · ???. 017
     return (
         '<svg viewBox="0 0 560 245" width="100%" height="230" style="background:#070b14;border:1px solid #1e293b;border-radius:10px;margin-top:8px;">'
         '<defs><marker id="vec-arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 z" fill="#10b981"/></marker></defs>'
