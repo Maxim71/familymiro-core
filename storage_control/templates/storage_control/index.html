@@ -539,10 +539,10 @@ document.addEventListener('DOMContentLoaded', () => {
     {% for fl in building_twin.floors %}
         <div id="twin-box-{{ forloop.counter }}" class="twin-fl-box" style="display:{% if forloop.first %}grid{% else %}none{% endif %};grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:8px;max-height:210px;overflow-y:auto;margin-bottom:10px;">
             {% for rm in fl.rooms %}
-                <a href="{% url 'storage_control:room_passport' rm.code %}" style="display:block;background:#111827;border:1px solid #1e293b;border-left:3px solid {% if rm.progress_pct > 0 %}#10b981{% else %}#38bdf8{% endif %};border-radius:8px;padding:8px 10px;text-decoration:none;color:#e2e8f0;font-size:12px;">
+                <div onclick="openRoomDrawer(\'{{ rm.code }}\')" style="display:block;background:#111827;border:1px solid #1e293b;border-left:3px solid {% if rm.progress_pct > 0 %}#10b981{% else %}#38bdf8{% endif %};border-radius:8px;padding:8px 10px;text-decoration:none;color:#e2e8f0;font-size:12px;">
                     <div style="display:flex;justify-content:space-between;font-weight:700;color:#38bdf8;"><span>Пом. {{ rm.code }} · {{ rm.area_m2 }} м²</span><span style="color:#94a3b8;">{{ rm.progress_pct }}%</span></div>
                     <div style="color:#cbd5e1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;">{{ rm.name }}</div>
-                </a>
+                </div>
             {% endfor %}
         </div>
     {% endfor %}
@@ -557,5 +557,35 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
 </div>
 {% endif %}
+
+<div id="isolated-room-modal" style="display:none;position:fixed;inset:0;background:rgba(2,6,23,0.82);z-index:9999;align-items:center;justify-content:center;padding:16px;" onclick="if(event.target===this)this.style.display='none'">
+    <div style="background:#0f172a;border:1px solid #38bdf8;border-radius:14px;width:100%;max-width:920px;max-height:86vh;overflow-y:auto;padding:18px;box-shadow:0 20px 50px rgba(0,0,0,0.6);">
+        <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #1e293b;padding-bottom:10px;margin-bottom:12px;">
+            <strong id="isolated-room-title" style="color:#38bdf8;font-size:16px;">🏢 Карточка помещения</strong>
+            <button type="button" onclick="document.getElementById('isolated-room-modal').style.display='none'" style="background:#1e293b;color:#f8fafc;border:1px solid #475569;border-radius:6px;padding:4px 12px;cursor:pointer;font-weight:700;">✕ Закрыть</button>
+        </div>
+        <div id="isolated-room-body" style="color:#e2e8f0;font-size:13px;">Загрузка...</div>
+    </div>
+</div>
+<script>
+function openRoomDrawer(roomCode) {
+    const modal = document.getElementById('isolated-room-modal');
+    const body = document.getElementById('isolated-room-body');
+    const title = document.getElementById('isolated-room-title');
+    if (!modal || !body) return;
+    title.textContent = '🏢 Карточка помещения № ' + roomCode;
+    body.innerHTML = 'Загрузка сводки по помещению...';
+    modal.style.display = 'flex';
+    fetch('/pomeshchenie/' + encodeURIComponent(roomCode) + '/')
+        .then(r => r.text())
+        .then(html => {
+            const doc = new DOMParser().parseFromString(html, 'text/html');
+            const cards = Array.from(doc.querySelectorAll('.card')).map(c => c.outerHTML).join('');
+            body.innerHTML = cards || html;
+        })
+        .catch(() => { body.innerHTML = 'Ошибка загрузки карточки.'; });
+}
+</script>
+
 </body>
 </html>
