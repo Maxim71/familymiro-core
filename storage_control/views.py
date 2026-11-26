@@ -538,7 +538,7 @@ def export_aosr_docx_view(request):
     return response
 
 def _enrich_mark_passport_ctx(ctx: dict, query: str) -> dict:
-    from storage_control.models import StockMovement, PurchaseRequest
+    from storage_control.models import StockMovement, PurchaseRequest, PhotoIntake
     from storage_control.services.turtle_geometry import (
         build_contextual_cad_modes, build_project_axes_and_floor_cuts, build_nss_cable_vector_svg
     )
