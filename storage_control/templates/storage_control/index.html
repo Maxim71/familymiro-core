@@ -587,5 +587,56 @@ function openRoomDrawer(roomCode) {
 }
 </script>
 
+
+<div id="live-sheet-inspector" style="display:none;background:#0f172a;border:1px solid #38bdf8;border-radius:12px;padding:14px;margin:12px 0;">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+        <strong id="lsi-title" style="color:#38bdf8;font-size:15px;">?? ???????? ???? ? ???????</strong>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button type="button" onclick="setPreviewZoom(1)" style="background:#1e293b;color:#e2e8f0;border:1px solid #475569;border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;">100%</button>
+            <button type="button" onclick="setPreviewZoom(1.7)" style="background:#1e293b;color:#38bdf8;border:1px solid #38bdf8;border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;">?? ???? ?1.7</button>
+            <button type="button" onclick="setPreviewZoom(2.5)" style="background:#1e293b;color:#fbbf24;border:1px solid #fbbf24;border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;">?? ???? ?2.5</button>
+            <button type="button" onclick="openFullscreenSheet()" style="background:#10b981;color:#052e16;border:none;border-radius:6px;padding:4px 12px;font-size:12px;font-weight:700;cursor:pointer;">??? ?? ???? ?????</button>
+        </div>
+    </div>
+    <div id="lsi-meta" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;font-size:12.5px;margin-bottom:10px;"></div>
+    <div id="lsi-viewport" style="overflow:auto;max-height:460px;background:#020617;border:1px solid #1e293b;border-radius:8px;padding:8px;text-align:center;">
+        <img id="lsi-img" src="" alt="???? ??" style="max-width:100%;transform-origin:top left;transition:transform 0.15s ease;">
+    </div>
+</div>
+<script>
+function setPreviewZoom(scale) {
+    const img = document.getElementById('lsi-img');
+    if (img) img.style.transform = 'scale(' + scale + ')';
+}
+function openFullscreenSheet() {
+    const img = document.getElementById('lsi-img');
+    if (img && img.src) window.open(img.src, '_blank');
+}
+document.addEventListener('click', function(e) {
+    const card = e.target.closest('[data-pdf-url], .search-result-card, .tracker-card');
+    if (!card) return;
+    const box = document.getElementById('live-sheet-inspector');
+    const meta = document.getElementById('lsi-meta');
+    const img = document.getElementById('lsi-img');
+    const title = document.getElementById('lsi-title');
+    if (!box || !meta) return;
+    const rawTxt = (card.innerText || '').trim();
+    const lines = rawTxt.split('\n').map(s => s.trim()).filter(Boolean);
+    title.textContent = '?? ?????? ???????: ' + (lines[1] || lines[0] || '???? ??');
+    meta.innerHTML =
+        '<div style="background:#111827;padding:8px;border-radius:8px;"><strong>?? ???????? (??? / ????):</strong><div style="color:#38bdf8;margin-top:2px;">' + (lines[0] || '??? ??') + '</div></div>' +
+        '<div style="background:#111827;padding:8px;border-radius:8px;"><strong>?? ?????? (?????? ? ????):</strong><div style="color:#34d399;margin-top:2px;">?? ??????? / ????? (???. 003 / 017) ? ?? ?????????? ? ?????? ???????? ??</div></div>' +
+        '<div style="background:#111827;padding:8px;border-radius:8px;"><strong>?? ???????? ? ??????????:</strong><div style="color:#fbbf24;margin-top:2px;">?????? (-3,640 ?) ? ???. 003, 017, 018 ? ???. ????</div></div>' +
+        '<div style="background:#111827;padding:8px;border-radius:8px;"><strong>?? ???????? ??? ??? / ??????:</strong><div style="color:#f472b6;margin-top:2px;">??????? ????? ? ????????? ? ??????? ???? ? 344/??</div></div>';
+    const existingPreview = document.querySelector('#pdf-preview-img, .pdf-sheet-preview img, img[src*="/media/"]');
+    if (img && existingPreview && existingPreview.src) {
+        img.src = existingPreview.src;
+        img.style.transform = 'scale(1)';
+    }
+    box.style.display = 'block';
+    box.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+});
+</script>
+
 </body>
 </html>
