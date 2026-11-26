@@ -127,6 +127,15 @@
                     </div>
                 {% endfor %}
                 {{ nss_vector_svg|safe }}
+            <div class="mp-card" style="margin:12px 0;border-left:4px solid #10b981;">
+                <h3 style="margin:0 0 8px 0;">📐 Реальная геометрия и проёмы здания (по загруженным томам РД)</h3>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px;font-size:12.5px;">
+                    <div style="background:#0f172a;padding:9px;border-radius:8px;"><strong>🧭 Координационные оси:</strong><div style="color:#38bdf8;margin-top:3px;">{{ real_metrics.axes_label }}</div></div>
+                    <div style="background:#0f172a;padding:9px;border-radius:8px;"><strong>📏 Общая длина здания:</strong><div style="color:#34d399;margin-top:3px;">{{ real_metrics.total_length_m }}</div></div>
+                    <div style="background:#0f172a;padding:9px;border-radius:8px;"><strong>🚪 Входные и п/п двери:</strong><div style="color:#fbbf24;margin-top:3px;">{{ real_metrics.entrance_doors }} шт. (по спец. АР)</div></div>
+                    <div style="background:#0f172a;padding:9px;border-radius:8px;"><strong>🪟 Окна и расстояние от окон:</strong><div style="color:#f472b6;margin-top:3px;">{{ real_metrics.windows_total }} окон · {{ real_metrics.window_distance }}</div></div>
+                </div>
+            </div>
                 <div id="bim-sleeves" class="bim-p" style="background:#0f172a;border-left:3px solid #ef4444;padding:10px;border-radius:8px;margin-top:8px;font-size:12px;">
                     <strong style="color:#fca5a5;">?? ??? ???????? ? ??????????? ?? ??????? ? ???????:</strong>
                     {% for s in cad_modes.sleeves %}<div style="margin-top:4px;">? <strong>{{ s.axis }}</strong> | <strong>{{ s.elev }}</strong> ? {{ s.spec }} ? <strong>{{ s.qty }}</strong></div>{% endfor %}
