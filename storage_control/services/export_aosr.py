@@ -1,157 +1,106 @@
-# -*- coding: utf-8 -*-
 import io
 import re
-from datetime import date
+from datetime import datetime, timedelta
 import docx
 from docx.shared import Pt, Cm
 from docx.enum.text import WD_ALIGN_PARAGRAPH
-from storage_control.models import PurchaseRequest
-from storage_control.services.section_decoder import resolve_section_and_brigade
-from storage_control.services.route_tracer import build_engineering_procurement_rows
+from storage_control.models import Document, PurchaseRequest
 
 
-def _clean_name(material_text: str) -> str:
-    """Убирает служебные квадратные скобки групп ТМЦ и лишние пробелы."""
-    if not material_text:
-        return ""
-    cleaned = re.sub(r'^\[[^\]]+\]\s*', '', str(material_text).strip())
-    return cleaned or str(material_text).strip()
-
-
-HANDOVER_MODES = {
-    "GEN_TO_CUSTOMER": (
-        "Генподрядчик → Технадзор Заказчика",
-        "Представитель лица, осуществляющего строительство (Генподрядчик)",
-        "Представитель застройщика / технического заказчика (Стройконтроль)",
-    ),
-    "SUB_TO_GEN": (
-        "Субподрядчик → Генподрядчик (ПТО)",
-        "Представитель субподрядной организации (Производитель работ)",
-        "Представитель генподрядчика (Инженер ПТО / Начальник участка)",
-    ),
-    "STAGE_TO_NEXT": (
-        "Передача фронта работ смежному участку",
-        "Сдающая сторона (Ответственный производитель работ)",
-        "Принимающая сторона (Руководитель смежного участка / ПТО)",
-    ),
-}
+TECH_NOTE_RE = re.compile(r'(\u0448\u0430\u0433\s+\u043a\u0440\u0435\u043f\u043b|\u043d\u0435\s+\u0434\u043e\u043b\u0436\u043d\u043e\s+\u0431\u044b\u0442\u044c|\u043a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u043e\s+\u0434\u044e\u0431\u0435\u043b|\u043f\u0440\u0438\u043c\u0435\u0447\u0430\u043d)', re.I)
 
 
 def build_aosr_docx_bytes(
-    doc,
-    handover_mode: str = "GEN_TO_CUSTOMER",
+    doc: Document,
+    *,
     date_start: str = "",
     date_end: str = "",
-    executor_name: str = "Косарев М.В. (Главный Архитектор / ПТО)",
-    inspector_name: str = "Представитель строительного контроля Заказчика",
-    next_work_allowed: str = "производство последующих строительно-монтажных работ согласно графику ГПР",
-    object_title: str = 'ЦОД НПО "СПЛАВ"',
+    next_work_allowed: str = "\u043f\u0440\u043e\u0438\u0437\u0432\u043e\u0434\u0441\u0442\u0432\u043e \u043f\u043e\u0441\u043b\u0435\u0434\u0443\u044e\u0449\u0438\u0445 \u0441\u0442\u0440\u043e\u0438\u0442\u0435\u043b\u044c\u043d\u043e-\u043c\u043e\u043d\u0442\u0430\u0436\u043d\u044b\u0445 \u0440\u0430\u0431\u043e\u0442 \u0441\u043e\u0433\u043b\u0430\u0441\u043d\u043e \u0413\u041f\u0420 \u0438 \u0420\u0414",
+    object_title: str = "\u041e\u0431\u044a\u0435\u043a\u0442 \u043a\u0430\u043f\u0438\u0442\u0430\u043b\u044c\u043d\u043e\u0433\u043e \u0441\u0442\u0440\u043e\u0438\u0442\u0435\u043b\u044c\u0441\u0442\u0432\u0430 (\u0422\u0443\u043b\u044c\u0441\u043a\u0430\u044f \u043e\u0431\u043b.)",
+    developer_info: str = "\u0417\u0430\u0441\u0442\u0440\u043e\u0439\u0449\u0438\u043a / \u0422\u0435\u0445\u043d\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u0437\u0430\u043a\u0430\u0437\u0447\u0438\u043a (\u041e\u0413\u0420\u041d, \u0418\u041d\u041d, \u0421\u0420\u041e)",
+    builder_info: str = "\u041b\u0438\u0446\u043e, \u043e\u0441\u0443\u0449\u0435\u0441\u0442\u0432\u043b\u044f\u044e\u0449\u0435\u0435 \u0441\u0442\u0440\u043e\u0438\u0442\u0435\u043b\u044c\u0441\u0442\u0432\u043e (\u041e\u0413\u0420\u041d, \u0418\u041d\u041d, \u0421\u0420\u041e)",
+    designer_info: str = "\u041b\u0438\u0446\u043e, \u043e\u0441\u0443\u0449\u0435\u0441\u0442\u0432\u043b\u044f\u044e\u0449\u0435\u0435 \u043f\u043e\u0434\u0433\u043e\u0442\u043e\u0432\u043a\u0443 \u043f\u0440\u043e\u0435\u043a\u0442\u043d\u043e\u0439 \u0434\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u0430\u0446\u0438\u0438 (\u041e\u0413\u0420\u041d, \u0418\u041d\u041d, \u0421\u0420\u041e)",
+    subcontractor_info: str = "\u0441\u0443\u0431\u043f\u043e\u0434\u0440\u044f\u0434\u0447\u0438\u043a / \u043f\u0440\u043e\u0438\u0437\u0432\u043e\u0434\u0438\u0442\u0435\u043b\u044c \u0440\u0430\u0431\u043e\u0442",
+    **extra_kwargs,
 ) -> bytes:
-    """Генерирует готовый к печати Акт освидетельствования скрытых работ (АОСР .docx) по РД-11-02-2006."""
+    now_dt = datetime.now()
+    d_end = (date_end or "").strip() or now_dt.strftime("%d.%m.%Y")
+    d_start = (date_start or "").strip() or (now_dt - timedelta(days=7)).strftime("%d.%m.%Y")
+
     document = docx.Document()
-
     for section in document.sections:
-        section.top_margin = Cm(1.5)
-        section.bottom_margin = Cm(1.5)
-        section.left_margin = Cm(2.0)
-        section.right_margin = Cm(1.5)
+        section.top_margin, section.bottom_margin = Cm(1.2), Cm(1.2)
+        section.left_margin, section.right_margin = Cm(1.8), Cm(1.2)
 
-    style = document.styles["Normal"]
-    style.font.name = "Times New Roman"
-    style.font.size = Pt(11)
+    document.styles["Normal"].font.name = "Times New Roman"
+    document.styles["Normal"].font.size = Pt(10.5)
 
-    mode_label, sender_role, receiver_role = HANDOVER_MODES.get(
-        handover_mode, HANDOVER_MODES["GEN_TO_CUSTOMER"]
-    )
-    today_str = date.today().strftime("%d.%m.%Y")
-    d_start = date_start or today_str
-    d_end = date_end or today_str
-    obj_name = (object_title or "").strip() or 'ЦОД НПО "СПЛАВ"'
+    p_top = document.add_paragraph()
+    p_top.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+    p_top.add_run("\u041f\u0440\u0438\u043a\u0430\u0437 \u041c\u0438\u043d\u0441\u0442\u0440\u043e\u044f \u0420\u0424 \u2116 344/\u043f\u0440 \u043e\u0442 16.05.2023\n\u041f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u0435 \u2116 3").font.size = Pt(9.5)
 
-    decoded = resolve_section_and_brigade(doc.title)
-    snip_ref = decoded.get("snip_ref") or "СП 48.13330.2019 (Организация строительства)"
+    for lbl, val in [
+        ("\u041e\u0431\u044a\u0435\u043a\u0442 \u043a\u0430\u043f\u0438\u0442\u0430\u043b\u044c\u043d\u043e\u0433\u043e \u0441\u0442\u0440\u043e\u0438\u0442\u0435\u043b\u044c\u0441\u0442\u0432\u0430:", object_title),
+        ("\u0417\u0430\u0441\u0442\u0440\u043e\u0439\u0449\u0438\u043a / \u0442\u0435\u0445\u0437\u0430\u043a\u0430\u0437\u0447\u0438\u043a:", developer_info),
+        ("\u041b\u0438\u0446\u043e, \u043e\u0441\u0443\u0449\u0435\u0441\u0442\u0432\u043b\u044f\u044e\u0449\u0435\u0435 \u0441\u0442\u0440\u043e\u0438\u0442\u0435\u043b\u044c\u0441\u0442\u0432\u043e:", builder_info),
+        ("\u041b\u0438\u0446\u043e, \u043e\u0441\u0443\u0449\u0435\u0441\u0442\u0432\u043b\u044f\u044e\u0449\u0435\u0435 \u043f\u043e\u0434\u0433\u043e\u0442\u043e\u0432\u043a\u0443 \u041f\u0414:", designer_info),
+    ]:
+        p = document.add_paragraph()
+        p.paragraph_format.space_after = Pt(2)
+        p.add_run(lbl + " ").bold = True
+        p.add_run(val)
 
-    # Шапка объекта
-    p_obj = document.add_paragraph()
-    p_obj.alignment = WD_ALIGN_PARAGRAPH.LEFT
-    r_obj = p_obj.add_run(f"Объект капитального строительства: {obj_name}\n")
-    r_obj.bold = True
-    p_obj.add_run(f"Контур передачи: {mode_label}")
-
-    # Заголовок акта
     p_title = document.add_paragraph()
     p_title.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    r_title = p_title.add_run(f"\nАКТ № {doc.id}-АОСР\nосвидетельствования скрытых работ\n")
-    r_title.bold = True
-    r_title.font.size = Pt(13)
-    p_title.add_run(f"от «{d_end}» г.  |  Основание: комплект РД {doc.title} (Рев. {doc.revision_num})")
+    rt = p_title.add_run(f"\n\u0410\u041a\u0422 \u2116 {doc.id}-\u0410\u041e\u0421\u0420\n\u043e\u0441\u0432\u0438\u0434\u0435\u0442\u0435\u043b\u044c\u0441\u0442\u0432\u043e\u0432\u0430\u043d\u0438\u044f \u0441\u043a\u0440\u044b\u0442\u044b\u0445 \u0440\u0430\u0431\u043e\u0442\n")
+    rt.bold = True
+    rt.font.size = Pt(12.5)
+    mode_label = "\u0421\u0443\u0431\u043f\u043e\u0434\u0440\u044f\u0434\u0447\u0438\u043a \u2192 \u0413\u0435\u043d\u043f\u043e\u0434\u0440\u044f\u0434\u0447\u0438\u043a" if extra_kwargs.get("handover_mode") == "SUB_TO_GEN" else "\u0413\u0435\u043d\u043f\u043e\u0434\u0440\u044f\u0434\u0447\u0438\u043a \u2192 \u0417\u0430\u043a\u0430\u0437\u0447\u0438\u043a (\u0421\u041a)"
+    p_title.add_run(f"\u043e\u0442 \u00ab{d_end}\u00bb \u0433.  |  \u0420\u0435\u0436\u0438\u043c \u0441\u0434\u0430\u0447\u0438: {mode_label}")
 
-    # Очищенная сводка работ/материалов строго по выбранному тому
-    raw_reqs = list(PurchaseRequest.objects.filter(document=doc).order_by("id"))
-    clean_rows = [r for r in build_engineering_procurement_rows(raw_reqs) if r["record_type"] == "BUY"]
+    insp = extra_kwargs.get("inspector_name") or "________________________"
+    exec_p = extra_kwargs.get("executor_name") or "________________________"
+    for r_ln in [
+        f"1. \u041f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u0438\u0442\u0435\u043b\u044c \u0437\u0430\u0441\u0442\u0440\u043e\u0439\u0449\u0438\u043a\u0430 / \u0442\u0435\u0445\u0437\u0430\u043a\u0430\u0437\u0447\u0438\u043a\u0430 (\u0421\u041a): {insp} (\u043f\u0440\u0438\u043a\u0430\u0437, \u2116 \u041d\u0420\u0421)",
+        "2. \u041f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u0438\u0442\u0435\u043b\u044c \u043b\u0438\u0446\u0430, \u043e\u0441\u0443\u0449\u0435\u0441\u0442\u0432\u043b\u044f\u044e\u0449\u0435\u0433\u043e \u0441\u0442\u0440\u043e\u0438\u0442\u0435\u043b\u044c\u0441\u0442\u0432\u043e: ________________________ (\u043f\u0440\u0438\u043a\u0430\u0437, \u2116 \u041d\u0420\u0421)",
+        f"3. \u041f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u0438\u0442\u0435\u043b\u044c \u043b\u0438\u0446\u0430, \u043e\u0441\u0443\u0449\u0435\u0441\u0442\u0432\u043b\u044f\u044e\u0449\u0435\u0433\u043e \u0441\u0442\u0440\u043e\u0438\u0442\u0435\u043b\u044c\u0441\u0442\u0432\u043e (\u0421\u041a): {insp} (\u043f\u0440\u0438\u043a\u0430\u0437, \u2116 \u041d\u0420\u0421)",
+        "4. \u041f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u0438\u0442\u0435\u043b\u044c \u043b\u0438\u0446\u0430, \u043e\u0441\u0443\u0449\u0435\u0441\u0442\u0432\u043b\u044f\u044e\u0449\u0435\u0433\u043e \u043f\u043e\u0434\u0433\u043e\u0442\u043e\u0432\u043a\u0443 \u041f\u0414: ________________________",
+        f"5. \u041f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u0438\u0442\u0435\u043b\u044c \u043b\u0438\u0446\u0430, \u0432\u044b\u043f\u043e\u043b\u043d\u0438\u0432\u0448\u0435\u0433\u043e \u0440\u0430\u0431\u043e\u0442\u044b ({subcontractor_info}): {exec_p}",
+    ]:
+        document.add_paragraph(r_ln).paragraph_format.space_after = Pt(2)
 
-    p_sec1 = document.add_paragraph()
-    p_sec1.add_run("\n1. К освидетельствованию предъявлены следующие работы и конструкции:").bold = True
+    all_proc = list(PurchaseRequest.objects.filter(document=doc).order_by("id").values("material_name", "required_qty", "unit", "record_type", "floor_info", "room_info"))
+    clean_rows = [r for r in all_proc if r["record_type"] in ("BUY", "TEP") and not TECH_NOTE_RE.search(r.get("material_name") or "")]
+    tech_notes = [f"{r.get('material_name')} ({r.get('required_qty')} {r.get('unit')})" for r in all_proc if TECH_NOTE_RE.search(r.get("material_name") or "")]
 
-    table = document.add_table(rows=1, cols=5)
-    table.style = "Table Grid"
+    document.add_paragraph().add_run("\n1. \u041a \u043e\u0441\u0432\u0438\u0434\u0435\u0442\u0435\u043b\u044c\u0441\u0442\u0432\u043e\u0432\u0430\u043d\u0438\u044e \u043f\u0440\u0435\u0434\u044a\u044f\u0432\u043b\u0435\u043d\u044b \u0441\u043b\u0435\u0434\u0443\u044e\u0449\u0438\u0435 \u0440\u0430\u0431\u043e\u0442\u044b:").bold = True
+    tbl = document.add_table(rows=1, cols=5)
+    tbl.style = "Table Grid"
+    for idx_h, h_txt in enumerate(["\u2116", "\u041e\u0441\u0438 / \u041e\u0442\u043c\u0435\u0442\u043a\u0430", "\u041d\u0430\u0438\u043c\u0435\u043d\u043e\u0432\u0430\u043d\u0438\u0435 \u0441\u043a\u0440\u044b\u0442\u044b\u0445 \u0440\u0430\u0431\u043e\u0442", "\u041e\u0431\u044a\u0451\u043c", "\u0415\u0434."]):
+        tbl.rows[0].cells[idx_h].text = h_txt
+    for idx, item in enumerate((clean_rows[:12] or [{"material_name": doc.title, "required_qty": 1.0, "unit": "\u043a\u043e\u043c\u043f\u043b."}]), start=1):
+        rc = tbl.add_row().cells
+        rc[0].text, rc[1].text, rc[2].text, rc[3].text, rc[4].text = str(idx), item.get("room_info") or "\u041f\u043e \u043e\u0441\u044f\u043c \u0420\u0414", f"\u041c\u043e\u043d\u0442\u0430\u0436: {item['material_name']}", f"{item['required_qty']:.2f}", item.get("unit") or "\u0448\u0442."
 
-    hdr_cells = table.rows[0].cells
-    headers = ("№", "Помещение / Отметка / Группа", "Наименование выполненных работ и конструкций", "Объём", "Ед. изм.")
-    for i, text in enumerate(headers):
-        cell = hdr_cells[i]
-        cell.text = text
-        if cell.paragraphs[0].runs:
-            cell.paragraphs[0].runs[0].bold = True
+    mats_str = ", ".join(f"{r['material_name']} ({r['required_qty']:.2f} {r.get('unit') or ''})" for r in clean_rows[:6]) or "\u041c\u0430\u0442\u0435\u0440\u0438\u0430\u043b\u044b \u043f\u043e \u0420\u0435\u0435\u0441\u0442\u0440\u0443 \u0441\u0435\u0440\u0442\u0438\u0444\u0438\u043a\u0430\u0442\u043e\u0432"
+    tech_str = ("; \u0442\u0440\u0435\u0431\u043e\u0432\u0430\u043d\u0438\u044f \u0420\u0414: " + "; ".join(tech_notes)) if tech_notes else ""
+    for sec_h, sec_v in [
+        ("2. \u0420\u0430\u0431\u043e\u0442\u044b \u0432\u044b\u043f\u043e\u043b\u043d\u0435\u043d\u044b \u043f\u043e \u043f\u0440\u043e\u0435\u043a\u0442\u043d\u043e\u0439 \u0434\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u0430\u0446\u0438\u0438:", f"\u041a\u043e\u043c\u043f\u043b\u0435\u043a\u0442 \u0420\u0414 {doc.title} (\u0420\u0435\u0432. {doc.revision_num}), {designer_info}"),
+        ("3. \u041f\u0440\u0438 \u0432\u044b\u043f\u043e\u043b\u043d\u0435\u043d\u0438\u0438 \u0440\u0430\u0431\u043e\u0442 \u043f\u0440\u0438\u043c\u0435\u043d\u0435\u043d\u044b:", f"{mats_str}. \u041f\u0430\u0441\u043f\u043e\u0440\u0442\u0430 \u043a\u0430\u0447\u0435\u0441\u0442\u0432\u0430 \u0438 \u0441\u0435\u0440\u0442\u0438\u0444\u0438\u043a\u0430\u0442\u044b \u043f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u044b \u0432 \u0420\u0435\u0435\u0441\u0442\u0440\u0435 \u0418\u0414."),
+        ("4. \u041f\u0440\u0435\u0434\u044a\u044f\u0432\u043b\u0435\u043d\u044b \u0434\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u044b \u0441\u043e\u043e\u0442\u0432\u0435\u0442\u0441\u0442\u0432\u0438\u044f:", f"\u0418\u0441\u043f\u043e\u043b\u043d\u0438\u0442\u0435\u043b\u044c\u043d\u0430\u044f \u0441\u0445\u0435\u043c\u0430 \u2116 {doc.id}-\u0418\u0421 \u043e\u0442 \u00ab{d_end}\u00bb \u0433., \u0437\u0430\u043f\u0438\u0441\u044c \u0432 \u041e\u0416\u0420 (\u0420\u0414-11-05-2007)."),
+        ("5. \u0414\u0430\u0442\u044b:", f"\u043d\u0430\u0447\u0430\u043b\u0430 \u0440\u0430\u0431\u043e\u0442: \u00ab{d_start}\u00bb \u0433.   \u043e\u043a\u043e\u043d\u0447\u0430\u043d\u0438\u044f \u0440\u0430\u0431\u043e\u0442: \u00ab{d_end}\u00bb \u0433."),
+        ("6. \u0420\u0430\u0431\u043e\u0442\u044b \u0432\u044b\u043f\u043e\u043b\u043d\u0435\u043d\u044b \u0432 \u0441\u043e\u043e\u0442\u0432\u0435\u0442\u0441\u0442\u0432\u0438\u0438 \u0441:", f"\u0421\u041f 48.13330.2019, \u043f\u0440\u043e\u0435\u043a\u0442\u043d\u043e\u0439 \u0434\u043e\u043a\u0443\u043c\u0435\u043d\u0442\u0430\u0446\u0438\u0435\u0439 {doc.title}{tech_str}."),
+        ("7. \u0420\u0430\u0437\u0440\u0435\u0448\u0430\u0435\u0442\u0441\u044f \u043f\u0440\u043e\u0438\u0437\u0432\u043e\u0434\u0441\u0442\u0432\u043e \u043f\u043e\u0441\u043b\u0435\u0434\u0443\u044e\u0449\u0438\u0445 \u0440\u0430\u0431\u043e\u0442:", next_work_allowed),
+    ]:
+        ps = document.add_paragraph()
+        ps.add_run(sec_h + " ").bold = True
+        ps.add_run(sec_v)
 
-    if clean_rows:
-        for idx, item in enumerate(clean_rows, start=1):
-            row_cells = table.add_row().cells
-            grp_clean = _clean_name(item["node_cabinet"])
-            loc = " / ".join(filter(None, [item["location"], grp_clean])) or "По проекту"
-            row_cells[0].text = str(idx)
-            row_cells[1].text = loc
-            row_cells[2].text = item["material_name"]
-            row_cells[3].text = f"{float(item['required_qty']):.2f}"
-            row_cells[4].text = item["unit"]
-    else:
-        row_cells = table.add_row().cells
-        row_cells[0].text = "1"
-        row_cells[1].text = "Согласно листам тома"
-        row_cells[2].text = f"Комплекс скрытых работ по тому {doc.title}"
-        row_cells[3].text = "1.00"
-        row_cells[4].text = "компл."
-
-    # Раздел 2: Применённые материалы и сертификаты
-    p_sec2 = document.add_paragraph()
-    p_sec2.add_run("\n2. При выполнении работ применены материалы и изделия:\n").bold = True
-    if clean_rows:
-        mat_names = "; ".join(f"{r['material_name']} ({r['required_qty']} {r['unit']})" for r in clean_rows[:12])
-        p_sec2.add_run(f"   {mat_names}.\n   Паспорта качества и сертификаты соответствия приложены к настоящему Акту.")
-    else:
-        p_sec2.add_run("   Материалы согласно спецификации проекта (сертификаты и паспорта качества приложены).")
-
-    # Раздел 3: Даты и решение комиссии
-    p_terms = document.add_paragraph()
-    p_terms.add_run("\n3. Даты выполнения скрытых работ:\n").bold = True
-    p_terms.add_run(f"   Начало работ: «{d_start}» г.    Окончание работ: «{d_end}» г.\n")
-
-    p_terms.add_run("\n4. Решение комиссии:\n").bold = True
-    p_terms.add_run(
-        f"   Работы выполнены в соответствии с проектной документацией ({doc.title}) "
-        f"и требованиями {snip_ref}.\n"
-        f"   На основании изложенного разрешается: {next_work_allowed}."
-    )
-
-    # Блок подписей
-    p_signs = document.add_paragraph()
-    p_signs.add_run("\nПОДПИСИ ОТВЕТСТВЕННЫХ ЛИЦ:\n").bold = True
-    p_signs.add_run(
-        f"\nСдал ({sender_role}):\n"
-        f"_______________________ / {executor_name} /\n"
-        f"\nПринял ({receiver_role}):\n"
-        f"_______________________ / {inspector_name} /\n"
-    )
+    document.add_paragraph("\n\u0410\u043a\u0442 \u0441\u043e\u0441\u0442\u0430\u0432\u043b\u0435\u043d \u0432 4 \u044d\u043a\u0437\u0435\u043c\u043f\u043b\u044f\u0440\u0430\u0445.").runs[0].bold = True
+    stbl = document.add_table(rows=5, cols=2)
+    stbl.style = "Table Grid"
+    for idx, r_txt in enumerate(["\u041f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u0438\u0442\u0435\u043b\u044c \u0437\u0430\u0441\u0442\u0440\u043e\u0439\u0449\u0438\u043a\u0430 (\u0421\u041a):", "\u041f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u0438\u0442\u0435\u043b\u044c \u0433\u0435\u043d\u043f\u043e\u0434\u0440\u044f\u0434\u0447\u0438\u043a\u0430:", "\u041f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u0438\u0442\u0435\u043b\u044c \u0421\u041a \u0433\u0435\u043d\u043f\u043e\u0434\u0440\u044f\u0434\u0447\u0438\u043a\u0430:", "\u041f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u0438\u0442\u0435\u043b\u044c \u043f\u0440\u043e\u0435\u043a\u0442\u0438\u0440\u043e\u0432\u0449\u0438\u043a\u0430:", "\u041f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u0438\u0442\u0435\u043b\u044c \u0441\u0443\u0431\u043f\u043e\u0434\u0440\u044f\u0434\u0447\u0438\u043a\u0430:"]):
+        stbl.rows[idx].cells[0].text, stbl.rows[idx].cells[1].text = r_txt, "_____________________ / ___________________ /"
 
     buf = io.BytesIO()
     document.save(buf)
