@@ -25,6 +25,29 @@ def resolve_discipline_aosr_rules(doc_title: str) -> tuple[str, str, str]:
         return ("\u041c\u043e\u043d\u0442\u0430\u0436 \u0442\u0440\u0443\u0431\u043e\u043f\u0440\u043e\u0432\u043e\u0434\u043e\u0432 \u0438 \u0432\u043e\u0437\u0434\u0443\u0445\u043e\u0432\u043e\u0434\u043e\u0432", "\u0421\u041f 73.13330.2016", "\u0433\u0438\u0434\u0440\u0430\u0432\u043b\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u0438\u0441\u043f\u044b\u0442\u0430\u043d\u0438\u044f, \u0442\u0435\u043f\u043b\u043e\u0438\u0437\u043e\u043b\u044f\u0446\u0438\u044f \u0438 \u0437\u0430\u0448\u0438\u0432\u043a\u0430 \u0448\u0430\u0445\u0442")
     return ("\u0423\u0441\u0442\u0440\u043e\u0439\u0441\u0442\u0432\u043e \u043f\u0435\u0440\u0435\u0433\u043e\u0440\u043e\u0434\u043e\u043a, \u0441\u0442\u044f\u0436\u043a\u0438 \u0438 \u0438\u0437\u043e\u043b\u044f\u0446\u0438\u0438", "\u0421\u041f 71.13330.2017, \u0421\u041f 29.13330.2011", "\u0448\u043f\u0430\u043a\u043b\u0451\u0432\u043a\u0430, \u043e\u043a\u0440\u0430\u0441\u043a\u0430 \u0438 \u0443\u043a\u043b\u0430\u0434\u043a\u0430 \u0444\u0438\u043d\u0438\u0448\u043d\u043e\u0433\u043e \u043f\u043e\u043a\u0440\u044b\u0442\u0438\u044f")
 
+
+def extract_real_volume_for_aosr(doc) -> tuple[str, str, str]:
+    import re
+    from storage_control.models import ParsedPage
+    from storage_control.services.building_twin import fix_autocad_mojibake
+    work_label, sp_ref, next_work = resolve_discipline_aosr_rules(doc.title)
+    best_kg = 0.0
+    best_page = 1
+    for pg in ParsedPage.objects.filter(document=doc).order_by("page_number")[:40]:
+        txt = fix_autocad_mojibake(pg.text or "")
+        for m in re.finditer(r'\u041c\u0430\u0441\u0441\u0430\s+\u043a\u043e\u043d\u0441\u0442\u0440\u0443\u043a\u0446\u0438\u0439[^\d]{0,25}(?:\d+\s+)?(\d{2,6}[\.,]\d+)', txt, re.I):
+            try:
+                val = float(m.group(1).replace(",", "."))
+                if val > best_kg:
+                    best_kg = val
+                    best_page = pg.page_number
+            except ValueError:
+                pass
+    if best_kg > 0:
+        tons = round(best_kg / 1000.0, 2)
+        return (f"{work_label} \u043f\u043e \u0447\u0435\u0440\u0442\u0435\u0436\u0430\u043c {doc.title} (\u0432\u0435\u0434\u043e\u043c\u043e\u0441\u0442\u044c \u0434\u0435\u0442\u0430\u043b\u0435\u0439, \u041b\u0438\u0441\u0442 \u2116{best_page})", f"{tons:.2f}", f"\u0442 ({best_kg:.1f} \u043a\u0433)")
+    return (f"{work_label} \u043f\u043e \u0447\u0435\u0440\u0442\u0435\u0436\u0430\u043c {doc.title}", "1.00", "\u043a\u043e\u043c\u043f\u043b. (\u043f\u043e \u0432\u0435\u0434\u043e\u043c\u043e\u0441\u0442\u0438 \u0420\u0414)")
+
 def build_aosr_docx_bytes(
     doc: Document,
     *,
