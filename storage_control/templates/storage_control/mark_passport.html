@@ -395,6 +395,22 @@ function filterUpdArchive(q) {
     <img id="mp-lightbox-img" src="" alt="">
 </div>
 <script src="{% static 'storage_control/js/mark_passport.js' %}"></script>
+
+<div id="turtle-4d-cascade" style="margin-top:14px;background:#0b1120;border:2px solid #38bdf8;border-radius:12px;padding:14px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+        <strong style="color:#38bdf8;font-size:15px;">🐢 Черепаха CAD — 4-Потоковый Строй-Каскад (Где копать / Закладывать · Системы · Сроки · Помехи)</strong>
+        <div style="display:flex;align-items:center;gap:8px;background:#1e293b;padding:5px 10px;border-radius:8px;font-size:12px;">
+            <span style="color:#fbbf24;font-weight:700;">⏳ Срок ГПР:</span>
+            <input type="range" id="c4d-week" min="1" max="12" value="4" oninput="renderTurtle4D()" style="cursor:pointer;">
+            <strong id="c4d-week-lbl" style="color:#34d399;min-width:85px;">Неделя 4 / 12</strong>
+        </div>
+    </div>
+    <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(250px,1fr);gap:12px;align-items:stretch;">
+        <svg id="c4d-svg" viewBox="0 0 780 260" style="width:100%;height:auto;background:#020617;border:1px solid #334155;border-radius:10px;"></svg>
+        <div id="c4d-blockers" style="background:#111827;border:1px solid #334155;border-left:3px solid #ef4444;border-radius:10px;padding:10px;font-size:12px;"></div>
+    </div>
+</div>
+
 </body>
 </html>
 
