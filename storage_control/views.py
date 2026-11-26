@@ -1088,11 +1088,11 @@ def new_client_wizard_view(request):
                 uniq_lines = []
                 for cand in (s_u16 + s_cp):
                     cl = re.sub(r'\s+', ' ', cand).strip()
-                    if len(cl) >= 6 and sum(ch.isalpha() for ch in cl) >= 4 and cl not in uniq_lines:
+                    if len(cl) >= 6 and sum("\u0410" <= ch <= "\u044f" or ch in "\u0401\u0451" for ch in cl) >= 4 and cl not in uniq_lines:
                         uniq_lines.append(cl)
                     if len(uniq_lines) >= 14:
                         break
-                extracted_lines = [f"\u0424\u043e\u0440\u043c\u0430\u0442 \u0447\u0435\u0440\u0442\u0435\u0436\u0430: {cad_ver} ({round(len(raw)/1048576, 2)} \u041c\u0411)"] + uniq_lines
+                extracted_lines = [f"\u0427\u0435\u0440\u0442\u0435\u0436 {cad_ver} ({round(len(raw)/1048576, 2)} \u041c\u0411) \u043f\u0440\u0438\u043d\u044f\u0442 \u0432 \u043f\u0430\u043a\u0435\u0442 \u0418\u0414 \u2192 \u0433\u043e\u0442\u043e\u0432 \u043a \u0432\u043a\u043b\u044e\u0447\u0435\u043d\u0438\u044e \u0432 \u0420\u0435\u0435\u0441\u0442\u0440 \u0418\u0414 \u0438 \u0410\u041e\u0421\u0420 \u2116 344/\u043f\u0440"] + uniq_lines
             else:
                 extracted_lines = [f"\u0413\u0440\u0430\u0444\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u043b\u0438\u0441\u0442 / \u0444\u043e\u0442\u043e ({ext.upper()}), \u0440\u0430\u0437\u043c\u0435\u0440 {round(len(raw)/1024, 1)} \u041a\u0411 \u2014 \u0433\u043e\u0442\u043e\u0432\u043e \u043a \u0432\u0435\u043a\u0442\u043e\u0440\u043d\u043e\u0439 \u043a\u0430\u043b\u0438\u0431\u0440\u043e\u0432\u043a\u0435 \u0427\u0435\u0440\u0435\u043f\u0430\u0445\u0438 CAD \u0438 \u043f\u0440\u0438\u0451\u043c\u043a\u0435 \u0423\u041f\u0414 \u0421\u043e\u043aолом."]
 
