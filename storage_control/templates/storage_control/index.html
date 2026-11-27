@@ -18,6 +18,34 @@
 </head>
 <body>
 
+
+<div id="role-workspace-bar" style="background:#0f172a;border:1px solid #38bdf8;border-radius:10px;padding:10px 14px;margin:8px 0;display:flex;flex-wrap:wrap;gap:7px;align-items:center;justify-content:space-between;">
+  <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+    <span style="color:#38bdf8;font-weight:800;font-size:12.5px;">👤 Режим человека (сжать экран):</span>
+    <button type="button" onclick="setPersonRole('builder',this)" class="tmc-pill active">👷 Строитель / Прораб</button>
+    <button type="button" onclick="setPersonRole('storekeeper',this)" class="tmc-pill">📦 Кладовщик</button>
+    <button type="button" onclick="setPersonRole('pto',this)" class="tmc-pill">📐 Инженер ПТО</button>
+    <button type="button" onclick="setPersonRole('accountant',this)" class="tmc-pill">🧾 Бухгалтер / 1С</button>
+    <button type="button" onclick="setPersonRole('director',this)" class="tmc-pill">💼 Директор / Снабжение</button>
+    <button type="button" onclick="setPersonRole('safety',this)" class="tmc-pill">🦺 Охрана труда и ТБ</button>
+  </div>
+  <div id="role-focus-hint" style="color:#34d399;font-size:12px;font-weight:700;">👷 Фокус строителя: что монтируем сегодня, паспорт марки/QR и завоз на следующий шаг.</div>
+</div>
+<script>
+function setPersonRole(role,btn){
+  document.querySelectorAll('#role-workspace-bar .tmc-pill').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const map={
+    builder:'👷 Фокус строителя: что монтируем сегодня, паспорт марки/QR и завоз на следующий шаг.',
+    storekeeper:'📦 Фокус кладовщика: приёмка УПД по фото, выдача бригадам М-11 и акты брака ТОРГ-2.',
+    pto:'📐 Фокус ПТО: сверка выносок РД, листы чертежей и печать АОСР № 344/пр.',
+    accountant:'🧾 Фокус бухгалтера: реестр М-4 / М-11 / УПД и выгрузка в Excel / 1С.',
+    director:'💼 Фокус директора: горящий дефицит к оплате, Партнёрская лига и сводка 6 этапов.',
+    safety:'🦺 Фокус охраны труда и ТБ: наряды-допуски (высота / огневые), СИЗ и фото смены.'
+  };
+  document.getElementById('role-focus-hint').textContent=map[role]||'';
+}
+</script>
 <div style="background:#0f172a;border:2px solid #f59e0b;border-radius:12px;padding:12px 14px;margin:10px 16px;">
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
         <strong style="color:#fbbf24;font-size:14px;">🧮 Сводка по проекту (Заложено / Запасено / Заказать + Аналог) и Инвентарь прорабов:</strong>
