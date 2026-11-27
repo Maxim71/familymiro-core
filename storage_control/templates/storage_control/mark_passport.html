@@ -413,8 +413,8 @@ function filterUpdArchive(q) {
 
 <div style="background:#0f172a;border:1px solid #334155;border-left:4px solid #10b981;border-radius:10px;padding:14px;margin-top:14px;">
   <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
-    <strong style="color:#34d399;font-size:15px;">📋 Реальные позиции и листы РД по марке «{{ ru_hint|default:mark_title }}»</strong>
-    <a href="/partner-league/?q={{ ru_hint|default:mark_title|urlencode }}&qty={{ real_qty }}" style="background:#10b981;color:#052e16;text-decoration:none;border-radius:6px;padding:6px 12px;font-weight:700;font-size:12.5px;">🤝 В Партнёрскую лигу (Цены и поставщики) →</a>
+    <strong style="color:#34d399;font-size:15px;">📋 Реальные позиции и листы РД по марке «{{ ru_hint|default:query }}»</strong>
+    <a href="/partner-league/?q={{ ru_hint|default:query|urlencode }}&qty={{ real_qty }}" style="background:#10b981;color:#052e16;text-decoration:none;border-radius:6px;padding:6px 12px;font-weight:700;font-size:12.5px;">🤝 В Партнёрскую лигу (Цены и поставщики) →</a>
   </div>
   {% for r in matched_reqs %}<div style="padding:5px 0;border-bottom:1px solid #1e293b;display:flex;justify-content:space-between;color:#e2e8f0;font-size:13px;"><span><strong>{{ r.material_name }}</strong> <span style="color:#fbbf24;">[{{ r.floor_info }}]</span></span><strong style="color:#34d399;">{{ r.required_qty }} {{ r.unit }}</strong></div>{% empty %}<div style="color:#94a3b8;font-size:12.5px;">Прямых строк в закупке нет — см. упоминания в чертежах ниже:</div>{% endfor %}
   {% for p in matched_pages %}<div style="color:#cbd5e1;font-size:12px;margin-top:4px;">• <strong>{{ p.doc }} (Л.{{ p.page }}):</strong> {{ p.snippet }}</div>{% endfor %}

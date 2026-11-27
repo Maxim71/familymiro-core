@@ -75,7 +75,8 @@ def classify_pdf_line_at_gate(raw_line: str) -> str:
     low = (raw_line or "").strip().lower()
     if len(low) < 8 or any(p in low for p in rules["noise_patterns"]):
         return "STAMP_NOISE"
-    if any(p in low for p in rules["design_note_patterns"]):
+    is_formula = ("√" in low) or ("=" in low and any(op in low for op in ("/", "*", "·", "3600", "11000")))
+    if is_formula or any(p in low for p in rules["design_note_patterns"]):
         return "DESIGN_NOTE"
     if any(p in low for p in rules["warranty_patterns"]):
         return "OPERATION_WARRANTY"
