@@ -9,7 +9,7 @@
 </head>
 <body>
 <div style="display:flex;align-items:center;gap:10px;background:#0f172a;border:1px solid #334155;border-radius:10px;padding:8px 12px;margin-bottom:12px;font-size:12px;">
-    <div style="width:44px;height:44px;background:#1e293b;border:1px solid #38bdf8;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#38bdf8;font-weight:800;font-size:12px;">QR</div>
+    <div style="width:44px;height:44px;background:#1e293b;border:1px solid #38bdf8;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#38bdf8;font-weight:800;font-size:12px;" id="custom-qr-slot" data-qr-slug="{{ slug_alias }}" data-qr-title="{{ ru_hint|default:query }}" data-qr-url="{{ request.build_absolute_uri }}">QR</div>
     <div><strong style="color:#38bdf8;">📱 QR-бирка для прораба и склада</strong><div style="color:#94a3b8;margin-top:2px;">Наведите камеру телефона на лист или паллету — откроется эта карточка на стройплощадке.</div></div>
 </div>
 <div class="mp-container">
@@ -23,7 +23,7 @@
 
     <div class="mp-hero">
         <span class="mp-badge">{{ tech.category }}</span>
-        <h1 class="mp-title">{{ query }}</h1>
+        <h1 class="mp-title">{{ ru_hint|default:query }}</h1>
         <p><strong>Расшифровка:</strong> {{ tech.decoded }}</p>
         <p style="color: var(--text-muted); margin-bottom: 0;"><strong>Инженерная физика:</strong> {{ tech.physics }}</p>
 
