@@ -9,7 +9,7 @@
 </head>
 <body>
 <div style="display:flex;align-items:center;gap:10px;background:#0f172a;border:1px solid #334155;border-radius:10px;padding:8px 12px;margin-bottom:12px;font-size:12px;">
-    <img src="https://qrserver.com{{ request.build_absolute_uri|urlencode }}" alt="QR" style="width:68px;height:68px;border-radius:6px;background:#fff;padding:3px;">
+    <div style="width:44px;height:44px;background:#1e293b;border:1px solid #38bdf8;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#38bdf8;font-weight:800;font-size:12px;">QR</div>
     <div><strong style="color:#38bdf8;">📱 QR-бирка для прораба и склада</strong><div style="color:#94a3b8;margin-top:2px;">Наведите камеру телефона на лист или паллету — откроется эта карточка на стройплощадке.</div></div>
 </div>
 <div class="mp-container">
@@ -118,7 +118,7 @@
                 <p style="margin:0 0 10px 0;font-size:12px;color:#94a3b8;"><strong>Зачем этот блок: показывает чертежи из РД, CAD-схему узла и закупку на этап.</strong> Зачем этот блок: показывает чертежи из РД, CAD-схему узла и закупку на этап.</p>
                 <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;">
                     {% for fc in project_floor_cuts.floor_cuts %}
-                        <button type="button" class="mp-copy-btn" onclick="document.querySelectorAll('.t-fl-cut').forEach(e=>e.style.display='none');document.getElementById('tfl-{{ forloop.counter }}').style.display='block';">?? {{ fc.floor_label }} (Лист №{{ fc.page_number }})</button>
+                        <button type="button" class="mp-copy-btn" onclick="document.querySelectorAll('.t-fl-cut').forEach(e=>e.style.display='none');document.getElementById('tfl-{{ forloop.counter }}').style.display='block';">{{ fc.floor_label }} (Лист №{{ fc.page_number }})</button>
                     {% endfor %}
                     <button type="button" class="mp-copy-btn" onclick="document.querySelectorAll('.bim-p').forEach(e=>e.style.display='none');document.getElementById('bim-sleeves').style.display='block';">🔩 Гильзы и высоты</button>
                     <button type="button" class="mp-copy-btn" onclick="document.querySelectorAll('.bim-p').forEach(e=>e.style.display='none');document.getElementById('bim-doors').style.display='block';">🚪 Проёмы и двери</button>
@@ -145,7 +145,7 @@
                     {% for s in cad_modes.sleeves %}<div style="margin-top:4px;">? <strong>{{ s.axis }}</strong> | <strong>{{ s.elev }}</strong> · {{ s.spec }} · <strong>{{ s.qty }}</strong></div>{% endfor %}
                 </div>
                 <div id="bim-doors" class="bim-p" style="display:none;background:#0f172a;border-left:3px solid #38bdf8;padding:10px;border-radius:8px;margin-top:8px;font-size:12px;">
-                    <strong style="color:#38bdf8;">🔍 Лупа ×2??🔍 Лупа ×2?, ??🔍 Лупа ×2??🔩 Гильзы и высоты?:</strong>
+                    <strong style="color:#38bdf8;">🔍 Лупа ×2🔍 Лупа ×2?, 🔍 Лупа ×2🔩 Гильзы и высоты?:</strong>
                     {% for d in cad_modes.doors %}<div style="margin-top:4px;">? <strong>{{ d.axis }}</strong> | <strong>{{ d.elev }}</strong> · {{ d.spec }} · <strong>{{ d.qty }}</strong></div>{% endfor %}
                 </div>
                 <div id="bim-pipes" class="bim-p" style="display:none;background:#0f172a;border-left:3px solid #10b981;padding:10px;border-radius:8px;margin-top:8px;font-size:12px;">
@@ -206,26 +206,26 @@
                         
                         <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:8px 10px;background:#0f172a;border:1px solid #1e293b;border-radius:8px;margin:8px 0;font-size:12px;">
                             <button type="button" class="mp-copy-btn" onclick="switchTurtleBimTab('sleeves')">🔩 Гильзы и высоты</button>
-                            <button type="button" class="mp-copy-btn" onclick="switchTurtleBimTab('doors')">🔍 Лупа ×2 · ??🔍 Лупа ×2</button>
+                            <button type="button" class="mp-copy-btn" onclick="switchTurtleBimTab('doors')">🔍 Лупа ×2 · 🔍 Лупа ×2</button>
                             <button type="button" class="mp-copy-btn" onclick="switchTurtleBimTab('pipes')">🚰 Карта-график труб</button>
                             <label style="margin-left:auto;color:#38bdf8;">Шаг осей (мм): <input type="number" id="turtle-step-input" value="6000" step="600" min="1500" max="24000" onchange="updateTurtleLiveStep(this.value)" style="width:74px;background:#1e293b;color:#fbbf24;border:1px solid #334155;border-radius:5px;padding:3px 6px;font-weight:700;"></label>
-                            <span id="turtle-ruler-out" style="color:#f472b6;font-weight:700;">🔍 Лупа ×2?? 2 Зачем этот блок: показывает чертежи из РД, CAD-схему узла и закупку на этап.</span>
-                            <button type="button" class="mp-copy-btn" onclick="clearTurtleRuler()" style="padding:3px 8px;">?? ?????</button>
+                            <span id="turtle-ruler-out" style="color:#f472b6;font-weight:700;">🔍 Лупа ×22 Зачем этот блок: показывает чертежи из РД, CAD-схему узла и закупку на этап.</span>
+                            <button type="button" class="mp-copy-btn" onclick="clearTurtleRuler()" style="padding:3px 8px;">?</button>
                         </div>
                         <div style="margin:8px 0;">{{ tp.svg_preview|safe }}</div>
 
                         <div id="bim-tab-sleeves" class="bim-tab-pane" style="background:#0f172a;border:1px solid #1e293b;border-left:3px solid #ef4444;border-radius:8px;padding:10px;margin-top:8px;font-size:12px;">
-                            <strong style="color:#fca5a5;">?? Зачем этот блок: показывает чертежи из РД, CAD-схему узла и закупку на этап.</strong>
+                            <strong style="color:#fca5a5;">Зачем этот блок: показывает чертежи из РД, CAD-схему узла и закупку на этап.</strong>
                             {% for s in cad_modes.sleeves %}<div style="margin-top:4px;">? <strong>{{ s.axis }}</strong> | <strong>{{ s.elev }}</strong> · {{ s.spec }} · <strong>{{ s.qty }}</strong></div>{% endfor %}
                         </div>
 
                         <div id="bim-tab-doors" class="bim-tab-pane" style="display:none;background:#0f172a;border:1px solid #1e293b;border-left:3px solid #38bdf8;border-radius:8px;padding:10px;margin-top:8px;font-size:12px;">
-                            <strong style="color:#38bdf8;">🔍 Лупа ×2??🔍 Лупа ×2?, ??🔍 Лупа ×2??🔍 Лупа ×2 (Зачем этот блок: показывает чертежи из РД, CAD-схему узла и закупку на этап.</strong>
+                            <strong style="color:#38bdf8;">🔍 Лупа ×2🔍 Лупа ×2?, 🔍 Лупа ×2🔍 Лупа ×2 (Зачем этот блок: показывает чертежи из РД, CAD-схему узла и закупку на этап.</strong>
                             {% for d in cad_modes.doors %}<div style="margin-top:4px;">? <strong>{{ d.axis }}</strong> | <strong>{{ d.elev }}</strong> · {{ d.spec }} · <strong>{{ d.qty }}</strong></div>{% endfor %}
                         </div>
 
                         <div id="bim-tab-pipes" class="bim-tab-pane" style="display:none;background:#0f172a;border:1px solid #1e293b;border-left:3px solid #10b981;border-radius:8px;padding:10px;margin-top:8px;font-size:12px;">
-                            <strong style="color:#34d399;">?? Зачем этот блок: показывает чертежи из РД, CAD-схему узла и закупку на этап.</strong>
+                            <strong style="color:#34d399;">Зачем этот блок: показывает чертежи из РД, CAD-схему узла и закупку на этап.</strong>
                             {% for p in cad_modes.pipe_stages %}<div style="margin-top:4px;">? <strong>{{ p.stage }}</strong> ({{ p.zone }}, {{ p.elev }}) · <strong>Зачем этот блок: показывает чертежи из РД, CAD-схему узла и закупку на этап.</strong> {{ p.buy }}</div>{% endfor %}
                         </div>
 

@@ -1,4 +1,20 @@
 
+def _detranslit_mark_slug(slug: str) -> str:
+    import re
+    s = re.sub(r'^\d+[\-_]\d+[\-_]', '', (slug or '')).replace('-', ' ').strip()
+    s = re.sub(r'h$', '', s)
+    pairs = [
+        ("shch", "щ"), ("sh", "ш"), ("ch", "ч"), ("zh", "ж"), ("yu", "ю"), ("ya", "я"),
+        ("kh", "х"), ("ts", "ц"), ("a", "а"), ("b", "б"), ("v", "в"), ("g", "г"),
+        ("d", "д"), ("e", "е"), ("z", "з"), ("i", "и"), ("k", "к"), ("l", "л"),
+        ("m", "м"), ("n", "н"), ("o", "о"), ("p", "п"), ("r", "р"), ("s", "с"),
+        ("t", "т"), ("u", "у"), ("f", "ф"), ("y", "ы"),
+    ]
+    low = s.lower()
+    for lat, cyr in pairs:
+        low = low.replace(lat, cyr)
+    return low.strip().capitalize()
+
 def _engineering_sort_key(item: dict) -> tuple:
     import re
     nm = (item.get("mark_name") or "").lower()
