@@ -1152,6 +1152,24 @@ def project_totals_and_analogs_api(request):
     from storage_control.models import PurchaseRequest, ParsedPage
     from storage_control.services.building_twin import fix_autocad_mojibake
 
+    def _norm_unit(u_raw: str) -> str:
+        u = (u_raw or "шт.").strip().lower().rstrip(".")
+        if u in ("шт", "pcs"):
+            return "шт."
+        if u == "л":
+            return "л"
+        if u in ("м", "п.м"):
+            return "м"
+        return u or "шт."
+
+    def _clean_zone(z_raw: str) -> str:
+        z = (z_raw or "").strip()
+        if not z or re.match(r'^24\.045', z) or "??" in z:
+            return "По плану РД"
+        if re.match(r'^[+\-]?0?\d\.\d{3}$', z):
+            return f"Отм. {z.replace('-0', '-').replace('.', ',')} м"
+        return z
+
     q = (request.GET.get("q") or "").strip()
     if not q:
         return JsonResponse({"ok": True, "items": [], "totals_by_unit": {}, "pdf_mentions": []})
@@ -1177,15 +1195,29 @@ def project_totals_and_analogs_api(request):
         if is_du_query and not re.search(r'(?:\bДу|\bDN|Фланец)', nm, re.I):
             continue
         m_dn = re.search(r'(?:Ду|DN|\u00d8)\s*(\d{2,4})', nm, re.I)
-        dn_tag = f"Ду {m_dn.group(1)}" if m_dn else "уточнить Ду по спец."
-        key = f"{nm} | {dn_tag}"
-        u = (r.unit or "шт.").strip()
+        has_dn_in_name = bool(m_dn)
+        if m_dn:
+            dn_tag = f"Ду {m_dn.group(1)}"
+            display_nm = nm if has_dn_in_name else f"{nm} [{dn_tag}]"
+        else:
+            # ??????????? ???????? ?? ?? ?????? ????? ?? ???? PDF, ????? ?? ?????? ?????? "???????? ??"
+            doc_dns = set()
+            if r.document_id:
+                for pg in ParsedPage.objects.filter(document_id=r.document_id)[:35]:
+                    for d_hit in re.findall(r'(?:Ду|DN)\s*(\d{2,3})', fix_autocad_mojibake(pg.text or ""), re.I):
+                        doc_dns.add(int(d_hit))
+            dn_list = ", ".join(f"Ду {x}" for x in sorted(doc_dns)[:8]) if doc_dns else "Ду 25…Ду 160"
+            dn_tag = f"распределить по чертежу: {dn_list}"
+            display_nm = f"{nm} [{dn_tag}]"
+
+        u = _norm_unit(r.unit)
         qty = float(r.required_qty or 0)
         totals_by_unit[u] = round(totals_by_unit.get(u, 0.0) + qty, 2)
+        key = f"{nm} | {dn_tag} | {u}"
         entry = grouped.setdefault(key, {
             "req_num": f"ЗМ-{r.id:04d}",
-            "mark_name": f"{nm} [{dn_tag}]" if is_du_query else nm,
-            "floor_or_zone": (r.floor_info or "По плану РД").strip(),
+            "mark_name": display_nm,
+            "floor_or_zone": _clean_zone(r.floor_info),
             "doc_title": r.document.title if r.document else "РД",
             "qty": 0.0,
             "unit": u,
@@ -1196,7 +1228,6 @@ def project_totals_and_analogs_api(request):
     p_cond = functools.reduce(lambda a, b: a | b, [Q(text__icontains=v) for v in variants[:6]])
     for pg in ParsedPage.objects.select_related("document").filter(p_cond)[:25]:
         txt = fix_autocad_mojibake(pg.text or "")
-        # ???????? ???? ??????? (06.26) ? ??????? ????????? ???? ?????? (1 1 1 4 4 4)
         txt = re.sub(r'(?:\b\d{2}\.\d{2}\b\s*){2,}', ' ', txt)
         txt = re.sub(r'(?:\b\d\b\s*){4,}', ' ', txt)
         m = re.search(r'(?:\bДу|\bDN)\s*\d{2,4}', txt) if is_du_query else re.search(re.escape(variants), txt, re.I)
