@@ -1,4 +1,14 @@
 
+def _build_foundation_to_handover_design(q: str, totals_by_unit: dict) -> dict:
+    low = (q or "").lower()
+    if any(k in low for k in ("фундам", "бетон", "армат", "а500", "котлов", "сваи", "плита")):
+        return {"stage": "Этап 1 / 6 · Фундамент (КЖ0)", "before": "Геодезия → Котлован → Подбетонка В7.5 → Гидроизоляция", "supply": "Завоз по захваткам бетонирования (миксеры + прогрев)", "companion": "Фиксаторы слоя, вязальная проволока, опалубка, вибраторы", "after": "Паспорт бетона/металла + кубики 7/28 сут + АОСР № 344/пр"}
+    if any(k in low for k in ("кровл", "техноэласт", "пламя", "рама", "балк")):
+        return {"stage": "Этап 2–3 / 6 · Каркас и Кровля", "before": "Приёмка фундамента → Геодезия осей → Уклон и праймер", "supply": "Длинномер / манипулятор + подъём по секторам (+10% нахлёст)", "companion": "Праймер, аэраторы, краевые рейки, герметик, метизы КМ", "after": "Геодезия + УЗК швов / пролив кровли + АОСР № 344/пр"}
+    if any(k in low for k in ("ral", "краск", "шпатл", "шпакл", "грунт", "отдел")):
+        return {"stage": "Этап 5 / 6 · Чистовая отделка и колеровка", "before": "Тепловой контур (+15°C) → Бетоноконтакт → Штукатурка → Шпатлёвка 2 слоя", "supply": "Поэтажный завоз вёдрами по 10л (2 слоя + 10% запас) после высыхания стен", "companion": "Грунтовка 2 слоя, стеклообои + клей, валики, скотч, плёнка", "after": "Сертификат КМ1 + УПД + АОСР № 344/пр"}
+    return {"stage": "Этап 4 / 6 · Инженерные системы (ОВ / ВК / ЭС)", "before": "Готовность перекрытий и проёмов → Разметка трасс → Опоры", "supply": "Поэтажная комплектация магистрали + фасонных узлов и крепежа из РД", "companion": "Шпильки, анкеры, болты, гайки, шайбы, прокладки, противопожарные муфты", "after": "Испытания (ПНР / опрессовка / мегаомметр) + АОСР № 344/пр"}
+
 def _detranslit_mark_slug(slug: str) -> str:
     import re
     s = re.sub(r'^\d+[\-_]\d+[\-_]', '', (slug or '')).replace('-', ' ').strip()
@@ -1383,7 +1393,7 @@ def project_totals_and_analogs_api(request):
 
     if "кг" in totals_by_unit:
         totals_by_unit["т (тонн)"] = round(totals_by_unit["кг"] / 1000.0, 3)
-    return JsonResponse({"ok": True, "query": q, "totals_by_unit": totals_by_unit, "items": sorted(grouped.values(), key=_engineering_sort_key), "blocked_items": blocked_items, "pdf_mentions": pdf_mentions, "general_analog": _suggest_analog_for_material(q)})
+    return JsonResponse({"ok": True, "query": q, "totals_by_unit": totals_by_unit, "items": sorted(grouped.values(), key=_engineering_sort_key), "blocked_items": blocked_items, "pdf_mentions": pdf_mentions, "general_analog": _suggest_analog_for_material(q), "lifecycle": _build_foundation_to_handover_design(q, totals_by_unit)})
 
 
 def inventory_foreman_api(request):
@@ -1506,6 +1516,14 @@ def partner_league_view(request):
     relay_info = step_price_relay(10) if request.GET.get("relay") == "1" else step_price_relay(0)
     q = (request.GET.get("q") or "").strip()
     qty = (request.GET.get("qty") or "").strip()
+    if q:
+        q_low = q.lower()
+        if any(k in q_low for k in ("шпакл", "шпатл", "штукат", "смес")):
+            matrix = [{"commodity_class": "Сухие строительные смеси и шпаклёвки (Knauf / Волма / Ceresit)", "partners": "Сатурн-Строймаркет, Петрович B2B, ЦКСМ", "discount": "По прайсу B2B", "logistics": "Паллеты / Манипулятор", "payment": "Безнал НДС 20% + УПД"}] + matrix
+        elif any(k in q_low for k in ("шпильк", "болт", "гайк", "анкер", "метиз")):
+            matrix = [{"commodity_class": "Крепёж, шпильки и метизы (ГОСТ / DIN 975 / Hilti)", "partners": "ЦКИ (Центр Крепёжных Изделий), Трайв-Комплект", "discount": "По прайсу B2B", "logistics": "Газель / Самовывоз", "payment": "Безнал НДС 20% + Сертификат"}] + matrix
+        else:
+            matrix = [{"commodity_class": f"Профильный подбор по запросу: {q[:45]}", "partners": "Аккредитованные дистрибьюторы и заводы Москвы/МО", "discount": "По прайсу B2B", "logistics": "Доставка / Самовывоз", "payment": "Безнал НДС 20% + УПД"}] + matrix
     matched_price = relay_info["prices"].get(canon_key(q), {}) if q else {}
     return render(request, "storage_control/partner_league.html", {"matrix": matrix, "query": q, "qty": qty, "relay": relay_info, "matched_price": matched_price, "imported_cnt": imported_cnt})
 
@@ -1519,3 +1537,19 @@ def aosr_print_view(request, slug: str):
     docs = sorted({r.document.title for r in reqs if r.document}) or ["Рабочая документация 24.0454"]
     qty_s = f"{round(sum(float(r.required_qty or 0) for r in reqs), 2)} {reqs.unit}" if reqs else "по ведомости РД"
     return render(request, "storage_control/aosr_print.html", {"title": ru_title, "qty": qty_s, "docs_list": ", ".join(docs)})
+
+
+def executive_summary_view(request):
+    from django.shortcuts import render
+    from storage_control.models import PurchaseRequest
+    all_r = list(PurchaseRequest.objects.all()[:3000])
+    def _cnt(keys): return sum(1 for r in all_r if any(k in (r.material_name or "").lower() for k in keys))
+    stages = [
+        {"title": "1. Фундамент и нулевой цикл (КЖ0)", "color": "#94a3b8", "count": _cnt(("армат", "бетон", "фундам")), "desc": "Котлован, подбетонка, гидроизоляция, армокаркас, испытания кубиков 7/28 сут.", "slug": "armatura-a500s"},
+        {"title": "2. Несущий каркас и КМ", "color": "#38bdf8", "count": _cnt(("рама", "балк", "профил")), "desc": "Монтаж рам Рм-1.1, колонн, геодезия осей и УЗК сварных соединений.", "slug": "rama-rm-1-1"},
+        {"title": "3. Кровля и тепловой контур", "color": "#fbbf24", "count": _cnt(("техноэласт", "пламя", "кровл")), "desc": "Праймер, рулонная гидроизоляция Техноэласт ПЛАМЯ СТОП, пролив и приёмка.", "slug": "tehnoelast-plamya-stop"},
+        {"title": "4. Инженерные сети (ОВ / ВК / ЭС)", "color": "#34d399", "count": _cnt(("воздуховод", "фланец", "кран", "nd-isr")), "desc": "Воздуховоды 200х300, VRF-блоки ND-ISR, арматура Ду 50–100, опрессовка.", "slug": "vozduhovod-200h300"},
+        {"title": "5. Чистовая отделка (АР1.1 / RAL)", "color": "#f472b6", "count": _cnt(("ral", "краск", "шпатл")), "desc": "Шпатлёвка, грунтовка, стеклообои и поэтажная окраска RAL 7006 / 9011.", "slug": "kraska-ral-7006"},
+        {"title": "6. Пусконаладка ПНР и сдача", "color": "#a855f7", "count": _cnt(("пд6", "система")), "desc": "Индивидуальные испытания Системы ПД6 L=16290, В1, К2, паспорта и закрытие АОСР.", "slug": "sistema-pd6-l-16290"},
+    ]
+    return render(request, "storage_control/executive_summary.html", {"stages": stages})

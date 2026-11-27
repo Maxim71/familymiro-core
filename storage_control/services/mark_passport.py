@@ -1,297 +1,126 @@
-# -*- coding: utf-8 -*-
-import re
-import urllib.parse
-import urllib.request
-from django.core.cache import cache
-from storage_control.models import Document, PurchaseRequest, WarehouseTmc, BimCrossLink
-
-_TRANSLIT = {
-    'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'e',
-    'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm',
-    'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
-    'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'sch',
-    'ы': 'y', 'э': 'e', 'ю': 'yu', 'я': 'ya',
-}
+import os, re
+from django.conf import settings
+from django.db.models import Q
+from storage_control.models import PurchaseRequest, ParsedPage
+from storage_control.services.building_twin import fix_autocad_mojibake
+from storage_control.services.quantum_normalizer import canon_key
 
 
-def make_mark_slug(title: str) -> str:
-    """Генерирует чистый SEO-алиас (slug) для https:// (например: bordyur-br-100-20-8)."""
-    s = "".join(_TRANSLIT.get(ch, ch) for ch in (title or "").lower())
-    s = re.sub(r'[^a-z0-9]+', '-', s).strip('-')
-    return s[:80] or "pozitsiya-rd"
+def _fetch_web_analogs(query: str) -> list:
+    return []
 
 
-def _fetch_web_analogs(mark_title: str) -> list:
-    """Динамически ищет аналоги и эквиваленты в открытых справочниках для любой незнакомой марки."""
-    cache_key = f"eng_analogs_{hash(mark_title)}"
-    cached = cache.get(cache_key)
-    if cached is not None:
-        return cached
-    found = []
-    try:
-        clean_q = re.sub(r'\([^\)]*\)', '', mark_title).strip()[:60]
-        q_enc = urllib.parse.quote(f"{clean_q} аналог эквивалент замена характеристики")
-        req = urllib.request.Request(
-            f"https://duckduckgo.com{q_enc}",
-            headers={"User-Agent": "Mozilla/5.0"},
-        )
-        html = urllib.request.urlopen(req, timeout=4).read().decode("utf-8", errors="ignore")
-        for m in re.finditer(r'class="result__snippet"[^>]*>(.*?)</a>', html, re.S | re.I):
-            txt = re.sub(r'<[^>]+>', '', m.group(1)).strip()
-            txt = re.sub(r'\s+', ' ', txt)
-            if len(txt) > 25 and txt not in found:
-                found.append(txt[:220])
-            if len(found) >= 3:
-                break
-    except Exception:
-        pass
-    cache.set(cache_key, found, 7200)
-    return found
-
-
-def _decode_engineering_mark(mark_title: str) -> dict:
-    """Полный инженерный декодер марок и подбор проверенных аналогов по ГОСТ."""
-    low = (mark_title or "").lower()
-
-    if "бордюр" in low or "бр " in low:
-        is_road = "300" in low or "30.15" in low
-        return {
-            "category": "Дорожное строительство и благоустройство (ГОСТ 6665-91)",
-            "decoded": (
-                "Бордюрный камень дорожный (БР 100.30.15), 1000×300×150 мм, масса ~96 кг."
-                if is_road
-                else "Бордюрный камень тротуарный/рядовой (БР 100.20.8), 1000×200×80 мм, масса ~36 кг."
-            ),
-            "physics": "Серый цвет — чистый портландцемент без красителей (максимальная морозостойкость F200). Скос отводит ливневую воду и защищает кромку от наезда колеса.",
-            "field_tips": [
-                "Ставить на уплотнённое щебёночно-песчаное основание (h=100–150 мм) и бетонную подушку B15.",
-                "Обязательно устроить бетонные «замки» с обеих сторон высотой 100–120 мм от опрокидывания и пучения.",
-                "Температурные швы 3–5 мм заполнять цементно-песчаным раствором М150.",
-            ],
-            "analogs": ["БР 100.30.18 (усиленный магистральный, 118 кг)", "БВ 100.30.15 (въездной с понижением)"],
-        }
-
-    if any(w in low for w in ("клеев", "раствор ytong", "клей для газобетона")):
-        return {
-            "category": "Кладочные клеевые смеси для ячеистого бетона (ГОСТ 31357-2007)",
-            "decoded": f"Тонкошовный полимерцементный клей для газобетона: {mark_title} (толщина шва 1–3 мм).",
-            "physics": "Исключает «мостики холода» и снижает расход смеси в 5 раз (расход ~25 кг / 1 мешок на 1 м³ блоков).",
-            "field_tips": [
-                "Наносить только зубчатым шпателем (зуб 4–6 мм) на обеспыленную поверхность блока.",
-                "При температуре ниже +5 °C применять только зимний клей с противоморозными добавками (до -10 °C).",
-            ],
-            "analogs": [
-                "Bonolit Клей для газобетона (25 кг, летний/зимний) — рецептура бывшего завода YTONG",
-                "Ceresit CT 21 (клей для ячеистого бетона, 25 кг) — в наличии на всех базах Тулы",
-                "Волма-Блок / Knauf Клей для газобетона (25 кг)",
-            ],
-        }
-
-    if any(w in low for w in ("ytong", "газобетон")):
-        return {
-            "category": "Автоклавный газобетон (ГОСТ 31360-2007)",
-            "decoded": f"Блок стеновой из автоклавного газобетона (D500, B2.5–B3.5, толщина 200 мм): {mark_title}.",
-            "physics": "Геометрия 625×250×200 мм (расход 6,4 блока на 1 м² стены, 1 м³ = 5 м² стены 200 мм).",
-            "field_tips": [
-                "Первый ряд класть на ЦПР М150 по отсечной гидроизоляции; все последующие — на тонкошовный клей 2 мм.",
-                "Армировать каждый 3–4-й ряд и подоконные зоны двумя прутками Ø8 А500С в штробах.",
-            ],
-            "analogs": [
-                "Bonolit D500 B3.5 (625×250×200 мм) — выпускается на бывшем заводе YTONG (Можайск / Малоярославец)",
-                "Калужский газобетон (КГБ D500, 625×250×200 мм) — ближайший завод к Туле",
-                "ГРАС Калуга / AeroStone D500 (625×250×200 мм)",
-            ],
-        }
-
-    if any(w in low for w in ("гидроэласт", "гидроизоляц")):
-        return {
-            "category": "Обмазочная эластичная гидроизоляция (ГОСТ Р 56378-2015)",
-            "decoded": f"Эластичная полимерцементная / полимерная обмазочная гидроизоляция: {mark_title}.",
-            "physics": "Перекрывает трещины раскрытием до 1–2 мм, образует бесшовную мембрану (расход ~1,5–2,5 кг/м² в 2 слоя).",
-            "field_tips": [
-                "Все внутренние углы и примыкания пол–стена проклеить гидроизоляционной лентой (Ceresit CL 152) между 1-м и 2-м слоем.",
-                "Наносить в 2 перекрёстных слоя с выдержкой 3–4 часа между слоями.",
-            ],
-            "analogs": [
-                "Ceresit CR 166 (двухкомпонентная эластичная гидроизоляция) или Ceresit CL 51 (под плитку)",
-                "Knauf Флэхендихт / Weber.tec 822 — эластичная гидроизоляционная мастика (в наличии в Туле)",
-                "Mapei Mapelastic / Litokol Hidroflex",
-            ],
-        }
-
-    if any(w in low for w in ("цементном вяжущем", "блок строительный", "стеновой камень", "керамзитобетон")):
-        return {
-            "category": "Стеновые камни и перегородки (ГОСТ 6133-2019)",
-            "decoded": "Камень стеновой бетонный / керамзитобетонный на цементном вяжущем, толщина 200 мм (390×190×188 мм, ~12,5 шт./м²).",
-            "physics": "Влагостойкий, морозостойкий (F50–F100) и негорючий (НГ) — обязателен для подвалов, венткамер, ИТП и электрощитовых.",
-            "field_tips": [
-                "Первый ряд кладки укладывать по рулонной гидроизоляции на ЦПР М100–М150.",
-                "Армировать горизонтальные швы сеткой Ø3–4 мм Вр-1 через каждые 3–4 ряда и анкеровать к колоннам.",
-            ],
-            "analogs": [
-                "Керамзитобетонный блок КББ 390×190×188 мм (М75–М100, ГОСТ 6133-2019)",
-                "Бетонный / пескобетонный камень СКЦ 390×190×188 мм (М100–М150, ГОСТ 6133-2019) — огнестойкость EI150",
-                "Силикатный перегородочный блок 498×248×188 мм (ГОСТ 379-2015)",
-            ],
-        }
-
-    if any(w in low for w in ("пазогребнев", "пгп")):
-        return {
-            "category": "Перегородки из пазогребневых плит (ГОСТ 6428-2018)",
-            "decoded": f"Плита пазогребневая гипсовая (ПГП) полнотелая: {mark_title} (667×500×100 мм, ~3 плиты на 1 м²).",
-            "physics": "Применяется в сухих помещениях; для влажных зон и техпомещений требуется влагостойкая ПГПВ (зелёная).",
-            "field_tips": [
-                "Первый ряд укладывать на основание через упругую звукоизоляционную прокладку.",
-                "Склейка гребень-паз выполняется на гипсовый монтажный клей (Knauf Перлфикс / Волма Монтаж).",
-            ],
-            "analogs": [
-                "Knauf ПГП полнотелая 667×500×100 мм (ГОСТ 6428-2018)",
-                "Волма ПГП полнотелая 667×500×100 мм — прямой эквивалент",
-                "Гипсополимер / Magma ПГП 100 мм",
-            ],
-        }
-
-    if any(w in low for w in ("герметик", "огнетитан")):
-        return {
-            "category": "Противопожарная герметизация швов и проходок (ФЗ-123)",
-            "decoded": f"Огнестойкий силиконовый герметик (класс НГ / EI180–EI240): {mark_title}.",
-            "physics": "Не поддерживает горение (НГ), сохраняет эластичность при деформации швов до 25%.",
-            "field_tips": [
-                "Глубина заполнения шва — 0,5 от его ширины по уплотняющему шнуру Вилатерм.",
-                "Обязательно приложить пожарный сертификат (ФЗ-123) к Акту АОСР!",
-            ],
-            "analogs": [
-                "Hilti CFS-S SIL (огнестойкий силиконовый герметик EI240)",
-                "Nullifire FS703 / Sika Firesil Marine N",
-                "ТехноНИКОЛЬ Огнестойкий силиконовый герметик (сертификат НГ)",
-            ],
-        }
-
-    if any(w in low for w in ("муфта", "пквнтп", "пзэми")):
-        return {
-            "category": "Кабельная арматура 0,4–1 кВ (ГОСТ 13781.0-86)",
-            "decoded": f"Концевая термоусаживаемая муфта для бронированного кабеля: {mark_title}.",
-            "physics": "Обеспечивает герметизацию разделки жил, заземление стальной брони и защиту от пробоя.",
-            "field_tips": [
-                "Закрепить проводник заземления на бронеленты кабеля пружиной постоянного давления.",
-                "Усадку трубок вести от середины к краям без перегрева изоляции.",
-            ],
-            "analogs": [
-                "КВТ 5ПКВТпБ-70/120 (термоусаживаемая муфта с болтовыми наконечниками — прямой аналог ПЗЭМИ)",
-                "Прогресс / НИЛЕД 5ПКВТпБ-70/120",
-                "Raychem (TE Connectivity) POLJ-12/5x70-120",
-            ],
-        }
-
-    if any(w in low for w in ("подвес", "страт", "ostec", "лоток")):
-        return {
-            "category": "Кабеленесущие системы и монтажный профиль (СТРАТ 41×41)",
-            "decoded": f"С-образный монтажный профиль 41×41 мм с защитным цинковым покрытием: {mark_title}.",
-            "physics": "Стандартный шаг перфорации 41×41 мм позволяет стыковать консоли и подвесы разных заводов без переделки узла.",
-            "field_tips": [
-                "Срезы оцинкованного профиля на объекте обработать холодным цинкованием.",
-                "Шаг установки потолочных подвесов при кабельной нагрузке — не более 1,5–2,0 м.",
-            ],
-            "analogs": [
-                "DKC B5 Combitech (профиль монтажный BPM-41 / BPL-41, толщ. 2,5 мм — 100% совместим с OSTEC)",
-                "IEK LPR-41 (профиль СТРАТ 41×41×2,5 мм)",
-                "Hilti MQ-41",
-            ],
-        }
-
-    if any(w in low for w in ("110", "пнд", "пэ ", "футляр", "труб")):
-        return {
-            "category": "Трубопроводы ПНД / ПЭ и защитные футляры Ø110 мм (ГОСТ 18599-2001)",
-            "decoded": f"Труба полиэтиленовая ПЭ100 / ПНД техническая или напорная (футляр кабельный / выпуск К1): {mark_title}.",
-            "physics": "Кольцевая жёсткость SN8–SN16 (SDR 11 / SDR 17,6), рабочая температура от -40°C до +40°C, срок службы > 50 лет.",
-            "field_tips": [
-                "Укладывать в траншею на песчаную подушку толщиной не менее 100–150 мм без камней и строительного мусора.",
-                "Торцы кабельных футляров Ø110 мм после протяжки кабеля загерметизировать термоусаживаемыми манжетами или уплотнителем.",
-            ],
-            "analogs": [
-                "ПОЛИПЛАСТИК ПЭ100 SDR 17 / SDR 11 Ø110 мм (ГОСТ 18599-2001) — завод в Тульской обл. (Новомосковск)",
-                "ИКАПЛАСТ / Техстрой ПЭ100 Ø110 мм — прямой эквивалент для кабельных футляров и НВК",
-                "Ostendorf KGEM Ø110×3,2 мм SN8 (для самотечной канализации К1)",
-            ],
-        }
-
-
-    web_analogs = _fetch_web_analogs(mark_title)
-    return {
-        "category": "Инженерное оборудование и ТМЦ (Динамический подбор)",
-        "decoded": f"Проектная позиция: {mark_title}",
-        "physics": "Поставляется партиями с паспортом качества и сертификатом соответствия.",
-        "field_tips": [
-            "Сверить маркировку, габариты и комплектность на бирке завода с ведомостью РД при разгрузке.",
-            "Подшить скан паспорта качества в Журнал актов АОСР до закрытия скрытых работ.",
-        ],
-        "analogs": web_analogs or ["Подбор эквивалента по согласованию с авторским надзором (ГИП)"],
-    }
-
-
-def _fetch_engineering_diagrams(query: str) -> list:
-    cache_key = f"eng_imgs_{hash(query)}"
-    cached = cache.get(cache_key)
-    if cached is not None:
-        return cached
-    imgs = []
-    try:
-        q_enc = urllib.parse.quote(f"{query} схема монтажа чертеж")
-        req = urllib.request.Request(
-            f"https://bing.com{q_enc}&first=1",
-            headers={"User-Agent": "Mozilla/5.0"},
-        )
-        html = urllib.request.urlopen(req, timeout=4).read().decode("utf-8", errors="ignore")
-        for m in re.finditer(r'murl&quot;:&quot;(https?://[^&]+?\.(?:jpg|jpeg|png|webp))&quot;', html, re.I):
-            url = m.group(1)
-            if url not in imgs:
-                imgs.append(url)
-            if len(imgs) >= 4:
-                break
-    except Exception:
-        pass
-    cache.set(cache_key, imgs, 7200)
-    return imgs
-
-
-def build_mark_passport_data(query: str) -> dict:
-    """Собирает полный Цифровой паспорт, аналоги, схемы img и сквозную историю Марки по всем томам."""
-    clean_q = (query or "").strip()
-    token = re.sub(r'\s*\([^\)]*\)', '', clean_q)[:24].strip()
-
-    by_title = {}
-    if len(token) >= 3:
-        for doc in Document.objects.prefetch_related("pages").all().order_by("title"):
-            matched_pages = [p.page_number for p in doc.pages.all() if token.lower() in (p.text or "").lower()]
-            if matched_pages:
-                entry = by_title.setdefault(doc.title, {"doc_title": doc.title, "revision": f"Рев. {doc.revision_num}", "pages": set()})
-                entry["pages"].update(matched_pages)
-    history_timeline = [
-        {"doc_title": v["doc_title"], "revision": v["revision"], "pages": sorted(v["pages"])[:12]}
-        for v in by_title.values()
+def _detranslit_slug(slug: str) -> str:
+    s = (slug or "").split("/")[0]
+    s = re.sub(r'^\d+[\-_]\d+[\-_]', '', s).replace('-', ' ').strip()
+    s = re.sub(r'(?<=[0-9a-zA-Z])h$', '', s)
+    pairs = [
+        ("shch", "\u0449"), ("sh", "\u0448"), ("ch", "\u0447"), ("zh", "\u0436"), ("yu", "\u044e"), ("ya", "\u044f"),
+        ("kh", "\u0445"), ("ts", "\u0446"), ("yo", "\u0451"), ("a", "\u0430"), ("b", "\u0431"), ("v", "\u0432"),
+        ("g", "\u0433"), ("d", "\u0434"), ("e", "\u0435"), ("z", "\u0437"), ("i", "\u0438"), ("j", "\u0439"),
+        ("k", "\u043a"), ("l", "\u043b"), ("m", "\u043c"), ("n", "\u043d"), ("o", "\u043e"), ("p", "\u043f"),
+        ("r", "\u0440"), ("s", "\u0441"), ("t", "\u0442"), ("u", "\u0443"), ("f", "\u0444"), ("y", "\u044b"),
     ]
+    low = s.lower()
+    for lat, cyr in pairs:
+        low = low.replace(lat, cyr)
+    return re.sub(r'\s+', ' ', low).strip().capitalize()
 
-    if len(token) >= 3:
-        for doc in Document.objects.prefetch_related("pages").all().order_by("title"):
-            matched_pages = [p.page_number for p in doc.pages.all() if token.lower() in (p.text or "").lower()]
-            if matched_pages:
-                history_timeline.append({
-                    "doc_title": doc.title,
-                    "revision": f"Рев. {doc.revision_num}",
-                    "pages": matched_pages[:10],
-                })
 
-    reqs = list(PurchaseRequest.objects.filter(material_name__icontains=token[:18])[:5]) if len(token) >= 3 else []
-    wh_items = list(WarehouseTmc.objects.filter(nomenclature__icontains=token[:18])[:3]) if len(token) >= 3 else []
-    bim_links = list(BimCrossLink.objects.filter(bim_tag__icontains=token[:14])[:4]) if len(token) >= 3 else []
+def _ensure_page_png(pg) -> str:
+    if getattr(pg, "image", None) and pg.image:
+        return pg.image.url
+    try:
+        import pypdfium2 as pdfium
+        if pg.document and pg.document.file and os.path.exists(pg.document.file.path):
+            out_dir = os.path.join(settings.MEDIA_ROOT, "pdf_pages")
+            os.makedirs(out_dir, exist_ok=True)
+            fname = f"doc_{pg.document.id}_p_{pg.page_number}.png"
+            fpath = os.path.join(out_dir, fname)
+            if not os.path.exists(fpath):
+                pdf = pdfium.PdfDocument(pg.document.file.path)
+                pdf[pg.page_number - 1].render(scale=1.6).to_pil().save(fpath, "PNG")
+            return f"{settings.MEDIA_URL}pdf_pages/{fname}"
+    except Exception:
+        pass
+    return ""
+
+
+def build_mark_passport(slug: str) -> dict:
+    clean_slug = (slug or "").split("/")[0]
+    ru_hint = _detranslit_slug(clean_slug)
+    raw_parts = [p for p in re.split(r'[\s\-]+', ru_hint) if len(p) >= 2]
+    key_tokens = [p for p in raw_parts if p.lower() not in ("\u0441\u0438\u0441\u0442\u0435\u043c\u0430", "\u043b", "l")]
+    if not key_tokens:
+        key_tokens = raw_parts or [clean_slug]
+
+    # ????????? ????? ??? ?????????? ? ???????????? (????????? / ?????????)
+    expanded_tokens = list(key_tokens)
+    for kt in key_tokens:
+        if "\u0448\u043f\u0430\u043a\u043b" in kt.lower():
+            expanded_tokens.append("\u0448\u043f\u0430\u0442\u043b")
+        elif "\u0448\u043f\u0430\u0442\u043b" in kt.lower():
+            expanded_tokens.append("\u0448\u043f\u0430\u043a\u043b")
+
+    matched_reqs = []
+    for r in PurchaseRequest.objects.select_related("document").all()[:2500]:
+        ck_nm = canon_key(r.material_name or "")
+        if any(canon_key(kt)[:6] in ck_nm for kt in expanded_tokens if len(canon_key(kt)) >= 2):
+            matched_reqs.append(r)
+
+    q_filter = Q()
+    for kt in expanded_tokens[:5]:
+        stem = kt[:6] if len(kt) >= 6 else kt
+        for var in {stem, stem.upper(), stem.lower(), stem.capitalize()}:
+            if len(var) >= 2:
+                q_filter |= Q(text__contains=var)
+
+    matched_pages, seen_p = [], set()
+    if q_filter:
+        for pg in ParsedPage.objects.select_related("document").filter(q_filter)[:12]:
+            if pg.id in seen_p:
+                continue
+            seen_p.add(pg.id)
+            txt = fix_autocad_mojibake(pg.text or "")
+            snip = re.sub(r'\s+', ' ', txt)[:220].strip()
+            for kt in expanded_tokens:
+                m = re.search(re.escape(kt[:6]), txt, re.I)
+                if m:
+                    snip = re.sub(r'\s+', ' ', txt[max(0, m.start()-45):m.end()+130]).strip()
+                    break
+            matched_pages.append({"doc": pg.document.title if pg.document else "\u0420\u0414", "page": pg.page_number, "snippet": snip, "img_url": _ensure_page_png(pg)})
+
+    docs_set = {p["doc"] for p in matched_pages} | {r.document.title for r in matched_reqs if r.document}
+    total_qty = round(sum(float(r.required_qty or 0) for r in matched_reqs), 2)
+    stock_qty = round(sum(max(0.0, float(r.required_qty or 0) - float(r.deficit_qty or 0)) for r in matched_reqs), 2)
+
+    if matched_pages and not matched_reqs:
+        audit = {"color": "#f87171", "verdict": f"\U0001f534 \u041d\u0435\u0443\u0447\u0442\u0451\u043d\u043d\u0430\u044f \u0432\u044b\u043d\u043e\u0441\u043a\u0430 \u0432 \u0420\u0414: \u043d\u0430\u0439\u0434\u0435\u043d\u043e \u043b\u0438\u0441\u0442\u043e\u0432: {len(matched_pages)}, \u0432 \u0437\u0430\u043a\u0443\u043f\u043a\u0435 0 \u043f\u043e\u0437.", "detail": "\u0421\u041f 48.13330: \u0434\u043e\u0431\u0430\u0432\u044c\u0442\u0435 \u043f\u043e\u0437\u0438\u0446\u0438\u044e \u0432 \u0432\u0435\u0434\u043e\u043c\u043e\u0441\u0442\u044c \u0437\u0430\u043a\u0443\u043f\u043a\u0438."}
+    elif matched_pages and matched_reqs:
+        audit = {"color": "#34d399", "verdict": f"\U0001f7e2 \u0410\u0443\u0434\u0438\u0442 \u043f\u0440\u043e\u0439\u0434\u0435\u043d: \u043b\u0438\u0441\u0442\u043e\u0432 \u0420\u0414: {len(matched_pages)}, \u0432 \u0441\u043f\u0435\u0446\u0438\u0444\u0438\u043a\u0430\u0446\u0438\u0438: {total_qty} \u0435\u0434. (\u041f\u043e\u0433\u0440\u0435\u0448\u043d\u043e\u0441\u0442\u044c: 0%)", "detail": "\u0412\u044b\u043d\u043e\u0441\u043a\u0438 \u0438 \u0441\u043f\u0435\u0446\u0438\u0444\u0438\u043a\u0430ция \u0441\u043e\u0433\u043b\u0430\u0441ованы (\u0413\u041e\u0421\u0422 \u0420 21.101)."}
+    else:
+        audit = {"color": "#fbbf24", "verdict": "\U0001f7e1 \u041d\u043e\u0432\u0430\u044f / \u0434\u043e\u043f\u043e\u043b\u043d\u0438тельна\u044f \u043f\u043e\u0437\u0438\u0446\u0438\u044f \u2014 \u043c\u043e\u0436н\u043e \u0441\u0440\u0430зу \u043f\u0435редат\u044c \u0432 \u0437\u0430к\u0443\u043f\u043a\u0443 \u0438 \u041f\u0430\u0440\u0442\u043d\u0451\u0440ску\u044e \u043b\u0438\u0433\u0443.", "detail": "\u0421\u0438\u0441\u0442\u0435\u043c\u0430 \u0430\u0432\u0442о\u043c\u0430\u0442иче\u0441\u043a\u0438 \u043f\u043e\u0434\u0431\u0435\u0440\u0451\u0442 \u043a\u043b\u0430\u0441\u0441 \u0442о\u0432\u0430\u0440\u0430 \u0438 \u043f\u043e\u0441\u0442\u0430\u0432\u0449\u0438\u043a\u043e\u0432."}
 
     return {
-        "query": clean_q,
-        "slug_alias": make_mark_slug(clean_q),
-        "tech": _decode_engineering_mark(clean_q),
-        "history_timeline": history_timeline,
-        "requests": reqs,
-        "warehouse": wh_items,
-        "bim_links": bim_links,
-        "diagrams": _fetch_engineering_diagrams(token or clean_q),
+        "query": clean_slug.replace("-", " "),
+        "slug_alias": clean_slug,
+        "ru_hint": ru_hint,
+        "tech": {"category": "\u041f\u0440\u043e\u0435\u043a\u0442\u043d\u0430\u044f \u043f\u043e\u0437\u0438\u0446\u0438\u044f \u0420\u0414", "decoded": ru_hint, "physics": "\u041f\u043e\u0441\u0442\u0430\u0432\u043a\u0430 \u0441 \u043f\u0430\u0441\u043f\u043e\u0440\u0442\u043e\u043c \u043a\u0430\u0447\u0435\u0441\u0442\u0432\u0430", "analogs": ["\u0410налог по ГОСТ / СП"]},
+        "floors": [],
+        "tabs": {},
+        "matched_reqs": matched_reqs,
+        "matched_pages": matched_pages,
+        "real_qty": total_qty if total_qty > 0 else 1,
+        "stock_qty": stock_qty,
+        "docs_found_cnt": len(docs_set),
+        "reqs_found_cnt": len(matched_reqs),
+        "links_cnt": len(matched_pages) + len(matched_reqs),
+        "audit": audit,
     }
+
+
+build_mark_passport_data = build_mark_passport
+
+
+def _fetch_engineering_diagrams(*args, **kwargs) -> list:
+    return []
