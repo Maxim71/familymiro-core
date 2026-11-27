@@ -1179,6 +1179,10 @@ def project_totals_and_analogs_api(request):
         variants = ["Ду ", "Ду1", "Ду2", "Ду3", "Ду4", "Ду5", "Ду6", "Ду8", "DN", "Фланец"]
     else:
         variants = _norm_x_variants(q)
+        for w in [w.strip() for w in q.split() if len(w.strip()) >= 5]:
+            for wc in (w, w.lower(), w.capitalize(), w.upper()):
+                if wc not in variants:
+                    variants.append(wc)
         stem = q[:max(4, len(q) - 2)] if len(q) >= 5 else q
         for sc in (stem, stem.lower(), stem.capitalize(), q.lower(), q.capitalize()):
             if sc and sc not in variants:
@@ -1230,7 +1234,7 @@ def project_totals_and_analogs_api(request):
         txt = fix_autocad_mojibake(pg.text or "")
         txt = re.sub(r'(?:\b\d{2}\.\d{2}\b\s*){2,}', ' ', txt)
         txt = re.sub(r'(?:\b\d\b\s*){4,}', ' ', txt)
-        m = re.search(r'(?:\bДу|\bDN)\s*\d{2,4}', txt) if is_du_query else re.search(re.escape(variants), txt, re.I)
+        m = re.search(r'(?:\b\u0414\u0443|\bDN)\s*\d{2,4}', txt) if is_du_query else re.search("|".join(re.escape(v) for v in variants[:6] if v), txt, re.I)
         if not m:
             continue
         snip = re.sub(r'\s+', ' ', txt[max(0, m.start() - 30): m.end() + 95]).strip()

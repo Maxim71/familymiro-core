@@ -22,7 +22,7 @@
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
         <strong style="color:#fbbf24;font-size:14px;">🧮 Сводка по проекту (Заложено / Запасено / Заказать + Аналог) и Инвентарь прорабов:</strong>
         <div style="display:flex;gap:6px;flex-wrap:wrap;">
-            <input type="text" id="top-total-q" placeholder="Минвата, Щебень, Розетка, Смеситель..." style="background:#1e293b;color:#f8fafc;border:1px solid #f59e0b;border-radius:6px;padding:6px 10px;font-size:12.5px;min-width:250px;">
+            <input type="text" id="top-total-q" onkeydown="if(event.key==='Enter')runTopTotals()" placeholder="Минвата, Щебень, Розетка, Смеситель..." style="background:#1e293b;color:#f8fafc;border:1px solid #f59e0b;border-radius:6px;padding:6px 10px;font-size:12.5px;min-width:250px;">
             <button type="button" onclick="runTopTotals()" style="background:#f59e0b;color:#451a03;border:none;border-radius:6px;padding:6px 14px;font-weight:700;font-size:12.5px;cursor:pointer;">🔍 Проверить объём и аналог</button>
             <button type="button" onclick="const b=document.getElementById('foreman-inv-box');b.style.display=b.style.display==='none'?'block':'none';loadForemanInv();" style="background:#38bdf8;color:#082f49;border:none;border-radius:6px;padding:6px 12px;font-weight:700;font-size:12px;cursor:pointer;">🛠️ Инвентарь за прорабом (ИНВ)</button>
         </div>
