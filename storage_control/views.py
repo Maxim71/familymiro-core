@@ -1427,6 +1427,9 @@ def partner_league_view(request):
     import os, json
     from django.conf import settings
     from django.shortcuts import render, redirect
+    from storage_control.services.price_relay import step_price_relay, import_dealer_csv
+    from storage_control.services.quantum_normalizer import canon_key
+
     m_path = os.path.join(settings.BASE_DIR, "partner_league_matrix.json")
     default_matrix = [
         {"commodity_class": "Теплоизоляция и ленты (Energoflex / K-Flex)", "partners": "РОЛС Изомаркет, ТеплоКомплект", "discount": "14% B2B", "logistics": "Борт / Самовывоз МО", "payment": "Безнал НДС 20% + УПД"},
@@ -1434,12 +1437,19 @@ def partner_league_view(request):
         {"commodity_class": "Арматура и фланцы (АДЛ / Ридан / LD)", "partners": "АДЛ Продакшн, СТМ-Комплект", "discount": "15% опт", "logistics": "Манипулятор / Сборный", "payment": "Безнал НДС + Паспорт"},
     ]
     matrix = json.load(open(m_path, encoding="utf-8")) if os.path.exists(m_path) else default_matrix
+    imported_cnt = 0
     if request.method == "POST":
-        c_cls, pts = (request.POST.get("commodity_class") or "").strip(), (request.POST.get("partners") or "").strip()
-        if c_cls and pts:
-            matrix.insert(0, {"commodity_class": c_cls, "partners": pts, "discount": request.POST.get("discount", "12% B2B"), "logistics": request.POST.get("logistics", "Борт / Самовывоз"), "payment": "Безнал НДС 20% + УПД"})
-            json.dump(matrix, open(m_path, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
-        return redirect(request.get_full_path())
-    from storage_control.services.price_relay import step_price_relay
+        if request.FILES.get("dealer_csv"):
+            imported_cnt = import_dealer_csv(request.FILES["dealer_csv"].read())
+        else:
+            c_cls, pts = (request.POST.get("commodity_class") or "").strip(), (request.POST.get("partners") or "").strip()
+            if c_cls and pts:
+                matrix.insert(0, {"commodity_class": c_cls, "partners": pts, "discount": request.POST.get("discount", "12% B2B"), "logistics": request.POST.get("logistics", "Борт / Самовывоз"), "payment": "Безнал НДС 20% + УПД"})
+                json.dump(matrix, open(m_path, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+                return redirect(request.get_full_path())
+
     relay_info = step_price_relay(10) if request.GET.get("relay") == "1" else step_price_relay(0)
-    return render(request, "storage_control/partner_league.html", {"matrix": matrix, "query": (request.GET.get("q") or "").strip(), "qty": (request.GET.get("qty") or "").strip(), "relay": relay_info})
+    q = (request.GET.get("q") or "").strip()
+    qty = (request.GET.get("qty") or "").strip()
+    matched_price = relay_info["prices"].get(canon_key(q), {}) if q else {}
+    return render(request, "storage_control/partner_league.html", {"matrix": matrix, "query": q, "qty": qty, "relay": relay_info, "matched_price": matched_price, "imported_cnt": imported_cnt})
