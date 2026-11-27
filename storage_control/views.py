@@ -1440,4 +1440,6 @@ def partner_league_view(request):
             matrix.insert(0, {"commodity_class": c_cls, "partners": pts, "discount": request.POST.get("discount", "12% B2B"), "logistics": request.POST.get("logistics", "Борт / Самовывоз"), "payment": "Безнал НДС 20% + УПД"})
             json.dump(matrix, open(m_path, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
         return redirect(request.get_full_path())
-    return render(request, "storage_control/partner_league.html", {"matrix": matrix, "query": (request.GET.get("q") or "").strip(), "qty": (request.GET.get("qty") or "").strip()})
+    from storage_control.services.price_relay import step_price_relay
+    relay_info = step_price_relay(10) if request.GET.get("relay") == "1" else step_price_relay(0)
+    return render(request, "storage_control/partner_league.html", {"matrix": matrix, "query": (request.GET.get("q") or "").strip(), "qty": (request.GET.get("qty") or "").strip(), "relay": relay_info})
