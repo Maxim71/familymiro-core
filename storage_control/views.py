@@ -1,6 +1,8 @@
 
 def _build_foundation_to_handover_design(q: str, totals_by_unit: dict) -> dict:
     low = (q or "").lower()
+    if any(k in low for k in ("ркдм", "клад", "клапан", "решетк")):
+        return {"stage": "Этап 4 / 6 · Противодымная вентиляция (ПВ / ДУ / ПД)", "before": "Монтаж шахт дымоудаления и проемов в огнестойких перегородках", "supply": "Заказ клапанов с указанием сечения (1040х840 / 700х600) и напряжения привода (220В/24В)", "companion": "Ответные фланцы, огнезащитный герметик, термолента, гибкая вставка, крепёж", "after": "Сертификат пожарной безопасности + акт испытаний срабатывания от АПС + АОСР № 344/пр"}
     if any(k in low for k in ("фундам", "бетон", "армат", "а500", "котлов", "сваи", "плита")):
         return {"stage": "Этап 1 / 6 · Фундамент (КЖ0)", "before": "Геодезия → Котлован → Подбетонка В7.5 → Гидроизоляция", "supply": "Завоз по захваткам бетонирования (миксеры + прогрев)", "companion": "Фиксаторы слоя, вязальная проволока, опалубка, вибраторы", "after": "Паспорт бетона/металла + кубики 7/28 сут + АОСР № 344/пр"}
     if any(k in low for k in ("кровл", "техноэласт", "пламя", "рама", "балк")):
@@ -1339,15 +1341,21 @@ def project_totals_and_analogs_api(request):
     canon_q_tokens = [tk for tk in canonicalize_spec_text(q).split() if len(tk) >= 2]
     all_reqs = list(PurchaseRequest.objects.select_related("document").order_by("id")[:1500])
     reqs = [r for r in all_reqs if all(tk in canonicalize_spec_text(r.material_name or "") for tk in canon_q_tokens)][:200]
-    if not reqs and len(q) >= 4:
-        for pg in ParsedPage.objects.select_related("document").filter(text__icontains=q)[:10]:
-            for raw_ln in fix_autocad_mojibake(pg.text or "").splitlines():
-                if q.lower() in raw_ln.lower():
-                    m_q = re.search(r'(?:\u0448\u0442|\u043a\u043e\u043c\u043f\u043b|\u043f\.\u043c|\u043c2|\u043c\u00b2|\u043a\u0433|\u043c)\.?\s+(\d+(?:[\.,]\d+)?)\b', raw_ln, re.I)
-                    if m_q:
-                        pr_new = PurchaseRequest.objects.create(document=pg.document, material_name=re.sub(r'\s+', ' ', raw_ln).strip()[:150], required_qty=float(m_q.group(1).replace(",", ".")), deficit_qty=float(m_q.group(1).replace(",", ".")), unit="\u0448\u0442.", floor_info=f"\u041b\u0438\u0441\u0442 \u2116{pg.page_number}")
+    if not reqs and len(q) >= 3:
+        from storage_control.services.quantum_normalizer import canon_key
+        ck_q = canon_key(q)
+        q_stem = q.split() if " " in q else q
+        for pg in ParsedPage.objects.select_related("document").filter(text__icontains=q_stem[:6])[:15]:
+            lines = [re.sub(r'\s+', ' ', l).strip() for l in fix_autocad_mojibake(pg.text or "").splitlines() if l.strip()]
+            for idx_l, raw_ln in enumerate(lines):
+                pair_ln = raw_ln + " " + (lines[idx_l + 1] if idx_l + 1 < len(lines) else "")
+                if ck_q in canon_key(pair_ln):
+                    m_q = re.search(r'(?:\u0448\u0442|\u043a\u043e\u043c\u043f\u043b|\u043f\.\u043c|\u043c2|\u043c\u00b2|\u043a\u0433|\u043c)\.?\s+(\d+(?:[\.,]\d+)?)\b', pair_ln, re.I)
+                    qty_val = float(m_q.group(1).replace(",", ".")) if m_q else 1.0
+                    if not PurchaseRequest.objects.filter(document=pg.document, material_name__iexact=raw_ln[:150], floor_info__contains=f"\u2116{pg.page_number}").exists():
+                        pr_new = PurchaseRequest.objects.create(document=pg.document, material_name=raw_ln[:150], required_qty=qty_val, deficit_qty=qty_val, unit="\u0448\u0442.", floor_info=f"\u0421истема ПВ/ОВ · Лист \u2116{pg.page_number}")
                         reqs.append(pr_new)
-                        break
+                    break
     grouped, totals_by_unit, blocked_items = {}, {}, []
     for r in reqs:
         raw_nm = (r.material_name or "").strip()
