@@ -13,6 +13,40 @@ def _engineering_sort_key(item: dict) -> tuple:
     area_score = -(nums[0] * nums[1]) if len(nums) >= 2 else (-(nums[0] ** 2) if nums else 0)
     return (lvl, kind, area_score, nm)
 
+
+def _build_system_assembly_info(name: str, zone: str, doc_title: str) -> dict:
+    import re
+    low_all = f"{name} {zone} {doc_title}".lower()
+    m_sys = re.search(r'(?:Система|КЛ|ВРУ|ЩР)\s*[\-]?[\u0410-\u042fA-Za-z0-9\.\-]{1,12}', f"{name} {zone}")
+
+    if "подвал" in low_all or "итп" in low_all:
+        loc_tag = "Подвал / ИТП"
+    elif any(k in low_all for k in ("кровл", "пламя стоп", "техноэласт")):
+        loc_tag = "Кровля здания"
+    elif any(k in low_all for k in ("гп", "нсс", "транш")):
+        loc_tag = "Наружные сети / ГП"
+    else:
+        loc_tag = "Этажи и помещения здания"
+
+    if "ов" in low_all or "воздух" in low_all or "вент" in low_all:
+        sys_label = m_sys.group(0) if m_sys else "Система ОВ (Вентиляция)"
+        pnr_label, pnr_unit, pnr_target = "ПНР расход", "м³/ч", 2940
+    elif "вк" in low_all or "фланец" in low_all or "кран" in low_all or "труб" in low_all:
+        sys_label = m_sys.group(0) if m_sys else "Система ВК / Теплоснабжение"
+        pnr_label, pnr_unit, pnr_target = "Опрессовка", "бар", 16
+    elif "эс" in low_all or "кабел" in low_all or "лоток" in low_all or "профил" in low_all:
+        sys_label = m_sys.group(0) if m_sys else "Система ЭС / Электроснабжение"
+        pnr_label, pnr_unit, pnr_target = "Изоляция", "МОм", 1000
+    else:
+        sys_label = m_sys.group(0) if m_sys else "Конструктив / Кровля / АР"
+        pnr_label, pnr_unit, pnr_target = "Контроль слоя", "мм", 100
+
+    origin_phrase = f"Принадлежит системе «{sys_label}» · Зона: {loc_tag} ({doc_title} · {zone})"
+    flow_phrase = f"Закуплено и принято по УПД → Выдано на участок ({loc_tag}, М-11): монтаж пошёл · Срок и отчёт прораба ведутся"
+    mismatch_reasons = "Точки над i при несоответствии: 1) Сверка габарита/сечения/Ду с узлом РД; 2) Проверка рабочих параметров (давление/расход/напряжение); 3) Комплектность по УПД → авто-акт ТОРГ-2."
+    return {"sys_origin": origin_phrase, "sys_flow": flow_phrase, "sys_mismatch": mismatch_reasons, "pnr_label": pnr_label, "pnr_unit": pnr_unit, "pnr_target": pnr_target}
+
+
 def _build_item_tech_passport(name: str) -> dict:
     import re
     low = (name or "").lower()
@@ -1250,7 +1284,7 @@ def project_totals_and_analogs_api(request):
         clean_nm, u, needs_du = normalize_unit_and_name(raw_nm, r.unit or "шт.")
         qty = float(r.required_qty or 0)
         if needs_du:
-            blocked_items.append({"req_num": f"ЗМ-{r.id:04d}", "mark_name": f"{clean_nm} [⛔ БЛОК ЗАКАЗА: требуется уточнение Ду]", "qty": qty, "unit": u, "work_cascade": build_work_sequence_cascade(clean_nm), **_build_item_tech_passport(clean_nm), "analog_item": _suggest_analog_for_material(clean_nm), "doc_title": r.document.title if r.document else "РД"})
+            blocked_items.append({"req_num": f"ЗМ-{r.id:04d}", "mark_name": f"{clean_nm} [⛔ БЛОК ЗАКАЗА: требуется уточнение Ду]", "qty": qty, "unit": u, "work_cascade": build_work_sequence_cascade(clean_nm), **_build_item_tech_passport(clean_nm), **_build_system_assembly_info(clean_nm, _clean_zone(r.floor_info), r.document.title if r.document else "РД"), "analog_item": _suggest_analog_for_material(clean_nm), "doc_title": r.document.title if r.document else "РД"})
             continue
 
         merge_key = f"{clean_nm.lower()} | {u}"
