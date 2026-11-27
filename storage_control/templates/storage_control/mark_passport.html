@@ -1,424 +1,73 @@
-﻿{% load static %}
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Паспорт Марки: {{ query }}</title>
-    <link rel="stylesheet" href="{% static 'storage_control/css/mark_passport.css' %}">
-</head>
-<body>
-<div style="display:flex;align-items:center;gap:10px;background:#0f172a;border:1px solid #334155;border-radius:10px;padding:8px 12px;margin-bottom:12px;font-size:12px;">
-    <div style="width:44px;height:44px;background:#1e293b;border:1px solid #38bdf8;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#38bdf8;font-weight:800;font-size:12px;" id="custom-qr-slot" data-qr-slug="{{ slug_alias }}" data-qr-title="{{ ru_hint|default:query }}" data-qr-url="{{ request.build_absolute_uri }}">QR</div>
-    <div><strong style="color:#38bdf8;">📱 QR-бирка для прораба и склада</strong><div style="color:#94a3b8;margin-top:2px;">Наведите камеру телефона на лист или паллету — откроется эта карточка на стройплощадке.</div></div>
+<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8"><title>Паспорт Марки: {{ ru_hint|default:query }}</title>
+<style>
+body{background:#020617;color:#f8fafc;font-family:system-ui,sans-serif;margin:0;padding:18px}.wrap{max-width:1180px;margin:0 auto}
+.card{background:#0f172a;border:1px solid #334155;border-radius:12px;padding:15px;margin-bottom:14px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:12px 0}
+.kpi{background:#0b1120;border:1px solid #334155;border-radius:10px;padding:12px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.tab-btn{background:#1e293b;color:#cbd5e1;border:1px solid #475569;border-radius:8px;padding:8px 14px;font-weight:700;cursor:pointer}
+.tab-btn.active{background:#f59e0b;color:#020617;border-color:#f59e0b}
+.pane{display:none}.pane.active{display:block}
+</style></head><body><div class="wrap">
+<div class="card" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <div id="custom-qr-slot" data-qr-slug="{{ slug_alias }}" data-qr-title="{{ ru_hint|default:query }}" data-qr-url="{{ request.build_absolute_uri }}" style="width:52px;height:52px;background:#1e293b;border:2px solid #38bdf8;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#38bdf8;font-weight:800;font-size:13px;">QR</div>
+    <div><div style="color:#38bdf8;font-size:12px;font-weight:700;">Слот под собственный QR-генератор · Паспорт марки / системы</div>
+    <h2 style="margin:2px 0 0;color:#f8fafc;">{{ ru_hint|default:query }}</h2></div>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    <a href="/" style="background:#1e293b;color:#38bdf8;border:1px solid #38bdf8;border-radius:8px;padding:8px 12px;text-decoration:none;font-weight:700;">← В ведомость ПТО</a>
+    <a href="/partner-league/?q={{ ru_hint|default:query|urlencode }}&qty={{ real_qty }}" style="background:#10b981;color:#052e16;border-radius:8px;padding:8px 14px;text-decoration:none;font-weight:700;">🤝 В Партнёрскую лигу →</a>
+  </div>
 </div>
-<div class="mp-container">
-    <div class="mp-topbar">
-        <a href="/" class="mp-back">← Вернуться в штабную ведомость ПТО</a>
-        <div class="mp-slug-box">
-            <span>{{ request.scheme }}://{{ request.get_host }}/marka/{{ slug_alias }}/</span>
-            <button type="button" id="mp-copy-slug" class="mp-copy-btn" data-url="{{ request.scheme }}://{{ request.get_host }}/marka/{{ slug_alias }}/">📋 Копировать ссылку</button>
-        </div>
-    </div>
 
-    <div class="mp-hero">
-        <span class="mp-badge">{{ tech.category }}</span>
-        <h1 class="mp-title">{{ ru_hint|default:query }}</h1>
-        <p><strong>Расшифровка:</strong> {{ tech.decoded }}</p>
-        <p style="color: var(--text-muted); margin-bottom: 0;"><strong>Инженерная физика:</strong> {{ tech.physics }}</p>
-
-        <div class="mp-kpi-strip">
-            <div class="mp-kpi">
-                <div class="mp-kpi-label">Найдено томов РД</div>
-                <div class="mp-kpi-val val-ok">{{ history_timeline|length }} том.</div>
-            </div>
-            <div class="mp-kpi">
-                <div class="mp-kpi-label">Позиций в закупке</div>
-                <div class="mp-kpi-val val-warn">{{ requests|length }} поз.</div>
-            </div>
-            <div class="mp-kpi">
-                <div class="mp-kpi-label">Остаток на складе</div>
-                <div class="mp-kpi-val val-ok">{% if warehouse %}{{ warehouse.0.stock_balance }} {{ warehouse.0.unit }}{% else %}0 ед.{% endif %}</div>
-            </div>
-            <div class="mp-kpi">
-                <div class="mp-kpi-label">BIM-сверки узлов</div>
-                <div class="mp-kpi-val {% if bim_links %}val-err{% else %}val-ok{% endif %}">{{ bim_links|length }} связ.</div>
-            </div>
-        </div>
-    </div>
-
-    {% if building_twin.floors %}
-<div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:8px 12px;background:#0f172a;border:1px solid #1e293b;border-radius:10px;margin-bottom:12px;font-size:12px;">
-    <strong style="color:#38bdf8;">🏢 Привязка к этажу (для электрики / сетей):</strong>
-    {% for fl in building_twin.floors %}
-        <span style="background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:6px;padding:3px 9px;">{{ fl.floor_label }} ({{ fl.rooms|length }} комн.)</span>
-    {% endfor %}
+<div class="kpis">
+  <div class="kpi"><div style="color:#94a3b8;font-size:12px;">Найдено томов РД</div><div style="color:#34d399;font-size:22px;font-weight:800;">{{ docs_found_cnt }} том.</div></div>
+  <div class="kpi"><div style="color:#94a3b8;font-size:12px;">Позиций в спецификации</div><div style="color:#fbbf24;font-size:22px;font-weight:800;">{{ reqs_found_cnt }} поз.</div></div>
+  <div class="kpi"><div style="color:#94a3b8;font-size:12px;">Остаток на складе</div><div style="color:#38bdf8;font-size:22px;font-weight:800;">{{ stock_qty }} ед.</div></div>
+  <div class="kpi"><div style="color:#94a3b8;font-size:12px;">Связей с чертежами РД</div><div style="color:#a855f7;font-size:22px;font-weight:800;">{{ links_cnt }} связ.</div></div>
 </div>
-{% endif %}
-<div class="mp-tabs">
-        <button type="button" class="mp-tab active" data-target="pane-tech">🛠️ Монтаж и Калькулятор смен</button>
-        <button type="button" class="mp-tab" data-target="pane-history">📜 История по томам и BIM ({{ history_timeline|length }})</button>
-        <button type="button" class="mp-tab" data-target="pane-drawings">📐 Схемы узлов и чертежи ({{ milled_cuts|length|add:turtle_plans|length }})</button>
-        <button type="button" class="mp-tab" data-target="pane-photos">📸 Фото УПД, ИД и Каталог 1С ({{ field_photos|length }})</button>
-    </div>
 
-    <div id="pane-tech" class="mp-pane active">
-        <div class="mp-grid-2">
-            <div class="mp-card">
-                <h3>🛠️ Полевая шпаргалка монтажника</h3>
-                <ul>
-                    {% for tip in tech.field_tips %}<li style="margin-bottom:8px;">{{ tip }}</li>{% endfor %}
-                </ul>
-                <h4 style="color: var(--accent-gold);">🔄 Прямые аналоги без пересогласования:</h4>
-                <ul>
-                    {% for an in tech.analogs %}<li>{{ an }}</li>{% endfor %}
-                </ul>
-            </div>
+<div class="tabs">
+  <button class="tab-btn active" onclick="openTab('t-sheets',this)">📐 Листы чертежей РД ({{ matched_pages|length }})</button>
+  <button class="tab-btn" onclick="openTab('t-spec',this)">📋 Спецификация и Закупка ({{ matched_reqs|length }})</button>
+  <button class="tab-btn" onclick="openTab('t-work',this)">🛠️ Монтаж и Калькулятор смен</button>
+  <button class="tab-btn" onclick="openTab('t-docs',this)">📄 АОСР, УПД и 1С</button>
+</div>
 
-            <div class="mp-card">
-                <h3>🧮 Живой калькулятор объёма, запаса и смен</h3>
-                <div class="mp-calc-row">
-                    <label>Объём: <input type="number" id="mp-calc-qty" class="mp-input" value="{% if requests %}{{ requests.0.required_qty|stringformat:'.2f' }}{% else %}100{% endif %}"></label>
-                    <label>Запас %: <input type="number" id="mp-calc-reserve" class="mp-input" value="5"></label>
-                    <label>Норма/см.: <input type="number" id="mp-calc-rate" class="mp-input" value="40"></label>
-                </div>
-                <div id="mp-calc-output" class="mp-calc-result"></div>
-            </div>
-        </div>
-    </div>
+<div id="t-sheets" class="pane active card">
+  {% for p in matched_pages %}
+  <div style="background:#0b1120;border:1px solid #334155;border-radius:8px;padding:12px;margin-bottom:10px;">
+    <div style="color:#38bdf8;font-weight:700;">📐 {{ p.doc }} — Лист №{{ p.page }}</div>
+    <div style="color:#cbd5e1;font-size:12.5px;margin:4px 0;">{{ p.snippet }}</div>
+    {% if p.img_url %}<img src="{{ p.img_url }}" style="max-width:100%;border-radius:6px;border:1px solid #475569;margin-top:6px;">{% endif %}
+  </div>
+  {% empty %}<div style="color:#94a3b8;">По данному шифру листов в загруженных томах пока нет.</div>{% endfor %}
+</div>
 
-    <div id="pane-history" class="mp-pane">
-        <div class="mp-grid-2">
-            <div class="mp-card">
-                <h3>📜 Хронология Марки в томах проекта</h3>
-                {% for h in history_timeline %}
-                    <div style="padding:8px 0; border-bottom:1px solid var(--border);">
-                        <strong>{{ h.doc_title }}</strong> ({{ h.revision }}) — Листы: <span style="color:var(--accent-gold);">{{ h.pages|join:", " }}</span>
-                    </div>
-                {% empty %}
-                    <p style="color: var(--text-muted);">Совпадений в других томах пока не найдено.</p>
-                {% endfor %}
-            </div>
+<div id="t-spec" class="pane card">
+  {% for r in matched_reqs %}
+  <div style="padding:8px 0;border-bottom:1px solid #1e293b;display:flex;justify-content:space-between;gap:8px;">
+    <span><strong>{{ r.material_name }}</strong> <span style="color:#fbbf24;">[{{ r.document.title }} · {{ r.floor_info }}]</span></span>
+    <strong style="color:#34d399;">{{ r.required_qty }} {{ r.unit }}</strong>
+  </div>
+  {% empty %}<div style="color:#94a3b8;">Прямых строк в закупке пока нет.</div>{% endfor %}
+</div>
 
-            <div class="mp-card">
-                <h3>🔗 Сквозные BIM-связи и коллизии из БД</h3>
-                {% for b in bim_links %}
-                    <div class="mp-bim-item {% if b.link_status == 'COLLISION' %}bim-collision{% else %}bim-matched{% endif %}">
-                        <strong>{{ b.bim_tag }}</strong><br>{{ b.engineering_note }}
-                    </div>
-                {% empty %}
-                    <p style="color: var(--text-muted);">Коллизий по этой марке не зафиксировано.</p>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-        <div id="pane-drawings" class="mp-pane">
-            <div class="mp-card" style="margin-bottom:14px;border-left:4px solid #38bdf8;">
-                <h3 style="margin:0 0 4px 0;">🐢 Черепаха CAD — Поэтажный разрез, Схема раздела и Закупка на этап</h3>
-                <p style="margin:0 0 10px 0;font-size:12px;color:#94a3b8;"><strong>Зачем этот блок: показывает чертежи из РД, CAD-схему узла и закупку на этап.</strong> Зачем этот блок: показывает чертежи из РД, CAD-схему узла и закупку на этап.</p>
-                <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;">
-                    {% for fc in project_floor_cuts.floor_cuts %}
-                        <button type="button" class="mp-copy-btn" onclick="document.querySelectorAll('.t-fl-cut').forEach(e=>e.style.display='none');document.getElementById('tfl-{{ forloop.counter }}').style.display='block';">{{ fc.floor_label }} (Лист №{{ fc.page_number }})</button>
-                    {% endfor %}
-                    <button type="button" class="mp-copy-btn" onclick="document.querySelectorAll('.bim-p').forEach(e=>e.style.display='none');document.getElementById('bim-sleeves').style.display='block';">🔩 Гильзы и высоты</button>
-                    <button type="button" class="mp-copy-btn" onclick="document.querySelectorAll('.bim-p').forEach(e=>e.style.display='none');document.getElementById('bim-doors').style.display='block';">🚪 Проёмы и двери</button>
-                    <button type="button" class="mp-copy-btn" onclick="document.querySelectorAll('.bim-p').forEach(e=>e.style.display='none');document.getElementById('bim-pipes').style.display='block';">🚰 Карта-график труб</button>
-                </div>
-                {% for fc in project_floor_cuts.floor_cuts %}
-                    <div id="tfl-{{ forloop.counter }}" class="t-fl-cut" style="display:{% if forloop.first %}block{% else %}none{% endif %};margin-bottom:10px;">
-                        <div style="font-size:12px;color:#38bdf8;margin-bottom:4px;"><strong>{{ fc.floor_label }}</strong> · {{ fc.doc_title }} (Лист №{{ fc.page_number }})</div>
-                        {% if fc.img_url %}<img src="{{ fc.img_url }}" style="max-width:100%;max-height:420px;border-radius:8px;border:1px solid #334155;">{% endif %}
-                    </div>
-                {% endfor %}
-                {{ nss_vector_svg|safe }}
-            <div class="mp-card" style="margin:12px 0;border-left:4px solid #10b981;">
-                <h3 style="margin:0 0 8px 0;">📐 Реальная геометрия и проёмы здания (по загруженным томам РД)</h3>
-                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px;font-size:12.5px;">
-                    <div style="background:#0f172a;padding:9px;border-radius:8px;"><strong>🧭 Координационные оси:</strong><div style="color:#38bdf8;margin-top:3px;">{{ real_metrics.axes_label }}</div></div>
-                    <div style="background:#0f172a;padding:9px;border-radius:8px;"><strong>📏 Общая длина здания:</strong><div style="color:#34d399;margin-top:3px;">{{ real_metrics.total_length_m }}</div></div>
-                    <div style="background:#0f172a;padding:9px;border-radius:8px;"><strong>🚪 Входные и п/п двери:</strong><div style="color:#fbbf24;margin-top:3px;">{{ real_metrics.entrance_doors }} шт. (по спец. АР)</div></div>
-                    <div style="background:#0f172a;padding:9px;border-radius:8px;"><strong>🪟 Окна и расстояние от окон:</strong><div style="color:#f472b6;margin-top:3px;">{{ real_metrics.windows_total }} окон · {{ real_metrics.window_distance }}</div></div>
-                </div>
-            </div>
-                <div id="bim-sleeves" class="bim-p" style="background:#0f172a;border-left:3px solid #ef4444;padding:10px;border-radius:8px;margin-top:8px;font-size:12px;">
-                    <strong style="color:#fca5a5;">🔩 Что закупать и закладывать по гильзам и высотам:</strong>
-                    {% for s in cad_modes.sleeves %}<div style="margin-top:4px;">? <strong>{{ s.axis }}</strong> | <strong>{{ s.elev }}</strong> · {{ s.spec }} · <strong>{{ s.qty }}</strong></div>{% endfor %}
-                </div>
-                <div id="bim-doors" class="bim-p" style="display:none;background:#0f172a;border-left:3px solid #38bdf8;padding:10px;border-radius:8px;margin-top:8px;font-size:12px;">
-                    <strong style="color:#38bdf8;">🔍 Лупа ×2🔍 Лупа ×2?, 🔍 Лупа ×2🔩 Гильзы и высоты?:</strong>
-                    {% for d in cad_modes.doors %}<div style="margin-top:4px;">? <strong>{{ d.axis }}</strong> | <strong>{{ d.elev }}</strong> · {{ d.spec }} · <strong>{{ d.qty }}</strong></div>{% endfor %}
-                </div>
-                <div id="bim-pipes" class="bim-p" style="display:none;background:#0f172a;border-left:3px solid #10b981;padding:10px;border-radius:8px;margin-top:8px;font-size:12px;">
-                    <strong style="color:#34d399;">🚰 Карта-график трубЗачем этот блок: показывает чертежи из РД, CAD-схему узла и закупку на этап.</strong>
-                    {% for p in cad_modes.pipe_stages %}<div style="margin-top:4px;">? <strong>{{ p.stage }}</strong> ({{ p.zone }}, {{ p.elev }}) · <strong>Зачем этот блок: показывает чертежи из РД, CAD-схему узла и закупку на этап.</strong> {{ p.buy }}</div>{% endfor %}
-                </div>
-            </div>
-        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px;padding:10px;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;">
-            <strong style="font-size:12px;color:var(--accent-gold);">🗂️ Картотека узлов по томам РД:</strong>
-            <a href="?q={{ query|urlencode }}#pane-drawings" class="mp-copy-btn" style="text-decoration:none;{% if not selected_doc_id %}background:var(--accent-sky);color:#0f172a;font-weight:700;{% endif %}">Все тома ({{ available_docs|length }})</a>
-            {% for d_item in available_docs %}
-                <a href="?q={{ query|urlencode }}&doc_id={{ d_item.id }}#pane-drawings" class="mp-copy-btn" style="text-decoration:none;{% if selected_doc_id == d_item.id|stringformat:'s' %}background:var(--accent-sky);color:#0f172a;font-weight:700;{% endif %}">{{ d_item.title|truncatechars:28 }}</a>
-            {% endfor %}
-        </div>
+<div id="t-work" class="pane card">
+  <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+    <label>Объём по РД: <input type="number" id="w-qty" value="{{ real_qty }}" oninput="calcShifts()" style="width:90px;background:#1e293b;color:#fff;border:1px solid #475569;border-radius:6px;padding:5px;"></label>
+    <label>Норма/смену: <input type="number" id="w-norm" value="10" oninput="calcShifts()" style="width:80px;background:#1e293b;color:#fff;border:1px solid #475569;border-radius:6px;padding:5px;"></label>
+    <div id="w-out" style="color:#38bdf8;font-weight:700;"></div>
+  </div>
+</div>
 
-        {% if milled_cuts %}
-            <div class="mp-grid-2" style="margin-bottom:16px;">
-                {% for cut in milled_cuts %}
-                    <div class="mp-card">
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-                            <strong style="color:var(--accent-sky);">🪚 Черепаха-Фреза ({{ cut.scale_label }})</strong>
-                            <span class="mp-badge">Лист №{{ cut.page_number }} · {{ cut.crop_size }}</span>
-                        </div>
-                        <a href="{{ cut.image_url }}" target="_blank" title="Открыть узел в полном разрешении">
-                            <img src="{{ cut.image_url }}" alt="{{ cut.caption }}" style="width:100%;max-height:280px;object-fit:contain;background:#fff;border-radius:8px;border:1px solid var(--border);">
-                        </a>
-                        <div style="font-size:12px;margin-top:8px;color:var(--text-muted);">
-                            <div><strong>Том РД:</strong> {{ cut.doc_title }}</div>
-                            <div><strong>Подпись узла:</strong> {{ cut.caption }}</div>
-                        </div>
-
-                        {% if cut.node_passport %}
-                            <div style="margin-top:10px;padding:10px;background:var(--bg-elevated);border:1px solid var(--border);border-left:3px solid var(--accent-gold);border-radius:8px;font-size:12px;line-height:1.5;color:var(--text-main);">
-                                <div><strong>📐 Высотная отметка узла:</strong> <code>{{ cut.node_passport.elevations }}</code> · <strong>Оси:</strong> <code>{{ cut.node_passport.axes }}</code></div>
-                                <div style="margin-top:6px;"><strong>🧱 Из каких материалов выполняется:</strong>
-                                    <ul style="margin:4px 0 0 18px;padding:0;">
-                                        {% for mat in cut.node_passport.materials %}<li>{{ mat }}</li>{% endfor %}
-                                    </ul>
-                                </div>
-                                <div style="margin-top:6px;"><strong>⚙️ Инженерное решение (по листу РД):</strong>
-                                    <ul style="margin:4px 0 0 18px;padding:0;">
-                                        {% for sol in cut.node_passport.engineering_solution %}<li>{{ sol }}</li>{% endfor %}
-                                    </ul>
-                                </div>
-                            </div>
-                        {% endif %}
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-
-        {% if turtle_plans %}
-            <div class="mp-grid-2" style="margin-bottom:16px;">
-                {% for tp in turtle_plans %}
-                    <div class="mp-card">
-                        <h3>🐢 Черепаха CAD-Оси и Углы контура (Снимок #{{ tp.photo_id }})</h3>
-                        
-                        
-                        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:8px 10px;background:#0f172a;border:1px solid #1e293b;border-radius:8px;margin:8px 0;font-size:12px;">
-                            <button type="button" class="mp-copy-btn" onclick="switchTurtleBimTab('sleeves')">🔩 Гильзы и высоты</button>
-                            <button type="button" class="mp-copy-btn" onclick="switchTurtleBimTab('doors')">🔍 Лупа ×2 · 🔍 Лупа ×2</button>
-                            <button type="button" class="mp-copy-btn" onclick="switchTurtleBimTab('pipes')">🚰 Карта-график труб</button>
-                            <label style="margin-left:auto;color:#38bdf8;">Шаг осей (мм): <input type="number" id="turtle-step-input" value="6000" step="600" min="1500" max="24000" onchange="updateTurtleLiveStep(this.value)" style="width:74px;background:#1e293b;color:#fbbf24;border:1px solid #334155;border-radius:5px;padding:3px 6px;font-weight:700;"></label>
-                            <span id="turtle-ruler-out" style="color:#f472b6;font-weight:700;">🔍 Лупа ×22 Зачем этот блок: показывает чертежи из РД, CAD-схему узла и закупку на этап.</span>
-                            <button type="button" class="mp-copy-btn" onclick="clearTurtleRuler()" style="padding:3px 8px;">?</button>
-                        </div>
-                        <div style="margin:8px 0;">{{ tp.svg_preview|safe }}</div>
-
-                        <div id="bim-tab-sleeves" class="bim-tab-pane" style="background:#0f172a;border:1px solid #1e293b;border-left:3px solid #ef4444;border-radius:8px;padding:10px;margin-top:8px;font-size:12px;">
-                            <strong style="color:#fca5a5;">Зачем этот блок: показывает чертежи из РД, CAD-схему узла и закупку на этап.</strong>
-                            {% for s in cad_modes.sleeves %}<div style="margin-top:4px;">? <strong>{{ s.axis }}</strong> | <strong>{{ s.elev }}</strong> · {{ s.spec }} · <strong>{{ s.qty }}</strong></div>{% endfor %}
-                        </div>
-
-                        <div id="bim-tab-doors" class="bim-tab-pane" style="display:none;background:#0f172a;border:1px solid #1e293b;border-left:3px solid #38bdf8;border-radius:8px;padding:10px;margin-top:8px;font-size:12px;">
-                            <strong style="color:#38bdf8;">🔍 Лупа ×2🔍 Лупа ×2?, 🔍 Лупа ×2🔍 Лупа ×2 (Зачем этот блок: показывает чертежи из РД, CAD-схему узла и закупку на этап.</strong>
-                            {% for d in cad_modes.doors %}<div style="margin-top:4px;">? <strong>{{ d.axis }}</strong> | <strong>{{ d.elev }}</strong> · {{ d.spec }} · <strong>{{ d.qty }}</strong></div>{% endfor %}
-                        </div>
-
-                        <div id="bim-tab-pipes" class="bim-tab-pane" style="display:none;background:#0f172a;border:1px solid #1e293b;border-left:3px solid #10b981;border-radius:8px;padding:10px;margin-top:8px;font-size:12px;">
-                            <strong style="color:#34d399;">Зачем этот блок: показывает чертежи из РД, CAD-схему узла и закупку на этап.</strong>
-                            {% for p in cad_modes.pipe_stages %}<div style="margin-top:4px;">? <strong>{{ p.stage }}</strong> ({{ p.zone }}, {{ p.elev }}) · <strong>Зачем этот блок: показывает чертежи из РД, CAD-схему узла и закупку на этап.</strong> {{ p.buy }}</div>{% endfor %}
-                        </div>
-
-                        <div style="font-size:12px;line-height:1.55;">
-                            <div><strong>Объект (по факту):</strong> {{ tp.object_title_fact }}</div>
-                            <div><strong>Форма и углы:</strong> {{ tp.footprint_shape }} · <code>L:W = {{ tp.aspect_ratio }}</code></div>
-                            <div><strong>Координационные оси:</strong> {{ tp.axes_detected_summary }}</div>
-                            {% if tp.calibrated_dimensions %}<div><strong>Калибровка размеров:</strong> {{ tp.calibrated_dimensions }}</div>{% endif %}
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-
-        <div class="mp-grid-2">
-            {% for d in drawings %}
-                <div class="mp-card">
-                    <img src="{{ d.image_url }}" alt="{{ d.caption }}" class="mp-drawing-img" data-caption="{{ d.caption }}">
-                    <p style="font-size:12px; color:var(--text-muted); margin-top:8px;">{{ d.caption }}</p>
-                </div>
-            {% empty %}
-                {% if not milled_cuts and not turtle_plans %}
-                    <p style="color: var(--text-muted);">Схемы узлов появятся автоматически при наличии масштабов (М 1:20, М 1:50) в томах РД или фото плана.</p>
-                {% endif %}
-            {% endfor %}
-        </div>
-    </div>
-    <div id="pane-photos" class="mp-pane">
-            <div class="mp-card" style="margin-bottom:14px;border-left:4px solid #10b981;">
-                <h3 style="margin:0 0 4px 0;">📦 Складской учёт, передача бригадам / субподрядчикам (М-11, М-15) и печать актов А4</h3>
-                <p style="margin:0 0 10px 0;font-size:12px;color:#94a3b8;"><strong>Зачем этот блок:</strong> фиксирует выдачу материала бригаде (М-11), передачу давальческого сырья субподрядчику (М-15), акты брака (ТОРГ-2) и формирует официальный печатный бланк А4.</p>
-                <form method="post" action="{% url 'storage_control:stock_movement_create' %}" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-bottom:10px;">
-                    {% csrf_token %}<input type="hidden" name="return_to" value="{{ request.get_full_path }}#pane-photos">
-                    <select name="movement_kind" class="mp-input"><option value="OUT_M11">📦 Выдача своей бригаде (Форма М-11)</option><option value="OUT_M15_SUB">🤝 Передача субподрядчику (Форма М-15)</option><option value="IN_UPD">📥 Приход по УПД / М-4</option><option value="DEFECT_TORG2">⚠️ Брак / Недостача (ТОРГ-2)</option><option value="WRITE_OFF_AOSR">✅ Списание в конструкцию (АОСР / КС-2)</option></select>
-                    <input type="text" name="material_name" class="mp-input" value="{{ query }}" placeholder="Наименование ТМЦ">
-                    <input type="text" name="qty" class="mp-input" placeholder="Количество (напр. 50)" required>
-                    <input type="text" name="brigade_or_subcontractor" class="mp-input" placeholder="Бригада или Субподрядчик (ООО ...)">
-                    <input type="text" name="axes_and_ojr" class="mp-input" placeholder="Оси и отметка (Ось 1 / А-Б, отм. -0,950)">
-                    <button type="submit" class="mp-copy-btn" style="background:#10b981;color:#052e16;font-weight:700;">📄 Оформить акт и провести</button>
-                </form>
-                {% for mv in stock_movements %}
-                    <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;font-size:12px;">
-                        <span><strong>?{{ mv.id }} · {{ mv.get_movement_kind_display }}</strong> · {{ mv.material_name }} (<strong>{{ mv.qty }} {{ mv.unit }}</strong>) · {{ mv.brigade_or_subcontractor }}</span>
-                        <a href="{% url 'storage_control:stock_movement_print' mv.id %}" target="_blank" class="mp-copy-btn" style="text-decoration:none;">?🔍 Лупа ×2 Зачем этот блок: показывает чертежи из РД, CAD-схему узла и закупку на этап.</a>
-                    </div>
-                {% endfor %}
-            </div>
-        <div class="mp-grid-2">
-            <div class="mp-card">
-                <h3>1️⃣ Загрузить фото УПД, паспорта качества или плана</h3>
-                <form method="post" action="{% url 'storage_control:photo_1c_hub' %}" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <input type="hidden" name="return_to" value="{{ request.get_full_path }}">
-                    <div style="margin-bottom:10px;">
-                        <select name="photo_kind" class="mp-input">
-                            <option value="UPD_INVOICE">🧾 Накладная / УПД / ТТН (Приход в Склад и 1С)</option>
-                            <option value="QUALITY_CERT">📜 Паспорт качества / Сертификат ФЗ-123 (в ИД)</option>
-                            <option value="TAG_LABEL">🏷️ Бирка / Этикетка партии / QR</option>
-                            <option value="FIELD_NODE">📐 Фото плана / Осей / Отметки со стройки</option>
-                        </select>
-                    </div>
-                    <div style="margin-bottom:10px;">
-                        <select name="scene_mode" class="mp-input">
-                            <option value="AUTO">🤖 Автоопределение освещения</option>
-                            <option value="GARAGE_HANGAR">🏚️ Гараж / Ангар / Сумерки</option>
-                            <option value="OUTDOOR_SUN">☀️ Улица / Яркое солнце</option>
-                            <option value="WAREHOUSE_INDOOR">🏭 Помещение / Склад</option>
-                            <option value="CONSTRUCTION_SITE">🏗️ Стройплощадка (пыль / печати)</option>
-                        </select>
-                    </div>
-                    <div style="margin-bottom:10px;">
-                        <input type="file" name="image" accept="image/*" required class="mp-input">
-                    </div>
-                    <div style="margin-bottom:12px;">
-                        <input type="text" name="notes" class="mp-input" value="{{ query }}" placeholder="Название объекта (напр. ТРЦ), марка, № УПД или оси">
-                    </div>
-                    <button type="submit" class="mp-copy-btn" style="padding:10px 18px;font-size:14px;">🔍 Распознать («Зрение сокола» + «Черепаха»)</button>
-                </form>
-            </div>
-
-            <div class="mp-card">
-                <h3>2️⃣ Приёмка на склад, выгрузка в 1С и Каталог Ответа [[{[XxX]}]]</h3>
-                {% for ph in field_photos %}
-                    <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:10px;padding:10px;margin-bottom:10px;">
-                        <div style="display:flex;gap:10px;align-items:flex-start;">
-                            <img src="{{ ph.image.url }}" alt="Фото #{{ ph.id }}" style="width:84px;height:84px;object-fit:cover;border-radius:8px;border:1px solid var(--border);">
-                            <div style="flex:1;font-size:12px;">
-                                <div style="font-weight:700;color:var(--accent-sky);">#{{ ph.id }} · {{ ph.get_photo_kind_display }}</div>
-                                <div style="color:var(--accent-gold);">{{ ph.get_status_display }} · Резкость: {{ ph.sharpness_pct }}%</div>
-                                <div>Док. № <strong>{{ ph.doc_number|default:"—" }}</strong> · ИНН: <strong>{{ ph.supplier_inn|default:"—" }}</strong> · Оси: <strong>{{ ph.detected_axes|default:"—" }}</strong></div>
-
-                                <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;">
-                                    {% if ph.status != "ACCEPTED_1C" %}
-                                        <form method="post" action="{% url 'storage_control:photo_1c_accept' ph.id %}" style="display:inline;">
-                                            {% csrf_token %}
-                                            <button type="submit" class="mp-copy-btn" style="background:#10b981;color:#052e16;font-weight:700;">✅ Принять на склад</button>
-                                        </form>
-                                    {% endif %}
-                                    <a href="{% url 'storage_control:photo_1c_export' ph.id 'xlsx' %}" class="mp-copy-btn" style="text-decoration:none;">📊 Excel 1С</a>
-                                    <a href="{% url 'storage_control:photo_1c_export' ph.id 'xml' %}" class="mp-copy-btn" style="text-decoration:none;">🧾 XML 1С</a>
-                                </div>
-
-                                {% if ph.payload_1c_json.catalog_answer %}
-                                    <details style="margin-top:8px;background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:6px 8px;">
-                                        <summary style="cursor:pointer;font-weight:700;color:var(--accent-gold);">🧬 Каталог Ответа [[{[XxX]}]] ({{ ph.payload_1c_json.catalog_answer|length }})</summary>
-                                        {% for entry in ph.payload_1c_json.catalog_answer %}
-                                            <div style="margin-top:6px;padding-top:6px;border-top:1px dashed var(--border);line-height:1.45;">
-                                                <div><strong>[1. Паспорт/1С]:</strong> {{ entry.1_passport_and_1c.canonical_name }} · {{ entry.1_passport_and_1c.incoming_qty }} {{ entry.1_passport_and_1c.unit }} (ОКЕИ <code>{{ entry.1_passport_and_1c.okei_code_1c }}</code>)</div>
-                                                <div><strong>[2. ЕНиР]:</strong> {{ entry.2_montage_and_enir.target_1c_operation }}</div>
-                                                <div><strong>[3. Оси/ОЖР]:</strong> {{ entry.3_bim_axes_and_ojr.grid_axes }} · Отм. {{ entry.3_bim_axes_and_ojr.elevation }}</div>
-                                                <div><strong>[4. ИД]:</strong> {{ entry.4_turtle_nodes_and_id.scene_profile }} ({{ entry.4_turtle_nodes_and_id.sharpness_pct }}%)</div>
-                                            </div>
-                                        {% endfor %}
-                                    </details>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                {% empty %}
-                    <p style="color:var(--text-muted);">Загрузите первое фото УПД, паспорта качества или плана слева.</p>
-                {% endfor %}
-            </div>
-        <div class="mp-card" style="margin-top:12px;border-left:4px solid #38bdf8;">
-    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
-        <strong style="color:#38bdf8;font-size:14px;">🚚 На воротах склада: {{ recent_5_intakes|length }} из 5 машин · В архиве УПД: {{ archived_intakes|length }}</strong>
-        <input type="text" id="upd-archive-q" oninput="filterUpdArchive(this.value)" placeholder="Приходил ли: герметик, анкер, саморез, розетки, счётчик..." style="background:#1e293b;color:#f8fafc;border:1px solid #38bdf8;border-radius:8px;padding:6px 12px;font-size:12.5px;min-width:310px;">
-    </div>
-    <div id="upd-search-answer" style="display:none;background:#0f172a;border:1px solid #10b981;border-radius:8px;padding:8px 12px;margin-bottom:8px;font-size:12.5px;color:#6ee7b7;"></div>
-    <details {% if archived_intakes %}open{% endif %}>
-        <summary style="cursor:pointer;color:#94a3b8;font-size:12px;font-weight:700;">🗄️ Открыть весь Архив приёмок УПД ({{ total_intakes_count }} накладных за всё время стройки)</summary>
-        <div id="upd-archive-list" style="margin-top:8px;max-height:240px;overflow-y:auto;">
-            {% for item in recent_5_intakes %}
-                <div class="upd-arch-row" style="padding:6px 8px;border-bottom:1px solid #1e293b;font-size:12px;">
-                    <strong style="color:#34d399;">[На воротах #{{ item.id }}]</strong> {{ item.doc_number|default:"УПД" }} · {{ item.notes }} · <span style="color:#94a3b8;">{{ item.ocr_raw_text|truncatechars:110 }}</span>
-                </div>
-            {% endfor %}
-            {% for item in archived_intakes %}
-                <div class="upd-arch-row" style="padding:6px 8px;border-bottom:1px solid #1e293b;font-size:12px;">
-                    <strong style="color:#fbbf24;">[Архив #{{ item.id }}]</strong> {{ item.doc_number|default:"УПД" }} · {{ item.notes }} · <span style="color:#94a3b8;">{{ item.ocr_raw_text|truncatechars:110 }}</span>
-                </div>
-            {% endfor %}
-        </div>
-    </details>
+<div id="t-docs" class="pane card">
+  <div style="color:#cbd5e1;">• Акт освидетельствования скрытых работ (АОСР № 344/пр) по марке <strong>{{ ru_hint|default:query }}</strong>;<br>• Требование-накладная М-11 и выгрузка в 1С:Склад.</div>
+</div>
 </div>
 <script>
-function filterUpdArchive(q) {
-    const needle = (q || "").trim().toLowerCase();
-    const rows = document.querySelectorAll(".upd-arch-row");
-    const ans = document.getElementById("upd-search-answer");
-    let found = 0;
-    rows.forEach(r => {
-        const ok = !needle || r.innerText.toLowerCase().includes(needle);
-        r.style.display = ok ? "block" : "none";
-        if (ok && needle) found++;
-    });
-    if (ans) {
-        if (!needle) { ans.style.display = "none"; }
-        else { ans.style.display = "block"; ans.textContent = found > 0 ? ("✅ Найдено приходов по запросу «" + q + "»: " + found + " накладных.") : ("❌ По запросу «" + q + "» приходов на склад пока не было."); }
-    }
-}
-</script>
-</div>
-    </div>
-</div>
-
-<div id="mp-lightbox" class="mp-modal">
-    <img id="mp-lightbox-img" src="" alt="">
-</div>
-<script src="{% static 'storage_control/js/mark_passport.js' %}"></script>
-
-<div id="turtle-4d-cascade" style="margin-top:14px;background:#0b1120;border:2px solid #38bdf8;border-radius:12px;padding:14px;">
-    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
-        <strong style="color:#38bdf8;font-size:15px;">🐢 Черепаха CAD — 4-Потоковый Строй-Каскад (Где копать / Закладывать · Системы · Сроки · Помехи)</strong>
-        <div style="display:flex;align-items:center;gap:8px;background:#1e293b;padding:5px 10px;border-radius:8px;font-size:12px;">
-            <span style="color:#fbbf24;font-weight:700;">⏳ Срок ГПР:</span>
-            <input type="range" id="c4d-week" min="1" max="12" value="4" oninput="renderTurtle4D()" style="cursor:pointer;">
-            <strong id="c4d-week-lbl" style="color:#34d399;min-width:85px;">Неделя 4 / 12</strong>
-        </div>
-    </div>
-    <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(250px,1fr);gap:12px;align-items:stretch;">
-        <svg id="c4d-svg" viewBox="0 0 780 260" style="width:100%;height:auto;background:#020617;border:1px solid #334155;border-radius:10px;"></svg>
-        <div id="c4d-blockers" style="background:#111827;border:1px solid #334155;border-left:3px solid #ef4444;border-radius:10px;padding:10px;font-size:12px;"></div>
-    </div>
-</div>
-
-<div style="background:#0f172a;border:1px solid #334155;border-left:4px solid #10b981;border-radius:10px;padding:14px;margin-top:14px;">
-  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
-    <strong style="color:#34d399;font-size:15px;">📋 Реальные позиции и листы РД по марке «{{ ru_hint|default:query }}»</strong>
-    <a href="/partner-league/?q={{ ru_hint|default:query|urlencode }}&qty={{ real_qty }}" style="background:#10b981;color:#052e16;text-decoration:none;border-radius:6px;padding:6px 12px;font-weight:700;font-size:12.5px;">🤝 В Партнёрскую лигу (Цены и поставщики) →</a>
-  </div>
-  {% for r in matched_reqs %}<div style="padding:5px 0;border-bottom:1px solid #1e293b;display:flex;justify-content:space-between;color:#e2e8f0;font-size:13px;"><span><strong>{{ r.material_name }}</strong> <span style="color:#fbbf24;">[{{ r.floor_info }}]</span></span><strong style="color:#34d399;">{{ r.required_qty }} {{ r.unit }}</strong></div>{% empty %}<div style="color:#94a3b8;font-size:12.5px;">Прямых строк в закупке нет — см. упоминания в чертежах ниже:</div>{% endfor %}
-  {% for p in matched_pages %}<div style="color:#cbd5e1;font-size:12px;margin-top:4px;">• <strong>{{ p.doc }} (Л.{{ p.page }}):</strong> {{ p.snippet }}</div>{% endfor %}
-</div>
-</body>
-</html>
-
+function openTab(id,btn){document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.getElementById(id).classList.add('active');btn.classList.add('active');}
+function calcShifts(){const q=parseFloat(document.getElementById('w-qty').value||0),n=parseFloat(document.getElementById('w-norm').value||1),s=Math.max(1,Math.ceil(q/n));document.getElementById('w-out').textContent='⏳ Расчётный срок монтажа: '+s+' смен (по 8 ч)';}
+calcShifts();
+</script></body></html>
