@@ -41,38 +41,45 @@
 </div>
 <script>
 function calcRowSave(idx, qty) {
-    const b = parseFloat(document.getElementById('p-base-'+idx).value || '0');
-    const a = parseFloat(document.getElementById('p-alt-'+idx).value || '0');
-    const out = document.getElementById('p-save-'+idx);
+    const b = parseFloat(document.getElementById('p-base-' + idx).value || '0');
+    const a = parseFloat(document.getElementById('p-alt-' + idx).value || '0');
+    const out = document.getElementById('p-save-' + idx);
     if (b > 0 && a > 0 && out) {
         const diff = Math.round((b - a) * qty);
         out.textContent = diff >= 0 ? ('💰 Экономия: +' + diff + ' ₽') : ('Разница: ' + diff + ' ₽');
     }
 }
-function openPartnerLeague(itemName, qtyStr) {
+function selectTopSug(btn) {
+    document.getElementById('top-total-q').value = btn.getAttribute('data-q') || '';
+    runTopTotals();
+}
+function openPartnerBtn(btn) {
+    const itemName = btn.getAttribute('data-name') || '';
+    const qtyStr = btn.getAttribute('data-qty') || '';
     const box = document.getElementById('partner-league-drawer');
     if (!box) return;
     box.style.display = 'block';
-    const rfq = 'Запрос счёта (Партнёрская лига): ' + itemName + ' — ' + qtyStr + '. Условия: безнал с НДС 20%, доставка на объект, паспорт качества и УПД.';
-    box.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;"><strong style="color:#34d399;">🤝 Партнёрская лига поставщиков: ' + itemName + ' (' + qtyStr + ')</strong>' +
-        '<button type="button" onclick="navigator.clipboard.writeText(''+rfq+'');this.textContent='✅ Заявка скопирована!'" style="background:#38bdf8;color:#082f49;border:none;border-radius:5px;padding:4px 10px;font-weight:700;cursor:pointer;">📋 Скопировать заявку на счёт</button></div>' +
-        '<div style="color:#cbd5e1;margin-top:6px;">• <strong>Где заказать:</strong> аккредитованные заводы и дистрибьюторы (АДЛ, Ридан, ДКС, ТехноНИКОЛЬ);<br>' +
-        '• <strong>Доставка:</strong> бортовой транспорт / манипулятор на объект или самовывоз со склада;<br>' +
-        '• <strong>Оплата и документы:</strong> безнал с НДС 20% · УПД + паспорт качества для АОСР.</div>';
+    const rfq = 'Запрос счёта (Партнёрская лига): ' + itemName + ' — ' + qtyStr + '. Безнал с НДС 20%, доставка на объект, УПД.';
+    box.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;"><strong style="color:#34d399;">🤝 Партнёрская лига: ' + itemName + ' (' + qtyStr + ')</strong>' +
+        '<button type="button" id="copy-rfq-btn" style="background:#38bdf8;color:#082f49;border:none;border-radius:5px;padding:4px 10px;font-weight:700;cursor:pointer;">📋 Скопировать заявку на счёт</button></div>' +
+        '<div style="color:#cbd5e1;margin-top:6px;">• <strong>Где заказать:</strong> заводы и дистрибьюторы (АДЛ, Ридан, ДКС, ТехноНИКОЛЬ);<br>' +
+        '• <strong>Доставка:</strong> манипулятор / борт на объект или самовывоз;<br>' +
+        '• <strong>Оплата:</strong> безнал с НДС 20% · УПД + паспорт качества для АОСР.</div>';
+    document.getElementById('copy-rfq-btn').onclick = function() { navigator.clipboard.writeText(rfq); this.textContent = '✅ Скопировано!'; };
 }
 function runTopTotals(){
     const q=(document.getElementById('top-total-q').value||'').trim(),box=document.getElementById('top-total-res');
     if(!q||!box)return;box.style.display='block';
     fetch('/api/project-totals/?q='+encodeURIComponent(q)).then(r=>r.json()).then(d=>{
         if(d.clarify_prompt){
-            box.innerHTML='<div style="background:#111827;border:1px solid #38bdf8;border-radius:8px;padding:8px 10px;color:#e2e8f0;">💡 <strong>'+d.clarify_prompt+'</strong><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">'+(d.suggestions||[]).map(s=>'<button type="button" onclick="document.getElementById('top-total-q').value=''+s+'';runTopTotals();" style="background:#1e293b;color:#38bdf8;border:1px solid #38bdf8;border-radius:6px;padding:4px 10px;font-size:12px;font-weight:700;cursor:pointer;">'+s+'</button>').join('')+'</div></div>';
+            box.innerHTML='<div style="background:#111827;border:1px solid #38bdf8;border-radius:8px;padding:8px 10px;color:#e2e8f0;">💡 <strong>'+d.clarify_prompt+'</strong><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">'+(d.suggestions||[]).map(s=>'<button type="button" data-q="'+s.replace(/"/g,'&quot;')+'" onclick="selectTopSug(this)" style="background:#1e293b;color:#38bdf8;border:1px solid #38bdf8;border-radius:6px;padding:4px 10px;font-size:12px;font-weight:700;cursor:pointer;">'+s+'</button>').join('')+'</div></div>';
             return;
         }
         const sums=Object.entries(d.totals_by_unit||{}).map(([u,v])=>'<strong style="color:#34d399;font-size:14px;">'+v+' '+u+'</strong>').join(' + ')||'0';
         let h='<div style="background:#111827;border:1px solid #334155;border-radius:8px;padding:8px 10px;margin-bottom:6px;">📊 <strong>Заложено по проекту:</strong> '+sums+' | <span style="color:#fbbf24;">К заказу (дефицит): '+sums+'</span></div>';
         if(d.items && d.items.length){
             const left = d.items.map(it=>'<div style="padding:6px 0;border-bottom:1px solid #1e293b;"><div style="display:flex;justify-content:space-between;gap:6px;"><span><strong style="color:#38bdf8;">['+it.req_num+']</strong> <strong>'+it.mark_name+'</strong></span><strong style="color:#34d399;white-space:nowrap;">'+it.qty+' '+it.unit+'</strong></div><div style="color:#94a3b8;font-size:11px;">📐 '+(it.tech_specs||'')+' · '+it.floor_or_zone+'</div></div>').join('');
-            const right = d.items.map((it,idx)=>'<div style="padding:6px 0;border-bottom:1px solid #1e293b;"><details><summary style="cursor:pointer;color:#e2e8f0;font-weight:600;">🔍 '+(it.analog_item||d.general_analog)+'</summary><div style="background:#111827;padding:6px;border-radius:6px;margin-top:4px;font-size:11.5px;"><div>✅ '+(it.tech_specs||'')+'</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:5px;"><input type="number" id="p-base-'+idx+'" placeholder="Смета ₽" oninput="calcRowSave('+idx+','+it.qty+')" style="width:85px;background:#1e293b;color:#fff;border:1px solid #334155;border-radius:4px;padding:2px 5px;"><input type="number" id="p-alt-'+idx+'" placeholder="Аналог ₽" oninput="calcRowSave('+idx+','+it.qty+')" style="width:85px;background:#1e293b;color:#34d399;border:1px solid #334155;border-radius:4px;padding:2px 5px;"><span id="p-save-'+idx+'" style="color:#fbbf24;font-weight:700;"></span></div></div></details><button type="button" onclick="openPartnerLeague(''+it.mark_name.replace(/'/g,'')+'',''+it.qty+' '+it.unit+'')" style="margin-top:4px;background:#10b981;color:#052e16;border:none;border-radius:5px;padding:3px 9px;font-size:11px;font-weight:700;cursor:pointer;">🤝 В Партнёрскую лигу</button></div>').join('');
+            const right = d.items.map((it,idx)=>'<div style="padding:6px 0;border-bottom:1px solid #1e293b;"><details><summary style="cursor:pointer;color:#e2e8f0;font-weight:600;">🔍 '+(it.analog_item||d.general_analog)+'</summary><div style="background:#111827;padding:6px;border-radius:6px;margin-top:4px;font-size:11.5px;"><div>✅ '+(it.tech_specs||'')+'</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:5px;"><input type="number" id="p-base-'+idx+'" placeholder="Смета ₽" oninput="calcRowSave('+idx+','+it.qty+')" style="width:85px;background:#1e293b;color:#fff;border:1px solid #334155;border-radius:4px;padding:2px 5px;"><input type="number" id="p-alt-'+idx+'" placeholder="Аналог ₽" oninput="calcRowSave('+idx+','+it.qty+')" style="width:85px;background:#1e293b;color:#34d399;border:1px solid #334155;border-radius:4px;padding:2px 5px;"><span id="p-save-'+idx+'" style="color:#fbbf24;font-weight:700;"></span></div></div></details><button type="button" data-name="'+it.mark_name.replace(/"/g,'&quot;')+'" data-qty="'+it.qty+' '+it.unit+'" onclick="openPartnerBtn(this)" style="margin-top:4px;background:#10b981;color:#052e16;border:none;border-radius:5px;padding:3px 9px;font-size:11px;font-weight:700;cursor:pointer;">🤝 В Партнёрскую лигу</button></div>').join('');
             h+='<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:10px;margin-top:8px;"><div style="background:#0b1120;border:1px solid #334155;border-left:3px solid #10b981;border-radius:8px;padding:10px;"><div style="color:#34d399;font-weight:700;margin-bottom:6px;">📋 По спецификации (К заказу):</div>'+left+'</div><div style="background:#0b1120;border:1px solid #334155;border-left:3px solid #38bdf8;border-radius:8px;padding:10px;"><div style="color:#38bdf8;font-weight:700;margin-bottom:6px;">🔄 Аналоги и Партнёрская лига:</div>'+right+'</div></div><div id="partner-league-drawer" style="display:none;margin-top:8px;background:#111827;border:1px solid #10b981;border-radius:8px;padding:10px;font-size:12px;"></div>';
         }
         if(d.pdf_mentions&&d.pdf_mentions.length)h+='<div style="margin:6px 0;color:#cbd5e1;"><strong>📄 Найдено в чертежах PDF:</strong>'+d.pdf_mentions.map(m=>'<div>• '+m.doc+' (Л.'+m.page+'): '+m.snippet+'</div>').join('')+'</div>';
