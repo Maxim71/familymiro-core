@@ -1152,76 +1152,63 @@ def project_totals_and_analogs_api(request):
     from django.db.models import Q
     from storage_control.models import PurchaseRequest, ParsedPage
     from storage_control.services.building_twin import fix_autocad_mojibake
-
-    def _norm_unit(u_raw: str) -> str:
-        u = (u_raw or "шт.").strip().lower().rstrip(".")
-        if u in ("шт", "pcs"):
-            return "шт."
-        if u == "л":
-            return "л"
-        if u in ("м", "п.м"):
-            return "м"
-        return u or "шт."
+    from storage_control.services.input_calibrator import classify_pdf_line_at_gate, normalize_unit_and_name
 
     def _clean_zone(z_raw: str) -> str:
         z = (z_raw or "").strip()
-        if not z or re.match(r'^24\.045', z) or "??" in z:
+        if not z or re.match(r'^24\.045', z) or re.match(r'^[+\-]?0?\d\.\d{3}$', z) or "??" in z:
             return "По плану РД"
-        if re.match(r'^[+\-]?0?\d\.\d{3}$', z):
-            return f"Отм. {z.replace('-0', '-').replace('.', ',')} м"
         return z
 
     q = (request.GET.get("q") or "").strip()
     if not q:
-        return JsonResponse({"ok": True, "items": [], "totals_by_unit": {}, "pdf_mentions": []})
+        return JsonResponse({"ok": True, "items": [], "totals_by_unit": {}, "blocked_items": [], "pdf_mentions": []})
 
-    is_du_query = q.lower() in ("ду", "dn", "фланец", "фланцы")
+    is_du_query = q.lower() in ("ду", "dn")
     if is_du_query:
-        variants = ["Ду ", "Ду1", "Ду2", "Ду3", "Ду4", "Ду5", "Ду6", "Ду8", "DN", "Фланец"]
+        return JsonResponse({
+            "ok": True,
+            "query": q,
+            "clarify_prompt": "Диаметр Ду указывается для конкретного изделия. Выберите \u043dоменклатуру из проекта:",
+            "suggestions": ["Кран шаро\u0432ой", "Клапан балансировочный", "Труба", "Фланец", "Задвижка"],
+            "totals_by_unit": {},
+            "items": [],
+            "blocked_items": [],
+            "pdf_mentions": [],
+        })
+    variants = _norm_x_variants(q)
+    stem = q[:max(4, len(q) - 2)] if len(q) >= 5 else q
+    for sc in (stem, stem.lower(), stem.capitalize(), q.lower(), q.capitalize()):
+        if sc and sc not in variants:
+            variants.append(sc)
+    if "армат" in q.lower():
+        variants.extend(["А500С", "А240", "34028"])
+
+    q_words = [w.strip() for w in q.split() if len(w.strip()) >= 4]
+    if len(q_words) >= 2 and not is_du_query:
+        cond = functools.reduce(lambda a, b: a & b, [Q(material_name__icontains=w) | Q(material_name__icontains=w.capitalize()) | Q(material_name__icontains=w.upper()) for w in q_words])
     else:
-        variants = _norm_x_variants(q)
-        for w in [w.strip() for w in q.split() if len(w.strip()) >= 5]:
-            for wc in (w, w.lower(), w.capitalize(), w.upper()):
-                if wc not in variants:
-                    variants.append(wc)
-        stem = q[:max(4, len(q) - 2)] if len(q) >= 5 else q
-        for sc in (stem, stem.lower(), stem.capitalize(), q.lower(), q.capitalize()):
-            if sc and sc not in variants:
-                variants.append(sc)
-        if "армат" in q.lower():
-            variants.extend(["А500С", "А240", "34028"])
+        cond = functools.reduce(lambda a, b: a | b, [Q(material_name__icontains=v) for v in variants])
 
-    cond = functools.reduce(lambda a, b: a | b, [Q(material_name__icontains=v) for v in variants])
-    reqs = list(PurchaseRequest.objects.select_related("document").filter(cond).order_by("material_name", "id")[:150])
-
-    grouped, totals_by_unit = {}, {}
+    reqs = list(PurchaseRequest.objects.select_related("document").filter(cond).order_by("id")[:200])
+    grouped, totals_by_unit, blocked_items = {}, {}, []
     for r in reqs:
-        nm = (r.material_name or "").strip()
-        if is_du_query and not re.search(r'(?:\bДу|\bDN|Фланец)', nm, re.I):
+        raw_nm = (r.material_name or "").strip()
+        if classify_pdf_line_at_gate(raw_nm) != "SPEC_ITEM":
             continue
-        m_dn = re.search(r'(?:Ду|DN|\u00d8)\s*(\d{2,4})', nm, re.I)
-        has_dn_in_name = bool(m_dn)
-        if m_dn:
-            dn_tag = f"Ду {m_dn.group(1)}"
-            display_nm = nm if has_dn_in_name else f"{nm} [{dn_tag}]"
-        else:
-            # ??????????? ???????? ?? ?? ?????? ????? ?? ???? PDF, ????? ?? ?????? ?????? "???????? ??"
-            doc_dns = set()
-            if r.document_id:
-                for pg in ParsedPage.objects.filter(document_id=r.document_id)[:35]:
-                    for d_hit in re.findall(r'(?:Ду|DN)\s*(\d{2,3})', fix_autocad_mojibake(pg.text or ""), re.I):
-                        doc_dns.add(int(d_hit))
-            dn_list = ", ".join(f"Ду {x}" for x in sorted(doc_dns)[:8]) if doc_dns else "Ду 25…Ду 160"
-            dn_tag = f"распределить по чертежу: {dn_list}"
-            display_nm = f"{nm} [{dn_tag}]"
-
-        u = _norm_unit(r.unit)
+        if is_du_query and not re.search(r'(?:\bДу|\bDN|Фланец)', raw_nm, re.I):
+            continue
+        clean_nm, u, needs_du = normalize_unit_and_name(raw_nm, r.unit or "шт.")
         qty = float(r.required_qty or 0)
+        if needs_du:
+            blocked_items.append({"req_num": f"ЗМ-{r.id:04d}", "mark_name": f"{clean_nm} [⛔ БЛОК ЗАКАЗА: требуется уточнение Ду]", "qty": qty, "unit": u, "doc_title": r.document.title if r.document else "РД"})
+            continue
+
+        merge_key = f"{clean_nm.lower()} | {u}"
         totals_by_unit[u] = round(totals_by_unit.get(u, 0.0) + qty, 2)
-        key = f"{nm} | {dn_tag} | {u}"
-        entry = grouped.setdefault(key, {
+        entry = grouped.setdefault(merge_key, {
             "req_num": f"ЗМ-{r.id:04d}",
-            "mark_name": display_nm,
+            "mark_name": clean_nm,
             "floor_or_zone": _clean_zone(r.floor_info),
             "doc_title": r.document.title if r.document else "РД",
             "qty": 0.0,
@@ -1235,11 +1222,11 @@ def project_totals_and_analogs_api(request):
         txt = fix_autocad_mojibake(pg.text or "")
         txt = re.sub(r'(?:\b\d{2}\.\d{2}\b\s*){2,}', ' ', txt)
         txt = re.sub(r'(?:\b\d\b\s*){4,}', ' ', txt)
-        m = re.search(r'(?:\b\u0414\u0443|\bDN)\s*\d{2,4}', txt) if is_du_query else re.search("|".join(re.escape(v) for v in variants[:6] if v), txt, re.I)
+        m = re.search(r'(?:\bДу|\bDN)\s*\d{2,4}', txt) if is_du_query else re.search("|".join(re.escape(v) for v in variants[:6] if v), txt, re.I)
         if not m:
             continue
         snip = re.sub(r'\s+', ' ', txt[max(0, m.start() - 30): m.end() + 95]).strip()
-        norm_key = snip[:65].lower()
+        norm_key = re.sub(r'\W+', '', snip[:55].lower())
         if norm_key in seen_snips:
             continue
         seen_snips.add(norm_key)
@@ -1249,7 +1236,7 @@ def project_totals_and_analogs_api(request):
 
     if "кг" in totals_by_unit:
         totals_by_unit["т (тонн)"] = round(totals_by_unit["кг"] / 1000.0, 3)
-    return JsonResponse({"ok": True, "query": q, "totals_by_unit": totals_by_unit, "items": list(grouped.values()), "pdf_mentions": pdf_mentions, "general_analog": _suggest_analog_for_material(q)})
+    return JsonResponse({"ok": True, "query": q, "totals_by_unit": totals_by_unit, "items": list(grouped.values()), "blocked_items": blocked_items, "pdf_mentions": pdf_mentions, "general_analog": _suggest_analog_for_material(q)})
 
 
 def inventory_foreman_api(request):
