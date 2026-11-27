@@ -1274,6 +1274,15 @@ def project_totals_and_analogs_api(request):
     canon_q_tokens = [tk for tk in canonicalize_spec_text(q).split() if len(tk) >= 2]
     all_reqs = list(PurchaseRequest.objects.select_related("document").order_by("id")[:1500])
     reqs = [r for r in all_reqs if all(tk in canonicalize_spec_text(r.material_name or "") for tk in canon_q_tokens)][:200]
+    if not reqs and len(q) >= 4:
+        for pg in ParsedPage.objects.select_related("document").filter(text__icontains=q)[:10]:
+            for raw_ln in fix_autocad_mojibake(pg.text or "").splitlines():
+                if q.lower() in raw_ln.lower():
+                    m_q = re.search(r'(?:\u0448\u0442|\u043a\u043e\u043c\u043f\u043b|\u043f\.\u043c|\u043c2|\u043c\u00b2|\u043a\u0433|\u043c)\.?\s+(\d+(?:[\.,]\d+)?)\b', raw_ln, re.I)
+                    if m_q:
+                        pr_new = PurchaseRequest.objects.create(document=pg.document, material_name=re.sub(r'\s+', ' ', raw_ln).strip()[:150], required_qty=float(m_q.group(1).replace(",", ".")), deficit_qty=float(m_q.group(1).replace(",", ".")), unit="\u0448\u0442.", floor_info=f"\u041b\u0438\u0441\u0442 \u2116{pg.page_number}")
+                        reqs.append(pr_new)
+                        break
     grouped, totals_by_unit, blocked_items = {}, {}, []
     for r in reqs:
         raw_nm = (r.material_name or "").strip()
