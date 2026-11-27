@@ -1563,3 +1563,9 @@ def executive_summary_view(request):
         {"title": "6. Пусконаладка ПНР и сдача", "color": "#a855f7", "count": _cnt(("пд6", "система")), "desc": "Индивидуальные испытания Системы ПД6 L=16290, В1, К2, паспорта и закрытие АОСР.", "slug": "sistema-pd6-l-16290"},
     ]
     return render(request, "storage_control/executive_summary.html", {"stages": stages})
+
+
+def ks2_ks3_view(request):
+    from django.shortcuts import render
+    from storage_control.models import PurchaseRequest
+    return render(request, "storage_control/ks2_ks3.html", {"items": list(PurchaseRequest.objects.order_by("-id")[:25])})

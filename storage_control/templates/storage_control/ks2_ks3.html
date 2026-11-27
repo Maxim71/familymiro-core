@@ -1,0 +1,18 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8"><title>💰 КС-2 и КС-3 — Закрытие выполненных работ</title>
+<style>body{background:#020617;color:#f8fafc;font-family:system-ui,sans-serif;margin:0;padding:18px}.wrap{max-width:1180px;margin:0 auto}.card{background:#0f172a;border:1px solid #334155;border-radius:12px;padding:16px;margin-bottom:14px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #334155;padding:7px 9px;font-size:13px}input{background:#1e293b;color:#fff;border:1px solid #475569;border-radius:5px;padding:4px 7px;width:95px}@media print{.noprint{display:none}body{background:#fff;color:#000}th,td{border:1px solid #000}}</style></head><body><div class="wrap">
+<div class="noprint" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+  <div><h2 style="margin:0;color:#34d399;">💰 Формы КС-2 (ОКУД 0322005) и КС-3 (ОКУД 0322001) — Закрытие денег</h2>
+  <div style="color:#94a3b8;font-size:13px;">Акт о приёмке выполненных работ и Справка о стоимости затрат с НДС 20%</div></div>
+  <div style="display:flex;gap:8px;"><a href="/" style="background:#1e293b;color:#38bdf8;border:1px solid #38bdf8;border-radius:8px;padding:7px 12px;text-decoration:none;font-weight:700;">← На главную</a><button onclick="window.print()" style="background:#10b981;color:#052e16;border:none;border-radius:8px;padding:7px 14px;font-weight:800;cursor:pointer;">🖨️ Печать КС-2 / КС-3</button></div>
+</div>
+<div class="card">
+  <h3 style="margin-top:0;">АКТ ПРИЁМКИ ВЫПОЛНЕННЫХ РАБОТ (ФОРМА КС-2) · Объект 24.0454</h3>
+  <table><thead><tr><th>№</th><th>Наименование работ и материалов (по РД / АОСР)</th><th>Ед.</th><th>Объём</th><th>Расценка за ед. (₽)</th><th>Стоимость (₽)</th></tr></thead>
+  <tbody id="ks-body">{% for r in items %}<tr><td>{{ forloop.counter }}</td><td>{{ r.material_name }}</td><td>{{ r.unit }}</td><td class="ks-q" data-q="{{ r.required_qty }}">{{ r.required_qty }}</td><td><input type="number" class="ks-p" value="0" oninput="calcKS()"></td><td class="ks-sum">0 ₽</td></tr>{% endfor %}</tbody></table>
+  <div style="margin-top:14px;padding:12px;background:#0b1120;border-radius:8px;display:flex;gap:20px;flex-wrap:wrap;font-size:14px;">
+    <div>Итого по КС-2 (без НДС): <strong id="ks-base" style="color:#38bdf8;">0 ₽</strong></div>
+    <div>НДС 20%: <strong id="ks-nds" style="color:#fbbf24;">0 ₽</strong></div>
+    <div>Всего к оплате по Справке КС-3: <strong id="ks-tot" style="color:#34d399;font-size:16px;">0 ₽</strong></div>
+  </div>
+</div></div>
+<script>function calcKS(){let base=0;document.querySelectorAll('#ks-body tr').forEach(tr=>{const q=parseFloat((tr.querySelector('.ks-q').dataset.q||'0').replace(',','.'))||0,p=parseFloat(tr.querySelector('.ks-p').value||0),s=Math.round(q*p);tr.querySelector('.ks-sum').textContent=s+' ₽';base+=s;});const nds=Math.round(base*0.20),tot=base+nds;document.getElementById('ks-base').textContent=base+' ₽';document.getElementById('ks-nds').textContent=nds+' ₽';document.getElementById('ks-tot').textContent=tot+' ₽';}</script></body></html>

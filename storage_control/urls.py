@@ -27,6 +27,7 @@ from .views import (
 app_name = 'storage_control'
 
 urlpatterns = [
+    path("ks2-ks3/", views.ks2_ks3_view, name="ks2_ks3"),
     path("executive-summary/", views.executive_summary_view, name="executive_summary"),
     path("partner-league/", views.partner_league_view, name="partner_league"),
     path("api/room-photo-upload/", room_photo_upload_api, name="room_photo_upload_api"),
