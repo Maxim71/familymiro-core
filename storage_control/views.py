@@ -1421,3 +1421,23 @@ def room_photo_upload_api(request):
         )
         return JsonResponse({"ok": True, "photo_id": ph.id})
     return JsonResponse({"ok": False}, status=400)
+
+
+def partner_league_view(request):
+    import os, json
+    from django.conf import settings
+    from django.shortcuts import render, redirect
+    m_path = os.path.join(settings.BASE_DIR, "partner_league_matrix.json")
+    default_matrix = [
+        {"commodity_class": "Теплоизоляция и ленты (Energoflex / K-Flex)", "partners": "РОЛС Изомаркет, ТеплоКомплект", "discount": "14% B2B", "logistics": "Борт / Самовывоз МО", "payment": "Безнал НДС 20% + УПД"},
+        {"commodity_class": "Вентиляция и VRF-системы (NED / Веза / ЛИСАНТ)", "partners": "НЕД-Центр, Веза-Москва, ГалВент", "discount": "18% проект", "logistics": "Доставка на объект", "payment": "Отсрочка / НДС 20%"},
+        {"commodity_class": "Арматура и фланцы (АДЛ / Ридан / LD)", "partners": "АДЛ Продакшн, СТМ-Комплект", "discount": "15% опт", "logistics": "Манипулятор / Сборный", "payment": "Безнал НДС + Паспорт"},
+    ]
+    matrix = json.load(open(m_path, encoding="utf-8")) if os.path.exists(m_path) else default_matrix
+    if request.method == "POST":
+        c_cls, pts = (request.POST.get("commodity_class") or "").strip(), (request.POST.get("partners") or "").strip()
+        if c_cls and pts:
+            matrix.insert(0, {"commodity_class": c_cls, "partners": pts, "discount": request.POST.get("discount", "12% B2B"), "logistics": request.POST.get("logistics", "Борт / Самовывоз"), "payment": "Безнал НДС 20% + УПД"})
+            json.dump(matrix, open(m_path, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+        return redirect(request.get_full_path())
+    return render(request, "storage_control/partner_league.html", {"matrix": matrix, "query": (request.GET.get("q") or "").strip(), "qty": (request.GET.get("qty") or "").strip()})

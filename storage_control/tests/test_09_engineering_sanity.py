@@ -47,3 +47,7 @@ class EngineeringSanityAuditTests(TestCase):
         rows = assign_words_to_gost_columns(words, 1000.0)
         self.assertEqual(rows[0]["qty"], 47.0)
         self.assertEqual(rows[0]["unit"], "м²")
+
+    def test_08_partner_league_page(self):
+        resp = Client().get("/partner-league/", {"q": "Лента", "qty": "10 шт."})
+        self.assertEqual(resp.status_code, 200)
