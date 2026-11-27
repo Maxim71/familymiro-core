@@ -1177,6 +1177,10 @@ def project_totals_and_analogs_api(request):
             "pdf_mentions": [],
         })
     variants = _norm_x_variants(q)
+    m_du_q = re.match(r'^(?:ду|dn)\s*(\d{2,4})$', q, re.I)
+    if m_du_q:
+        d_num = m_du_q.group(1)
+        variants.extend([f"Ду {d_num}", f"Ду{d_num}", f"DN{d_num}", f"DN {d_num}"])
     stem = q[:max(4, len(q) - 2)] if len(q) >= 5 else q
     for sc in (stem, stem.lower(), stem.capitalize(), q.lower(), q.capitalize()):
         if sc and sc not in variants:
@@ -1201,7 +1205,7 @@ def project_totals_and_analogs_api(request):
         clean_nm, u, needs_du = normalize_unit_and_name(raw_nm, r.unit or "шт.")
         qty = float(r.required_qty or 0)
         if needs_du:
-            blocked_items.append({"req_num": f"ЗМ-{r.id:04d}", "mark_name": f"{clean_nm} [⛔ БЛОК ЗАКАЗА: требуется уточнение Ду]", "qty": qty, "unit": u, "doc_title": r.document.title if r.document else "РД"})
+            blocked_items.append({"req_num": f"ЗМ-{r.id:04d}", "mark_name": f"{clean_nm} [⛔ БЛОК ЗАКАЗА: требуется уточнение Ду]", "qty": qty, "unit": u, "analog_item": _suggest_analog_for_material(clean_nm), "doc_title": r.document.title if r.document else "РД"})
             continue
 
         merge_key = f"{clean_nm.lower()} | {u}"

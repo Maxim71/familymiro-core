@@ -48,7 +48,15 @@ function runTopTotals(){
         const sums=Object.entries(d.totals_by_unit||{}).map(([u,v])=>'<strong style="color:#34d399;font-size:14px;">'+v+' '+u+'</strong>').join(' + ')||'0';
         let h='<div style="background:#111827;border:1px solid #334155;border-radius:8px;padding:8px 10px;margin-bottom:6px;">📊 <strong>Заложено по проекту:</strong> '+sums+' | <span style="color:#fbbf24;">К заказу (дефицит): '+sums+'</span><div style="color:#38bdf8;margin-top:4px;">🔄 '+(d.general_analog||'')+'</div></div>';
         if(d.pdf_mentions&&d.pdf_mentions.length)h+='<div style="margin:6px 0;color:#cbd5e1;"><strong>📄 Найдено в чертежах PDF (КЖ / КМ / РД):</strong>'+d.pdf_mentions.map(m=>'<div>• '+m.doc+' (Л.'+m.page+'): '+m.snippet+'</div>').join('')+'</div>';
-        if(d.items)h+=d.items.map(it=>'<div style="padding:4px 8px;border-bottom:1px solid #1e293b;display:flex;justify-content:space-between;"><span><strong style="color:#38bdf8;">['+it.req_num+']</strong> '+it.mark_name+' <span style="color:#fbbf24;">['+it.floor_or_zone+' · '+it.doc_title+']</span></span><strong style="color:#34d399;">'+it.qty+' '+it.unit+'</strong></div>').join('');
+        if(d.items && d.items.length){
+            h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;">' +
+               '<div style="background:#0b1120;border:1px solid #334155;border-radius:8px;padding:8px;"><div style="color:#34d399;font-weight:700;margin-bottom:6px;">📋 По спецификации проекта (К заказу):</div>' +
+               d.items.map(it=>'<div style="padding:5px 0;border-bottom:1px solid #1e293b;display:flex;justify-content:space-between;gap:6px;"><span><strong style="color:#38bdf8;">['+it.req_num+']</strong> '+it.mark_name+' <span style="color:#fbbf24;">['+it.floor_or_zone+']</span></span><strong style="color:#34d399;white-space:nowrap;">'+it.qty+' '+it.unit+'</strong></div>').join('') +
+               '</div>' +
+               '<div style="background:#0b1120;border:1px solid #334155;border-radius:8px;padding:8px;"><div style="color:#38bdf8;font-weight:700;margin-bottom:6px;">🔄 Аналоги и сравнение цен (Замены):</div>' +
+               d.items.map(it=>'<div style="padding:5px 0;border-bottom:1px solid #1e293b;display:flex;justify-content:space-between;align-items:center;gap:6px;"><span style="color:#cbd5e1;font-size:11.5px;">'+(it.analog_item||d.general_analog||'Подбор по ГОСТ/СП')+'</span><input type="text" placeholder="Цена ₽" style="width:74px;background:#1e293b;color:#fbbf24;border:1px solid #334155;border-radius:4px;padding:2px 5px;font-size:11px;"></div>').join('') +
+               '</div></div>';
+        }
         box.innerHTML=h;
     });
 }
