@@ -43,6 +43,12 @@ def extract_real_volume_for_aosr(doc) -> tuple[str, str, str]:
                     best_page = pg.page_number
             except ValueError:
                 pass
+    from storage_control.models import PurchaseRequest
+    doc_reqs = list(PurchaseRequest.objects.filter(document=doc).order_by("-required_qty")[:4])
+    if doc_reqs:
+        summary = "; ".join(f"{r.material_name[:55]} ({r.required_qty} {r.unit})" for r in doc_reqs)
+        first = doc_reqs
+        return (f"{work_label}: {summary}", f"{first.required_qty}", f"{first.unit}")
     if best_kg > 0:
         tons = round(best_kg / 1000.0, 2)
         return (f"{work_label} \u043f\u043e \u0447\u0435\u0440\u0442\u0435\u0436\u0430\u043c {doc.title} (\u0432\u0435\u0434\u043e\u043c\u043e\u0441\u0442\u044c \u0434\u0435\u0442\u0430\u043b\u0435\u0439, \u041b\u0438\u0441\u0442 \u2116{best_page})", f"{tons:.2f}", f"\u0442 ({best_kg:.1f} \u043a\u0433)")

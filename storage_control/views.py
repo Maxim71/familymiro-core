@@ -1155,44 +1155,64 @@ def project_totals_and_analogs_api(request):
     q = (request.GET.get("q") or "").strip()
     if not q:
         return JsonResponse({"ok": True, "items": [], "totals_by_unit": {}, "pdf_mentions": []})
-    variants = _norm_x_variants(q)
-    stem = q[:max(4, len(q) - 2)] if len(q) >= 5 else q
-    for s_c in (stem, stem.lower(), stem.capitalize(), stem.upper(), q.lower(), q.capitalize(), q.upper()):
-        if s_c and s_c not in variants:
-            variants.append(s_c)
-    if "\u0430\u0440\u043c\u0430\u0442" in q.lower() or "\u043c\u0435\u0442\u0430\u043b" in q.lower():
-        variants.extend(["\u0410500\u0421", "\u0410240", "\u0410400", "A500C", "A240", "34028", "5781"])
+
+    is_du_query = q.lower() in ("ду", "dn", "фланец", "фланцы")
+    if is_du_query:
+        variants = ["Ду ", "Ду1", "Ду2", "Ду3", "Ду4", "Ду5", "Ду6", "Ду8", "DN", "Фланец"]
+    else:
+        variants = _norm_x_variants(q)
+        stem = q[:max(4, len(q) - 2)] if len(q) >= 5 else q
+        for sc in (stem, stem.lower(), stem.capitalize(), q.lower(), q.capitalize()):
+            if sc and sc not in variants:
+                variants.append(sc)
+        if "армат" in q.lower():
+            variants.extend(["А500С", "А240", "34028"])
 
     cond = functools.reduce(lambda a, b: a | b, [Q(material_name__icontains=v) for v in variants])
-    reqs = list(PurchaseRequest.objects.select_related("document").filter(cond).order_by("id")[:150])
+    reqs = list(PurchaseRequest.objects.select_related("document").filter(cond).order_by("material_name", "id")[:150])
 
     grouped, totals_by_unit = {}, {}
     for r in reqs:
-        key = f"{(r.material_name or '').strip()} | {(r.floor_info or '\u041f\u043e \u043f\u0440\u043e\u0435\u043a\u0442\u0443').strip()}"
-        u = (r.unit or "\u0448\u0442.").strip()
+        nm = (r.material_name or "").strip()
+        if is_du_query and not re.search(r'(?:\bДу|\bDN|Фланец)', nm, re.I):
+            continue
+        m_dn = re.search(r'(?:Ду|DN|\u00d8)\s*(\d{2,4})', nm, re.I)
+        dn_tag = f"Ду {m_dn.group(1)}" if m_dn else "уточнить Ду по спец."
+        key = f"{nm} | {dn_tag}"
+        u = (r.unit or "шт.").strip()
         qty = float(r.required_qty or 0)
         totals_by_unit[u] = round(totals_by_unit.get(u, 0.0) + qty, 2)
         entry = grouped.setdefault(key, {
-            "req_num": f"\u0417\u041c-{r.id:04d}",
-            "mark_name": (r.material_name or "").strip(),
-            "floor_or_zone": (r.floor_info or "\u041f\u043e \u043f\u043b\u0430\u043d\u0443 \u0420\u0414").strip(),
-            "doc_title": r.document.title if r.document else "\u0420\u0414",
+            "req_num": f"ЗМ-{r.id:04d}",
+            "mark_name": f"{nm} [{dn_tag}]" if is_du_query else nm,
+            "floor_or_zone": (r.floor_info or "По плану РД").strip(),
+            "doc_title": r.document.title if r.document else "РД",
             "qty": 0.0,
             "unit": u,
         })
         entry["qty"] = round(entry["qty"] + qty, 2)
 
-    pdf_mentions = []
-    p_cond = functools.reduce(lambda a, b: a | b, [Q(text__icontains=v) for v in variants])
-    for pg in ParsedPage.objects.select_related("document").filter(p_cond)[:12]:
+    pdf_mentions, seen_snips = [], set()
+    p_cond = functools.reduce(lambda a, b: a | b, [Q(text__icontains=v) for v in variants[:6]])
+    for pg in ParsedPage.objects.select_related("document").filter(p_cond)[:25]:
         txt = fix_autocad_mojibake(pg.text or "")
-        idx = txt.lower().find(stem.lower())
-        if idx >= 0:
-            snip = re.sub(r'\s+', ' ', txt[max(0, idx - 35): idx + 110]).strip()
-            pdf_mentions.append({"doc": pg.document.title if pg.document else "\u0420\u0414", "page": pg.page_number, "snippet": snip})
+        # ???????? ???? ??????? (06.26) ? ??????? ????????? ???? ?????? (1 1 1 4 4 4)
+        txt = re.sub(r'(?:\b\d{2}\.\d{2}\b\s*){2,}', ' ', txt)
+        txt = re.sub(r'(?:\b\d\b\s*){4,}', ' ', txt)
+        m = re.search(r'(?:\bДу|\bDN)\s*\d{2,4}', txt) if is_du_query else re.search(re.escape(variants), txt, re.I)
+        if not m:
+            continue
+        snip = re.sub(r'\s+', ' ', txt[max(0, m.start() - 30): m.end() + 95]).strip()
+        norm_key = snip[:65].lower()
+        if norm_key in seen_snips:
+            continue
+        seen_snips.add(norm_key)
+        pdf_mentions.append({"doc": pg.document.title if pg.document else "РД", "page": pg.page_number, "snippet": snip})
+        if len(pdf_mentions) >= 8:
+            break
 
-    if "\u043a\u0433" in totals_by_unit:
-        totals_by_unit["\u0442 (\u0442\u043e\u043d\u043d)"] = round(totals_by_unit["\u043a\u0433"] / 1000.0, 3)
+    if "кг" in totals_by_unit:
+        totals_by_unit["т (тонн)"] = round(totals_by_unit["кг"] / 1000.0, 3)
     return JsonResponse({"ok": True, "query": q, "totals_by_unit": totals_by_unit, "items": list(grouped.values()), "pdf_mentions": pdf_mentions, "general_analog": _suggest_analog_for_material(q)})
 
 
