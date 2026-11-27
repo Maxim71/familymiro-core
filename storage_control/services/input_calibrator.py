@@ -166,3 +166,67 @@ def extract_gost_table_rows_xy(pdf_path: str, page_index: int = 0) -> list[dict]
         return assign_words_to_gost_columns(words_xy, pw)
     except Exception:
         return []
+
+
+from storage_control.services.quantum_normalizer import canon_key as canonicalize_spec_text
+
+def build_work_sequence_cascade(name: str) -> str:
+    """?????????? ??????????????? ?????????????????? ????? ??? ? ???????? ??? ??? ???????."""
+    c = canonicalize_spec_text(name)
+    if "\u0432\u043e\u0437\u0434\u0443\u0445\u043e\u0432\u043e\u0434" in c:
+        return "1. \u041f\u0440\u0438\u0451\u043c\u043a\u0430 \u0423\u041f\u0414 \u2192 2. \u0420\u0430\u0437\u043c\u0435\u0442\u043a\u0430 \u0438 \u0448\u043f\u0438\u043b\u044c\u043a\u0438 \u2192 3. \u041c\u043e\u043d\u0442\u0430\u0436 \u0432\u043e\u0437\u0434\u0443\u0445\u043e\u0432\u043e\u0434\u043e\u0432 \u0438 \u043f\u0440\u043e\u0445\u043e\u0434\u043e\u043a EI 90 \u2192 4. \u041f\u0443\u0441\u043a\u043e\u043d\u0430\u043b\u0430\u0434\u043a\u0430 \u0438 \u0410\u041e\u0421\u0420"
+    if any(k in c for k in ("\u0444\u043b\u0430\u043d\u0435\u0446", "\u043a\u0440\u0430\u043d", "\u0442\u0440\u0443\u0431")):
+        return "1. \u0412\u0445\u043e\u0434\u043d\u043e\u0439 \u043a\u043e\u043d\u0442\u0440\u043e\u043b\u044c \u0414\u0443/\u0420\u0443 \u2192 2. \u041c\u043e\u043d\u0442\u0430\u0436 \u0443\u0437\u043b\u0430 \u0438 \u043f\u0440\u043e\u043a\u043b\u0430\u0434\u043e\u043a \u2192 3. \u041e\u043f\u0440\u0435\u0441\u0441\u043e\u0432\u043a\u0430 \u2192 4. \u0410\u041e\u0421\u0420 \u2116 344/\u043f\u0440"
+    if any(k in c for k in ("\u0440\u0430\u043c\u0430", "\u0430\u0440\u043c\u0430\u0442", "\u043f\u0440\u043e\u0444\u0438\u043b", "\u0431\u043e\u043b\u0442")):
+        return "1. \u0421\u043a\u043b\u0430\u0434 (\u0423\u041f\u0414 + \u0441\u0435\u0440\u0442\u0438\u0444\u0438\u043a\u0430\u0442 \u043c\u0435\u0442\u0430\u043b\u043b\u0430) \u2192 2. \u0413\u0435\u043e\u0434\u0435\u0437\u0438\u044f \u043e\u0441\u0435\u0439 \u2192 3. \u0421\u0431\u043e\u0440\u043a\u0430 \u0438 \u0430\u043d\u0442\u0438\u043a\u043e\u0440 \u2192 4. \u0410\u041e\u0421\u0420"
+    return "1. \u041f\u0440\u0438\u0451\u043c\u043a\u0430 \u0423\u041f\u0414 \u2192 2. \u0412\u044b\u0434\u0430\u0447\u0430 \u0432 \u043f\u0440\u043e\u0438\u0437\u0432\u043e\u0434\u0441\u0442\u0432\u043e (\u041c-11) \u2192 3. \u041c\u043e\u043d\u0442\u0430\u0436 \u043f\u043e \u0413\u041f\u0420 \u2192 4. \u0410\u041e\u0421\u0420 \u2116 344/\u043f\u0440"
+
+
+def parse_grouped_gost_spec(text: str, page_num: int) -> list[dict]:
+    """
+    ?????? ??????? ???????????? ???? ? ?????????? ???????????:
+    ?????????? '?????????? ?? ????????????? ???????????? ?????, ?=0.7 ??'
+    ? ????????? ??? ? ?????? ???????? ??????? ??????? ('200?300 | ?.?. | 5,7 | ????? 20%').
+    """
+    active_group = ""
+    active_gost = ""
+    results = []
+    group_triggers = (
+        "\u0432\u043e\u0437\u0434\u0443\u0445\u043e\u0432\u043e\u0434",
+        "\u043e\u0442\u0432\u043e\u0434",
+        "\u043f\u0435\u0440\u0435\u0445\u043e\u0434",
+        "\u0442\u0440\u043e\u0439\u043d\u0438\u043a",
+        "\u043a\u043b\u0430\u043f\u0430\u043d",
+        "\u0448\u0443\u043c\u043e\u0433\u043b\u0443\u0448",
+    )
+    for raw_ln in (text or "").splitlines():
+        ln = re.sub(r'\s+', ' ', raw_ln).strip()
+        low = ln.lower()
+        if not ln:
+            continue
+        m_g = re.search(r'(?:\u0413\u041e\u0421\u0422|\u0421\u041f)\s*[0-9\-\.]+', ln)
+        if m_g:
+            active_gost = m_g.group(0)
+        # ???? ?????? ? ????????? ?????? (??? ?????????? ? ?????)
+        if any(gt in low for gt in group_triggers) and not re.search(r'(?:\u043f\.\u043c\.?|\u0448\u0442\.?)\s+\d', low):
+            active_group = re.sub(r'(?:\u0413\u041e\u0421\u0422|\u0421\u041f)\s*[0-9\-\.]+', '', ln).strip(" ,.-")
+            continue
+        # ???????? ?????? ???????/???????? + ??????? + ?????????? (????????: "200?300 ?.?. 5,7 ????? 20%")
+        m_child = re.match(r'^((?:\d{2,4}[xX\u0445\u00d7]\d{2,4}|(?:\u00d8|\u2300|d)\s*\d{2,4})[^\n]{0,35}?)\s+(\u043f\.\u043c\.?|\u0448\u0442\.?|\u043c2|\u043c\u00b2|\u043c)\s+(\d+(?:[\.,]\d+)?)', ln, re.I)
+        if m_child and active_group:
+            sec = m_child.group(1).strip()
+            unit_raw = m_child.group(2).strip()
+            base_qty = float(m_child.group(3).replace(",", "."))
+            has_20 = "20%" in low or "\u0437\u0430\u043f\u0430\u0441" in low
+            final_qty = round(base_qty * 1.2, 2) if has_20 else base_qty
+            justif = f"\u0422\u0440\u0430\u0441\u0441\u0430 {base_qty} + 20% \u0437\u0430\u043f\u0430\u0441 \u0421\u041f = {final_qty}" if has_20 else f"\u041f\u043e \u0441\u043f\u0435\u0446\u0438\u0444\u0438\u043a\u0430\u0446\u0438\u0438 \u0420\u0414 ({base_qty})"
+            full_name = f"{active_group} {sec}" + (f" ({active_gost})" if active_gost else "")
+            results.append({
+                "name": full_name[:145],
+                "unit": "\u043c" if "\u043f.\u043c" in unit_raw.lower() else unit_raw,
+                "base_qty": base_qty,
+                "qty": final_qty,
+                "justification": justif,
+                "page": page_num,
+            })
+    return results

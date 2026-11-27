@@ -1,4 +1,18 @@
 
+def _engineering_sort_key(item: dict) -> tuple:
+    import re
+    nm = (item.get("mark_name") or "").lower()
+    zn = (item.get("floor_or_zone") or "").lower()
+    # 1. ??????? ??????: ?????? (0) -> 1 ???? (1) -> 2 ???? (2) -> ?????? (9)
+    lvl = 0 if "подвал" in zn else (1 if "1" in zn else (2 if "2" in zn else 9))
+    # 2. ??? ????????: 1. ?????? ??????? (0) -> 2. ??????/??????/???????? (1) -> 3. ??????????/?????? (2)
+    kind = 1 if any(k in nm for k in ("отвод", "переход", "тройник", "утка")) else (
+           2 if any(k in nm for k in ("фланец", "болт", "гайка", "шпильк", "хомут")) else 0)
+    # 3. ??????/??????? ?? ???????? ? ????????
+    nums = [int(x) for x in re.findall(r'\d{2,4}', nm)]
+    area_score = -(nums[0] * nums[1]) if len(nums) >= 2 else (-(nums[0] ** 2) if nums else 0)
+    return (lvl, kind, area_score, nm)
+
 def _build_item_tech_passport(name: str) -> dict:
     import re
     low = (name or "").lower()
@@ -27,7 +41,7 @@ def _build_item_tech_passport(name: str) -> dict:
         specs = f"\u041f\u0430\u0440\u0430\u043c\u0435\u0442\u0440\u044b: {du_val} | {ru_val} | {gost_val}"
 
     return {"analog_item": analog, "tech_specs": specs}
-from storage_control.services.input_calibrator import classify_pdf_line_at_gate, normalize_unit_and_name
+from storage_control.services.input_calibrator import classify_pdf_line_at_gate, normalize_unit_and_name, canonicalize_spec_text, build_work_sequence_cascade
 
 def _extract_mark_search_tokens(q: str) -> list[str]:
     import re
@@ -1223,7 +1237,9 @@ def project_totals_and_analogs_api(request):
     else:
         cond = functools.reduce(lambda a, b: a | b, [Q(material_name__icontains=v) for v in variants])
 
-    reqs = list(PurchaseRequest.objects.select_related("document").filter(cond).order_by("id")[:200])
+    canon_q_tokens = [tk for tk in canonicalize_spec_text(q).split() if len(tk) >= 2]
+    all_reqs = list(PurchaseRequest.objects.select_related("document").order_by("id")[:1500])
+    reqs = [r for r in all_reqs if all(tk in canonicalize_spec_text(r.material_name or "") for tk in canon_q_tokens)][:200]
     grouped, totals_by_unit, blocked_items = {}, {}, []
     for r in reqs:
         raw_nm = (r.material_name or "").strip()
@@ -1234,7 +1250,7 @@ def project_totals_and_analogs_api(request):
         clean_nm, u, needs_du = normalize_unit_and_name(raw_nm, r.unit or "шт.")
         qty = float(r.required_qty or 0)
         if needs_du:
-            blocked_items.append({"req_num": f"ЗМ-{r.id:04d}", "mark_name": f"{clean_nm} [⛔ БЛОК ЗАКАЗА: требуется уточнение Ду]", "qty": qty, "unit": u, **_build_item_tech_passport(clean_nm), "analog_item": _suggest_analog_for_material(clean_nm), "doc_title": r.document.title if r.document else "РД"})
+            blocked_items.append({"req_num": f"ЗМ-{r.id:04d}", "mark_name": f"{clean_nm} [⛔ БЛОК ЗАКАЗА: требуется уточнение Ду]", "qty": qty, "unit": u, "work_cascade": build_work_sequence_cascade(clean_nm), **_build_item_tech_passport(clean_nm), "analog_item": _suggest_analog_for_material(clean_nm), "doc_title": r.document.title if r.document else "РД"})
             continue
 
         merge_key = f"{clean_nm.lower()} | {u}"
@@ -1269,7 +1285,7 @@ def project_totals_and_analogs_api(request):
 
     if "кг" in totals_by_unit:
         totals_by_unit["т (тонн)"] = round(totals_by_unit["кг"] / 1000.0, 3)
-    return JsonResponse({"ok": True, "query": q, "totals_by_unit": totals_by_unit, "items": list(grouped.values()), "blocked_items": blocked_items, "pdf_mentions": pdf_mentions, "general_analog": _suggest_analog_for_material(q)})
+    return JsonResponse({"ok": True, "query": q, "totals_by_unit": totals_by_unit, "items": sorted(grouped.values(), key=_engineering_sort_key), "blocked_items": blocked_items, "pdf_mentions": pdf_mentions, "general_analog": _suggest_analog_for_material(q)})
 
 
 def inventory_foreman_api(request):
