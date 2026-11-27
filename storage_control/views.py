@@ -1,3 +1,29 @@
+
+def _build_item_tech_passport(name: str) -> dict:
+    import re
+    low = (name or "").lower()
+    m_du = re.search(r'(?:\u0414\u0443|DN)\s*(\d{2,4})', name, re.I)
+    m_ru = re.search(r'(?:\u0420\u0443|PN)\s*(\d{1,3})', name, re.I)
+    m_gost = re.search(r'(?:\u0413\u041e\u0421\u0422|\u0421\u041f)\s*[0-9\-\.]+', name, re.I)
+
+    du_val = f"\u0414\u0443 {m_du.group(1)}" if m_du else "\u043f\u043e \u043f\u0440\u043e\u0435\u043a\u0442\u0443"
+    ru_val = f"\u0420\u0443 {m_ru.group(1)}" if m_ru else "\u0420\u0443 16 (\u0441\u0442\u0430\u043d\u0434\u0430\u0440\u0442)"
+    gost_val = m_gost.group(0) if m_gost else "\u0413\u041e\u0421\u0422 / \u0422\u0423"
+
+    if "\u0444\u043b\u0430\u043d\u0435\u0446" in low:
+        analog = f"\u0424\u043b\u0430\u043d\u0435\u0446 \u0441\u0442\u0430\u043b\u044c\u043d\u043e\u0439 \u043f\u043b\u043e\u0441\u043a\u0438\u0439 {du_val} {ru_val} \u0413\u041e\u0421\u0422 33259-2015 (\u0421\u044220, \u0410\u0414\u041b / \u0421\u0422\u041c)"
+        specs = f"\u0414\u0438\u0430\u043c\u0435\u0442\u0440: {du_val} | \u0414\u0430\u0432\u043b\u0435\u043d\u0438\u0435: {ru_val} | \u0421\u0442\u0430\u043d\u0434\u0430\u0440\u0442: \u0413\u041e\u0421\u0422 33259-2015 | \u041c\u0430\u0442\u0435\u0440\u0438\u0430\u043b: \u0421\u0442\u0430\u043b\u044c 20"
+    elif "\u043a\u0440\u0430\u043d" in low:
+        analog = f"\u041a\u0440\u0430\u043d \u0448\u0430\u0440\u043e\u0432\u043e\u0439 \u043f\u043e\u043b\u043d\u043e\u043f\u0440\u043e\u0445\u043e\u0434\u043d\u043e\u0439 {du_val} {ru_val} (\u0410\u0414\u041b \u0411\u0438\u0432\u0430\u043b / LD / Giacomini)"
+        specs = f"\u0414\u0438\u0430\u043c\u0435\u0442\u0440: {du_val} | \u0414\u0430\u0432\u043b\u0435\u043d\u0438\u0435: {ru_val} | \u041f\u0440\u043e\u0445\u043e\u0434: \u043f\u043e\u043b\u043d\u044b\u0439 | \u041a\u043b\u0430\u0441\u0441 \u0433\u0435\u0440\u043c\u0435\u0442\u0438\u0447\u043d\u043e\u0441\u0442\u0438: \u0410"
+    elif "\u0442\u0435\u0445\u043d\u043e\u044d\u043b\u0430\u0441\u0442" in low or "\u043f\u043b\u0430\u043c\u044f" in low:
+        analog = "\u0422\u0435\u0445\u043d\u043e\u044d\u043b\u0430\u0441\u0442 \u042d\u041a\u041f / \u0423\u043d\u0438\u0444\u043b\u0435\u043a\u0441 \u042d\u041a\u041f \u0420\u041f1 (\u0413\u041e\u0421\u0422 32805-2014, \u0432\u0435\u0440\u0445\u043d\u0438\u0439 \u0441\u043b\u043e\u0439)"
+        specs = "\u0422\u0438\u043f: \u0421\u0411\u0421-\u043c\u043e\u0434\u0438\u0444\u0438\u0446\u0438\u0440\u043e\u0432\u0430\u043d\u043d\u044b\u0439 | \u0413\u0440\u0443\u043f\u043f\u0430 \u0433\u043e\u0440\u044e\u0447\u0435\u0441\u0442\u0438: \u0420\u041f1 | \u0413\u0438\u0431\u043a\u043e\u0441\u0442\u044c \u043d\u0430 \u0431\u0440\u0443\u0441\u0435: -25\u00b0C"
+    else:
+        analog = _suggest_analog_for_material(name)
+        specs = f"\u041f\u0430\u0440\u0430\u043c\u0435\u0442\u0440\u044b: {du_val} | {ru_val} | {gost_val}"
+
+    return {"analog_item": analog, "tech_specs": specs}
 from storage_control.services.input_calibrator import classify_pdf_line_at_gate, normalize_unit_and_name
 
 def _extract_mark_search_tokens(q: str) -> list[str]:
@@ -1205,7 +1231,7 @@ def project_totals_and_analogs_api(request):
         clean_nm, u, needs_du = normalize_unit_and_name(raw_nm, r.unit or "шт.")
         qty = float(r.required_qty or 0)
         if needs_du:
-            blocked_items.append({"req_num": f"ЗМ-{r.id:04d}", "mark_name": f"{clean_nm} [⛔ БЛОК ЗАКАЗА: требуется уточнение Ду]", "qty": qty, "unit": u, "analog_item": _suggest_analog_for_material(clean_nm), "doc_title": r.document.title if r.document else "РД"})
+            blocked_items.append({"req_num": f"ЗМ-{r.id:04d}", "mark_name": f"{clean_nm} [⛔ БЛОК ЗАКАЗА: требуется уточнение Ду]", "qty": qty, "unit": u, **_build_item_tech_passport(clean_nm), "analog_item": _suggest_analog_for_material(clean_nm), "doc_title": r.document.title if r.document else "РД"})
             continue
 
         merge_key = f"{clean_nm.lower()} | {u}"
