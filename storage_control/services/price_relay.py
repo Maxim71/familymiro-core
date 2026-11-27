@@ -54,3 +54,41 @@ def step_price_relay(batch_percent: int = 10) -> dict:
     json.dump(state, open(RELAY_STATE_PATH, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
     cov = min(100, round((len(state["prices"]) / total) * 100, 1))
     return {"passes": state["passes"], "coverage_pct": cov, "updated_now": len(chunk), "prices": state["prices"]}
+
+
+RELAY_MULTIPLIERS = {
+    "partner_discount_pct": -12.0,
+    "tzr_logistics_pct": 5.0,
+    "inflation_reserve_pct": 4.0,
+    "waste_reserve_pct": 3.0,
+}
+
+
+def apply_relay_multipliers(base_price: float) -> float:
+    k_disc = 1.0 + RELAY_MULTIPLIERS["partner_discount_pct"] / 100.0
+    k_tzr = 1.0 + RELAY_MULTIPLIERS["tzr_logistics_pct"] / 100.0
+    k_inf = 1.0 + RELAY_MULTIPLIERS["inflation_reserve_pct"] / 100.0
+    k_wst = 1.0 + RELAY_MULTIPLIERS["waste_reserve_pct"] / 100.0
+    return round(base_price * k_disc * k_tzr * k_inf * k_wst, 2)
+
+
+def import_dealer_csv(raw_bytes: bytes) -> int:
+    import csv, io
+    from datetime import date
+    from storage_control.services.quantum_normalizer import canon_key
+    state = json.load(open(RELAY_STATE_PATH, encoding="utf-8")) if os.path.exists(RELAY_STATE_PATH) else {"cursor": 0, "passes": 0, "prices": {}}
+    text = raw_bytes.decode("utf-8-sig", errors="ignore")
+    reader = csv.reader(io.StringIO(text), delimiter=";" if ";" in text else ",")
+    added = 0
+    for row in reader:
+        if len(row) < 2:
+            continue
+        nm = row.strip()
+        m_p = re.search(r'\d+(?:[\.,]\d+)?', row[1].replace(" ", "").replace(",", "."))
+        if nm and m_p:
+            ck = canon_key(nm)
+            base_p = float(m_p.group(0))
+            state["prices"][ck] = {"name": nm[:80], "unit_price": apply_relay_multipliers(base_p), "source": "\u041fрайс дилера (CSV + множители)", "updated": str(date.today())}
+            added += 1
+    json.dump(state, open(RELAY_STATE_PATH, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+    return added
