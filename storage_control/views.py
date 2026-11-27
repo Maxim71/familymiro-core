@@ -844,15 +844,54 @@ def export_dynamic_table_view(request):
     resp["Content-Disposition"] = f'attachment; filename="table_{doc.id}_p{dt["page"]}.xlsx"'
     return resp
 
-def mark_passport_seo_alias_view(request, slug):
-    """SEO-ЧПУ алиас /marka/<slug>/ -> открывает Паспорт Марки без крякозябр в URL."""
-    from django.http import QueryDict
-    clean_q = slug.replace("-", " ").strip()
-    qd = QueryDict(mutable=True)
-    qd["q"] = clean_q
-    request.GET = qd
-    return mark_passport_view(request)
+def mark_passport_seo_alias_view(request, slug: str):
+    import re
+    from django.shortcuts import render
+    from storage_control.models import PurchaseRequest, ParsedPage
+    from storage_control.services.mark_passport import build_mark_passport
+    from storage_control.services.building_twin import fix_autocad_mojibake
+    from storage_control.services.quantum_normalizer import canon_key
 
+    ctx = build_mark_passport(slug)
+    ru_hint = _detranslit_mark_slug(slug)
+    raw_parts = [p for p in re.split(r'[\s\-]+', ru_hint) if len(p) >= 2]
+    key_tokens = [p for p in raw_parts if p.lower() not in ("система", "л", "l")]
+    primary_key = key_tokens if key_tokens else (raw_parts if raw_parts else slug)
+
+    matched_reqs = []
+    for r in PurchaseRequest.objects.select_related("document").all()[:2500]:
+        ck_nm = canon_key(r.material_name or "")
+        if any(canon_key(kt) in ck_nm for kt in (key_tokens or [primary_key]) if len(canon_key(kt)) >= 2):
+            matched_reqs.append(r)
+
+    matched_pages, seen_p = [], set()
+    search_terms = list({t for t in (key_tokens + [primary_key, slug.replace("-", " ")]) if len(t) >= 2})
+    for term in search_terms[:4]:
+        for pg in ParsedPage.objects.select_related("document").filter(text__icontains=term)[:15]:
+            if pg.id in seen_p:
+                continue
+            seen_p.add(pg.id)
+            txt = fix_autocad_mojibake(pg.text or "")
+            m = re.search(re.escape(term), txt, re.I)
+            snip = re.sub(r'\s+', ' ', txt[max(0, m.start()-40):m.end()+120]).strip() if m else txt[:150]
+            img_url = pg.image.url if getattr(pg, "image", None) and pg.image else ""
+            matched_pages.append({"doc": pg.document.title if pg.document else "РД", "page": pg.page_number, "snippet": snip, "img_url": img_url})
+
+    docs_set = {p["doc"] for p in matched_pages} | {r.document.title for r in matched_reqs if r.document}
+    total_qty = round(sum(float(r.required_qty or 0) for r in matched_reqs), 2)
+    stock_qty = round(sum(max(0.0, float(r.required_qty or 0) - float(r.deficit_qty or 0)) for r in matched_reqs), 2)
+
+    ctx.update({
+        "ru_hint": ru_hint,
+        "matched_reqs": matched_reqs,
+        "matched_pages": matched_pages,
+        "real_qty": total_qty if total_qty > 0 else 1,
+        "stock_qty": stock_qty,
+        "docs_found_cnt": len(docs_set),
+        "reqs_found_cnt": len(matched_reqs),
+        "links_cnt": len(matched_pages) + len(matched_reqs),
+    })
+    return render(request, "storage_control/mark_passport.html", ctx)
 
 def async_search_api_view(request):
     """Асинхронный JSON-поиск по картотеке РД и складу (для мгновенных подсказок и SEO)."""
