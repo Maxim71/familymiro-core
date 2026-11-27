@@ -21,6 +21,14 @@ body{background:#020617;color:#f8fafc;font-family:system-ui,sans-serif;margin:0;
   </div>
 </div>
 
+<div class="card" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:10px 15px;">
+  <span style="color:#94a3b8;font-size:12px;font-weight:700;">🔍 Перейти к марке / системе:</span>
+  <input type="text" id="mp-jump-q" placeholder="Напр. ПД6, ND-ISR-22C, Фланец Ду 50..." style="background:#1e293b;color:#fff;border:1px solid #475569;border-radius:6px;padding:5px 9px;font-size:12.5px;min-width:220px;">
+  <button type="button" onclick="const v=(document.getElementById('mp-jump-q').value||'').trim();if(v)location.href='/marka/'+encodeURIComponent(v.toLowerCase().replace(/[^a-zа-я0-9]+/g,'-'))+'/';" style="background:#38bdf8;color:#082f49;border:none;border-radius:6px;padding:6px 12px;font-weight:700;cursor:pointer;">Открыть паспорт</button>
+  <a href="/marka/sistema-pd6-l-16290/" style="background:#1e293b;color:#fbbf24;border:1px solid #475569;border-radius:6px;padding:4px 8px;font-size:11.5px;text-decoration:none;">Система ПД6</a>
+  <a href="/marka/nd-isr-22c-v-x/" style="background:#1e293b;color:#34d399;border:1px solid #475569;border-radius:6px;padding:4px 8px;font-size:11.5px;text-decoration:none;">ND-ISR-22C-V/X</a>
+  <a href="/marka/flanec-stalnoj-du-50/" style="background:#1e293b;color:#38bdf8;border:1px solid #475569;border-radius:6px;padding:4px 8px;font-size:11.5px;text-decoration:none;">Фланец Ду 50</a>
+</div>
 <div class="kpis">
   <div class="kpi"><div style="color:#94a3b8;font-size:12px;">Найдено томов РД</div><div style="color:#34d399;font-size:22px;font-weight:800;">{{ docs_found_cnt }} том.</div></div>
   <div class="kpi"><div style="color:#94a3b8;font-size:12px;">Позиций в спецификации</div><div style="color:#fbbf24;font-size:22px;font-weight:800;">{{ reqs_found_cnt }} поз.</div></div>
