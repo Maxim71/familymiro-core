@@ -879,5 +879,65 @@ document.addEventListener('click', function(e) {
 });
 </script>
 
+
+<style>
+#tmc-designer-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;background:#0b1120;border:1px solid #334155;border-radius:10px;padding:10px 12px;margin:10px 0;}
+.tmc-pill{background:#1e293b;color:#cbd5e1;border:1px solid #475569;border-radius:20px;padding:4px 11px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;}
+.tmc-pill.active,.tmc-pill:hover{background:#38bdf8;color:#082f49;border-color:#38bdf8;}
+.tmc-pg-btn{background:#1e293b;color:#f8fafc;border:1px solid #475569;border-radius:6px;padding:4px 10px;font-size:12px;font-weight:700;cursor:pointer;}
+.tmc-pg-btn:disabled{opacity:.4;cursor:default;}
+table td, table th{padding:7px 9px !important;font-size:12.5px !important;vertical-align:middle !important;}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+  const hdr=Array.from(document.querySelectorAll('h2,h3,div,strong')).find(el=>el.textContent && el.textContent.includes('Ведомость закупок ТМЦ'));
+  const tbl=document.querySelector('table');
+  if(!tbl || !tbl.tBodies.length) return;
+  const rows=Array.from(tbl.tBodies[0].rows);
+  if(rows.length<=15) return;
+  let page=1, perPage=15, mode='all', q='';
+
+  const bar=document.createElement('div');
+  bar.id='tmc-designer-bar';
+  bar.innerHTML='<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">' +
+    '<button type="button" class="tmc-pill active" data-m="all">Все ('+rows.length+')</button>' +
+    '<button type="button" class="tmc-pill" data-m="def">🔴 Дефицит</button>' +
+    '<button type="button" class="tmc-pill" data-m="mep">⚙️ ОВ / ВК / ЭС</button>' +
+    '<button type="button" class="tmc-pill" data-m="fin">🎨 Отделка / АР</button>' +
+    '<input type="text" id="tmc-live-filter" placeholder="🔍 Быстрый фильтр по таблице..." style="background:#1e293b;color:#fff;border:1px solid #475569;border-radius:16px;padding:4px 11px;font-size:12px;min-width:190px;">' +
+    '</div><div style="display:flex;gap:6px;align-items:center;">' +
+    '<button type="button" class="tmc-pg-btn" id="tmc-prev">← Назад</button>' +
+    '<span id="tmc-pg-info" style="color:#94a3b8;font-size:12px;font-weight:700;"></span>' +
+    '<button type="button" class="tmc-pg-btn" id="tmc-next">Вперёд →</button>' +
+    '<button type="button" class="tmc-pg-btn" id="tmc-all-btn" style="color:#38bdf8;">Все строки</button></div>';
+  tbl.parentNode.insertBefore(bar, tbl);
+
+  function render(){
+    const filtered=rows.filter(r=>{
+      const t=r.textContent.toLowerCase();
+      if(q && !t.includes(q)) return false;
+      if(mode==='def') return !t.includes('0 м') && !t.includes('0 шт') && !t.includes('0,0');
+      if(mode==='mep') return /(ов|вк|эс|ркдм|клад|воздух|флан|кран|кабел)/.test(t);
+      if(mode==='fin') return /(отдел|краск|ral|шпатл|площадь|потолок)/.test(t);
+      return true;
+    });
+    const maxP=Math.max(1, Math.ceil(filtered.length/perPage));
+    if(page>maxP) page=maxP;
+    const s=(page-1)*perPage, e=s+perPage;
+    rows.forEach(r=>r.style.display='none');
+    filtered.slice(s,e).forEach(r=>r.style.display='');
+    document.getElementById('tmc-pg-info').textContent='Стр. '+page+' из '+maxP+' ('+filtered.length+' поз.)';
+    document.getElementById('tmc-prev').disabled=(page<=1);
+    document.getElementById('tmc-next').disabled=(page>=maxP);
+  }
+  bar.querySelectorAll('.tmc-pill').forEach(b=>b.onclick=()=>{bar.querySelectorAll('.tmc-pill').forEach(x=>x.classList.remove('active'));b.classList.add('active');mode=b.dataset.m;page=1;render();});
+  document.getElementById('tmc-live-filter').oninput=(ev)=>{q=ev.target.value.trim().toLowerCase();page=1;render();};
+  document.getElementById('tmc-prev').onclick=()=>{if(page>1){page--;render();}};
+  document.getElementById('tmc-next').onclick=()=>{page++;render();};
+  document.getElementById('tmc-all-btn').onclick=()=>{perPage=(perPage===15?9999:15);page=1;render();};
+  render();
+});
+</script>
+
 </body>
 </html>
