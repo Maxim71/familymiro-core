@@ -1508,3 +1508,14 @@ def partner_league_view(request):
     qty = (request.GET.get("qty") or "").strip()
     matched_price = relay_info["prices"].get(canon_key(q), {}) if q else {}
     return render(request, "storage_control/partner_league.html", {"matrix": matrix, "query": q, "qty": qty, "relay": relay_info, "matched_price": matched_price, "imported_cnt": imported_cnt})
+
+
+def aosr_print_view(request, slug: str):
+    from django.shortcuts import render
+    from storage_control.models import PurchaseRequest, ParsedPage
+    from storage_control.services.quantum_normalizer import canon_key
+    ru_title = _detranslit_mark_slug(slug)
+    reqs = [r for r in PurchaseRequest.objects.select_related("document").all()[:2000] if canon_key(ru_title.split() if ru_title else slug) in canon_key(r.material_name or "")]
+    docs = sorted({r.document.title for r in reqs if r.document}) or ["Рабочая документация 24.0454"]
+    qty_s = f"{round(sum(float(r.required_qty or 0) for r in reqs), 2)} {reqs.unit}" if reqs else "по ведомости РД"
+    return render(request, "storage_control/aosr_print.html", {"title": ru_title, "qty": qty_s, "docs_list": ", ".join(docs)})
