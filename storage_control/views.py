@@ -1589,3 +1589,26 @@ def site_compass_view(request):
         {"title": "4. Контуры ОВ и СКС / ЭС", "color": "#34d399", "count": _cnt(("воздуховод", "ркдм", "nd-isr", "кабел", "фланец")), "items_preview": "Воздуховоды, клапаны РКДМ-1040х840, VRF NED, трассы СКС/ЭС", "q": "РКДМ-1040х840"},
     ]
     return render(request, "storage_control/site_compass.html", {"zones": zones})
+
+
+def foreman_lab_view(request):
+    import os, json
+    from django.conf import settings
+    from django.shortcuts import render, redirect
+    from storage_control.models import PurchaseRequest
+    fdir = os.path.join(settings.MEDIA_ROOT, "field_training")
+    os.makedirs(fdir, exist_ok=True)
+    meta_p = os.path.join(fdir, "gallery.json")
+    photos = json.load(open(meta_p, encoding="utf-8")) if os.path.exists(meta_p) else []
+    if request.method == "POST" and request.FILES.getlist("photos"):
+        zone = (request.POST.get("zone") or "Объект").strip()
+        note = (request.POST.get("note") or "Фото со стройки").strip()
+        for f in request.FILES.getlist("photos"):
+            safe = f"{len(photos)+1}_{f.name}"
+            with open(os.path.join(fdir, safe), "wb") as out:
+                for ch in f.chunks():
+                    out.write(ch)
+            photos.insert(0, {"url": f"{settings.MEDIA_URL}field_training/{safe}", "zone": zone, "note": note})
+        json.dump(photos, open(meta_p, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+        return redirect("/foreman-lab/")
+    return render(request, "storage_control/foreman_lab.html", {"photos": photos, "items": list(PurchaseRequest.objects.order_by("-id")[:15])})
