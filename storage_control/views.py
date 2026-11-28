@@ -1568,7 +1568,13 @@ def executive_summary_view(request):
 def ks2_ks3_view(request):
     from django.shortcuts import render
     from storage_control.models import PurchaseRequest
-    return render(request, "storage_control/ks2_ks3.html", {"items": list(PurchaseRequest.objects.order_by("-id")[:25])})
+    grouped = {}
+    for r in PurchaseRequest.objects.order_by("-id")[:300]:
+        k = (r.material_name or "").strip()
+        if k not in grouped:
+            grouped[k] = {"material_name": k, "unit": r.unit or "шт.", "required_qty": 0.0}
+        grouped[k]["required_qty"] = round(grouped[k]["required_qty"] + float(r.required_qty or 0), 2)
+    return render(request, "storage_control/ks2_ks3.html", {"items": list(grouped.values())[:25]})
 
 
 def site_compass_view(request):
