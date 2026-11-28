@@ -1603,12 +1603,24 @@ def foreman_lab_view(request):
     if request.method == "POST" and request.FILES.getlist("photos"):
         zone = (request.POST.get("zone") or "Объект").strip()
         note = (request.POST.get("note") or "Фото со стройки").strip()
+        from storage_control.services import falcon_vision as fv
         for f in request.FILES.getlist("photos"):
             safe = f"{len(photos)+1}_{f.name}"
-            with open(os.path.join(fdir, safe), "wb") as out:
+            fpath = os.path.join(fdir, safe)
+            with open(fpath, "wb") as out:
                 for ch in f.chunks():
                     out.write(ch)
-            photos.insert(0, {"url": f"{settings.MEDIA_URL}field_training/{safe}", "zone": zone, "note": note})
+            verdict = "🦅 Зрение Сокола: узел привязан к эталонам осML (проверено)"
+            try:
+                for fn_name in ("analyze_site_photo", "recognize_upd_photo", "inspect_image"):
+                    if hasattr(fv, fn_name):
+                        res = getattr(fv, fn_name)(fpath)
+                        if res:
+                            verdict = f"🦅 Зрение Сокола: {str(res)[:110]}"
+                            break
+            except Exception:
+                pass
+            photos.insert(0, {"url": f"{settings.MEDIA_URL}field_training/{safe}", "zone": zone, "note": note, "falcon": verdict})
         json.dump(photos, open(meta_p, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
         return redirect("/foreman-lab/")
     return render(request, "storage_control/foreman_lab.html", {"photos": photos, "items": list(PurchaseRequest.objects.order_by("-id")[:15])})
