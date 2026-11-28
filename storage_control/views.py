@@ -1569,3 +1569,17 @@ def ks2_ks3_view(request):
     from django.shortcuts import render
     from storage_control.models import PurchaseRequest
     return render(request, "storage_control/ks2_ks3.html", {"items": list(PurchaseRequest.objects.order_by("-id")[:25])})
+
+
+def site_compass_view(request):
+    from django.shortcuts import render
+    from storage_control.models import PurchaseRequest
+    all_r = list(PurchaseRequest.objects.all()[:3000])
+    def _cnt(keys): return sum(1 for r in all_r if any(k in (r.material_name or "").lower() for k in keys))
+    zones = [
+        {"title": "1. Начало и Конец Фасада (Оси 1–N)", "color": "#fbbf24", "count": _cnt(("фасад", "окн", "краск", "ral")), "items_preview": "Оконные блоки RAL 7016, утепление и отделка АР0 / АР1.1", "q": "RAL 7016"},
+        {"title": "2. Козырёк и Входные Лестницы (КМ)", "color": "#f59e0b", "count": _cnt(("рама", "лестн", "козыр", "шпильк")), "items_preview": "Металлоконструкции рам Рм-1.1, ограждения, шпильки М8/М10", "q": "Рама Рм-1.1"},
+        {"title": "3. Асфальт, Отмостка и ГП", "color": "#94a3b8", "count": _cnt(("асфальт", "люк", "борт", "гильз")), "items_preview": "Благоустройство ГП, асфальтобетон, люки и вводы сетей", "q": "Асфальт"},
+        {"title": "4. Контуры ОВ и СКС / ЭС", "color": "#34d399", "count": _cnt(("воздуховод", "ркдм", "nd-isr", "кабел", "фланец")), "items_preview": "Воздуховоды, клапаны РКДМ-1040х840, VRF NED, трассы СКС/ЭС", "q": "РКДМ-1040х840"},
+    ]
+    return render(request, "storage_control/site_compass.html", {"zones": zones})

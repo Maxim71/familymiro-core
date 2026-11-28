@@ -1,0 +1,20 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8"><title>🧭 Визуальный Ориентир Объекта</title>
+<style>body{background:#020617;color:#f8fafc;font-family:system-ui,sans-serif;margin:0;padding:18px}.wrap{max-width:1180px;margin:0 auto}.card{background:#0f172a;border:1px solid #334155;border-radius:12px;padding:16px;margin-bottom:14px}.zones{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}.zbtn{background:#0b1120;border:1px solid #334155;border-radius:10px;padding:14px;color:#f8fafc}</style></head><body><div class="wrap">
+<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+  <div><h2 style="margin:0;color:#38bdf8;">🧭 Визуальный Ориентир Объекта (Проект 24.0454)</h2>
+  <div style="color:#94a3b8;font-size:13px;">Начало фасада → Козырёк и лестницы → Асфальт → Контуры ОВ и СКС → Конец фасада</div></div>
+  <div style="display:flex;gap:8px;"><a href="/" style="background:#1e293b;color:#38bdf8;border:1px solid #38bdf8;border-radius:8px;padding:7px 12px;text-decoration:none;font-weight:700;">← На главную</a><a href="/ks2-ks3/" style="background:#f59e0b;color:#020617;border-radius:8px;padding:7px 12px;text-decoration:none;font-weight:800;">💰 КС-2 / КС-3</a></div>
+</div>
+<div class="card">
+  <svg viewBox="0 0 960 210" style="width:100%;height:auto;background:#0b1120;border-radius:10px;border:1px solid #1e293b;">
+    <rect x="20" y="165" width="920" height="24" rx="4" fill="#334155"/><text x="480" y="181" fill="#e2e8f0" font-size="12" font-weight="bold" text-anchor="middle">🛣️ АСФАЛЬТ, ОТМОСТКА И НАРУЖНЫЕ СЕТИ (ГП)</text>
+    <rect x="90" y="45" width="780" height="120" rx="6" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+    <line x1="90" y1="20" x2="90" y2="165" stroke="#fbbf24" stroke-width="2" stroke-dasharray="4"/><text x="90" y="15" fill="#fbbf24" font-size="11" font-weight="bold" text-anchor="middle">◀ НАЧАЛО ФАСАДА (Ось 1)</text>
+    <line x1="870" y1="20" x2="870" y2="165" stroke="#fbbf24" stroke-width="2" stroke-dasharray="4"/><text x="870" y="15" fill="#fbbf24" font-size="11" font-weight="bold" text-anchor="middle">КОНЕЦ ФАСАДА (Ось N) ▶</text>
+    <polygon points="390,95 570,95 555,112 405,112" fill="#f59e0b"/><text x="480" y="88" fill="#fbbf24" font-size="11" font-weight="bold" text-anchor="middle">🏛️ КОЗЫРЁК И ВХОДНЫЕ ЛЕСТНИЦЫ (КМ)</text>
+    <rect x="425" y="112" width="110" height="53" fill="#1e293b" stroke="#f59e0b"/>
+    <rect x="130" y="65" width="230" height="35" rx="5" fill="#052e16" stroke="#10b981"/><text x="245" y="87" fill="#34d399" font-size="12" font-weight="bold" text-anchor="middle">🌬️ СИСТЕМЫ ОВ / ПД6 / РКДМ</text>
+    <rect x="600" y="65" width="230" height="35" rx="5" fill="#1e1b4b" stroke="#818cf8"/><text x="715" y="87" fill="#a5b4fc" font-size="12" font-weight="bold" text-anchor="middle">📡 СИСТЕМЫ СКС / ЭС / АПС</text>
+  </svg>
+</div>
+<div class="zones">{% for z in zones %}<div class="zbtn" style="border-left:4px solid {{ z.color }};"><div style="display:flex;justify-content:space-between;"><strong style="color:{{ z.color }};font-size:15px;">{{ z.title }}</strong><span style="background:#1e293b;padding:2px 8px;border-radius:6px;font-size:12px;">{{ z.count }} поз.</span></div><div style="color:#cbd5e1;font-size:12.5px;margin:6px 0;">{{ z.items_preview }}</div><div style="display:flex;gap:6px;margin-top:8px;"><a href="/partner-league/?q={{ z.q|urlencode }}" style="background:#10b981;color:#052e16;border-radius:6px;padding:4px 9px;font-size:11.5px;font-weight:700;text-decoration:none;">🤝 Поставщики и КП</a><a href="/ks2-ks3/" style="background:#1e293b;color:#38bdf8;border:1px solid #38bdf8;border-radius:6px;padding:4px 9px;font-size:11.5px;font-weight:700;text-decoration:none;">💰 Закрыть КС-2</a></div></div>{% endfor %}</div></div></body></html>
